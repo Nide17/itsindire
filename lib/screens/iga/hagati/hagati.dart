@@ -3,10 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
 import 'package:tegura/screens/iga/gradient_title.dart';
-import 'package:tegura/screens/iga/view_logged_in.dart';
-import 'package:tegura/screens/iga/view_not_logged_in.dart';
-import 'package:tegura/screens/iga/progress_circle.dart';
-import 'package:tegura/screens/my_appbar.dart';
+import 'package:tegura/screens/utilities/view_logged_in.dart';
+import 'package:tegura/screens/utilities/view_not_logged_in.dart';
+import 'package:tegura/screens/utilities/progress_circle.dart';
+import 'package:tegura/screens/utilities/my_appbar.dart';
 
 class Hagati extends StatefulWidget {
   const Hagati({Key? key}) : super(key: key);

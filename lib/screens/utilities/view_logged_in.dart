@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/screens/iga/user_progress.dart';
+import 'package:tegura/screens/utilities/user_progress.dart';
 
 class ViewLoggedIn extends StatelessWidget {
   // INSTANCE VARIABLES

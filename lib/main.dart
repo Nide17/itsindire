@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/models/user.dart';
-import 'package:tegura/screens/auth/auth.dart';
+// import 'package:tegura/screens/auth/auth.dart';
+import 'package:tegura/screens/auth/injira.dart';
 import 'package:tegura/screens/ibiciro/ibiciro.dart';
 import 'package:tegura/screens/iga/iga.dart';
-import 'package:tegura/screens/loading.dart';
+import 'package:tegura/screens/utilities/loading.dart';
 import 'package:tegura/services/auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -24,14 +25,11 @@ class TeguraApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     // USER STREAM PROVIDER - LISTENS TO AUTH CHANGES
     return StreamProvider<UserModel?>.value(
       value: AuthService().usr,
       initialData: null,
-
       child: MaterialApp(
-
         // REMOVE DEBUG BANNER
         debugShowCheckedModeBanner: false,
 
@@ -47,7 +45,8 @@ class TeguraApp extends StatelessWidget {
         routes: {
           '/iga': (context) => const Iga(),
           '/ibiciro': (context) => const Ibiciro(),
-          '/injira': (context) => AuthService().usr == null ? const Auth() : const Auth(),
+          // '/injira': (context) => AuthService().usr == null ? const Auth() : const Auth(),
+          '/injira': (context) => const Injira(),
         },
       ),
     );

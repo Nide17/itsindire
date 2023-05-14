@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
-import 'package:tegura/screens/my_appbar.dart'; // APP BAR
+import 'package:tegura/screens/utilities/my_appbar.dart'; // APP BAR
 import 'package:tegura/screens/iga/iga_data.dart'; // DATA FOR THE IGA PAGE
 
 class Iga extends StatefulWidget {

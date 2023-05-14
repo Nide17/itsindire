@@ -9,7 +9,7 @@ import 'package:tegura/screens/iga/iga_card.dart';
 import 'package:tegura/screens/iga/igazeti/igazeti_ibimurika.dart';
 import 'package:tegura/screens/iga/igazeti/igazeti_ibyapa.dart';
 import 'package:tegura/screens/iga/igazeti/igazeti_imirongo.dart';
-import 'package:tegura/screens/my_appbar.dart';
+import 'package:tegura/screens/utilities/my_appbar.dart';
 
 class Igazeti extends StatefulWidget {
   const Igazeti({Key? key}) : super(key: key);

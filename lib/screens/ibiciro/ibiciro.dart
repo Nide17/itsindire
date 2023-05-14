@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/screens/my_appbar.dart';
+import 'package:tegura/screens/utilities/my_appbar.dart';
 
 class Ibiciro extends StatefulWidget {
   const Ibiciro({Key? key}) : super(key: key);
