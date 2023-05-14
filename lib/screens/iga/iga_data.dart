@@ -4,6 +4,7 @@ import 'package:tegura/screens/iga/hagati/hagati.dart';
 import 'package:tegura/screens/iga/igazeti/igazeti.dart';
 import 'package:tegura/screens/iga/wasoje/wasoje.dart';
 import 'package:tegura/screens/iga/bibaza/bibaza.dart';
+import 'package:tegura/screens/iga/baza/baza.dart';
 
 final List<Map<String, dynamic>> igaList = [
   {
@@ -40,6 +41,6 @@ final List<Map<String, dynamic>> igaList = [
     'icon': 'assets/images/baza_mwarimu.svg',
     'text': 'Baza mwarimu',
     'route': 'baza',
-    'screen': 'Baza()'
+    'screen': const Baza()
   },
 ];
