@@ -122,8 +122,8 @@ class AmasuzumabumenyiState extends State<Amasuzumabumenyi> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const IgaCard(
+            children: const [
+              IgaCard(
                 title: 'ISUZUMABUMENYI RYA 2',
                 icon: 'assets/images/isuzuma.png',
                 screen: IgazetiImirongo(),
