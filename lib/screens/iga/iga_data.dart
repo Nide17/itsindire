@@ -3,6 +3,7 @@ import 'package:tegura/screens/iga/amasuzuma/amasuzuma.dart';
 import 'package:tegura/screens/iga/hagati/hagati.dart';
 import 'package:tegura/screens/iga/igazeti/igazeti.dart';
 import 'package:tegura/screens/iga/wasoje/wasoje.dart';
+import 'package:tegura/screens/iga/bibaza/bibaza.dart';
 
 final List<Map<String, dynamic>> igaList = [
   {
@@ -33,7 +34,7 @@ final List<Map<String, dynamic>> igaList = [
     'icon': 'assets/images/ibibazo_bibaza.svg',
     'text': 'Ibibazo abanyeshuri bibaza',
     'route': 'bibaza',
-    'screen': 'Bibaza()'
+    'screen': const Bibaza()
   },
   {
     'icon': 'assets/images/baza_mwarimu.svg',

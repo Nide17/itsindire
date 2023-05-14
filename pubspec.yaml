@@ -78,6 +78,8 @@ flutter:
     - assets/images/ibibazo_bibaza.svg
     - assets/images/baza_mwarimu.svg
     - assets/images/down_arrow.svg
+    - assets/images/answer.svg
+    - assets/images/question.svg
     - assets/images/igazeti_book.png
     - assets/images/ibyapa.png
     - assets/images/imirongo.png
