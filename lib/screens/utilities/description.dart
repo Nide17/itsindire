@@ -17,7 +17,7 @@ class Description extends StatelessWidget {
       // TEXT WIDGET TO DISPLAY THE TEXT
       Padding(
         padding: const EdgeInsets.fromLTRB(
-            16.0, 8.0, 16.0, 8.0), // Add 16.0 pixels of padding to all sides
+            16.0, 12.0, 16.0, 12.0), // Add 16.0 pixels of padding to all sides
         child: Text(
           text,
           textAlign: TextAlign.justify,

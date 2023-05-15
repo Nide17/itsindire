@@ -5,15 +5,15 @@ import "package:tegura/screens/iga/gradient_title.dart";
 import 'package:tegura/screens/utilities/my_appbar.dart';
 import "package:tegura/services/auth.dart";
 
-class Injira extends StatefulWidget {
-  const Injira({Key? key}) : super(key: key);
+class Iyandikishe extends StatefulWidget {
+  const Iyandikishe({Key? key}) : super(key: key);
 
   @override
-  _InjiraState createState() => _InjiraState();
+  _IyandikisheState createState() => _IyandikisheState();
 }
 
 // STATE FOR THE SIGN IN PAGE - STATEFUL
-class _InjiraState extends State<Injira> {
+class _IyandikisheState extends State<Iyandikishe> {
   // AUTH SERVICE INSTANCE
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
@@ -34,11 +34,13 @@ class _InjiraState extends State<Injira> {
         body: ListView(
           children: [
             // 1. GRADIENT TITLE
-            GradientTitle(title: 'INJIRA', icon: 'assets/images/injira.svg'),
+            GradientTitle(
+                title: 'Iyandikishe', icon: 'assets/images/iyandikishe.svg'),
 
             // 2. DESCRIPTION
             const Description(
-                text: 'Injira kugirango ubashe kubona amasomo yose!'),
+                text:
+                    'Iyandikishe ubundi, wige, umenye ndetse utsindire provisoire!'),
 
             // CENTERED IMAGE
             Row(
@@ -61,6 +63,12 @@ class _InjiraState extends State<Injira> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // NOMERO ZA TELEPHONE
+                    DefaultInput(
+                      placeholder: 'Izina',
+                      validation: 'Injiza izina ryawe!',
+                    ),
+
                     // NOMERO ZA TELEPHONE
                     DefaultInput(
                       placeholder: 'Nomero za telefone',
@@ -89,7 +97,7 @@ class _InjiraState extends State<Injira> {
                           }
                         },
                         child: const Text(
-                          'Injira',
+                          'Iyandikishe',
                           textAlign: TextAlign.right,
                           style: TextStyle(
                             color: Color.fromARGB(255, 255, 255, 255),
@@ -108,7 +116,7 @@ class _InjiraState extends State<Injira> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          'Wibagiwe ijambobanga? ',
+                          'Niba wariyandikishije, ',
                           style: TextStyle(
                             color: Color.fromARGB(255, 255, 255, 255),
                           ),
@@ -117,10 +125,10 @@ class _InjiraState extends State<Injira> {
                         // INK WELL
                         InkWell(
                           onTap: () {
-                            Navigator.pushNamed(context, '/hindura');
+                            Navigator.pushReplacementNamed(context, '/injira');
                           },
                           child: const Text(
-                            'Hindura',
+                            'Injira',
                             style: TextStyle(
                               color: Color.fromARGB(255, 0, 27, 116),
                               decoration: TextDecoration.underline,
@@ -135,31 +143,26 @@ class _InjiraState extends State<Injira> {
                       height: MediaQuery.of(context).size.height * 0.1,
                     ),
 
-                    // ROW
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Niba utariyandikisha, ',
+                    // 4. BUTTON
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF2C64C6),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24.0),
+                            )),
+                        onPressed: () {
+                          // Navigator.pushNamed(context, '/ur-student');
+                        },
+                        child: const Text(
+                          'Register as UR student',
+                          textAlign: TextAlign.right,
                           style: TextStyle(
-                            color: Color.fromARGB(255, 0, 27, 116),
+                            color: Color.fromARGB(255, 255, 255, 255),
                           ),
                         ),
-
-                        // INK WELL
-                        InkWell(
-                          onTap: () {
-                            Navigator.pushReplacementNamed(context, '/iyandikishe');
-                          },
-                          child: const Text(
-                            'Iyandikishe',
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ],
                 ),

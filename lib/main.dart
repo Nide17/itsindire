@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tegura/models/user.dart';
 // import 'package:tegura/screens/auth/auth.dart';
 import 'package:tegura/screens/auth/injira.dart';
+import 'package:tegura/screens/auth/iyandikishe.dart';
 import 'package:tegura/screens/ibiciro/ibiciro.dart';
 import 'package:tegura/screens/iga/iga.dart';
 import 'package:tegura/screens/utilities/loading.dart';
@@ -47,6 +48,7 @@ class TeguraApp extends StatelessWidget {
           '/ibiciro': (context) => const Ibiciro(),
           // '/injira': (context) => AuthService().usr == null ? const Auth() : const Auth(),
           '/injira': (context) => const Injira(),
+          '/iyandikishe':(context) => const Iyandikishe(),
         },
       ),
     );
