@@ -1,4 +1,6 @@
 import "package:flutter/material.dart";
+import "package:tegura/screens/utilities/cta_button.dart";
+import "package:tegura/screens/utilities/cta_link.dart";
 import "package:tegura/screens/utilities/default_input.dart";
 import 'package:tegura/screens/utilities/description.dart';
 import "package:tegura/screens/iga/gradient_title.dart";
@@ -73,93 +75,33 @@ class _InjiraState extends State<Injira> {
                       validation: 'Injiza ijambobanga!',
                     ),
 
-                    // 4. BUTTON
+                    // CTA BUTTON
+                    CtaButton(
+                      text: 'Injira',
+                      formKey: _formKey,
+                    ),
+
+                    // CTA LINK
+                    const CtaLink(
+                      text1: 'Wibagiwe ijambobanga? ',
+                      text2: 'hindura',
+                      color1: Color.fromARGB(255, 255, 255, 255),
+                      color2: Color.fromARGB(255, 0, 27, 116),
+                      route: '/wibagiwe',
+                    ),
+
+                    // SIZED BOX
                     SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF00CCE5),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24.0),
-                            )),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            //TODO: Send the form data
-                          }
-                        },
-                        child: const Text(
-                          'Injira',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 255, 255, 255),
-                          ),
-                        ),
-                      ),
+                      height: MediaQuery.of(context).size.height * 0.08,
                     ),
 
-                    // VERTICAL SPACE
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.035,
-                    ),
-
-                    // ROW
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Wibagiwe ijambobanga? ',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 255, 255, 255),
-                          ),
-                        ),
-
-                        // INK WELL
-                        InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/hindura');
-                          },
-                          child: const Text(
-                            'Hindura',
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 0, 27, 116),
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    // VERTICAL SPACE
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.1,
-                    ),
-
-                    // ROW
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Niba utariyandikisha, ',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 0, 27, 116),
-                          ),
-                        ),
-
-                        // INK WELL
-                        InkWell(
-                          onTap: () {
-                            Navigator.pushReplacementNamed(context, '/iyandikishe');
-                          },
-                          child: const Text(
-                            'Iyandikishe',
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                      ],
+                    // CTA LINK
+                    const CtaLink(
+                      text1: 'Niba utariyandikisha, ',
+                      color1: Color.fromARGB(255, 0, 27, 116),
+                      color2: Color.fromARGB(255, 255, 255, 255),
+                      text2: 'iyandikishe',
+                      route: '/iyandikishe',
                     ),
                   ],
                 ),

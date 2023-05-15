@@ -41,7 +41,7 @@ class IgazetiState extends State<Igazeti> {
         body: ListView(children: <Widget>[
           // 1. GRADIENT TITLE
           GradientTitle(
-              title: 'Igazeti n’ibimenyetso',
+              title: 'IGAZETI N\'IBIMENYETSO',
               icon: 'assets/images/igazeti.svg'),
 
           // 2. VERTICAL SPACE

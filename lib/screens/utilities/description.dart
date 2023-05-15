@@ -24,7 +24,7 @@ class Description extends StatelessWidget {
           style: TextStyle(
             fontSize: MediaQuery.of(context).size.width * 0.05,
             color: const Color.fromARGB(255, 255, 255, 255),
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w400,
           ),
         ),
       ),

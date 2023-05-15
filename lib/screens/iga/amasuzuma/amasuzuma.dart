@@ -41,7 +41,7 @@ class AmasuzumabumenyiState extends State<Amasuzumabumenyi> {
         body: ListView(children: <Widget>[
           // 1. GRADIENT TITLE
           GradientTitle(
-              title: 'Amasuzumabumenyi yose',
+              title: 'AMASUZUMABUMENYI YOSE',
               icon: 'assets/images/amasuzumabumenyi.svg'),
 
           // 2. DESCRIPTION

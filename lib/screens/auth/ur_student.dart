@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:tegura/screens/utilities/cta_button.dart";
 import "package:tegura/screens/utilities/default_input.dart";
 import 'package:tegura/screens/utilities/description.dart';
 import "package:tegura/screens/iga/gradient_title.dart";
@@ -144,42 +145,18 @@ class _UrStudentState extends State<UrStudent> {
                       validation: 'Please enter your password!',
                     ),
 
-                    // 4. BUTTON
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF00CCE5),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24.0),
-                            )),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            //TODO: Send the form data
-                          }
-                        },
-                        child: const Text(
-                          'Register',
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 255, 255, 255),
-                          ),
-                        ),
-                      ),
+                    // CTA BUTTON
+                    CtaButton(
+                      text: 'Register',
+                      formKey: _formKey,
                     ),
 
                     // VERTICAL SPACE
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.035,
+                      height: MediaQuery.of(context).size.height * 0.08,
                     ),
 
-                    // VERTICAL SPACE
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.1,
-                    ),
-
-                    // 4. BUTTON
+                    // BISANZWE
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

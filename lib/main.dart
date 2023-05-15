@@ -5,6 +5,7 @@ import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/auth/injira.dart';
 import 'package:tegura/screens/auth/iyandikishe.dart';
 import 'package:tegura/screens/auth/ur_student.dart';
+import 'package:tegura/screens/auth/wibagiwe.dart';
 import 'package:tegura/screens/ibiciro/ibiciro.dart';
 import 'package:tegura/screens/iga/iga.dart';
 import 'package:tegura/screens/utilities/loading.dart';
@@ -51,6 +52,7 @@ class TeguraApp extends StatelessWidget {
           '/injira': (context) => const Injira(),
           '/iyandikishe':(context) => const Iyandikishe(),
           '/ur-student':(context) => const UrStudent(),
+          '/wibagiwe':(context) => const Wibagiwe(),
         },
       ),
     );

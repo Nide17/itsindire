@@ -1,21 +1,21 @@
 import "package:flutter/material.dart";
 import "package:tegura/screens/utilities/cta_button.dart";
-import "package:tegura/screens/utilities/cta_link.dart";
+import 'package:tegura/screens/utilities/cta_link.dart';
 import "package:tegura/screens/utilities/default_input.dart";
 import 'package:tegura/screens/utilities/description.dart';
 import "package:tegura/screens/iga/gradient_title.dart";
 import 'package:tegura/screens/utilities/my_appbar.dart';
 import "package:tegura/services/auth.dart";
 
-class Iyandikishe extends StatefulWidget {
-  const Iyandikishe({Key? key}) : super(key: key);
+class Wibagiwe extends StatefulWidget {
+  const Wibagiwe({Key? key}) : super(key: key);
 
   @override
-  _IyandikisheState createState() => _IyandikisheState();
+  _WibagiweState createState() => _WibagiweState();
 }
 
 // STATE FOR THE SIGN IN PAGE - STATEFUL
-class _IyandikisheState extends State<Iyandikishe> {
+class _WibagiweState extends State<Wibagiwe> {
   // AUTH SERVICE INSTANCE
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
@@ -37,12 +37,13 @@ class _IyandikisheState extends State<Iyandikishe> {
           children: [
             // 1. GRADIENT TITLE
             GradientTitle(
-                title: 'IYANDIKISHE', icon: 'assets/images/iyandikishe.svg'),
+                title: 'WIBAGIWE IJAMBOBANGA?',
+                icon: 'assets/images/wibagiwe.svg'),
 
             // 2. DESCRIPTION
             const Description(
                 text:
-                    'Iyandikishe ubundi, wige, umenye ndetse utsindire provisoire!'),
+                    'Andika nimero zawe za telephone wohereze niba wibagiwe ijambobanga ryawe, tugufashe kubona irindi.'),
 
             // CENTERED IMAGE
             Row(
@@ -50,7 +51,7 @@ class _IyandikisheState extends State<Iyandikishe> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset(
-                    'assets/images/house_keys.png',
+                    'assets/images/padlock.png',
                     height: MediaQuery.of(context).size.height * 0.2,
                     width: MediaQuery.of(context).size.width * 0.2,
                   ),
@@ -67,26 +68,19 @@ class _IyandikisheState extends State<Iyandikishe> {
                   children: [
                     // NOMERO ZA TELEPHONE
                     DefaultInput(
-                      placeholder: 'Izina',
-                      validation: 'Injiza izina ryawe!',
-                    ),
-
-                    // NOMERO ZA TELEPHONE
-                    DefaultInput(
                       placeholder: 'Nomero za telefone',
                       validation: 'Injiza numero za telefone!',
                     ),
 
-                    // IJAMBOBANGA
-                    DefaultInput(
-                      placeholder: 'Ijambobanga',
-                      validation: 'Injiza ijambobanga!',
-                    ),
-
                     // CTA BUTTON
                     CtaButton(
-                      text: 'Iyandikishe',
+                      text: 'Bona ijambobanga rishya',
                       formKey: _formKey,
+                    ),
+
+                    // VERTICAL SPACE
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.08,
                     ),
 
                     // CTA LINK
@@ -98,49 +92,13 @@ class _IyandikisheState extends State<Iyandikishe> {
                       route: '/injira',
                     ),
 
-                                        // VERTICAL SPACE
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.08,
-                    ),
-
-                    // UR STUDENT BUTTON
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          // width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2C64C6),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24.0),
-                                )),
-                            onPressed: () {
-                              Navigator.pushReplacementNamed(
-                                  context, '/ur-student');
-                            },
-                            child: const Text(
-                              'Register as UR student',
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 255, 255, 255),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        // HORIZONTAL SPACE
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.02,
-                        ),
-
-                        // PNG IMAGE ASSET
-                        Image.asset(
-                          'assets/images/50off.png',
-                          height: MediaQuery.of(context).size.height * 0.1,
-                          width: MediaQuery.of(context).size.width * 0.1,
-                        ),
-                      ],
+                    // CTA LINK
+                    const CtaLink(
+                      text1: 'Niba utariyandikisha, ',
+                      color1: Color.fromARGB(255, 0, 27, 116),
+                      color2: Color.fromARGB(255, 255, 255, 255),
+                      text2: 'iyandikishe',
+                      route: '/iyandikishe',
                     ),
                   ],
                 ),

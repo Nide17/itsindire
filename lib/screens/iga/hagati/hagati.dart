@@ -36,7 +36,7 @@ class _HagatiState extends State<Hagati> {
         body: ListView(children: <Widget>[
           // 1. GRADIENT TITLE
           GradientTitle(
-              title: 'Amasomo ugezemo hagati',
+              title: 'AMASOMO UGEZEMO HAGATI',
               icon: 'assets/images/video_icon.svg'),
 
           // 2. ADD 10.0 PIXELS OF SPACE
