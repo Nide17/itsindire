@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'dart:math';
-
 import 'package:tegura/screens/home/home.dart';
+import 'dart:math';
 
 class LoadingLightningState extends StatefulWidget {
   const LoadingLightningState({Key? key}) : super(key: key);
@@ -44,7 +43,7 @@ class _LoadingLightningState extends State<LoadingLightningState>
         context,
         MaterialPageRoute(
           // BUILDER TO BUILD THE HOME PAGE
-          builder: (context) => const Home()
+          builder: (context) => const HomePage()
         ),
       );
     });

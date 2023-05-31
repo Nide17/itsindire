@@ -122,25 +122,25 @@ class _UrStudentState extends State<UrStudent> {
                       height: MediaQuery.of(context).size.height * 0.02,
                     ),
                     // NOMERO ZA TELEPHONE
-                    DefaultInput(
+                    const DefaultInput(
                       placeholder: 'Registration number',
                       validation: 'Please enter your registration number!',
                     ),
 
                     // NOMERO ZA TELEPHONE
-                    DefaultInput(
+                    const DefaultInput(
                       placeholder: 'Names',
                       validation: 'Please enter your names!',
                     ),
 
                     // IJAMBOBANGA
-                    DefaultInput(
+                    const DefaultInput(
                       placeholder: 'Phone number',
                       validation: 'Please enter your phone number!',
                     ),
 
                     // IJAMBOBANGA
-                    DefaultInput(
+                    const DefaultInput(
                       placeholder: 'Password',
                       validation: 'Please enter your password!',
                     ),
@@ -148,7 +148,15 @@ class _UrStudentState extends State<UrStudent> {
                     // CTA BUTTON
                     CtaButton(
                       text: 'Register',
-                      formKey: _formKey,
+
+                      // ON PRESSED
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+                          print('\nUR Student\n');
+                          // TODO: Send the form data or perform sign-in
+                        }
+                      },
                     ),
 
                     // VERTICAL SPACE
@@ -167,7 +175,7 @@ class _UrStudentState extends State<UrStudent> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(24.0),
                                 )),
-                            onPressed: () {
+                            onPressed: () async {
                               Navigator.pushReplacementNamed(
                                   context, '/iyandikishe');
                             },

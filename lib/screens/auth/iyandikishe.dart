@@ -17,8 +17,14 @@ class Iyandikishe extends StatefulWidget {
 // STATE FOR THE SIGN IN PAGE - STATEFUL
 class _IyandikisheState extends State<Iyandikishe> {
   // AUTH SERVICE INSTANCE
-  final AuthService _auth = AuthService();
+  final AuthService _authInstance = AuthService();
   final _formKey = GlobalKey<FormState>();
+
+  // FORM FIELD VALUES STATE
+  String username = '';
+  String email = '';
+  String password = '';
+  String error = '';
 
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
@@ -69,24 +75,66 @@ class _IyandikisheState extends State<Iyandikishe> {
                     DefaultInput(
                       placeholder: 'Izina',
                       validation: 'Injiza izina ryawe!',
+
+                      // ON CHANGED
+                      onChanged: (val) {
+                        setState(() => username = val);
+                      },
                     ),
 
-                    // NOMERO ZA TELEPHONE
+                    // EMAIL
                     DefaultInput(
-                      placeholder: 'Nomero za telefone',
-                      validation: 'Injiza numero za telefone!',
+                      placeholder: 'Imeyili',
+                      validation: 'Injiza imeyili yawe!',
+
+                      // ON CHANGED
+                      onChanged: (val) {
+                        setState(() => email = val);
+                      },
                     ),
 
                     // IJAMBOBANGA
                     DefaultInput(
                       placeholder: 'Ijambobanga',
                       validation: 'Injiza ijambobanga!',
+
+                      // ON CHANGED
+                      onChanged: (val) {
+                        setState(() => password = val);
+                      },
+
+                      // OBSCURE TEXT
+                      obscureText: true,
                     ),
 
                     // CTA BUTTON
                     CtaButton(
                       text: 'Iyandikishe',
-                      formKey: _formKey,
+
+                      // ON PRESSED
+                      onPressed: () async {
+                        // VALIDATE FORM
+                        if (_formKey.currentState!.validate()) {
+                          
+                          // REGISTER USER
+                          dynamic resSignUp = await _authInstance
+                              .registerWithEmailAndPassword(username, email, password);
+
+                          // CHECK IF USER IS REGISTERED
+                          if (resSignUp == null) {
+                            setState(
+                                () => error = 'Please supply a valid email');
+                          } else {
+                            // LOGOUT USER
+                            await _authInstance.logOut();
+                            
+                            // REDIRECT TO LOGIN PAGE AFTER SUCCESSFUL REGISTRATION
+                            if(!mounted) return;
+                            
+                            Navigator.pushReplacementNamed(context, '/injira');
+                          }
+                        }
+                      },
                     ),
 
                     // CTA LINK
@@ -98,7 +146,7 @@ class _IyandikisheState extends State<Iyandikishe> {
                       route: '/injira',
                     ),
 
-                                        // VERTICAL SPACE
+                    // VERTICAL SPACE
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.08,
                     ),
@@ -144,28 +192,6 @@ class _IyandikisheState extends State<Iyandikishe> {
                     ),
                   ],
                 ),
-              ),
-            ),
-
-            // ANONYMOUS SIGN IN BUTTON
-            Container(
-              padding: const EdgeInsets.all(40.0),
-
-              // RAISED BUTTON
-              child: ElevatedButton(
-                onPressed: () async {
-                  // SIGN IN
-                  dynamic result = await _auth
-                      .signInAnon(); // DYNAMIC TYPE - CAN USER OR NULL
-
-                  if (result == null) {
-                    print('Error signing in');
-                  } else {
-                    print('Signed in');
-                    print(result.uid);
-                  }
-                },
-                child: const Text('Sign In Anonymously'),
               ),
             ),
           ],

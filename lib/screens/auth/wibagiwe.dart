@@ -67,7 +67,7 @@ class _WibagiweState extends State<Wibagiwe> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // NOMERO ZA TELEPHONE
-                    DefaultInput(
+                    const DefaultInput(
                       placeholder: 'Nomero za telefone',
                       validation: 'Injiza numero za telefone!',
                     ),
@@ -75,7 +75,16 @@ class _WibagiweState extends State<Wibagiwe> {
                     // CTA BUTTON
                     CtaButton(
                       text: 'Bona ijambobanga rishya',
-                      formKey: _formKey,
+
+                      // ON PRESSED
+                      onPressed: () async {
+                        // VALIDATE FORM
+                        if (_formKey.currentState!.validate()) {
+                          print('Validated');
+                        } else {
+                          print('Not validated');
+                        }
+                      },
                     ),
 
                     // VERTICAL SPACE

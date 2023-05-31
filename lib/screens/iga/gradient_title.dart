@@ -41,24 +41,24 @@ class GradientTitle extends StatelessWidget {
           children: <Widget>[
             // HORIZONTAL SPACE
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.05,
+              width: MediaQuery.of(context).size.width * 0.03,
             ),
 
             // SVG ICON
             SvgPicture.asset(
               icon,
-              height: MediaQuery.of(context).size.height * 0.04,
+              height: MediaQuery.of(context).size.height * 0.03,
             ),
 
             // HORIZONTAL SPACE
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.05,
+              width: MediaQuery.of(context).size.width * 0.03,
             ),
 
             // TEXT WIDGET
             Text(title,
                 style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.052,
+                  fontSize: MediaQuery.of(context).size.width * 0.048,
                   color: const Color.fromARGB(255, 255, 255, 255),
                   fontWeight: FontWeight.w400,
                 )),
