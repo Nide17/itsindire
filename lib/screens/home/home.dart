@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/models/profile.dart';
 import 'package:tegura/models/user.dart';
-import 'package:tegura/screens/utilities/my_appbar.dart';
+import 'package:tegura/utilities/appbar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> {
           Center(
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/iga');
+                Navigator.pushNamed(context, '/iga-landing');
               },
               style: ElevatedButton.styleFrom(
                 fixedSize: const Size(124, 32),

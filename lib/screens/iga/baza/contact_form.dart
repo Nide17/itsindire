@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/screens/utilities/default_input.dart';
+import 'package:tegura/utilities/default_input.dart';
 
 class ContactForm extends StatefulWidget {
   const ContactForm({super.key});
@@ -24,17 +24,17 @@ class _ContactFormState extends State<ContactForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DefaultInput(
+            const DefaultInput(
               placeholder: 'Izina',
               validation: 'Izina ryawe rirakenewe!',
             ),
 
-            DefaultInput(
+            const DefaultInput(
               placeholder: 'Numero za telefone',
               validation: 'Numero za telefone zirakenewe!',
             ),
 
-            DefaultInput(
+            const DefaultInput(
               placeholder: 'Ubutumwa',
               validation: 'Ubutumwa bwawe burakenewe!',
               maxLines: 5,

@@ -1,11 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tegura/models/user.dart';
-import 'package:tegura/services/database.dart';
+import 'package:tegura/services/profiledb.dart';
 
 // CLASS FOR HANDLING AUTH SERVICES
 class AuthService {
   // INSTANCE OF THE FIREBASE AUTHENTICATION
   final FirebaseAuth _authInstance = FirebaseAuth.instance;
+  // roleId IS A REFERENCE TYPE TO ROLES COLLECTION
+  final CollectionReference roles =
+      FirebaseFirestore.instance.collection('roles');
 
   // CREATE USER OBJECT(MODEL) BASED ON FIREBASE USER
   UserModel? _userFromFirebaseUser(User usr) {
@@ -77,7 +81,7 @@ class AuthService {
 
       // SAVE THE USER DATA TO PROFILE COLLECTION
       if (user != null) {
-        await DatabaseService(uid: user.uid).updateUserProfile(
+        await ProfileService(uid: user.uid).updateUserProfile(
           user.uid,
           username,
           '',
@@ -89,7 +93,7 @@ class AuthService {
           false,
           '',
           '',
-          1,
+          roles.doc('1'),
         );
       }
 
@@ -103,7 +107,6 @@ class AuthService {
       print(e.toString());
     }
   }
-
 
   // SIGN OUT METHOD
   Future logOut() async {

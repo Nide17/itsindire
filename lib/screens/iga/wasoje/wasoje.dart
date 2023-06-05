@@ -3,16 +3,16 @@ import 'package:provider/provider.dart';
 import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
 import 'package:tegura/screens/iga/gradient_title.dart';
-import 'package:tegura/screens/utilities/view_logged_in.dart';
-import 'package:tegura/screens/utilities/view_not_logged_in.dart';
-import 'package:tegura/screens/utilities/progress_circle.dart';
-import 'package:tegura/screens/utilities/my_appbar.dart';
+import 'package:tegura/utilities/view_logged_in.dart';
+import 'package:tegura/utilities/view_not_logged_in.dart';
+import 'package:tegura/utilities/progress_circle.dart';
+import 'package:tegura/utilities/appbar.dart';
 
 class Wasoje extends StatefulWidget {
   const Wasoje({Key? key}) : super(key: key);
 
   @override
-  _WasojeState createState() => _WasojeState();
+  State<Wasoje> createState() => _WasojeState();
 }
 
 class _WasojeState extends State<Wasoje> {
@@ -35,7 +35,7 @@ class _WasojeState extends State<Wasoje> {
         // PAGE BODY
         body: ListView(children: <Widget>[
           // 1. GRADIENT TITLE
-          GradientTitle(
+          const GradientTitle(
               title: 'AMASOMO WASOJE KWIGA',
               icon: 'assets/images/course_list.svg'),
 
@@ -55,22 +55,23 @@ class _WasojeState extends State<Wasoje> {
 
           if (usr != null)
             Column(
-              children: [
-                ViewLoggedIn(
-                    title: 'IBYAPA BYO KUMIHANDA',
-                    description:
-                        'Ibyapa byo kumuhanda bigira uruhare runini mukurinda umutekano mumihanda yacu...',
-                    progress: 1.0),
-                ViewLoggedIn(
-                    title: 'IBYAPA BYO MUMUHANDA',
-                    description:
-                        'Ibimenyetso byo mumuhanda ni imirongo cyangwa inyuguti bishushanyije mumuhanda...',
-                    progress: 1.0),
-                ViewLoggedIn(
-                    title: 'IMPANUKA',
-                    description:
-                        'Hari amategeko yihariye ajyena uko umuyobozi agomba kwitwara mubihe by\'impanuka...',
-                    progress: 1.0),
+              children: const [
+                // ViewLoggedIn(
+                //     title: 'IBYAPA BYO KUMIHANDA',
+                //     description:
+                //         'Ibyapa byo kumuhanda bigira uruhare runini mukurinda umutekano mumihanda yacu...',
+                //     progress: 1.0),
+                // ViewLoggedIn(
+                //     title: 'IBYAPA BYO MUMUHANDA',
+                //     description:
+                //         'Ibimenyetso byo mumuhanda ni imirongo cyangwa inyuguti bishushanyije mumuhanda...',
+                //     progress: 1.0),
+                // ViewLoggedIn(
+                //     title: 'IMPANUKA',
+                //     description:
+                //         'Hari amategeko yihariye ajyena uko umuyobozi agomba kwitwara mubihe by\'impanuka...',
+                //     progress: 1.0),
+                
               ],
             )
           else

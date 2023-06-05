@@ -9,16 +9,16 @@ import 'package:tegura/screens/iga/iga_card.dart';
 import 'package:tegura/screens/iga/igazeti/igazeti_ibimurika.dart';
 import 'package:tegura/screens/iga/igazeti/igazeti_ibyapa.dart';
 import 'package:tegura/screens/iga/igazeti/igazeti_imirongo.dart';
-import 'package:tegura/screens/utilities/my_appbar.dart';
+import 'package:tegura/utilities/appbar.dart';
 
 class Igazeti extends StatefulWidget {
   const Igazeti({Key? key}) : super(key: key);
 
   @override
-  IgazetiState createState() => IgazetiState();
+  State<Igazeti> createState() => _IgazetiState();
 }
 
-class IgazetiState extends State<Igazeti> {
+class _IgazetiState extends State<Igazeti> {
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,4 @@
 // WIDGET FOR HOLDING THE APPBAR
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:tegura/models/profile.dart';
 import 'package:tegura/models/user.dart';
 import 'package:tegura/services/auth.dart';
+
 class AppBarTegura extends StatelessWidget {
   const AppBarTegura({Key? key}) : super(key: key);
 
@@ -32,7 +32,8 @@ class AppBarTegura extends StatelessWidget {
 
       // BOTTOM BORDER OF THE APP BAR
       bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(18.0),
+        // SET RESPONSIVE HEIGHT OF THE BOTTOM BORDER
+        preferredSize: MediaQuery.of(context).size * 0.001,
         child: Container(
           color: const Color(0xFFFFBD59),
           height: MediaQuery.of(context).size.height * 0.01,
@@ -43,18 +44,18 @@ class AppBarTegura extends StatelessWidget {
           // ARRAY OF WIDGETS - ROW
           SvgPicture.asset(
             'assets/images/car.svg',
-            height: MediaQuery.of(context).size.height * 0.05,
+            height: MediaQuery.of(context).size.height * 0.045,
           ),
 
           // SPACING BETWEEN THE TWO WIDGETS
           SizedBox(
-            width: MediaQuery.of(context).size.height * 0.013,
+            width: MediaQuery.of(context).size.height * 0.012,
           ),
           Text('Tegura.rw', // TEXT WIDGET
               style: TextStyle(
                 color: const Color.fromARGB(255, 0, 0, 0),
                 fontWeight: FontWeight.w900,
-                fontSize: MediaQuery.of(context).size.width * 0.05,
+                fontSize: MediaQuery.of(context).size.width * 0.048,
               )),
         ],
       ),
@@ -68,7 +69,7 @@ class AppBarTegura extends StatelessWidget {
             // USE CUSTOM ICON - SVG
             icon: SvgPicture.asset(
               'assets/images/avatar.svg',
-              height: MediaQuery.of(context).size.height * 0.05,
+              height: MediaQuery.of(context).size.height * 0.048,
             ),
             onPressed: () {
               // OPEN A DIALOG BOX TO DISPLAY USER DETAILS AND LOGOUT BUTTON
@@ -76,18 +77,40 @@ class AppBarTegura extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: const Text('User Details'),
+                    title: Text("${profile?.username}'s Profile"),
+                    backgroundColor: const Color.fromARGB(255, 201, 222, 255),
+                    elevation: 10.0,
+                    shadowColor: const Color(0xFFFFF59D),
                     content: SingleChildScrollView(
                       child: ListBody(
                         children: <Widget>[
-                          const Text('Name: Anon'),
-                          Text('UID: ${usr.uid}'),
+                          Text('Name: ${profile?.username}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                              )),
+                          const SizedBox(height: 10.0),
+                          Text('Email: ${usr.email}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                              )),
                         ],
                       ),
                     ),
                     actions: <Widget>[
                       TextButton(
-                        child: const Text('Logout'),
+                        style: TextButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 74, 185, 0),
+                          elevation: 8.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                        child: const Text('Logout',
+                            style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 252, 255, 79))),
                         onPressed: () {
                           // CLOSE THE DIALOG BOX
                           Navigator.of(context).pop();

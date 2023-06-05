@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tegura/models/profile.dart';
 
-class DatabaseService {
+class ProfileService {
   // COLLECTIONS REFERENCE - FIRESTORE
   final CollectionReference profilesCollection =
       FirebaseFirestore.instance.collection('profiles');
@@ -9,7 +9,7 @@ class DatabaseService {
   final String? uid;
 
   // CONSTRUCTOR
-  DatabaseService({this.uid});
+  ProfileService({this.uid});
 
   // THIS FUNCTION WILL UPDATE THE USER DATA IN THE DATABASE WHEN THE USER SIGNS UP AND WHEN THE USER UPDATES HIS/HER PROFILE
   Future updateUserProfile(
@@ -24,7 +24,7 @@ class DatabaseService {
       bool urStudent,
       String regNumber,
       String campus,
-      int roleId) async {
+      DocumentReference roleId) async {
     // RETURN THE USER DATA - IF THE DOC DOESN'T EXIST, IT WILL BE CREATED BY FIRESTORE
     return await profilesCollection.doc(uid).set({
       // USER DATA - FIELDS
@@ -69,6 +69,10 @@ class DatabaseService {
   // GET A SINGLE PROFILE FROM A SNAPSHOT USING THE PROFILE MODEL - _profileFromSnapshot
   // FUNCTION CALLED EVERY TIME THE PROFILE DATA CHANGES
   ProfileModel _profileFromSnapshot(DocumentSnapshot documentSnapshot) {
+    // roleId IS A REFERENCE TYPE TO ROLES COLLECTION
+    final CollectionReference roles =
+        FirebaseFirestore.instance.collection('roles');
+
     // Get the data from the snapshot
     final data = documentSnapshot.data() as Map<String, dynamic>;
 
@@ -102,8 +106,8 @@ class DatabaseService {
     // Check if the 'campus' field exists before accessing it
     final campus = data.containsKey('campus') ? data['campus'] : '';
 
-    // Check if the 'roleId' field exists before accessing it
-    final roleId = data.containsKey('roleId') ? data['roleId'] : 1;
+    // Check if the 'roleId' field exists before accessing it - DocumentReference
+    final roleId = data.containsKey('roleId') ? data['roleId'] : roles.doc('1');
 
     // Return the ProfileModel with the extracted data
     return ProfileModel(
@@ -137,7 +141,7 @@ class DatabaseService {
   // }
 
   // GET A SINGLE USER PROFILE STREAM - CURRENT LOGGED IN USER PROFILE USING UID
-  Stream<ProfileModel?>? getCurrentUser(String? uid) {
+  Stream<ProfileModel?>? getCurrentProfile(String? uid) {
     // CHECK IF CURRENT USER UID IS NULL, IF IT IS, RETURN NULL
     if (uid == null) return null;
 

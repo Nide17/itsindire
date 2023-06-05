@@ -3,16 +3,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tegura/screens/home/home.dart';
 import 'dart:math';
 
-class LoadingLightningState extends StatefulWidget {
-  const LoadingLightningState({Key? key}) : super(key: key);
+class LoadingLightning extends StatefulWidget {
+  const LoadingLightning({Key? key}) : super(key: key);
 
   // CREATE STATE
   @override
-  _LoadingLightningState createState() => _LoadingLightningState();
+  State<LoadingLightning> createState() => _LoadingLightningState();
 }
 
 // STATE FOR THE LOADING LIGHTNING
-class _LoadingLightningState extends State<LoadingLightningState>
+class _LoadingLightningState extends State<LoadingLightning>
     with SingleTickerProviderStateMixin {
   // DECLARE ANIMATION CONTROLLER AND ANIMATION VARIABLES
   late AnimationController
