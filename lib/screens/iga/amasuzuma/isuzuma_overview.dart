@@ -18,7 +18,7 @@ class IsuzumaOverview extends StatefulWidget {
 }
 
 class _IsuzumaOverviewState extends State<IsuzumaOverview> {
-  List<String> amasomo = []; // Initialize as an empty list
+  List<String> amasomo = [];
 
   Future<void> fetchAmasomoTitles() async {
     List<String> amasomoTitles = await IsomoService()
@@ -26,7 +26,7 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
 
     setState(() {
       amasomo =
-          amasomoTitles; // Update the amasomo list with the fetched titles
+          amasomoTitles;
     });
   }
 
@@ -43,11 +43,11 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
         : '';
 
     return Scaffold(
-      backgroundColor: const Color(0xFF5B8BDF),
+      backgroundColor: const Color.fromARGB(255, 71, 103, 158),
 
       // APP BAR
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(58.0),
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(58.0),
         child: AppBarTegura(),
       ),
 
@@ -61,6 +61,10 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
           decoration: BoxDecoration(
             color: const Color(0xFF00CCE5),
             borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(
+              width: 2.0,
+              color: const Color(0xFFFFBD59),
+            ),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

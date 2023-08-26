@@ -118,24 +118,44 @@ class UserProgress extends StatelessWidget {
                   );
                 }
 
-                print(payment);
-
                 // NAVIGATE TO IGA CONTENT
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => payment == null ||
-                                !payment.endAt.isAfter(DateTime.now())
-                            ? const Ibiciro(message: 'Banza ugure ifatabuguzi!')
-                            : percent != 1.0
-                                ? IgaContent(
-                                    isomo: isomo,
-                                    courseProgress: courseProgress,
-                                  )
-                                : IsuzumeContent(
-                                    isomo: isomo,
-                                    courseProgress: courseProgress,
-                                  )));
+                payment != null && payment.isApproved != true
+                    ? showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text(
+                              'Ntibyagenze neza',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            content: Text(payment.isApproved == false
+                                ? 'Ifatabuguzi ryawe ntiriremezwa'
+                                : 'Ongera ugerageze!'),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('OK'))
+                            ],
+                          );
+                        })
+                    : Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => payment == null ||
+                                    !payment.endAt.isAfter(DateTime.now())
+                                ? const Ibiciro(
+                                    message: 'Banza ugure ifatabuguzi!')
+                                : percent != 1.0
+                                    ? IgaContent(
+                                        isomo: isomo,
+                                        courseProgress: courseProgress,
+                                      )
+                                    : IsuzumeContent(
+                                        isomo: isomo,
+                                        courseProgress: courseProgress,
+                                      )));
               },
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.3,

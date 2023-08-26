@@ -66,6 +66,8 @@ class DefaultInput extends StatelessWidget {
           // ON CHANGED
           onChanged: onChanged,
 
+          textAlignVertical: TextAlignVertical.center,
+
           // STYLING
           decoration: InputDecoration(
             hintText: placeholder,
@@ -84,7 +86,7 @@ class DefaultInput extends StatelessWidget {
 
             // HEIGHT
             contentPadding: const EdgeInsets.symmetric(
-              vertical: 4.0,
+              vertical: 16.0,
               horizontal: 24.0,
             ),
           ),
@@ -102,7 +104,7 @@ class DefaultInput extends StatelessWidget {
 
         // VERTICAL SPACE
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.02,
+          height: MediaQuery.of(context).size.height * 0.024,
         )
       ],
     );

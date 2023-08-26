@@ -98,8 +98,8 @@ class _IsuzumaViewsState extends State<IsuzumaViews> {
             height: MediaQuery.of(context).size.height * 0.02,
           ),
           IsuzumaTimer(
-            // duration: 1200, // Duration in seconds
-            duration: 12, // Duration in seconds
+            duration: 1200, // Duration in seconds - 20 minutes
+            // duration: 12, // Duration in seconds
             onTimerExpired: handleTimerExpired,
           ),
           SizedBox(

@@ -26,6 +26,7 @@ class IfatabuguziService {
       final ibirimo = List<String>.from(ibirimoData);
       final ubusobanuro =
           data.containsKey('ubusobanuro') ? data['ubusobanuro'] : '';
+      final type = data.containsKey('type') ? data['type'] : '';
 
       return IfatabuguziModel(
         id: doc.id,
@@ -33,6 +34,7 @@ class IfatabuguziService {
         igiciro: igiciro,
         ibirimo: ibirimo,
         ubusobanuro: ubusobanuro,
+        type: type,
       );
     }).toList();
   }
@@ -51,8 +53,9 @@ class IfatabuguziService {
     // Convert raw data for questions into List<ifatabuguziQuestion>
     final ibirimoData = data.containsKey('ibirimo') ? data['ibirimo'] : [];
     final ibirimo = List<String>.from(ibirimoData);
-          final ubusobanuro =
+    final ubusobanuro =
         data.containsKey('ubusobanuro') ? data['ubusobanuro'] : '';
+    final type = data.containsKey('type') ? data['type'] : '';
 
     // RETURN A LIST OF amafatabuguzi FROM THE SNAPSHOT
     return IfatabuguziModel(
@@ -61,6 +64,7 @@ class IfatabuguziService {
       igiciro: igiciro,
       ibirimo: ibirimo,
       ubusobanuro: ubusobanuro,
+      type: type,
     );
   }
 

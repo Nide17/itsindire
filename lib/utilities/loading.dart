@@ -65,7 +65,7 @@ class _LoadingLightningState extends State<LoadingLightning>
 
       // COLUMN WIDGET TO HOLD THE CHILDREN
       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        const SizedBox(height: 200),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.24),
         const Text(
           "TEGURA",
           style: TextStyle(
@@ -74,7 +74,7 @@ class _LoadingLightningState extends State<LoadingLightning>
             fontWeight: FontWeight.bold,
           ),
         ),
-
+        SizedBox(height: MediaQuery.of(context).size.height * 0.08),
         // SVG IMAGE OF THE APP LOADING
         Container(
           padding: const EdgeInsets.all(4.0),
@@ -99,7 +99,7 @@ class _LoadingLightningState extends State<LoadingLightning>
         ),
 
         // TEXT WIDGET TO DISPLAY THE APP MESSAGE
-        const SizedBox(height: 10),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.08),
         const Text(
           "Iga, Umenye, Utsinde!",
           style: TextStyle(

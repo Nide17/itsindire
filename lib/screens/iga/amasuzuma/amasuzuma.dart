@@ -68,15 +68,13 @@ class _AmasuzumabumenyiState extends State<Amasuzumabumenyi> {
       ],
       child: Consumer<List<IsuzumaModel>?>(
           builder: (context, amasuzumabumenyi, _) {
-
         return Consumer<List<IsuzumaScoreModel>?>(
             builder: (context, amaUserScores, _) {
-
           if (amaUserScores == null) {
             return const Center(child: CircularProgressIndicator());
           }
           return Scaffold(
-              backgroundColor: const Color(0xFF5B8BDF),
+              backgroundColor: const Color.fromARGB(255, 71, 103, 158),
 
               // APP BAR
               appBar: const PreferredSize(

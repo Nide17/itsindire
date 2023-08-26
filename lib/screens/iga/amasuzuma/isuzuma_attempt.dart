@@ -133,8 +133,8 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
             backgroundColor: const Color.fromARGB(255, 255, 255, 255),
 
             // APP BAR
-            appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(58.0),
+            appBar: const PreferredSize(
+              preferredSize: Size.fromHeight(58.0),
               child: AppBarTegura(),
             ),
 
@@ -303,7 +303,5 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
     setState(() {
       qnIndex = index;
     });
-
-    print("Question index: $qnIndex");
   }
 }

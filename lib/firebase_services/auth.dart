@@ -6,8 +6,10 @@ import 'package:tegura/firebase_services/profiledb.dart';
 
 // CLASS FOR HANDLING AUTH SERVICES
 class AuthService {
+  
   // INSTANCE OF THE FIREBASE AUTHENTICATION
   final FirebaseAuth _authInstance = FirebaseAuth.instance;
+
   // roleId IS A REFERENCE TYPE TO ROLES COLLECTION
   final CollectionReference roles =
       FirebaseFirestore.instance.collection('roles');
@@ -87,7 +89,7 @@ class AuthService {
 
   // REGISTER WITH EMAIL AND PASSWORD METHOD
   Future registerWithEmailAndPassword(
-      String username, String email, String password) async {
+      String username, String email, String password, bool? urStudent, String? regNbr, String? campus) async {
     try {
       // REGISTER WITH EMAIL AND PASSWORD REQUEST - RETURN AUTH RESULT FUTURE
       UserCredential result =
@@ -104,15 +106,14 @@ class AuthService {
         await ProfileService(uid: user.uid).updateUserProfile(
           user.uid,
           username,
-          '',
           email,
           '',
           '',
           '',
           '',
-          false,
-          '',
-          '',
+          urStudent ?? false,
+          regNbr ?? '',
+          campus ?? '',
           roles.doc('1'),
         );
       }

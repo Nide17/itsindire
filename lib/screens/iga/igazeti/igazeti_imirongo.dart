@@ -5,6 +5,15 @@ class IgazetiImirongo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    // CENTER THE CONTENTS - COMING SOON ..
+    return const Scaffold(
+      body: Center(
+        child: Text("Coming soon ...",
+            style: TextStyle(
+              color: Colors.black54,
+              fontSize: 20.0,
+            )),
+      ),
+    );
   }
 }

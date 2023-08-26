@@ -24,11 +24,11 @@ class _WibagiweState extends State<Wibagiwe> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color(0xFF5B8BDF),
+        backgroundColor: const Color.fromARGB(255, 71, 103, 158),
 
         // APP BAR
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(58.0),
+        appBar: const PreferredSize(
+          preferredSize: Size.fromHeight(58.0),
           child: AppBarTegura(),
         ),
 

@@ -3,16 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/firebase_services/payment_db.dart';
+import 'package:tegura/firebase_services/profiledb.dart';
+import 'package:tegura/main.dart';
 import 'package:tegura/models/payment.dart';
 import 'package:tegura/models/profile.dart';
 import 'package:tegura/models/user.dart';
 import 'package:tegura/firebase_services/auth.dart';
 
 class AppBarTegura extends StatefulWidget {
-  // INSTANCE VARIABLES
-  final ProfileModel? profile;
-
-  const AppBarTegura({Key? key, this.profile}) : super(key: key);
+  const AppBarTegura({Key? key}) : super(key: key);
 
   @override
   State<AppBarTegura> createState() => _AppBarTeguraState();
@@ -23,6 +22,8 @@ class _AppBarTeguraState extends State<AppBarTegura> {
   Widget build(BuildContext context) {
     // GET PROVIDER USER
     final usr = Provider.of<UserModel?>(context);
+    final conn = Provider.of<ConnectionStatus>(context);
+    print("Conn in app bar build: ${conn.isOnline}");
 
     return MultiProvider(
       providers: [
@@ -46,12 +47,31 @@ class _AppBarTeguraState extends State<AppBarTegura> {
             return null;
           },
         ),
+        StreamProvider<ProfileModel?>.value(
+          // WHAT TO GIVE TO THE CHILDREN WIDGETS
+          value:
+              usr != null ? ProfileService().getCurrentProfile(usr.uid) : null,
+          initialData: null,
+
+          // CATCH ERRORS
+          catchError: (context, error) {
+            // PRINT THE ERROR
+            if (kDebugMode) {
+              print("Error in get progress: $error");
+              print("The err: ${ProfileService().getCurrentProfile(usr?.uid)}");
+            }
+            // RETURN NULL
+            return null;
+          },
+        ),
       ],
       child: Consumer<PaymentModel?>(builder: (context, payment, _) {
         return Consumer<ProfileModel?>(builder: (context, profile, _) {
-          String? username = widget.profile != null
-              ? widget.profile?.username
-              : profile?.username;
+          String username = profile != null
+              ? profile.username!
+              : usr != null
+                  ? usr.email!
+                  : 'User';
           return AppBar(
             backgroundColor: const Color(0xFF5B8BDF),
             automaticallyImplyLeading: false,
@@ -103,10 +123,26 @@ class _AppBarTeguraState extends State<AppBarTegura> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text(
-                            username != null
-                                ? 'Ikaze ${capitalizeWords(username)}'
-                                : 'Ikaze!',
+                          icon: SvgPicture.asset(
+                            'assets/images/avatar.svg',
+                            height: MediaQuery.of(context).size.height * 0.048,
+                          ),
+                          title: Align(
+                            alignment: Alignment.center,
+                            child: Text.rich(
+                              textAlign: TextAlign.center,
+                              TextSpan(
+                                  text: capitalizeWords(username),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                  children: [
+                                    TextSpan(
+                                        text: '\n${usr.email}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 12.0)),
+                                  ]),
+                            ),
                           ),
                           backgroundColor:
                               const Color.fromARGB(255, 201, 222, 255),
@@ -115,70 +151,101 @@ class _AppBarTeguraState extends State<AppBarTegura> {
                           content: SingleChildScrollView(
                             child: ListBody(
                               children: <Widget>[
-                                Text(
-                                    username != null
-                                        ? 'Izina: ${capitalizeWords(username)}'
-                                        : 'User',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                    )),
-                                const SizedBox(height: 10.0),
-                                Text('Email: ${usr.email}',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                    )),
-                                const SizedBox(height: 16.0),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.024,
+                                ),
                                 Align(
                                   child: Text(
-                                      (payment!.getRemainingDays() > 0)
-                                          ? 'IFATABUGUZI'
-                                          : 'IFATABUGUZI RYARANGIYE!',
-                                      style: const TextStyle(
+                                      payment == null
+                                          ? 'NTA FATABUGUZI URAFATA'
+                                          : payment.getRemainingDays() > 0
+                                              ? 'IFATABUGUZI RYAWE'
+                                              : 'IFATABUGUZI RYARANGIYE!',
+                                      style: TextStyle(
                                         fontWeight: FontWeight.w900,
                                         decoration: TextDecoration.underline,
+                                        color: payment != null &&
+                                                payment.getRemainingDays() > 0
+                                            ? const Color.fromARGB(255, 0, 0, 0)
+                                            : const Color.fromARGB(
+                                                255, 255, 0, 0),
                                       )),
                                 ),
-                                if (payment.getRemainingDays() > 0)
-                                  const SizedBox(height: 10.0),
-                                if (payment.getRemainingDays() > 0)
+                                if (payment != null &&
+                                    payment.getRemainingDays() > 0 &&
+                                    payment.isApproved == true)
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.024,
+                                  ),
+                                if (payment != null &&
+                                    payment.getRemainingDays() > 0 &&
+                                    payment.isApproved == true)
                                   Text(
                                       'Rizarangira: ${payment.getFormatedEndDate()}',
+                                      textAlign: TextAlign.center,
                                       style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                      )),
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15.0,
+                                          color:
+                                              Color.fromARGB(255, 61, 61, 61))),
                                 const SizedBox(height: 10.0),
-                                if (payment.getRemainingDays() > 0)
+                                if (payment != null &&
+                                    payment.getRemainingDays() > 0 &&
+                                    payment.isApproved == true)
                                   Text(
                                       'Iminsi usigaje: ${payment.getRemainingDays()}',
+                                      textAlign: TextAlign.center,
                                       style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15.0,
+                                          color:
+                                              Color.fromARGB(255, 61, 61, 61))),
+                                const SizedBox(height: 10.0),
+                                if (payment != null &&
+                                    payment.getRemainingDays() > 0 &&
+                                    payment.isApproved == false)
+                                  const Text('Ntiriremezwa',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15.0,
+                                        color: Color.fromARGB(255, 255, 0, 0),
                                       )),
                               ],
                             ),
                           ),
                           actions: <Widget>[
-                            TextButton(
-                              style: TextButton.styleFrom(
-                                backgroundColor:
-                                    const Color.fromARGB(255, 74, 185, 0),
-                                elevation: 8.0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                              ),
-                              child: const Text('Logout',
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          Color.fromARGB(255, 252, 255, 79))),
-                              onPressed: () {
+                            // LOGOUT BUTTON WITH logout.svg ICON
+                            GestureDetector(
+                              onTap: () {
                                 // CLOSE THE DIALOG BOX
                                 Navigator.of(context).pop();
 
                                 // LOGOUT THE USER USING THE AUTH SERVICE INSTANCE
                                 AuthService().logOut();
                               },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    onPressed: null,
+                                    icon: SvgPicture.asset(
+                                      'assets/images/logout.svg',
+                                      width: 24.0,
+                                      height: 24.0,
+                                    ),
+                                  ),
+                                  const Text(
+                                    'Logout',
+                                    style: TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         );
@@ -205,7 +272,6 @@ class _AppBarTeguraState extends State<AppBarTegura> {
         capitalizedWords.add(word);
       }
     }
-
     return capitalizedWords.join(' ');
   }
 }

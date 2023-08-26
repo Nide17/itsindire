@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:tegura/main.dart';
 import 'package:tegura/models/isomo.dart';
 import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
 import 'package:tegura/utilities/appbar.dart'; // APP BAR
@@ -20,6 +21,50 @@ class _IgaLandingState extends State<IgaLanding> {
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
+    final conn = Provider.of<ConnectionStatus>(context);
+    print("conn in ibiciro ${conn.isOnline}");
+    bool everDisconnected = false;
+
+    // WHEN CONNECTION IS LOST, NOTIFY USER. IF IT COMES BACK AFTER BEING LOST NOTIFY USER TOO
+    if (conn.isOnline == false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              textAlign: TextAlign.center,
+              'Nta internet mufite!.',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            backgroundColor: Color.fromARGB(255, 255, 8, 0),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      });
+      everDisconnected = true;
+    }
+
+    // WHEN CONNECTION IS BACK, NOTIFY USER
+    if (conn.isOnline == true && everDisconnected == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Internet yagarutse!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            backgroundColor: Color.fromARGB(255, 0, 255, 85),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      });
+    }
 
     return MultiProvider(
       providers: [
@@ -43,14 +88,14 @@ class _IgaLandingState extends State<IgaLanding> {
         ),
       ],
       child: Scaffold(
-          backgroundColor: const Color(0xFF5B8BDF),
+          backgroundColor: const Color.fromARGB(255, 71, 103, 158),
 
           // APP BAR
           appBar: const PreferredSize(
             preferredSize: Size.fromHeight(58.0),
             child: AppBarTegura(),
           ),
-          
+
           // PAGE BODY
           body: ListView(
             // CHILDREN OF THE COLUMN WIDGET

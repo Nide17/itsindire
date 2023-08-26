@@ -27,6 +27,10 @@ class IgaCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0xFF00CCE5),
           borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
+            width: 4.0,
+            color: const Color(0xFFFFBD59),
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,

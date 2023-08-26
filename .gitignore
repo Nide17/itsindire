@@ -44,3 +44,10 @@ app.*.map.json
 /android/app/release
 /backup
 */backup/*
+/.vscode
+.vscode/*
+/.vscode/*
+todoNext.txt
+momoapi.txt
+./momoapi.txt
+MOMO API NEEDED DOCUMENTS.pdf

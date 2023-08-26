@@ -27,6 +27,9 @@ class PaymentService {
       final userId = data.containsKey('userId') ? data['userId'] : '';
       final ifatabuguziID =
           data.containsKey('ifatabuguziID') ? data['ifatabuguziID'] : '';
+      final isApproved =
+          data.containsKey('isApproved') ? data['isApproved'] : false;
+          final phone = data.containsKey('phone') ? data['phone'] : '';
 
       return PaymentModel(
         id: id,
@@ -34,6 +37,8 @@ class PaymentService {
         endAt: endAt,
         userId: userId,
         ifatabuguziID: ifatabuguziID,
+        isApproved: isApproved,
+        phone: phone,
       );
     }).toList();
   }
@@ -55,7 +60,9 @@ class PaymentService {
     final userId = data.containsKey('userId') ? data['userId'] : '';
     final ifatabuguziID =
         data.containsKey('ifatabuguziID') ? data['ifatabuguziID'] : '';
-
+    final isApproved =
+        data.containsKey('isApproved') ? data['isApproved'] : false;
+    final phone = data.containsKey('phone') ? data['phone'] : '';
     // RETURN A LIST OF amafatabuguzi FROM THE SNAPSHOT
     return PaymentModel(
       id: id,
@@ -63,6 +70,8 @@ class PaymentService {
       endAt: endAt,
       userId: userId,
       ifatabuguziID: ifatabuguziID,
+      isApproved: isApproved,
+      phone: phone,
     );
   }
 
@@ -93,7 +102,7 @@ class PaymentService {
   }
 
   // GET USER LATEST PAYMENT BY USER ID
-  Stream<PaymentModel> getLatestpaymentsByUserId(String userId) {
+  Stream<PaymentModel?> getLatestpaymentsByUserId(String userId) {
     final documentsStream = paymentsCollection
         .where('userId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
@@ -104,25 +113,34 @@ class PaymentService {
       final documents = querySnapshot.docs;
 
       if (documents.isEmpty) {
-        print('Empty');
-        return PaymentModel(
-            createdAt: DateTime.now(),
-            endAt: DateTime.now(),
-            userId: userId,
-            ifatabuguziID: '');
-      }
-      else {
-        print('Not Empty');
+        return null;
+      } else {
         return _paymentFromSnapshot(documents.first);
-      } 
+      }
     });
+  }
+
+  // GET PAYMENT DATA
+  Future<dynamic> getUserLatestPaymentData(String uid) async {
+    // GET THE USER LATEST PAYMENT DATA
+    final paymentData = await paymentsCollection
+        .where('userId', isEqualTo: uid)
+        .orderBy('createdAt', descending: true)
+        .limit(1)
+        .get();
+
+    // CHECK IF THE PAYMENT DATA IS EMPTY
+    if (paymentData.docs.isEmpty) {
+      return null;
+    } else {
+      return _paymentFromSnapshot(paymentData.docs.first);
+    }
   }
 
   // CREATE PAYMENT
   Future<bool> createPayment(PaymentModel payment) async {
     try {
       await paymentsCollection.add(payment.toJson());
-      print('Payment created');
       return true;
     } catch (e) {
       print(e);

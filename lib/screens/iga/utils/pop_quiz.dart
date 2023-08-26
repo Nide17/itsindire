@@ -76,8 +76,8 @@ class _PopQuizState extends State<PopQuiz> {
             backgroundColor: const Color.fromARGB(255, 228, 225, 225),
             
             // APP BAR
-            appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(58.0),
+            appBar: const PreferredSize(
+              preferredSize: Size.fromHeight(58.0),
               child: AppBarTegura(),
             ),
             // PAGE BODY

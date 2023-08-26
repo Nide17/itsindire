@@ -19,5 +19,14 @@
  - The authentication should be done using Firebase Auth. ✅
  - Fix, when logged in, user name remains null.✅
  - Style the selected price checkout ✅
- - UR registration view
- - Momo api
+ - UR registration view ✅
+ - Momo api ✅
+ - use http package to query momo api ✅
+ 
+ - Refer to profile and user models classes for ChangeNotifier usage in other areas for updating the UI.
+ - Wrong name on new user login without closing and reopening the app. ✅
+ - No network connection, show error message.
+ - Password reset.
+ - App icon
+ - Back buttons when finished with quiz.
+ - Reset the timer when quiz finished.

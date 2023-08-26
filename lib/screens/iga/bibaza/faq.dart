@@ -46,7 +46,7 @@ class Faq extends StatelessWidget {
 
             // TEXT WIDGET
             Container(
-              width: MediaQuery.of(context).size.width * 0.9,
+              width: MediaQuery.of(context).size.width * 0.86,
 
               // STYLING
               decoration: BoxDecoration(
@@ -64,10 +64,13 @@ class Faq extends StatelessWidget {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.symmetric(
+                    vertical: MediaQuery.of(context).size.height * 0.024,
+                    horizontal: MediaQuery.of(context).size.width * 0.032 
+                ),
                 child: Text(question,
                     style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.045,
+                      fontSize: MediaQuery.of(context).size.width * 0.04,
                       color: const Color.fromARGB(255, 0, 0, 0),
                       fontWeight: FontWeight.bold,
                     )),
@@ -78,7 +81,7 @@ class Faq extends StatelessWidget {
 
         // HORIZONTAL SPACE
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.01,
+          height: MediaQuery.of(context).size.height * 0.032,
         ),
 
         // CONTENT
