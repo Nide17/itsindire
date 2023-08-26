@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tegura/models/course_progress.dart';
 import 'package:tegura/models/isomo.dart';
 import 'package:tegura/models/profile.dart';
 import 'package:tegura/screens/auth/injira.dart';
@@ -10,6 +11,7 @@ import 'package:tegura/screens/auth/ur_student.dart';
 import 'package:tegura/screens/auth/wibagiwe.dart';
 import 'package:tegura/screens/ibiciro/ibiciro.dart';
 import 'package:tegura/screens/iga/iga_landing.dart';
+import 'package:tegura/services/isomo_progress.dart';
 import 'package:tegura/utilities/loading.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:tegura/services/auth.dart';
@@ -87,6 +89,27 @@ class TeguraApp extends StatelessWidget {
               print("Error in main2 isomo: $error");
               print(
                   "The err: ${IsomoService().getAllAmasomo(FirebaseAuth.instance.currentUser?.uid)}");
+            }
+            // RETURN NULL
+            return null;
+          },
+        ),
+
+        StreamProvider<List<CourseProgressModel?>?>.value(
+          // WHAT TO GIVE TO THE CHILDREN WIDGETS
+          value: CourseProgressService()
+              .getUserProgresses(FirebaseAuth.instance.currentUser?.uid),
+          initialData: null,
+
+          // TO ACCESS THE LIST OF PROGRESSES, WE USE
+
+          // CATCH ERRORS
+          catchError: (context, error) {
+            // PRINT THE ERROR
+            if (kDebugMode) {
+              print("Error in get progress: $error");
+              print(
+                  "The err: ${CourseProgressService().getUserProgresses(FirebaseAuth.instance.currentUser?.uid)}");
             }
             // RETURN NULL
             return null;

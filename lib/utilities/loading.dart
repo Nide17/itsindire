@@ -42,9 +42,8 @@ class _LoadingLightningState extends State<LoadingLightning>
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          // BUILDER TO BUILD THE HOME PAGE
-          builder: (context) => const HomePage()
-        ),
+            // BUILDER TO BUILD THE HOME PAGE
+            builder: (context) => const HomePage()),
       );
     });
   }

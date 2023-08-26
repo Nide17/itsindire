@@ -16,7 +16,7 @@ class CircleProgress extends StatelessWidget {
 
     // GET THE PERCENTAGE
     final double percent = (courseProgress != null &&
-            courseProgress.totalIngingos != 0)
+            courseProgress.totalIngingos != 0 && courseProgress.totalIngingos >= curCourseIngingo)
         ? (curCourseIngingo / courseProgress.totalIngingos) // GET THE PROGRESS
         : 0.0; // GET THE PROGRESS
 

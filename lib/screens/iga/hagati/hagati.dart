@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tegura/models/course_progress.dart';
 import 'package:tegura/models/isomo.dart';
 import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
@@ -23,21 +24,54 @@ class _HagatiState extends State<Hagati> {
     // GET THE USER
     final usr = Provider.of<UserModel?>(context);
 
-    // GET THE AMASOMO DATA - IsomoService().getAllAmasomo(FirebaseAuth.instance.currentUser?.uid
+    // PROVIDER VARIABLES
+    final progresses = Provider.of<List<CourseProgressModel?>?>(context);
     final amasomo = Provider.of<List<IsomoModel?>?>(context);
-    
-    // BUILD ViewLoggedIn WIDGETS WITH THE AMASOMO DATA ELEMENTS
-    final amasomoWidgets = amasomo?.map((isomo) => ViewLoggedIn(
-          isomo: isomo ??
-              IsomoModel(
-                title: 'Nta somo ryabonetse',
-                description: 'Nta somo ryabonetse',
-                introText: 'Nta somo ryabonetse',
-                id: 0,
-                conclusion: 'Nta somo ryabonetse',
-              ),
-          userId: usr!.uid,
-        ));
+
+    // LIST OF PROGRESSES THAT ARE NOT FINISHED BY THE USER AND ALSO THE ONES THAT ARE NOT STARTED
+    List<CourseProgressModel?>? notFinishedProgresses;
+    List<CourseProgressModel?>? finishedProgresses;
+
+    // GET THE PROGRESSES THAT ARE NOT FINISHED BY THE USER AND ADD THEM TO THE LIST
+    if (progresses != null) {
+      notFinishedProgresses = progresses
+          .where(
+              (progress) => progress?.currentIngingo != progress?.totalIngingos)
+          .toList();
+    }
+
+    // GET THE AMASOMOS THAT ARE NOT STARTED, MAKE EMPTY PROGRESSES FOR THEM, ADD THEM TO THE PROGRESSES LIST
+    if (amasomo != null) {
+      for (var isomo in amasomo) {
+        if (progresses != null) {
+          if (!progresses.any((progress) => progress?.courseId == isomo!.id)) {
+            notFinishedProgresses?.add(CourseProgressModel(
+              courseId: isomo!.id,
+              currentIngingo: 0,
+              totalIngingos: 1,
+              id: '',
+              userId: usr!.uid,
+            ));
+          }
+        }
+      }
+    }
+
+    // GET THE PROGRESSES THAT ARE FINISHED BY THE USER AND ADD THEM TO THE LIST
+    if (progresses != null) {
+      finishedProgresses = progresses
+          .where(
+              (progress) => progress?.currentIngingo == progress?.totalIngingos)
+          .toList();
+    }
+
+    print('NOT FINISHED PROGRESSES: $notFinishedProgresses');
+    print('FINISHED PROGRESSES: $finishedProgresses');
+
+    // OVERALL PROGRESS - RATIO OF FINISHED PROGRESSES TO ALL PROGRESSES
+    final overallProgress = finishedProgresses != null
+        ? finishedProgresses.length / amasomo!.length
+        : 0.0;
 
     // RETURN THE WIDGETS
     return Scaffold(
@@ -63,17 +97,16 @@ class _HagatiState extends State<Hagati> {
 
           // 3. ELLIPSE WITH SPACES IN THE STROKE
           ProgressCircle(
-            percent: usr != null ? 0.5 : 0.0,
+            percent: usr != null ? overallProgress : 0.0,
             progress: usr != null
-                ? 'Ugeze kukigero cya 50% wiga!'
-                : 'Nturatangira kwiga!',
+                ? 'Ugeze kukigero cya ${(overallProgress * 100).toStringAsFixed(0)}% wiga!'
+                : 'Banza winjire!',
             usr: usr,
           ),
 
-          if (usr != null && amasomo != null)
-            Column(
-              children: amasomoWidgets!.toList(),
-            )
+          if (usr != null)
+            ViewLoggedIn(
+                userId: usr.uid, progressesToShow: notFinishedProgresses)
           else
             const ViewNotLoggedIn(),
         ]),

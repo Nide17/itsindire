@@ -59,7 +59,9 @@ class DirectionButton extends StatelessWidget {
             CourseProgressService().updateUserCourseProgress(
               courseProgress!.userId,
               isomo.id,
-              courseProgress.totalIngingos,
+              courseProgress.totalIngingos < courseProgress.currentIngingo
+                  ? courseProgress.currentIngingo
+                  : courseProgress.totalIngingos,
               skip + pageIngingos,
             );
 
