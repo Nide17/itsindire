@@ -50,7 +50,7 @@ class _WasojeState extends State<Wasoje> {
               currentIngingo: 0,
               totalIngingos: 1,
               id: '',
-              userId: usr!.uid,
+              userId: usr != null ? usr.uid : '',
             ));
           }
         }
@@ -66,8 +66,8 @@ class _WasojeState extends State<Wasoje> {
     }
 
     // OVERALL PROGRESS - RATIO OF FINISHED PROGRESSES TO ALL PROGRESSES
-    final overallProgress = finishedProgresses != null
-        ? finishedProgresses.length / amasomo!.length
+    final overallProgress = (finishedProgresses != null && amasomo != null)
+        ? finishedProgresses.length / amasomo.length
         : 0.0;
 
     // RETURN THE WIDGETS

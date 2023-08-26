@@ -148,13 +148,13 @@ class ProfileService {
     // CHECK IF CURRENT USER PROFILE EXISTS, IF IT DOESN'T EXIST, CREATE IT, IF IT EXISTS, RETURN IT
     profilesCollection.doc(uid).get().then((doc) {
       if (doc.exists) {
-        print('\nDB Document exist with data: ${doc.data()}');
+        // print('\nDB Document exist with data: ${doc.data()}');
         return profilesCollection
             .doc(uid)
             .snapshots()
             .map(_profileFromSnapshot);
       } else {
-        print("\nDB No such document!");
+        // print("\nDB No such document!");
         return null;
       }
     });

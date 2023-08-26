@@ -92,6 +92,8 @@ class CourseProgressService {
     // CHECK IF CURRENT COURSE ID IS NULL, IF IT IS, RETURN NULL
     if (courseId == null || courseId == 0) return null;
 
+    // print('${courseId}_$uid'); // '1_1
+
     // GET ONE USER progress ON A COURSE FROM FIRESTORE AS A STREAM OF DOCUMENT SNAPSHOT
     return progressCollection
         .doc('${courseId}_$uid')
@@ -113,6 +115,13 @@ class CourseProgressService {
     int totalIngingos,
     int currentIngingo,
   ) async {
+    // print('ISOMO PROGRESS');
+    // print('id:${courseId}_$uid');
+    // print('userId: $uid');
+    // print('courseId: $courseId');
+    // print('totalIngingos: $totalIngingos');
+    // print('currentIngingo: $currentIngingo');
+
     // RETURN THE USER DATA - IF THE DOC DOESN'T EXIST,
     //IT WILL BE CREATED BY FIRESTORE
     return await progressCollection.doc('${courseId}_$uid').set({

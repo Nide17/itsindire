@@ -37,7 +37,7 @@ class IngingoService {
       // RETURN A LIST OF ingingos FROM THE SNAPSHOT
       return IngingoModel(
         // INGINGOS DATA
-        id: id,
+        id: id is int ? id : id is String ? int.parse(id) : 0,
         isomoId: isomoId,
         title: title,
         text: text,
@@ -73,7 +73,7 @@ class IngingoService {
     // RETURN A LIST OF ingingos FROM THE SNAPSHOT
     return IngingoModel(
       // INGINGOS DATA
-      id: id,
+      id: id is int ? id : id is String ? int.parse(id) : 0,
       isomoId: isomoId,
       title: title,
       text: text,

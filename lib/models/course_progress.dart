@@ -15,6 +15,9 @@ class CourseProgressModel {
       required this.currentIngingo,
       required this.totalIngingos});
 
+// GET THE PROGRESS PERCENTAGE
+get progressPercentage => currentIngingo / totalIngingos;
+
   // TO STRING
   @override
   String toString() {

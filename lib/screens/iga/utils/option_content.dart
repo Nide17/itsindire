@@ -11,11 +11,11 @@ class OptionContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // SPLIT THE TEXT INTO PARTS AND CREATE A LIST OF TEXT SPANS TO BE RETURNED
-    final parts = option?.text?.split('*');
+    final parts = option?.text?.split('*') ?? [];
     final spans = <TextSpan>[];
 
     // CREATE TEXTSPANS WITH DIFFERENT STYLES FOR EACH PART OF THE TEXT
-    for (var i = 0; i < parts!.length; i++) {
+    for (var i = 0; i < parts.length; i++) {
       // IF THE PART IS EVEN, IT'S A NORMAL TEXT
       final isBold = i % 2 == 1;
 

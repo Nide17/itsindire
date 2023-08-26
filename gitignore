@@ -134,6 +134,8 @@ app.*.symbols
 
 /backup
 /backup/*
+backup/*
 /.vscode
 .vscode/*
 /.vscode/*
+todoNext.txt

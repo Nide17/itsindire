@@ -26,8 +26,7 @@ class _IgaLandingState extends State<IgaLanding> {
         // PROVIDE FIREBASE FIRESTORE INSTANCE - DB REFERENCE TO PROFILES COLLECTION
         StreamProvider<List<IsomoModel?>?>.value(
           // WHAT TO GIVE TO THE CHILDREN WIDGETS
-          value: IsomoService()
-              .getAllAmasomo(FirebaseAuth.instance.currentUser?.uid),
+          value: null,
           initialData: null,
 
           // CATCH ERRORS

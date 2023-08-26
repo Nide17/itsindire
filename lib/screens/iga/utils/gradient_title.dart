@@ -7,10 +7,15 @@ class GradientTitle extends StatelessWidget {
   final String title;
   final String icon;
   final double? marginTop;
+  final String? parentWidget;
 
 // CONSTRUCTOR
   const GradientTitle(
-      {super.key, required this.title, required this.icon, this.marginTop});
+      {super.key,
+      required this.title,
+      required this.icon,
+      this.marginTop,
+      this.parentWidget});
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +32,17 @@ class GradientTitle extends StatelessWidget {
           borderRadius: BorderRadius.circular(100),
 
           // THE GRADIENT
-          gradient: const LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            stops: [0.2677, 0.8325],
-            colors: [
-              Color(0xFF0500E5),
-              Color(0xFF9D14DD),
-            ],
-          ),
+          gradient: parentWidget == 'isuzume'
+              ? null
+              : const LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  stops: [0.2677, 0.8325],
+                  colors: [
+                    Color(0xFF0500E5),
+                    Color(0xFF9D14DD),
+                  ],
+                ),
         ),
 
         // CONTENT
@@ -51,8 +58,9 @@ class GradientTitle extends StatelessWidget {
             // SVG ICON
             if (icon != '')
               SvgPicture.asset(icon,
-                  width: MediaQuery.of(context).size.width * 0.05),
-
+                  width: MediaQuery.of(context).size.width * 0.05,
+                  colorFilter: const ColorFilter.mode(
+                      Color(0xFF5B8BDF), BlendMode.srcIn)),
             // HORIZONTAL SPACE
             if (icon != '')
               SizedBox(
@@ -65,9 +73,14 @@ class GradientTitle extends StatelessWidget {
                 title,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.048,
-                  color: const Color.fromARGB(255, 255, 255, 255),
-                  fontWeight: FontWeight.w400,
+                  fontSize: parentWidget == 'isuzume'
+                      ? MediaQuery.of(context).size.width * 0.038
+                      : MediaQuery.of(context).size.width * 0.048,
+                  color:
+                      parentWidget == 'isuzume' ? Colors.black : Colors.white,
+                  fontWeight: parentWidget == 'isuzume'
+                      ? FontWeight.w700
+                      : FontWeight.w500,
                 ),
               ),
             ),

@@ -1,0 +1,5 @@
+0. Custom Radio Button: Using scoreObject instead of popQuestions 
+
+1. Persist choices between screens (e.g. if you go to next question and then back, the choices you made should still be selected)
+
+2. Allow user to forward and backward between questions - Even when no choice is selected, the user should be able to go to the next question. (Choice should be saved as null) - This is to allow the user to skip questions and come back to them later.
