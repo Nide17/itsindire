@@ -100,7 +100,7 @@ class IngingoService {
   }
 
 // GET TOTAL ingingos FOR A GIVEN isomoId
-  Stream<IngingoSum> getTotalIsomoIngingos(String isomoId) {
+  Stream<IngingoSum> getTotalIsomoIngingos(int isomoId) {
     // Retrieve the stream of documents from Firestore
     final documentsStream =
         ingingoCollection.where('isomoID', isEqualTo: isomoId).snapshots();
@@ -123,7 +123,7 @@ class IngingoService {
 
 // GET A LIST OF ingingos FOR A GIVEN isomoId, LIMITED TO THE GIVEN NUMBER, AND SKIP THE GIVEN NUMBER OF DOCUMENTS RETURNED FROM THE QUERY RESULTS - PAGINATION - ORDERED BY ITS DOCUMENT ID
   Stream<List<IngingoModel>> getIngingosByIsomoIdPaginated(
-      String isomoId, int limit, int lastIDinsideDoc) {
+      int isomoId, int limit, int lastIDinsideDoc) {
     // Construct the initial query
     Query query = ingingoCollection
         .where('isomoID', isEqualTo: isomoId)

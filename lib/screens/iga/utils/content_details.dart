@@ -104,7 +104,8 @@ class ContentDetails extends StatelessWidget {
                                 MediaQuery.of(context).size.height * 0.027),
                         TextSpan(
                             text:
-                                '${currIngingos?[index].id}. ${currIngingos?[index].title} ',
+                                // '${currIngingos?[index].id}. ${currIngingos?[index].title} ',
+                                '${currIngingos?[index].title} ',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                             children: [
                               // INGINGO TEXT
@@ -124,6 +125,7 @@ class ContentDetails extends StatelessWidget {
                                 ),
                             ]),
                       ),
+
                       // IF INGINGO HAS OPTIONS USING ABOVE METHOD
                       if (currIngingos?[index].options != null &&
                           currIngingos?[index].options != [])
@@ -134,28 +136,104 @@ class ContentDetails extends StatelessWidget {
                               // ONE OPTION
                               Option option = Option.fromJson(
                                   currIngingos[index].options[optionIndex]);
+                              print(option.title);
 
                               // RETURN THE WIDGETS OF THE OPTIONS
                               return Column(children: [
-                                Text.rich(
-                                    textAlign: TextAlign.left,
-                                    TextSpan(
-                                      children: [
-                                        // OPTION TITLE
-                                        TextSpan(
-                                          text: '${option.title}',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        // OPTION TEXT IF ANY
-                                        if (option.text != null)
-                                          TextSpan(
-                                            text: ' ${option.text}',
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.normal),
+                                // IF OPTION HAS title
+                                if (option.title != null && option.title != '')
+                                  // SIZEBOX
+                                  SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.025),
+                                Column(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          bottom: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.015),
+                                      child: Row(
+                                        children: [
+                                          // IF OPTION HAS leftImageUrl
+                                          if (option.leftImageUrl != null &&
+                                              option.leftImageUrl != '')
+                                            Flexible(
+                                              // OCCUPY 1/5 OF THE SPACE
+                                              flex: 1,
+                                              // LOOSE FIT
+                                              fit: FlexFit.loose,
+                                              child: Container(
+                                                margin: EdgeInsets.only(
+                                                    right:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.025),
+                                                child: SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.13,
+                                                  child: Image.network(
+                                                    option.leftImageUrl!,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.1,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.001,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+
+                                          Flexible(
+                                            // OCCUPY 4/5 OF THE SPACE
+                                            flex: 4,
+                                            child: Text.rich(
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                    fontSize:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.024),
+                                                TextSpan(
+                                                  children: [
+                                                    // OPTION TITLE
+                                                    if (option.title != null &&
+                                                        option.title != '')
+                                                      TextSpan(
+                                                        text: '${option.title}',
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    // OPTION TEXT IF ANY
+                                                    if (option.text != null)
+                                                      TextSpan(
+                                                        text: ' ${option.text}',
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal),
+                                                      ),
+                                                  ],
+                                                )),
                                           ),
-                                      ],
-                                    )),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
 
                                 // OPTION IMAGE IF ANY
                                 if (option.imageUrl != null &&
@@ -206,6 +284,9 @@ class ContentDetails extends StatelessWidget {
                           currIngingos?[index].nb != '')
                         Text.rich(
                           textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.height * 0.025),
                           TextSpan(
                             children: [
                               const TextSpan(

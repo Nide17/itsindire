@@ -24,11 +24,11 @@ class CourseProgressService {
       // CHECK IF THE FIELDS EXISTS BEFORE ASSIGNING TO THE VARIABLE
       final id = data.containsKey('id') ? data['id'] : '';
       final userId = data.containsKey('userId') ? data['userId'] : '';
-      final courseId = data.containsKey('courseId') ? data['courseId'] : '';
+      final courseId = data.containsKey('courseId') ? data['courseId'] : 0;
       final totalIngingos =
-          data.containsKey('totalIngingos') ? data['totalIngingos'] : '';
+          data.containsKey('totalIngingos') ? data['totalIngingos'] : 0;
       final currentIngingo =
-          data.containsKey('currentIngingo') ? data['currentIngingo'] : '';
+          data.containsKey('currentIngingo') ? data['currentIngingo'] : 0;
 
       // RETURN A LIST OF progresses FROM THE SNAPSHOT
       return CourseProgressModel(
@@ -51,11 +51,11 @@ class CourseProgressService {
     // CHECK IF THE FIELDS EXIST BEFORE ASSIGNING TO THE VARIABLE
     final id = data.containsKey('id') ? data['id'] : '';
     final userId = data.containsKey('userId') ? data['userId'] : '';
-    final courseId = data.containsKey('courseId') ? data['courseId'] : '';
+    final courseId = data.containsKey('courseId') ? data['courseId'] : 0;
     final totalIngingos =
-        data.containsKey('totalIngingos') ? data['totalIngingos'] : '';
+        data.containsKey('totalIngingos') ? data['totalIngingos'] : 0;
     final currentIngingo =
-        data.containsKey('currentIngingo') ? data['currentIngingo'] : '';
+        data.containsKey('currentIngingo') ? data['currentIngingo'] : 0;
 
     // RETURN A LIST OF progresses FROM THE SNAPSHOT
     return CourseProgressModel(
@@ -81,25 +81,31 @@ class CourseProgressService {
   // }
 
   // GET ONE USER progress ON A COURSE STREAM
-  Stream<CourseProgressModel?>? getProgress(String? uid, String? courseId) {
+  Stream<CourseProgressModel?>? getProgress(String? uid, int? courseId) {
     // CHECK IF CURRENT USER UID IS NULL, IF IT IS, RETURN NULL
-    if (uid == null) return null;
+    if (uid == null || uid == '') return null;
 
     // CHECK IF CURRENT COURSE ID IS NULL, IF IT IS, RETURN NULL
-    if (courseId == null) return null;
+    if (courseId == null || courseId == 0) return null;
 
     // GET ONE USER progress ON A COURSE FROM FIRESTORE AS A STREAM OF DOCUMENT SNAPSHOT
     return progressCollection
         .doc('${courseId}_$uid')
         .snapshots()
-        .map(_progressFromSnapshot);
+        .map((snapshot) {
+      if (!snapshot.exists) {
+        return null; // Return null if the document doesn't exist
+      } else {
+        return _progressFromSnapshot(snapshot);
+      }
+    });
   }
 
   // THIS FUNCTION WILL UPDATE THE USER PROGRESS ON A COURSE IN THE DATABASE
   //WHEN THE USER START AND WHEN THE USER IS LEARNING A COURSE AND WHEN THE USER FINISHES A COURSE
   Future updateUserCourseProgress(
     String uid,
-    String courseId,
+    int courseId,
     int totalIngingos,
     int currentIngingo,
   ) async {

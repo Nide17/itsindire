@@ -36,7 +36,7 @@ class ViewLoggedIn extends StatelessWidget {
           catchError: (context, error) {
             // PRINT THE ERROR
             if (kDebugMode) {
-              print("Error in logged in: $error");
+              print("Error in get progress: $error");
               print(
                   "The err: ${CourseProgressService().getProgress(userId, isomo.id)}");
             }
@@ -55,7 +55,7 @@ class ViewLoggedIn extends StatelessWidget {
           catchError: (context, error) {
             // PRINT THE ERROR
             if (kDebugMode) {
-              print("Error in logged in for ingingos: $error");
+              print("Error in logged in get all isomo ingingos: $error");
               print(
                   "The err: ${IngingoService().getTotalIsomoIngingos(isomo.id)}");
             }

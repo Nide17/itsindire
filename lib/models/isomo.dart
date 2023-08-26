@@ -1,7 +1,7 @@
 // MODEL TO REPRESENT THE ISOMO
 class IsomoModel {
   // TITLE AND DESCRIPTION
-  String id = '';
+  int id = 0;
   String title = '';
   String description = '';
   String introText = '';
