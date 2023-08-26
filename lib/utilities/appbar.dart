@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/models/profile.dart';
 import 'package:tegura/models/user.dart';
-import 'package:tegura/services/auth.dart';
+import 'package:tegura/firebase_services/auth.dart';
 
 class AppBarTegura extends StatelessWidget {
   const AppBarTegura({Key? key}) : super(key: key);

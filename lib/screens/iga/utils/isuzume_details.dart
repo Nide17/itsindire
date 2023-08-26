@@ -4,8 +4,8 @@ import 'package:tegura/models/course_progress.dart';
 import 'package:tegura/models/isomo.dart';
 import 'package:tegura/screens/iga/utils/custom_radio_button.dart';
 import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/screens/iga/utils/quiz_score_provider.dart';
-import 'package:tegura/services/isomo_progress.dart';
+import 'package:tegura/providers/quiz_score_provider.dart';
+import 'package:tegura/firebase_services/isomo_progress.dart';
 import 'package:tegura/utilities/ikibazo_button.dart';
 
 typedef ShowQnCallback = void Function(int index);
@@ -71,45 +71,7 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
             height: MediaQuery.of(context).size.height * 0.02,
           ),
           Expanded(
-              child: scorePopQns == null
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Iri somo nta ngingo rifite!',
-                          style: TextStyle(
-                            fontSize: 17.0,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF9D14DD),
-                          ),
-                        ),
-                        const SizedBox(height: 10.0),
-                        // REDIRECT BUTTON TO /iga
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: const Color(0XFF00A651),
-                            backgroundColor: const Color(0xFF0500E5),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                          child: const Text(
-                            'Funga',
-                            style: TextStyle(
-                                fontSize: 17.0,
-                                fontWeight: FontWeight.bold,
-                                color: Color.fromARGB(255, 255, 255, 255)),
-                          ),
-                        ),
-                      ],
-                    )
-
-                  // IKIBAZO NUMBER BUTTONS AND QUESTION DISPLAY
-                  : Column(
+              child: Column(
                       children: [
                         // IKIBAZO NUMBER BUTTONS
                         Align(
@@ -152,8 +114,6 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                           ? true
                                           : false,
                                       showQn: widget.showQn,
-                                      popQuestion:
-                                          scorePopQns[index].popQuestion,
                                       index: index,
                                     ),
                                   ))),
@@ -218,11 +178,7 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                                       .popQuestion
                                                       .id,
                                                   true);
-                                          // print(
-                                          //     'isAnswered: ${scoreProviderModel.quizScore.questions[widget.qnIndex]}');
-                                          // print(
-                                          //     'isAnswered: ${scoreProviderModel.quizScore.questions[widget.qnIndex].isAnswered}');
-                                        },
+                                          },
                                       );
                                     }).toList(),
                                   ),

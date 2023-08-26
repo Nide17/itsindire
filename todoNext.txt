@@ -1,5 +1,17 @@
-0. Custom Radio Button: Using scoreObject instead of popQuestions 
+0. Custom Radio Button: Using scoreObject instead of popQuestions ✅
 
-1. Persist choices between screens (e.g. if you go to next question and then back, the choices you made should still be selected)
+1. Persist choices between screens (e.g. if you go to next question and then back, the choices you made should still be selected) ✅
 
-2. Allow user to forward and backward between questions - Even when no choice is selected, the user should be able to go to the next question. (Choice should be saved as null) - This is to allow the user to skip questions and come back to them later.
+2. Allow user to forward and backward between questions - Even when no choice is selected, the user should be able to go to the next question. (Choice should be saved as null) - This is to allow the user to skip questions and come back to them later. ✅
+
+3. Amasuzumabumenyi
+ - Quizzes with 20 specific questions, displayed randomly. ✅
+ - One score for each quiz per user. ✅
+ - The user should be able to see the questions they got wrong and the correct answers at the end of the quiz. ✅
+ - Scores, if no score - ntago urayikora; else show previous score. ✅
+ - Make the score questions type List<ScoreQuestion> and options List<ScoreOption> ✅
+ - On answer click,  ✅
+ - Attempt the isuzuma on tap, save once per user per isuzuma, next attempt updates the score. ✅
+ - On submit, show the score on another screen.
+
+ 4. Add a timer to the quiz.

@@ -8,11 +8,11 @@ import 'package:tegura/models/pop_question.dart';
 import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/iga/utils/circle_progress.dart';
 import 'package:tegura/screens/iga/utils/content_details.dart';
-import 'package:tegura/services/isomo_progress.dart';
-import 'package:tegura/services/pop_question_db.dart';
+import 'package:tegura/firebase_services/isomo_progress.dart';
+import 'package:tegura/firebase_services/pop_question_db.dart';
 import 'package:tegura/utilities/appbar.dart';
 import 'package:tegura/utilities/direction_button.dart';
-import 'package:tegura/services/ingingodb.dart';
+import 'package:tegura/firebase_services/ingingodb.dart';
 
 class IgaContent extends StatefulWidget {
 // INSTANCE VARIABLES

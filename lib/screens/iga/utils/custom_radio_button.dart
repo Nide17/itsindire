@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tegura/models/pop_question.dart';
-import 'package:tegura/screens/iga/utils/quiz_score_provider.dart';
+import 'package:tegura/providers/quiz_score_provider.dart';
 
 class CustomRadioButton extends StatefulWidget {
   final bool isSelected;

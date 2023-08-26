@@ -7,8 +7,8 @@ import 'package:tegura/models/pop_question.dart';
 import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/iga/utils/isuzume_details.dart';
 import 'package:tegura/screens/iga/utils/isuzume_results.dart';
-import 'package:tegura/screens/iga/utils/quiz_score_provider.dart';
-import 'package:tegura/services/pop_question_db.dart';
+import 'package:tegura/providers/quiz_score_provider.dart';
+import 'package:tegura/firebase_services/pop_question_db.dart';
 import 'package:tegura/utilities/appbar.dart';
 import 'package:tegura/utilities/direction_button_isuzume.dart';
 
@@ -63,7 +63,6 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
       ],
       child: Consumer<QuizScoreProvider>(
         builder: (context, scoreProviderModel, child) {
-          // print('isAnswered: ${scoreProviderModel.quizScore.questions}');
           return Consumer<List<PopQuestionModel>?>(
             builder: (context, popQuestions, _) {
               if (popQuestions == null) {
@@ -211,10 +210,9 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                             direction: 'inyuma',
                             opacity: 1,
                             backward: backward,
-                            popQuestions: popQuestions,
+                            lastQn: popQuestions.length - 1,
                             currQnID: qnIndex,
                             isDisabled: qnIndex < 1,
-                            scoreObject: scoreProviderModel,
                           ),
 
                           SizedBox(
@@ -226,10 +224,9 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                             direction: 'komeza',
                             opacity: 1,
                             forward: forward,
-                            popQuestions: popQuestions,
+                            lastQn: popQuestions.length - 1,
                             currQnID: qnIndex,
                             isDisabled: qnIndex >= popQuestions.length - 1,
-                            scoreObject: scoreProviderModel,
                           ),
                         ],
                       ),

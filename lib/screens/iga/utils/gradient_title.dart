@@ -70,12 +70,12 @@ class GradientTitle extends StatelessWidget {
             // TEXT WIDGET
             Flexible(
               child: Text(
-                title,
+                title.toUpperCase(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: parentWidget == 'isuzume'
-                      ? MediaQuery.of(context).size.width * 0.038
-                      : MediaQuery.of(context).size.width * 0.048,
+                      ? MediaQuery.of(context).size.width * 0.035
+                      : MediaQuery.of(context).size.width * 0.045,
                   color:
                       parentWidget == 'isuzume' ? Colors.black : Colors.white,
                   fontWeight: parentWidget == 'isuzume'

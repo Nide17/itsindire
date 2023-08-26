@@ -6,7 +6,7 @@ import 'package:tegura/utilities/description.dart';
 import 'package:tegura/screens/iga/utils/gradient_title.dart';
 import 'package:tegura/utilities/appbar.dart';
 import 'package:tegura/utilities/spinner.dart';
-import "package:tegura/services/auth.dart";
+import 'package:tegura/firebase_services/auth.dart';
 
 class Injira extends StatefulWidget {
   const Injira({Key? key}) : super(key: key);

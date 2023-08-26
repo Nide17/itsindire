@@ -6,7 +6,7 @@ import 'package:tegura/models/isomo.dart';
 import 'package:tegura/screens/iga/utils/content_title_text.dart';
 import 'package:tegura/screens/iga/utils/gradient_title.dart';
 import 'package:tegura/screens/iga/utils/option_content.dart';
-import 'package:tegura/services/isomo_progress.dart';
+import 'package:tegura/firebase_services/isomo_progress.dart';
 
 class ContentDetails extends StatefulWidget {
 // INSTANCE VARIABLES

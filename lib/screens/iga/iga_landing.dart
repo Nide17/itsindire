@@ -7,7 +7,7 @@ import 'package:tegura/models/isomo.dart';
 import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
 import 'package:tegura/utilities/appbar.dart'; // APP BAR
 import 'package:tegura/screens/iga/iga_data.dart';
-import 'package:tegura/services/isomodb.dart'; // DATA FOR THE IGA PAGE
+import 'package:tegura/firebase_services/isomodb.dart'; // DATA FOR THE IGA PAGE
 
 class IgaLanding extends StatefulWidget {
   const IgaLanding({Key? key}) : super(key: key);

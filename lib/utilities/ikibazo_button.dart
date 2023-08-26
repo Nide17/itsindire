@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/models/pop_question.dart';
-import 'package:tegura/screens/iga/utils/quiz_score_provider.dart';
+import 'package:tegura/providers/quiz_score_provider.dart';
 
 typedef ShowQnCallback = void Function(int index);
 
@@ -9,7 +9,6 @@ class IkibazoButton extends StatefulWidget {
   // INSTANCE VARIABLES
   final String buttonText;
   final ShowQnCallback showQn;
-  final PopQuestionModel popQuestion;
   final int index;
   final bool isActive;
 
@@ -17,7 +16,6 @@ class IkibazoButton extends StatefulWidget {
     Key? key,
     required this.buttonText,
     required this.showQn,
-    required this.popQuestion,
     required this.index,
     required this.isActive,
   }) : super(key: key);
