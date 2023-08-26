@@ -3,7 +3,7 @@ import 'package:tegura/utilities/cta_button.dart';
 import 'package:tegura/utilities/cta_link.dart';
 import 'package:tegura/utilities/default_input.dart';
 import 'package:tegura/utilities/description.dart';
-import "package:tegura/screens/iga/gradient_title.dart";
+import 'package:tegura/screens/iga/utils/gradient_title.dart';
 import 'package:tegura/utilities/appbar.dart';
 import "package:tegura/services/auth.dart";
 
