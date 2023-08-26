@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tegura/models/isuzuma.dart';
 import 'package:tegura/models/isuzuma_score.dart';
 import 'package:tegura/models/user.dart';
+import 'package:tegura/screens/auth/iyandikishe.dart';
 import 'package:tegura/screens/iga/amasuzuma/amanota.dart';
 import 'package:tegura/screens/iga/amasuzuma/isuzuma_overview.dart';
 
@@ -19,11 +20,11 @@ class AmasuzumaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final usr = Provider.of<UserModel?>(context);
-
+    
     // FIND A SCORE WHERE THE TAKER ID IS THE CURRENT USER ID AND THE ISUZUMA ID IS THE CURRENT ISUZUMA ID
-    final scoreUserIsuzuma = amaUserScores!.isNotEmpty
+    final scoreUserIsuzuma = (usr != null && amaUserScores!.isNotEmpty)
         ? amaUserScores!.firstWhere((element) =>
-            element.takerID == usr!.uid && element.isuzumaID == isuzuma.id)
+            element.takerID == usr.uid && element.isuzumaID == isuzuma.id)
         : null;
 
     return Column(
@@ -38,9 +39,14 @@ class AmasuzumaCard extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => IsuzumaOverview(
-                          isuzuma: isuzuma,
-                          scoreUserIsuzuma: scoreUserIsuzuma)),
+                    builder: (context) => usr != null
+                        ? IsuzumaOverview(
+                            isuzuma: isuzuma,
+                            scoreUserIsuzuma: scoreUserIsuzuma)
+                        : const Iyandikishe(
+                            message:
+                                'Banza wiyandikishe, wishyure ubone aya masuzumabumenyi yose!'),
+                  ),
                 );
               },
               child: Container(

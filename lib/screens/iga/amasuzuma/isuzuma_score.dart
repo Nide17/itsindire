@@ -14,17 +14,6 @@ class IsuzumaScore extends StatefulWidget {
 class _IsuzumaScoreState extends State<IsuzumaScore> {
   @override
   Widget build(BuildContext context) {
-    // print('Marks: ${widget.scoreProviderModel.quizScore}');
-
-    // int count = 0;
-    // for (ScoreQuestion question
-    //     in widget.scoreProviderModel.quizScore.questions) {
-    //   // print the count
-    //   print('Count: ${count++}');
-    // }
-
-    // PRINT THE quizScore
-    // print(widget.scoreProviderModel.quizScore.questions[1].isAnswerCorrect);
 
     // MARKS COUNTING
     int marks = 0;
@@ -37,9 +26,6 @@ class _IsuzumaScoreState extends State<IsuzumaScore> {
         marks++;
       }
     }
-
-    // PRINT THE MARKS
-    print('Marks: $marks');
 
     return Scaffold(
       appBar: AppBar(

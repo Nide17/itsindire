@@ -188,7 +188,6 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
   }
 
   Color getDisplayColor(bool? isThisCorrect) {
-    print("isThisCorrect: $isThisCorrect");
     if (isThisCorrect != null) {
       if (isThisCorrect == true) {
         return Colors.green;

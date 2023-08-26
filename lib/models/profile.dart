@@ -1,7 +1,8 @@
 // DEFINING USER MODEL TO REPRESENT THE USER
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
-class ProfileModel {
+class ProfileModel extends ChangeNotifier {
   final String? uid; // UNIQUE ID OF THE USER - FROM FIREBASE
   final String? username;
   final String? names;
@@ -30,6 +31,12 @@ class ProfileModel {
       this.regNumber,
       this.campus,
       this.roleId});
+
+  // RETURN CURRENT PROFILE OBJECT FOR APPBAR AND NOTIFY LISTENERS
+  dynamic get currentUserProfile {
+    notifyListeners();
+    return this;
+  }
 
   // TO STRING
   @override

@@ -35,11 +35,10 @@ class _DirectionButtonIsuzumeState extends State<DirectionButtonIsuzume> {
     // RETURN THE WIDGETS
     return ElevatedButton(
       onPressed: () {
-        // print(widget.direction == 'inyuma' && widget.isDisabled == false);
+
         if (widget.direction == 'inyuma' && widget.isDisabled == false) {
           // DECREASE SKIP STATE
           widget.backward!();
-          // print(widget.currQnID);
 
           // REMOVE THE CURRENT PAGE FROM THE STACK IF NO MORE PREVIOUS PAGES
           if (widget.currQnID == 0) {
@@ -48,7 +47,6 @@ class _DirectionButtonIsuzumeState extends State<DirectionButtonIsuzume> {
         } else if (widget.direction == 'komeza' && widget.isDisabled == false) {
           // INCREASE SKIP STATE
           widget.forward!();
-          // print(widget.currQnID);
 
           // REMOVE THE CURRENT PAGE FROM THE STACK IF NO MORE NEXT PAGES
           if (widget.currQnID == widget.lastQn) {

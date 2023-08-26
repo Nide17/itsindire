@@ -126,20 +126,6 @@ class ProfileService {
     );
   }
 
-// You can use similar checks for all the fields in the `_profileFromSnapshot` method to avoid the "Bad state: cannot get a field on a DocumentSnapshotPlatform which does not exist" error.
-
-  // // GET ALL USERS PROFILES STREAM
-  // Stream<List<ProfileModel>> get userProfiles {
-  //   // PRINT THE USER PROFILES ONE BY ONE - USING THE PROFILE MODEL TO REPRESENT THE USER DATA
-  //   profilesCollection.snapshots().forEach((snp) {
-  //     _profilesListFromSnapshot(snp).forEach((prfl) {
-  //       // print(prfl.username);
-  //       // print(prfl.roleId);
-  //     });
-  //   });
-  //   return profilesCollection.snapshots().map(_profilesListFromSnapshot);
-  // }
-
   // GET A SINGLE USER PROFILE STREAM - CURRENT LOGGED IN USER PROFILE USING UID
   Stream<ProfileModel?>? getCurrentProfile(String? uid) {
     // CHECK IF CURRENT USER UID IS NULL, IF IT IS, RETURN NULL
@@ -148,17 +134,24 @@ class ProfileService {
     // CHECK IF CURRENT USER PROFILE EXISTS, IF IT DOESN'T EXIST, CREATE IT, IF IT EXISTS, RETURN IT
     profilesCollection.doc(uid).get().then((doc) {
       if (doc.exists) {
-        // print('\nDB Document exist with data: ${doc.data()}');
         return profilesCollection
             .doc(uid)
             .snapshots()
             .map(_profileFromSnapshot);
       } else {
-        // print("\nDB No such document!");
         return null;
       }
     });
 
     return profilesCollection.doc(uid).snapshots().map(_profileFromSnapshot);
+  }
+
+  // APP BAR PROFILE DATA
+  Future<dynamic> getAppBarProfileData(String uid) async {
+    // GET THE USER PROFILE DATA
+    final profileData = await profilesCollection.doc(uid).get();
+
+    // RETURN THE USER PROFILE DATA AS _profileFromSnapshot
+    return _profileFromSnapshot(profileData);
   }
 }

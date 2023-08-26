@@ -145,11 +145,10 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                 backgroundColor: const Color.fromARGB(255, 255, 255, 255),
 
                 // APP BAR
-                appBar: PreferredSize(
-                  preferredSize: MediaQuery.of(context).size * 0.07,
-                  child: const AppBarTegura(),
+                appBar: const PreferredSize(
+                  preferredSize: Size.fromHeight(58.0),
+                  child: AppBarTegura(),
                 ),
-
                 // PAGE BODY
                 body: IsuzumeDetails(
                   isomo: widget.isomo,
@@ -242,7 +241,6 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
   }
 
   void showQn(int index) {
-    // print('The value i up: $index');
     setState(() {
       qnIndex = index;
       selectedOption = -1;

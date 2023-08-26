@@ -48,7 +48,7 @@ class CtaLink extends StatelessWidget {
 
         // VERTICAL SPACE
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.04,
+          height: MediaQuery.of(context).size.height * 0.02,
         ),
       ],
     );

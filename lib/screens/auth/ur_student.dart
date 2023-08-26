@@ -28,195 +28,205 @@ class _UrStudentState extends State<UrStudent> {
         backgroundColor: const Color(0xFF5B8BDF),
 
         // APP BAR
-        appBar: const PreferredSize(
-          preferredSize: Size.fromHeight(58.0),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(58.0),
           child: AppBarTegura(),
         ),
 
         // PAGE BODY
-        body: ListView(
-          children: [
-            // 1. GRADIENT TITLE
-            GradientTitle(
-                title: 'REGISTER AS UR STUDENT',
-                icon: 'assets/images/ur_student.svg'),
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xff14e4ff), Color(0xFF5B8BDF)],
+              stops: [0.01, 0.6],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
+          ),
+          child: ListView(
+            children: [
+              // 1. GRADIENT TITLE
+              const GradientTitle(
+                  title: 'REGISTER AS UR STUDENT',
+                  icon: 'assets/images/ur_student.svg'),
 
-            // 2. DESCRIPTION
-            const Description(
-                text:
-                    'Register as UR student and get a discount up to 50% of regular cost!'),
+              // 2. DESCRIPTION
+              const Description(
+                  text:
+                      'Register as UR student and get a discount up to 50% of regular cost!'),
 
-            // CENTERED IMAGE
-            Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/50off.png',
-                    height: MediaQuery.of(context).size.height * 0.2,
-                    width: MediaQuery.of(context).size.width * 0.2,
-                  ),
-                ]),
-
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.05,
-                  vertical: 0.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              // CENTERED IMAGE
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // FORM DROPDOWN
-                    DropdownButtonFormField<String>(
-                      items: _items.map((String item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(
-                              color: Color(0xFF7FC8DF),
+                    Image.asset(
+                      'assets/images/50off.png',
+                      height: MediaQuery.of(context).size.height * 0.15,
+                      width: MediaQuery.of(context).size.width * 0.2,
+                    ),
+                  ]),
+
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.05,
+                    vertical: 0.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // FORM DROPDOWN
+                      DropdownButtonFormField<String>(
+                        items: _items.map((String item) {
+                          return DropdownMenuItem<String>(
+                            value: item,
+                            child: Text(
+                              item,
+                              style: const TextStyle(
+                                color: Color(0xFF7FC8DF),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        hint: const Text(
+                          'Choose your campus',
+                          style: TextStyle(
+                            color: Color(0xFF7FC8DF),
+                          ),
+                        ),
+                        decoration: const InputDecoration(
+                          // BACKGROUND COLOR
+                          filled: true,
+                          fillColor: Color.fromARGB(255, 255, 255, 255),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(20.0),
                             ),
                           ),
-                        );
-                      }).toList(),
-                      hint: const Text(
-                        'Choose your campus',
-                        style: TextStyle(
-                          color: Color(0xFF7FC8DF),
-                        ),
-                      ),
-                      decoration: const InputDecoration(
-                        // BACKGROUND COLOR
-                        filled: true,
-                        fillColor: Color.fromARGB(255, 255, 255, 255),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(20.0),
+
+                          // HEIGHT
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 16.0,
+                            horizontal: 24.0,
                           ),
                         ),
-
-                        // HEIGHT
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: 16.0,
-                          horizontal: 24.0,
-                        ),
+                        onChanged: (String? value) {
+                          setState(() {
+                            _selectedItem = value!;
+                          });
+                        },
+                        value: _selectedItem.isNotEmpty ? _selectedItem : null,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Choose your campus';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          // do something with the selected value
+                        },
                       ),
-                      onChanged: (String? value) {
-                        setState(() {
-                          _selectedItem = value!;
-                        });
-                      },
-                      value: _selectedItem.isNotEmpty ? _selectedItem : null,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Choose your campus';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        // do something with the selected value
-                      },
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
-                    ),
-                    // NOMERO ZA TELEPHONE
-                    const DefaultInput(
-                      placeholder: 'Registration number',
-                      validation: 'Please enter your registration number!',
-                    ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.02,
+                      ),
+                      // NOMERO ZA TELEPHONE
+                      const DefaultInput(
+                        placeholder: 'Registration number',
+                        validation: 'Please enter your registration number!',
+                      ),
 
-                    // NOMERO ZA TELEPHONE
-                    const DefaultInput(
-                      placeholder: 'Names',
-                      validation: 'Please enter your names!',
-                    ),
+                      // NOMERO ZA TELEPHONE
+                      const DefaultInput(
+                        placeholder: 'Names',
+                        validation: 'Please enter your names!',
+                      ),
 
-                    // IJAMBOBANGA
-                    const DefaultInput(
-                      placeholder: 'Phone number',
-                      validation: 'Please enter your phone number!',
-                    ),
+                      // IJAMBOBANGA
+                      const DefaultInput(
+                        placeholder: 'Phone number',
+                        validation: 'Please enter your phone number!',
+                      ),
 
-                    // IJAMBOBANGA
-                    const DefaultInput(
-                      placeholder: 'Password',
-                      validation: 'Please enter your password!',
-                    ),
+                      // IJAMBOBANGA
+                      const DefaultInput(
+                        placeholder: 'Password',
+                        validation: 'Please enter your password!',
+                      ),
 
-                    // CTA BUTTON
-                    CtaButton(
-                      text: 'Register',
+                      // CTA BUTTON
+                      CtaButton(
+                        text: 'Register',
 
-                      // ON PRESSED
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          _formKey.currentState!.save();
-                          print('\nUR Student\n');
-                          // TODO: Send the form data or perform sign-in
-                        }
-                      },
-                    ),
+                        // ON PRESSED
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            print('\nUR Student\n');
+                            // TODO: Send the form data or perform sign-in
+                          }
+                        },
+                      ),
 
-                    // VERTICAL SPACE
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.08,
-                    ),
+                      // VERTICAL SPACE
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.002,
+                      ),
 
-                    // BISANZWE
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2C64C6),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24.0),
-                                )),
-                            onPressed: () async {
-                              Navigator.pushReplacementNamed(
-                                  context, '/iyandikishe');
-                            },
-                            child: const Text(
-                              'Iyandikishe bisanzwe',
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 255, 255, 255),
+                      // BISANZWE
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF2C64C6),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24.0),
+                                  )),
+                              onPressed: () async {
+                                Navigator.pushReplacementNamed(
+                                    context, '/iyandikishe');
+                              },
+                              child: const Text(
+                                'Iyandikishe bisanzwe',
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            // ANONYMOUS SIGN IN BUTTON
-            Container(
-              padding: const EdgeInsets.all(40.0),
+              // ANONYMOUS SIGN IN BUTTON
+              Container(
+                padding: const EdgeInsets.all(40.0),
 
-              // RAISED BUTTON
-              child: ElevatedButton(
-                onPressed: () async {
-                  // SIGN IN
-                  dynamic result = await _auth
-                      .signInAnon(); // DYNAMIC TYPE - CAN USER OR NULL
+                // RAISED BUTTON
+                child: ElevatedButton(
+                  onPressed: () async {
+                    // SIGN IN
+                    dynamic result = await _auth
+                        .signInAnon(); // DYNAMIC TYPE - CAN USER OR NULL
 
-                  if (result == null) {
-                    print('Error signing in');
-                  } else {
-                    print('Signed in');
-                    print(result.uid);
-                  }
-                },
-                child: const Text('Sign In Anonymously'),
+                    if (result == null) {
+                      print('Error signing in');
+                    } else {
+                      print('Signed in');
+                      print(result.uid);
+                    }
+                  },
+                  child: const Text('Sign In Anonymously'),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ));
   }
 }

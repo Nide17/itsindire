@@ -28,21 +28,10 @@ class _IkibazoButtonState extends State<IkibazoButton> {
 
   @override
   Widget build(BuildContext context) {
-    // // UPDATE THE QUESTION SCORE FOR THIS QUESTION
-    // // BUILD ScoreQuestion - final PopQuestionModel popQuestion, bool isAnswered, int optionChoiceID
-    // ScoreQuestion scoreQuestion = ScoreQuestion(
-    //   popQuestion: widget.popQuestion,
-    //   isAnswered: isAnswered,
-    //   optionChoiceID: -1,
-    // );
-
-    // // UPDATE THE SCORE OBJECT
-    // widget.scoreObject.updateQuestion(scoreQuestion);
 
     // RETURN THE BUTTON
     return Consumer<QuizScoreProvider>(
         builder: (context, scoreProviderModel, child) {
-          print(scoreProviderModel.quizScore.questions[widget.index].isAnswered);
       return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),

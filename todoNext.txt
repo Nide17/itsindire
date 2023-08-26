@@ -12,6 +12,12 @@
  - Make the score questions type List<ScoreQuestion> and options List<ScoreOption> ✅
  - On answer click,  ✅
  - Attempt the isuzuma on tap, save once per user per isuzuma, next attempt updates the score. ✅
- - On submit, show the score on another screen.
+ - On submit, show the score on another screen. ✅
 
- 4. Add a timer to the quiz.
+ 4. Add a timer to the quiz. ✅
+
+ - The authentication should be done using Firebase Auth. ✅
+ - Fix, when logged in, user name remains null.✅
+ - Style the selected price checkout ✅
+ - UR registration view
+ - Momo api

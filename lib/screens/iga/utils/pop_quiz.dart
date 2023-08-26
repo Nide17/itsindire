@@ -74,12 +74,12 @@ class _PopQuizState extends State<PopQuiz> {
         Container()
         : Scaffold(
             backgroundColor: const Color.fromARGB(255, 228, 225, 225),
+            
             // APP BAR
             appBar: PreferredSize(
-              preferredSize: MediaQuery.of(context).size * 0.07,
-              child: const AppBarTegura(),
+              preferredSize: const Size.fromHeight(58.0),
+              child: AppBarTegura(),
             ),
-
             // PAGE BODY
             body: SingleChildScrollView(
               child: Column(

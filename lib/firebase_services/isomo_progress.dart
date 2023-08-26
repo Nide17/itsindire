@@ -92,8 +92,6 @@ class CourseProgressService {
     // CHECK IF CURRENT COURSE ID IS NULL, IF IT IS, RETURN NULL
     if (courseId == null || courseId == 0) return null;
 
-    // print('${courseId}_$uid'); // '1_1
-
     // GET ONE USER progress ON A COURSE FROM FIRESTORE AS A STREAM OF DOCUMENT SNAPSHOT
     return progressCollection
         .doc('${courseId}_$uid')

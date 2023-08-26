@@ -20,25 +20,20 @@ class _BazaState extends State<Baza> {
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
-    final usr = Provider.of<UserModel?>(context);
-    // const usr = null;
-    // if (kDebugMode) {
-    //   print(usr?.uid);
-    // }
 
     return Scaffold(
         backgroundColor: const Color(0xFF5B8BDF),
 
         // APP BAR
-        appBar: PreferredSize(
-          preferredSize: MediaQuery.of(context).size * 0.07,
-          child: const AppBarTegura(),
+        appBar: const PreferredSize(
+          preferredSize: Size.fromHeight(58.0),
+          child: AppBarTegura(),
         ),
-
+        
         // PAGE BODY
         body: ListView(children: <Widget>[
           // 1. GRADIENT TITLE
-          GradientTitle(
+          const GradientTitle(
               title: 'BAZA MWARIMU', icon: 'assets/images/ibibazo_bibaza.svg'),
 
           // 2. DESCRIPTION

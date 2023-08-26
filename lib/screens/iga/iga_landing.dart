@@ -46,11 +46,11 @@ class _IgaLandingState extends State<IgaLanding> {
           backgroundColor: const Color(0xFF5B8BDF),
 
           // APP BAR
-          appBar: PreferredSize(
-            preferredSize: MediaQuery.of(context).size * 0.07,
-            child: const AppBarTegura(),
+          appBar: const PreferredSize(
+            preferredSize: Size.fromHeight(58.0),
+            child: AppBarTegura(),
           ),
-
+          
           // PAGE BODY
           body: ListView(
             // CHILDREN OF THE COLUMN WIDGET

@@ -47,7 +47,10 @@ class _AmasuzumabumenyiState extends State<Amasuzumabumenyi> {
         // SCORES BY USER
         StreamProvider<List<IsuzumaScoreModel>?>.value(
           // WHAT TO GIVE TO THE CHILDREN WIDGETS
-          value: IsuzumaScoreService().getScoresByTakerID(usr!.uid),
+          value: usr != null
+              ? IsuzumaScoreService().getScoresByTakerID(usr.uid)
+              : IsuzumaScoreService().amasuzumabumenyiScores,
+
           initialData: null,
 
           // CATCH ERRORS
@@ -56,7 +59,7 @@ class _AmasuzumabumenyiState extends State<Amasuzumabumenyi> {
             if (kDebugMode) {
               print("Error amasuzumabumenyi: $error");
               print(
-                  "The err: ${IsuzumaScoreService().getScoresByTakerID(usr.uid)}");
+                  "The err: ${IsuzumaScoreService().getScoresByTakerID(usr!.uid)}");
             }
             // RETURN NULL
             return null;
@@ -65,11 +68,9 @@ class _AmasuzumabumenyiState extends State<Amasuzumabumenyi> {
       ],
       child: Consumer<List<IsuzumaModel>?>(
           builder: (context, amasuzumabumenyi, _) {
-        // print("The amasuzumabumenyi: $amasuzumabumenyi");
 
         return Consumer<List<IsuzumaScoreModel>?>(
             builder: (context, amaUserScores, _) {
-          // print("The Isuzuma scores: $amaUserScores");
 
           if (amaUserScores == null) {
             return const Center(child: CircularProgressIndicator());
@@ -78,9 +79,9 @@ class _AmasuzumabumenyiState extends State<Amasuzumabumenyi> {
               backgroundColor: const Color(0xFF5B8BDF),
 
               // APP BAR
-              appBar: PreferredSize(
-                preferredSize: MediaQuery.of(context).size * 0.07,
-                child: const AppBarTegura(),
+              appBar: const PreferredSize(
+                preferredSize: Size.fromHeight(58.0),
+                child: AppBarTegura(),
               ),
 
               // PAGE BODY

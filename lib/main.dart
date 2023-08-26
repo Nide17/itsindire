@@ -41,8 +41,11 @@ class TeguraApp extends StatelessWidget {
         // PROVIDE FIREBASE FIRESTORE INSTANCE - DB REFERENCE TO PROFILES COLLECTION
         StreamProvider<ProfileModel?>.value(
           // WHAT TO GIVE TO THE CHILDREN WIDGETS
-          value: ProfileService()
-              .getCurrentProfile(FirebaseAuth.instance.currentUser?.uid),
+          value: FirebaseAuth.instance.currentUser != null
+              ? ProfileService()
+                  .getCurrentProfile(FirebaseAuth.instance.currentUser!.uid)
+              : null,
+
           initialData: null,
 
           // CATCH ERRORS
@@ -51,7 +54,7 @@ class TeguraApp extends StatelessWidget {
             if (kDebugMode) {
               print("Error in main2 user: $error");
               print(
-                  "The err: ${ProfileService().getCurrentProfile(FirebaseAuth.instance.currentUser?.uid)}");
+                  "The err: ${FirebaseAuth.instance.currentUser != null ? ProfileService().getCurrentProfile(FirebaseAuth.instance.currentUser!.uid) : null}");
             }
             // RETURN NULL
             return null;
@@ -101,8 +104,6 @@ class TeguraApp extends StatelessWidget {
               .getUserProgresses(FirebaseAuth.instance.currentUser?.uid),
           initialData: null,
 
-          // TO ACCESS THE LIST OF PROGRESSES, WE USE
-
           // CATCH ERRORS
           catchError: (context, error) {
             // PRINT THE ERROR
@@ -121,9 +122,7 @@ class TeguraApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
 
         // APP THEME
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+        theme: ThemeData(primarySwatch: Colors.blue),
 
         // HOME PAGE - LOADING FIRST
         home: const LoadingLightning(),
