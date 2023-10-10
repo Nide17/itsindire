@@ -63,7 +63,7 @@ class IsuzumaQuestion {
   String ingingoID;
   String isomoID;
   String? title;
-  String? image;
+  String? imageUrl;
   List<IsuzumaOption> options;
 
   IsuzumaQuestion({
@@ -71,7 +71,7 @@ class IsuzumaQuestion {
     required this.ingingoID,
     required this.isomoID,
     this.title,
-    this.image,
+    this.imageUrl,
     required this.options,
   });
 
@@ -81,7 +81,7 @@ class IsuzumaQuestion {
         ingingoID = json['ingingoID'],
         isomoID = json['isomoID'],
         title = json['title'],
-        image = json['image'],
+        imageUrl = json['imageUrl'],
         options = (json['options'] as List<dynamic>)
             .map((optionJson) => IsuzumaOption.fromJson(optionJson))
             .toList();
@@ -93,7 +93,7 @@ class IsuzumaQuestion {
       'ingingoID': ingingoID,
       'isomoID': isomoID,
       'title': title,
-      'image': image,
+      'imageUrl': imageUrl,
       'options': options,
     };
   }
@@ -101,7 +101,7 @@ class IsuzumaQuestion {
   // TO STRING
   @override
   String toString() {
-    return 'Question(id: $id, ingingoID: $ingingoID, isomoID: $isomoID, title: $title, image: $image, options: $options)';
+    return 'Question(id: $id, ingingoID: $ingingoID, isomoID: $isomoID, title: $title, imageUrl: $imageUrl, options: $options)';
   }
 
   // TO OBJECT
@@ -111,7 +111,7 @@ class IsuzumaQuestion {
       ingingoID: map['ingingoID'],
       isomoID: map['isomoID'],
       title: map['title'],
-      image: map['image'],
+      imageUrl: map['imageUrl'],
       options: map['options'],
     );
   }
@@ -120,14 +120,14 @@ class IsuzumaQuestion {
 class IsuzumaOption {
   int id;
   String? text;
-  String? image;
+  String? imageUrl;
   bool isCorrect;
   String? explanation;
 
   IsuzumaOption({
     required this.id,
     this.text,
-    this.image,
+    this.imageUrl,
     required this.isCorrect,
     this.explanation,
   });
@@ -136,7 +136,7 @@ class IsuzumaOption {
   IsuzumaOption.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         text = json['text'],
-        image = json['image'],
+        imageUrl = json['imageUrl'],
         isCorrect = json['isCorrect'],
         explanation = json['explanation'];
 
@@ -145,7 +145,7 @@ class IsuzumaOption {
     return {
       'id': id,
       'text': text,
-      'image': image,
+      'imageUrl': imageUrl,
       'isCorrect': isCorrect,
       'explanation': explanation,
     };
@@ -154,7 +154,7 @@ class IsuzumaOption {
   // TO STRING
   @override
   String toString() {
-    return 'Option(id: $id, text: $text, image: $image, isCorrect: $isCorrect, explanation: $explanation)';
+    return 'Option(id: $id, text: $text, imageUrl: $imageUrl, isCorrect: $isCorrect, explanation: $explanation)';
   }
 
   // TO OBJECT
@@ -162,7 +162,7 @@ class IsuzumaOption {
     return IsuzumaOption(
       id: map['id'],
       text: map['text'],
-      image: map['image'],
+      imageUrl: map['imageUrl'],
       isCorrect: map['isCorrect'],
       explanation: map['explanation'],
     );

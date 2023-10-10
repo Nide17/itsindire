@@ -61,14 +61,18 @@ class IsomoService {
       // GET THE AMASOMO DOCUMENT FROM FIRESTORE
       final amasomoDocument = await amasomoCollection.doc(id).get();
 
-      // GET THE DATA FROM THE DOCUMENT SNAPSHOT
-      final data = amasomoDocument.data() as Map<String, dynamic>;
+      if (amasomoDocument.exists) {
+        // GET THE DATA FROM THE DOCUMENT SNAPSHOT
+        final data = amasomoDocument.data() as Map<String, dynamic>;
 
-      // CHECK IF THE FIELDS EXISTS BEFORE ASSIGNING IT TO THE VARIABLE
-      final title = data.containsKey('title') ? data['title'] : '';
+        // CHECK IF THE FIELDS EXISTS BEFORE ASSIGNING IT TO THE VARIABLE
+        final title = data.containsKey('title') ? data['title'] : '';
 
-      // ADD THE TITLE TO THE LIST OF AMASOMO TITLES
-      amasomoTitles.add(title);
+        // ADD THE TITLE TO THE LIST OF AMASOMO TITLES
+        amasomoTitles.add(title);
+      } else {
+        print('\nAmasomo document does not exist\n');
+      }
     }
 
     // RETURN THE LIST OF AMASOMO TITLES

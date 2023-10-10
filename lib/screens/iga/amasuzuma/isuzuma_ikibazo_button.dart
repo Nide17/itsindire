@@ -33,32 +33,29 @@ class _IsuzumaIkibazoButtonState extends State<IsuzumaIkibazoButton> {
       // RETURN THE BUTTON
       return Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(8.0),
         ),
-        width: MediaQuery.of(context).size.width * 0.22,
+        width: MediaQuery.of(context).size.width * 0.21,
+        height: MediaQuery.of(context).size.height * 0.038,
+        margin: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.004,),
         child: ElevatedButton(
           onPressed: () {
             widget.isActive ? null : widget.showQn(widget.qnIndex);
           },
           style: ElevatedButton.styleFrom(
-            fixedSize: Size(
-              MediaQuery.of(context).size.width * 0.3,
-              MediaQuery.of(context).size.height * 0.0,
-            ),
             backgroundColor: calculateBackgroundColor(
                 currentQn, widget.isReviewing, widget.isActive),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(6.0),
             ),
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+            padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.004,),
           ),
-          child: SingleChildScrollView(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Align(
+                child: Text(
                   'Ikibazo ${widget.qnIndex}',
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -67,8 +64,8 @@ class _IsuzumaIkibazoButtonState extends State<IsuzumaIkibazoButton> {
                           ? Colors.white
                           : Colors.black),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       );

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -98,7 +97,6 @@ class _TeguraAppState extends State<TeguraApp> {
   // BUILD METHOD
   @override
   Widget build(BuildContext context) {
-    // print("_isOnline: $_isOnline");
     // RETURN THE APP
     return MultiProvider(
       providers: [
@@ -162,7 +160,7 @@ class _TeguraAppState extends State<TeguraApp> {
                   "The err: ${IsomoService().getAllAmasomo(FirebaseAuth.instance.currentUser?.uid)}");
             }
             // RETURN NULL
-            return null;
+            return [];
           },
         ),
 
@@ -181,7 +179,7 @@ class _TeguraAppState extends State<TeguraApp> {
                   "The err: ${CourseProgressService().getUserProgresses(FirebaseAuth.instance.currentUser?.uid)}");
             }
             // RETURN NULL
-            return null;
+            return [];
           },
         ),
       ],
@@ -199,8 +197,6 @@ class _TeguraAppState extends State<TeguraApp> {
         routes: {
           '/iga-landing': (context) => const IgaLanding(),
           '/ibiciro': (context) => const Ibiciro(),
-
-          // '/injira': (context) => AuthService().usr == null ? const Auth() : const Auth(),
           '/injira': (context) => const Injira(),
           '/iyandikishe': (context) => const Iyandikishe(),
           '/ur-student': (context) => const UrStudent(),

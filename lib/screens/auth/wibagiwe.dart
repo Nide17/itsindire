@@ -17,12 +17,20 @@ class Wibagiwe extends StatefulWidget {
 // STATE FOR THE SIGN IN PAGE - STATEFUL
 class _WibagiweState extends State<Wibagiwe> {
   // AUTH SERVICE INSTANCE
-  final AuthService _auth = AuthService();
+  final AuthService _authInstance = AuthService();
   final _formKey = GlobalKey<FormState>();
+  String email = '';
+  String output = '';
 
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
+
+    // IF THE USER IS LOGGED IN, POP THE CURRENT PAGE
+    if (_authInstance.currentUser() != null) {
+      Navigator.popUntil(context, (route) => route.isFirst);
+    }
+
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 71, 103, 158),
 
@@ -75,10 +83,14 @@ class _WibagiweState extends State<Wibagiwe> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // NOMERO ZA TELEPHONE
-                      const DefaultInput(
-                        placeholder: 'Nomero za telefone',
-                        validation: 'Injiza numero za telefone!',
+                      // EMAIL INPUT
+                      DefaultInput(
+                        placeholder: 'Imeyili',
+                        validation: 'Injiza imeyili yawe hano!',
+                        // ON CHANGED
+                        onChanged: (val) {
+                          setState(() => email = val);
+                        },
                       ),
 
                       // CTA BUTTON
@@ -89,7 +101,35 @@ class _WibagiweState extends State<Wibagiwe> {
                         onPressed: () async {
                           // VALIDATE FORM
                           if (_formKey.currentState!.validate()) {
-                            print('Validated');
+                            dynamic resetResult =
+                                await _authInstance.resetPassword(email);
+
+                            if (resetResult == null) {
+                              setState(() {
+                                output = 'Ntibigenze neza, rebako imeyili ariyo!';
+                              });
+                            } else {
+                              setState(() {
+                                output =
+                                    'Reba amabwiriza kuri email yawe, ubundi winjire!';
+                              });
+
+                              // GO TO SIGN IN PAGE
+                              if (context.mounted) {
+                                Navigator.pushNamed(context, '/injira');
+                              }
+                            }
+
+                            // SHOW SNACKBAR IF OUTPUT IS NOT EMPTY
+                            if (output.isNotEmpty && context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(output),
+                                  duration: const Duration(seconds: 10),
+                                  backgroundColor: const Color(0xFFFFBD59),
+                                ),
+                              );
+                            }
                           } else {
                             print('Not validated');
                           }
@@ -102,7 +142,7 @@ class _WibagiweState extends State<Wibagiwe> {
                       ),
 
                       // CTA LINK
-                      const CtaLink(
+                      const CtaAuthLink(
                         text1: 'Niba wariyandikishije, ',
                         text2: 'injira',
                         color1: Color.fromARGB(255, 255, 255, 255),
@@ -116,7 +156,7 @@ class _WibagiweState extends State<Wibagiwe> {
                       ),
 
                       // CTA LINK
-                      const CtaLink(
+                      const CtaAuthLink(
                         text1: 'Niba utariyandikisha, ',
                         color1: Color.fromARGB(255, 0, 27, 116),
                         color2: Color.fromARGB(255, 255, 255, 255),
@@ -125,28 +165,6 @@ class _WibagiweState extends State<Wibagiwe> {
                       ),
                     ],
                   ),
-                ),
-              ),
-
-              // ANONYMOUS SIGN IN BUTTON
-              Container(
-                padding: const EdgeInsets.all(40.0),
-
-                // RAISED BUTTON
-                child: ElevatedButton(
-                  onPressed: () async {
-                    // SIGN IN
-                    dynamic result = await _auth
-                        .signInAnon(); // DYNAMIC TYPE - CAN USER OR NULL
-
-                    if (result == null) {
-                      print('Error signing in');
-                    } else {
-                      print('Signed in');
-                      print(result.uid);
-                    }
-                  },
-                  child: const Text('Sign In Anonymously'),
                 ),
               ),
             ],

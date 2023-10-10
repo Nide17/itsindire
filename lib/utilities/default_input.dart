@@ -47,9 +47,9 @@ class DefaultInput extends StatelessWidget {
   }
 
   // VALIDATION - EMPTY
-  static String? _validateEmpty(String? value) {
+  String? _validateEmpty(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Uzuza hano!';
+      return validation;
     }
     return null;
   }

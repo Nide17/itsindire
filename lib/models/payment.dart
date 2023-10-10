@@ -26,7 +26,7 @@ class PaymentModel {
     int diff = endAt.difference(now).inDays;
 
     // RETURN THE DIFFERENCE
-    return diff;
+    return diff + 1;
   }
 
   // GET FORMATED END DATE - 2021-09-30

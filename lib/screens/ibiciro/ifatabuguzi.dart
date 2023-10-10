@@ -172,8 +172,8 @@ class Ifatabuguzi extends StatelessWidget {
                                       ),
                                     ],
                                   )
-                                : Row(
-                                    children: const [],
+                                : const Row(
+                                    children: [],
                                   )
                           ],
                         ),

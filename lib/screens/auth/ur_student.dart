@@ -30,6 +30,12 @@ class _UrStudentState extends State<UrStudent> {
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
+    
+    // IF THE USER IS LOGGED IN, POP THE CURRENT PAGE
+    if (_authInstance.currentUser() != null) {
+      Navigator.pop(context);
+    }
+    
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 71, 103, 158),
 
@@ -264,28 +270,6 @@ class _UrStudentState extends State<UrStudent> {
                       ),
                     ],
                   ),
-                ),
-              ),
-
-              // ANONYMOUS SIGN IN BUTTON
-              Container(
-                padding: const EdgeInsets.all(40.0),
-
-                // RAISED BUTTON
-                child: ElevatedButton(
-                  onPressed: () async {
-                    // SIGN IN
-                    dynamic result = await _authInstance
-                        .signInAnon(); // DYNAMIC TYPE - CAN USER OR NULL
-
-                    if (result == null) {
-                      print('Error signing in');
-                    } else {
-                      print('Signed in');
-                      print(result.uid);
-                    }
-                  },
-                  child: const Text('Sign In Anonymously'),
                 ),
               ),
             ],

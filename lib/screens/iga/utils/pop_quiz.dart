@@ -33,23 +33,24 @@ class _PopQuizState extends State<PopQuiz> {
   Widget build(BuildContext context) {
     // CALLBACK FOR FORWARD BUTTON
     void forward() {
-      if (currQnID >= widget.popQuestions.length - 1) {
-      } else {
-        setState(() {
+      setState(() {
+
+        // INCREASE THE CURRENT QUESTION ID BY 1 IF NOT THE LAST QUESTION
+        if (currQnID < widget.popQuestions.length) {
           currQnID = currQnID + 1;
+        }
 
-          // RESET THE SELECTED OPTION
-          selectedOption = 0;
+        // RESET THE SELECTED OPTION
+        selectedOption = 0;
 
-          // RESET THE CORRECTNESS OF THE ANSWER
-          isCurrentCorrect = false;
+        // RESET THE CORRECTNESS OF THE ANSWER
+        isCurrentCorrect = false;
 
-          // UPDATE THE SKIP VALUE IN THE PARENT WIDGET (IGA_CONTENT) IF THE USER IS ON THE LAST QUESTION
-          if (currQnID == widget.popQuestions.length - 1) {
-            widget.courseChangeSkip(5);
-          }
-        });
-      }
+        // UPDATE THE SKIP VALUE IN THE PARENT WIDGET (IGA_CONTENT) IF THE USER IS ON THE LAST QUESTION
+        if (currQnID == widget.popQuestions.length) {
+          widget.courseChangeSkip(5);
+        }
+      });
     }
 
     // CALLBACK FOR BACKWARD BUTTON
@@ -68,13 +69,10 @@ class _PopQuizState extends State<PopQuiz> {
       }
     }
 
-    return !(currQnID < 1 || (currQnID >= widget.popQuestions.length - 1))
-        ?
-        // EMPTY WIDGET
-        Container()
-        : Scaffold(
+    return currQnID >= 0 && currQnID < widget.popQuestions.length
+        ? Scaffold(
             backgroundColor: const Color.fromARGB(255, 228, 225, 225),
-            
+
             // APP BAR
             appBar: const PreferredSize(
               preferredSize: Size.fromHeight(58.0),
@@ -101,12 +99,49 @@ class _PopQuizState extends State<PopQuiz> {
                       children: [
                         // 1. QUESTION TITLE
                         Text(
-                          widget.popQuestions[currQnID].title,
+                          widget.popQuestions[currQnID].title ?? '',
                           style: const TextStyle(
                             fontSize: 18.0,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+
+                        // DISPLAY NETWORK IMAGE IF ANY
+                        widget.popQuestions[currQnID].imageUrl == null ||
+                                widget.popQuestions[currQnID].imageUrl == ''
+                            ? const SizedBox.shrink()
+                            : SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.4,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4.0),
+                                  margin: const EdgeInsets.only(top: 10.0),
+                                  decoration: const BoxDecoration(
+                                    color: Color.fromARGB(255, 255, 255, 255),
+                                    border: Border.fromBorderSide(
+                                      BorderSide(
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                        width: 1,
+                                        style: BorderStyle.solid,
+                                      ),
+                                    ),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10.0)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                        offset: Offset(0, 1),
+                                        blurRadius: 1,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Image.network(
+                                    widget.popQuestions[currQnID].imageUrl!,
+                                    width:
+                                        MediaQuery.of(context).size.width * 1,
+                                  ),
+                                ),
+                              ),
+
                         const SizedBox(height: 10.0),
                         Column(
                           children: widget.popQuestions[currQnID].options
@@ -179,6 +214,7 @@ class _PopQuizState extends State<PopQuiz> {
                 ],
               ),
             ),
-          );
+          )
+        : const SizedBox.shrink();
   }
 }

@@ -7,19 +7,18 @@ import 'package:tegura/models/isuzuma_score.dart';
 import 'package:tegura/models/payment.dart';
 import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/auth/injira.dart';
-import 'package:tegura/screens/auth/iyandikishe.dart';
 import 'package:tegura/screens/iga/amasuzuma/amanota.dart';
 import 'package:tegura/screens/iga/amasuzuma/isuzuma_overview.dart';
 import 'package:tegura/utilities/spinner.dart';
 
 class AmasuzumaCard extends StatefulWidget {
   final IsuzumaModel isuzuma;
-  final List<IsuzumaScoreModel>? amaUserScores;
+  final IsuzumaScoreModel? userScore;
 
   const AmasuzumaCard({
     Key? key,
     required this.isuzuma,
-    required this.amaUserScores,
+    this.userScore,
   }) : super(key: key);
 
   @override
@@ -68,13 +67,6 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
   Widget build(BuildContext context) {
     final usr = Provider.of<UserModel?>(context);
 
-    // FIND A SCORE WHERE THE TAKER ID IS THE CURRENT USER ID AND THE ISUZUMA ID IS THE CURRENT ISUZUMA ID
-    final scoreUserIsuzuma = (usr != null && widget.amaUserScores!.isNotEmpty)
-        ? widget.amaUserScores!.firstWhere((element) =>
-            element.takerID == usr.uid &&
-            element.isuzumaID == widget.isuzuma.id)
-        : null;
-
     return loading
         ? const Spinner()
         : Column(
@@ -99,7 +91,7 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
                                   MaterialPageRoute(
                                       builder: (context) => IsuzumaOverview(
                                           isuzuma: widget.isuzuma,
-                                          scoreUserIsuzuma: scoreUserIsuzuma)),
+                                          scoreUserIsuzuma: widget.userScore)),
                                 )
                               :
                               // SHOW ALERT DIALOG
@@ -177,10 +169,14 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
                       ),
                     ),
                   ),
-                  scoreUserIsuzuma != null
+                  widget.userScore != null
                       ? Amanota(
-                          score: scoreUserIsuzuma.marks,
-                          maxScore: scoreUserIsuzuma.totalMarks,
+                          score: widget.userScore != null
+                              ? widget.userScore!.marks
+                              : 0,
+                          maxScore: widget.userScore != null
+                              ? widget.userScore!.totalMarks
+                              : 0,
                         )
                       : const Text(
                           'Nturarikora!',

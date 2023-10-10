@@ -118,8 +118,8 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
                       children: [
                         // IJAMBOBANGA
                         DefaultInput(
-                          placeholder: 'Your phone number',
-                          validation: 'Please provide your phone number first!',
+                          placeholder: 'Telefone yawe',
+                          validation: 'Injiza numero ya telefone yawe!',
 
                           // ON CHANGED
                           onChanged: (value) {
@@ -277,7 +277,7 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
                       Text(
                         widget.ifatabuguzi.type == 'ur'
                             ? 'You will be allowed to start studying once your payment is confirmed!'
-                            : 'Urahita wemererwa gutangira kwiga aka kanya!',
+                            : 'Urahita wemererwa gutangira kwiga!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.04,

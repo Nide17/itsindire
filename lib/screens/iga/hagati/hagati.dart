@@ -44,7 +44,7 @@ class _HagatiState extends State<Hagati> {
                 print("The err: ${IsomoService().getAllAmasomo(usr?.uid)}");
               }
               // RETURN NULL
-              return null;
+              return [];
             },
           ),
 
@@ -62,7 +62,7 @@ class _HagatiState extends State<Hagati> {
                     "The err: ${CourseProgressService().getUserProgresses(usr?.uid)}");
               }
               // RETURN NULL
-              return null;
+              return [];
             },
           ),
         ],

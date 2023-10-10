@@ -31,6 +31,7 @@ class _IyandikisheState extends State<Iyandikishe> {
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
+    
     // IF THE USER IS LOGGED IN, POP THE CURRENT PAGE
     if (_authInstance.currentUser() != null) {
       Navigator.pop(context);
@@ -210,7 +211,6 @@ class _IyandikisheState extends State<Iyandikishe> {
 
                               // REDIRECT TO LOGIN PAGE AFTER SUCCESSFUL REGISTRATION
                               if (!mounted) return;
-
                               Navigator.pushReplacementNamed(
                                   context, '/injira');
                             }
@@ -219,7 +219,7 @@ class _IyandikisheState extends State<Iyandikishe> {
                       ),
 
                       // CTA LINK
-                      const CtaLink(
+                      const CtaAuthLink(
                         text1: 'Niba wariyandikishije, ',
                         text2: 'injira',
                         color1: Color.fromARGB(255, 255, 255, 255),

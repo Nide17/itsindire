@@ -15,7 +15,8 @@ import 'package:tegura/firebase_services/auth.dart';
 class Injira extends StatefulWidget {
   final String? message;
   final ConnectionStatus? connectionStatus;
-  const Injira({Key? key, this.message, this.connectionStatus}) : super(key: key);
+  const Injira({Key? key, this.message, this.connectionStatus})
+      : super(key: key);
 
   @override
   State<Injira> createState() => _InjiraState();
@@ -50,6 +51,12 @@ class _InjiraState extends State<Injira> {
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
+
+    // IF THE USER IS LOGGED IN, POP THE CURRENT PAGE
+    if (_authInstance.currentUser() != null) {
+      Navigator.pop(context);
+    }
+
     return loading
         ? const Spinner()
         : Scaffold(
@@ -136,7 +143,7 @@ class _InjiraState extends State<Injira> {
                         ),
                       ]),
 
-// FORM
+                  // FORM
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: MediaQuery.of(context).size.width * 0.05,
@@ -239,9 +246,9 @@ class _InjiraState extends State<Injira> {
                           ),
 
                           // CTA LINK
-                          const CtaLink(
+                          const CtaAuthLink(
                             text1: 'Wibagiwe ijambobanga? ',
-                            text2: 'hindura',
+                            text2: 'Risabe',
                             color1: Color.fromARGB(255, 255, 255, 255),
                             color2: Color.fromARGB(255, 0, 27, 116),
                             route: '/wibagiwe',
@@ -253,7 +260,7 @@ class _InjiraState extends State<Injira> {
                           ),
 
                           // CTA LINK
-                          const CtaLink(
+                          const CtaAuthLink(
                             text1: 'Niba utariyandikisha, ',
                             color1: Color.fromARGB(255, 0, 27, 116),
                             color2: Color.fromARGB(255, 255, 255, 255),
@@ -265,25 +272,25 @@ class _InjiraState extends State<Injira> {
                     ),
                   ),
 
-                  // ANONYMOUS SIGN IN BUTTON
-                  Container(
-                    padding: const EdgeInsets.all(40.0),
+                  // // ANONYMOUS SIGN IN BUTTON
+                  // Container(
+                  //   padding: const EdgeInsets.all(40.0),
 
-                    // RAISED BUTTON
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        // SIGN IN ANONYMOUSLY USING THE AUTH SERVICE INSTANCE - AUTH CLASS
-                        dynamic result = await _authInstance
-                            .signInAnon(); // DYNAMIC TYPE - CAN BE USER OR NULL
+                  //   // RAISED BUTTON
+                  //   child: ElevatedButton(
+                  //     onPressed: () async {
+                  //       // SIGN IN ANONYMOUSLY USING THE AUTH SERVICE INSTANCE - AUTH CLASS
+                  //       dynamic result = await _authInstance
+                  //           .signInAnon(); // DYNAMIC TYPE - CAN BE USER OR NULL
 
-                        if (result == null) {
-                        } else {
-                          print(result.uid);
-                        }
-                      },
-                      child: const Text('Sign In Anonymously'),
-                    ),
-                  ),
+                  //       if (result == null) {
+                  //       } else {
+                  //         print(result.uid);
+                  //       }
+                  //     },
+                  //     child: const Text('Sign In Anonymously'),
+                  //   ),
+                  // ),
                 ],
               ),
             ));

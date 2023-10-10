@@ -1,14 +1,15 @@
-
 class OptionPopQn {
   int id = 0;
   bool isCorrect = false;
-  String title = '';
+  String? title = '';
+  String? imageUrl = '';
   String? description = '';
 
   OptionPopQn({
     required this.id,
     required this.isCorrect,
-    required this.title,
+    this.title,
+    this.imageUrl,
     this.description,
   });
 
@@ -16,6 +17,7 @@ class OptionPopQn {
     id = json['id'];
     isCorrect = json['isCorrect'];
     title = json['title'];
+    imageUrl = json['imageUrl'];
     description = json['description'];
   }
 
@@ -24,13 +26,14 @@ class OptionPopQn {
       'id': id,
       'isCorrect': isCorrect,
       'title': title,
+      'imageUrl': imageUrl,
       'description': description,
     };
   }
 
   @override
   String toString() {
-    return 'OptionPopQn(id: $id, isCorrect: $isCorrect, title: $title, description: $description)';
+    return 'OptionPopQn(id: $id, isCorrect: $isCorrect, title: $title, imageUrl: $imageUrl, description: $description)';
   }
 
   OptionPopQn toObject(Map<String, dynamic> map) {
@@ -38,6 +41,7 @@ class OptionPopQn {
       id: map['id'],
       isCorrect: map['isCorrect'],
       title: map['title'],
+      imageUrl: map['imageUrl'],
       description: map['description'],
     );
   }
@@ -48,7 +52,8 @@ class PopQuestionModel {
   String id = '';
   int ingingoID = 0;
   int isomoID = 0;
-  String title = '';
+  String? title = '';
+  String? imageUrl = '';
   dynamic options = '';
 
   // CONSTRUCTOR
@@ -56,7 +61,8 @@ class PopQuestionModel {
     required this.id,
     required this.ingingoID,
     required this.isomoID,
-    required this.title,
+    this.title,
+    this.imageUrl,
     required this.options,
   });
 
@@ -66,10 +72,11 @@ class PopQuestionModel {
     ingingoID = json['ingingoID'];
     isomoID = json['isomoID'];
     title = json['title'];
+    imageUrl = json['imageUrl'];
     options = json['options'];
   }
-  
-  int getCorrectOptionId () {
+
+  int getCorrectOptionId() {
     int correctOptionId = -1;
     for (var i = 0; i < options.length; i++) {
       if (options[i]['isCorrect'] == true) {
@@ -86,6 +93,7 @@ class PopQuestionModel {
       'ingingoID': ingingoID,
       'isomoID': isomoID,
       'title': title,
+      'imageUrl': imageUrl,
       'options': options,
     };
   }
@@ -93,7 +101,7 @@ class PopQuestionModel {
   // TO STRING
   @override
   String toString() {
-    return 'PopQuestionModel(id: $id, ingingoID: $ingingoID, isomoID: $isomoID, title: $title, options: $options)';
+    return 'PopQuestionModel(id: $id, ingingoID: $ingingoID, isomoID: $isomoID, title: $title, imageUrl: $imageUrl, options: $options)';
   }
 
   // TO OBJECT
@@ -103,6 +111,7 @@ class PopQuestionModel {
       ingingoID: map['ingingoID'],
       isomoID: map['isomoID'],
       title: map['title'],
+      imageUrl: map['imageUrl'],
       options: map['options'],
     );
   }

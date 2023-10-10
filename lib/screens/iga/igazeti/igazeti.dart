@@ -1,7 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
 import 'package:tegura/screens/iga/utils/gradient_title.dart';
 import 'package:tegura/screens/iga/igazeti/igazeti_book.dart';
@@ -44,10 +41,10 @@ class _IgazetiState extends State<Igazeti> {
           ),
 
           // CARDS ROW FOR IGAZETI, AND IBYAPA - FLEX 50%
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
+            children: [
               IgaCard(
                 title: 'IGAZETI',
                 icon: 'assets/images/igazeti_book.png',
@@ -66,10 +63,10 @@ class _IgazetiState extends State<Igazeti> {
             height: MediaQuery.of(context).size.height * 0.04,
           ),
           // CARDS ROW FOR IMIRONGO, AND IBIMURIKA - FLEX 50%
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
+            children: [
               IgaCard(
                 title: 'IMIRONGO YO MUMUHANDA',
                 icon: 'assets/images/imirongo.png',

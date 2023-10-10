@@ -22,11 +22,20 @@
  - UR registration view ✅
  - Momo api ✅
  - use http package to query momo api ✅
- 
- - Refer to profile and user models classes for ChangeNotifier usage in other areas for updating the UI.
  - Wrong name on new user login without closing and reopening the app. ✅
+ - Reduce buttons size for quiz taking screen. ✅
+ - Images on review ??? ✅
+ - Amasuzumabumenyi yose. ✅
+ - Getting wrong number of pop questions on direction_button to be used in PopQuiz widget. ✅
+ - Pop quiz with one question not able to go to next page of the isomo. ✅
+ - Show bottom prev and next buttons when at least one choice is selected. ✅
  - No network connection, show error message.
  - Password reset.
  - App icon
  - Back buttons when finished with quiz.
  - Reset the timer when quiz finished.
+ - Qns image
+ - Refer to profile and user models classes for ChangeNotifier usage in other areas for updating the UI.
+
+- On back button: are you sure you want to quit the quiz?
+- Serve paid only ✅

@@ -129,27 +129,27 @@ class _ContentDetailsState extends State<ContentDetails> {
                                   color: Colors.green),
                             ),
 
-                          // IF THE COURSE HAS BEEN COMPLETED, MAKE A RESET BUTTON
-                          if (index == 0 && currProgress == totalIngs)
-                            ElevatedButton(
-                              onPressed: () {
-                                CourseProgressService()
-                                    .updateUserCourseProgress(
-                                  courseProgress != null
-                                      ? courseProgress.userId
-                                      : widget.userID ?? '',
-                                  courseProgress != null
-                                      ? courseProgress.courseId
-                                      : 0,
-                                  totalIngs,
-                                  0,
-                                );
+                          // // IF THE COURSE HAS BEEN COMPLETED, MAKE A RESET BUTTON
+                          // if (index == 0 && currProgress == totalIngs)
+                          //   ElevatedButton(
+                          //     onPressed: () {
+                          //       CourseProgressService()
+                          //           .updateUserCourseProgress(
+                          //         courseProgress != null
+                          //             ? courseProgress.userId
+                          //             : widget.userID ?? '',
+                          //         courseProgress != null
+                          //             ? courseProgress.courseId
+                          //             : 0,
+                          //         totalIngs,
+                          //         0,
+                          //       );
 
-                                // GO BACK TO THE COURSE PAGE
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Ongera uritangire!'),
-                            ),
+                          //       // GO BACK TO THE COURSE PAGE
+                          //       Navigator.pop(context);
+                          //     },
+                          //     child: const Text('Ongera utangire iri somo!'),
+                          //   ),
 
                           if (index == 0 && currProgress == totalIngs)
                             const SizedBox(height: 10.0),

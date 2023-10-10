@@ -205,8 +205,8 @@ class Subscription extends StatelessWidget {
                                       ),
                                     ],
                                   )
-                                : Row(
-                                    children: const [],
+                                : const Row(
+                                    children: [],
                                   )
                           ],
                         ),

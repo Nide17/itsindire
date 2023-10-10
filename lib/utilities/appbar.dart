@@ -66,6 +66,7 @@ class _AppBarTeguraState extends State<AppBarTegura> {
         ),
       ],
       child: Consumer<PaymentModel?>(builder: (context, payment, _) {
+        
         return Consumer<ProfileModel?>(builder: (context, profile, _) {
           String username = profile != null
               ? profile.username!
@@ -110,23 +111,35 @@ class _AppBarTeguraState extends State<AppBarTegura> {
             // CHECK IF USER IS LOGGED IN OR NOT BEFORE
             actions: <Widget>[
               // IF USER IS LOGGED IN
-              if (usr != null)
+              if (usr != null && profile != null)
                 IconButton(
                   // USE CUSTOM ICON - SVG
-                  icon: SvgPicture.asset(
-                    'assets/images/avatar.svg',
-                    height: MediaQuery.of(context).size.height * 0.048,
-                  ),
+                  icon: profile.photo == null || profile.photo == ''
+                      ? SvgPicture.asset(
+                          'assets/images/avatar.svg',
+                          height: MediaQuery.of(context).size.height * 0.048,
+                        )
+                      : CircleAvatar(
+                          backgroundImage: NetworkImage(profile.photo!),
+                        ),
                   onPressed: () {
                     // OPEN A DIALOG BOX TO DISPLAY USER DETAILS AND LOGOUT BUTTON
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          icon: SvgPicture.asset(
-                            'assets/images/avatar.svg',
-                            height: MediaQuery.of(context).size.height * 0.048,
-                          ),
+                          icon: profile.photo == null || profile.photo == ''
+                              ? SvgPicture.asset(
+                                  'assets/images/avatar.svg',
+                                  height: MediaQuery.of(context).size.height *
+                                      0.048,
+                                )
+                              : CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                    profile.photo!,
+                                    scale: 2,
+                                  ),
+                                ),
                           title: Align(
                             alignment: Alignment.center,
                             child: Text.rich(
@@ -221,8 +234,8 @@ class _AppBarTeguraState extends State<AppBarTegura> {
                             GestureDetector(
                               onTap: () {
                                 // CLOSE THE DIALOG BOX
-                                Navigator.of(context).pop();
-
+                                Navigator.popUntil(
+                                    context, (route) => route.isFirst);
                                 // LOGOUT THE USER USING THE AUTH SERVICE INSTANCE
                                 AuthService().logOut();
                               },
@@ -238,7 +251,7 @@ class _AppBarTeguraState extends State<AppBarTegura> {
                                     ),
                                   ),
                                   const Text(
-                                    'Logout',
+                                    'Sohoka',
                                     style: TextStyle(
                                       fontSize: 14.0,
                                       fontWeight: FontWeight.bold,

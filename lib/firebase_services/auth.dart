@@ -153,5 +153,25 @@ class AuthService {
     }
   }
 
+  // RESET PASSWORD METHOD
+  Future resetPassword(String email) async {
+    // ASYNC METHOD TO RETURN A FUTURE
+    try {
+      // RESET PASSWORD REQUEST
+      await _authInstance.sendPasswordResetEmail(email: email);
+
+      // RETURN success
+      return 'success';
+      
+    } catch (e) {
+      // PRINT THE ERROR
+      if (kDebugMode) {
+        print(e.toString());
+        return null;
+      }
+    }
+  }
+
+  // GET CURRENT USER METHOD - RETURNS THE CURRENT USER
   currentUser() {}
 }

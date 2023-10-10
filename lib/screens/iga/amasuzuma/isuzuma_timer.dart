@@ -57,15 +57,19 @@ class IsuzumaTimerState extends State<IsuzumaTimer>
             : Colors.green;
 
         return Container(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.016),
           decoration: BoxDecoration(
             color: const Color.fromARGB(255, 255, 237, 134),
             borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: Colors.green,
+              width: 1.5,
+            ),
           ),
           child: Text(
             '$minutes:${remainingSeconds.toString().padLeft(2, '0')}',
             style: TextStyle(
-              fontSize: 24,
+              fontSize: MediaQuery.of(context).size.width * 0.05,
               fontWeight: FontWeight.bold,
               color: textColor,
             ),

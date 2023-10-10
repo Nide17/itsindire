@@ -34,7 +34,7 @@ class _ContactFormState extends State<ContactForm> {
         return true;
       } catch (e) {
         print('Error sending email: $e');
-        throw e;
+        rethrow;
       }
     }
 

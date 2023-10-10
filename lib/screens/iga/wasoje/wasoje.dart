@@ -44,7 +44,7 @@ class _WasojeState extends State<Wasoje> {
                 print("The err: ${IsomoService().getAllAmasomo(usr?.uid)}");
               }
               // RETURN NULL
-              return null;
+              return [];
             },
           ),
 
@@ -62,7 +62,7 @@ class _WasojeState extends State<Wasoje> {
                     "The err: ${CourseProgressService().getUserProgresses(usr?.uid)}");
               }
               // RETURN NULL
-              return null;
+              return [];
             },
           ),
         ],

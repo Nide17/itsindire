@@ -59,6 +59,7 @@ class _IsuzumaScoreReviewState extends State<IsuzumaScoreReview> {
           );
         } else {
           List<ScoreQuestionI> scoreQns = scorePrModel.questions;
+
           int scoreQnsLength = scoreQns.length;
           ScoreQuestionI? currentQn =
               qnIndex > -1 ? scoreQns[qnIndex - 1] : null;
@@ -97,7 +98,6 @@ class _IsuzumaScoreReviewState extends State<IsuzumaScoreReview> {
           ];
           // RETURN THE CONTENT
           return Scaffold(
-            
             // APP BAR
             appBar: const PreferredSize(
               preferredSize: Size.fromHeight(58.0),
@@ -116,10 +116,10 @@ class _IsuzumaScoreReviewState extends State<IsuzumaScoreReview> {
                     marginTop: 8.0,
                     parentWidget: 'isuzume'),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
+                  height: MediaQuery.of(context).size.height * 0.01,
                 ),
                 Expanded(
-                    child: Column(
+                    child: ListView(
                   children: [
                     // IKIBAZO NUMBER BUTTONS
                     Align(
@@ -179,13 +179,54 @@ class _IsuzumaScoreReviewState extends State<IsuzumaScoreReview> {
                             Text(
                               currentQn == null ? '' : currentQn.title!,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 17.0,
+                              style: TextStyle(
+                                fontSize: MediaQuery.of(context).size.width *
+                                    0.04,
                                 fontWeight: FontWeight.bold,
-                                color: Color.fromARGB(255, 0, 0, 0),
+                                color: const Color.fromARGB(255, 0, 0, 0),
                               ),
                             ),
-                            const SizedBox(height: 10.0),
+
+                            // DISPLAY NETWORK IMAGE IF ANY
+                            currentQn == null || currentQn.imageUrl == null || currentQn.imageUrl == ''
+                                ? const SizedBox.shrink()
+                                : SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.16,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4.0),
+                                      margin: const EdgeInsets.only(top: 10.0),
+                                      decoration: const BoxDecoration(
+                                        color:
+                                            Color.fromARGB(255, 255, 255, 255),
+                                        border: Border.fromBorderSide(
+                                          BorderSide(
+                                            color: Color.fromARGB(255, 0, 0, 0),
+                                            width: 1,
+                                            style: BorderStyle.solid,
+                                          ),
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.0)),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Color.fromARGB(255, 0, 0, 0),
+                                            offset: Offset(0, 1),
+                                            blurRadius: 1,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Image.network(
+                                        currentQn.imageUrl!,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                1,
+                                      ),
+                                    ),
+                                  ),
+
+                            // ######################## CONTENT #######################
+                            SizedBox(height: MediaQuery.of(context).size.height * 0.02), 
                             Column(
                               children: currentQn?.options
                                       .map<Widget>((option) {
@@ -205,11 +246,10 @@ class _IsuzumaScoreReviewState extends State<IsuzumaScoreReview> {
 
                     // ############## QUESTIONS OPTIONS ##############
                     // SHOW THE QUESTION AND OPTIONS
-                    Expanded(
-                        child: Container(
+                    Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: MediaQuery.of(context).size.width * 0.04,
-                        vertical: MediaQuery.of(context).size.height * 0.03,
+                        // vertical: MediaQuery.of(context).size.height * 0.03,
                       ),
                       child: SingleChildScrollView(
                         child: Column(children: [
@@ -223,7 +263,7 @@ class _IsuzumaScoreReviewState extends State<IsuzumaScoreReview> {
                                             0.05,
                                     vertical:
                                         MediaQuery.of(context).size.height *
-                                            0.05,
+                                            0.04,
                                   ),
                                   padding: EdgeInsets.all(
                                     MediaQuery.of(context).size.width * 0.04,
@@ -306,7 +346,7 @@ class _IsuzumaScoreReviewState extends State<IsuzumaScoreReview> {
                               horizontal:
                                   MediaQuery.of(context).size.width * 0.05,
                               vertical:
-                                  MediaQuery.of(context).size.height * 0.05,
+                                  MediaQuery.of(context).size.height * 0.024,
                             ),
                             child: Center(
                               child: Wrap(
@@ -334,7 +374,7 @@ class _IsuzumaScoreReviewState extends State<IsuzumaScoreReview> {
                           ),
                         ]),
                       ),
-                    )),
+                    ),
                   ],
                 )),
               ]),
