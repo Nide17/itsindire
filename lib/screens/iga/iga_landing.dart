@@ -1,32 +1,63 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:tegura/firebase_services/ingingo_db.dart';
+import 'package:tegura/firebase_services/isomo_progress.dart';
 import 'package:tegura/main.dart';
+import 'package:tegura/models/course_progress.dart';
 import 'package:tegura/models/isomo.dart';
+import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
-import 'package:tegura/utilities/appbar.dart'; // APP BAR
+import 'package:tegura/utilities/app_bar.dart';
 import 'package:tegura/screens/iga/iga_data.dart';
-import 'package:tegura/firebase_services/isomodb.dart';
-import 'package:tegura/utilities/no_internet.dart'; // DATA FOR THE IGA PAGE
+import 'package:tegura/utilities/loading_widget.dart';
+import 'package:tegura/utilities/no_internet.dart';
 
 class IgaLanding extends StatefulWidget {
-  const IgaLanding({Key? key}) : super(key: key);
+  const IgaLanding({super.key});
 
   @override
   State<IgaLanding> createState() => _IgaLandingState();
 }
 
 class _IgaLandingState extends State<IgaLanding> {
-  // BUILD METHOD TO BUILD THE UI OF THE APP
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     final conn = Provider.of<ConnectionStatus>(context);
-    print("conn in ibiciro ${conn.isOnline}");
+    final usr = Provider.of<UserModel?>(context);
+    final List<CourseProgressModel?>? allUserProgresses =
+        Provider.of<List<CourseProgressModel?>?>(context);
+    final List<IsomoModel?>? allAmasomos =
+        Provider.of<List<IsomoModel?>?>(context);
+
+    // FOR EACH COURSE, UPDATE THE PROGRESS IF ALL USER PROGRESSES LENGTH IS 0
+    if (allAmasomos != null &&
+        allAmasomos.isNotEmpty &&
+        allUserProgresses!.isEmpty) {
+      loading = true;
+      for (var isomo in allAmasomos) {
+        
+        // GET THE TOTAL INGINGOS FOR THE COURSE AND UPDATE THE PROGRESS'S TOTAL INGINGOS
+        Stream<IsomoIngingoSum> totalIngingos =
+            IngingoService().getTotalIsomoIngingos(isomo!.id);
+
+        totalIngingos.listen((event) {
+          CourseProgressService().updateUserCourseProgress(
+            usr!.uid,
+            isomo.id,
+            0,
+            event.totalIngingos,
+          );
+        });
+      }
+
+      loading = false;
+    }
+
     bool everDisconnected = false;
 
-    // WHEN CONNECTION IS LOST, NOTIFY USER. IF IT COMES BACK AFTER BEING LOST NOTIFY USER TOO
     if (conn.isOnline == false) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -47,164 +78,125 @@ class _IgaLandingState extends State<IgaLanding> {
       everDisconnected = true;
     }
 
-    // WHEN CONNECTION IS BACK, NOTIFY USER
     if (conn.isOnline == true && everDisconnected == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
               'Internet yagarutse!',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 16.0,
+                fontSize: MediaQuery.of(context).size.width * 0.045,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            backgroundColor: Color.fromARGB(255, 0, 255, 85),
-            duration: Duration(seconds: 3),
+            backgroundColor: const Color.fromARGB(255, 0, 255, 85),
+            duration: const Duration(seconds: 3),
           ),
         );
       });
     }
 
-    return MultiProvider(
-      providers: [
-        // PROVIDE FIREBASE FIRESTORE INSTANCE - DB REFERENCE TO PROFILES COLLECTION
-        StreamProvider<List<IsomoModel?>?>.value(
-          // WHAT TO GIVE TO THE CHILDREN WIDGETS
-          value: null,
-          initialData: null,
+    return loading
+        ? const LoadingWidget()
+        : Scaffold(
+            backgroundColor: const Color.fromARGB(255, 71, 103, 158),
+            appBar: const PreferredSize(
+              preferredSize: Size.fromHeight(58.0),
+              child: AppBarTegura(),
+            ),
+            body: conn.isOnline == false
+                ? const NoInternet()
+                : ListView(
+                    children: igaList.asMap().entries.map((entry) {
+                      final bool isFirst = entry.key == 0;
+                      final bool isLast = entry.key == igaList.length - 1;
+                      final double height = isFirst
+                          ? MediaQuery.of(context).size.height * 0.06
+                          : MediaQuery.of(context).size.height * 0.025;
+                      final Map<String, dynamic> item = entry.value;
 
-          // CATCH ERRORS
-          catchError: (context, error) {
-            // PRINT THE ERROR
-            if (kDebugMode) {
-              print("Error in iga landing: $error");
-              print(
-                  "The err: ${IsomoService().getAllAmasomo(FirebaseAuth.instance.currentUser?.uid)}");
-            }
-            // RETURN NULL
-            return [];
-          },
-        ),
-      ],
-      child: Scaffold(
-          backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-
-          // APP BAR
-          appBar: const PreferredSize(
-            preferredSize: Size.fromHeight(58.0),
-            child: AppBarTegura(),
-          ),
-
-          // PAGE BODY
-          body:
-              // IF THERE IS NO INTERNET - SHOW "No internet" and BUTTON UNDER IT TO REFRESH BOTH CENTERED HOR. AND VERT.
-              conn.isOnline == false
-                  ? const NoInternet()
-                  : ListView(
-                      // CHILDREN OF THE COLUMN WIDGET
-                      children: igaList.asMap().entries.map((entry) {
-                        final bool isFirst = entry.key == 0;
-                        final bool isLast = entry.key == igaList.length - 1;
-                        final double height = isFirst
-                            ? MediaQuery.of(context).size.height * 0.06
-                            : MediaQuery.of(context).size.height * 0.025;
-                        final Map<String, dynamic> item = entry.value;
-
-                        return Column(
-                          children: <Widget>[
-                            // 1. VERTICAL SPACE
-                            SizedBox(height: height),
-
-                            // 2. BUTTON CONTAINER WIDGET
-                            Container(
-                              width: MediaQuery.of(context).size.width * .9,
-                              padding: EdgeInsets.symmetric(
-                                vertical:
-                                    MediaQuery.of(context).size.height * 0.012,
-                                horizontal:
-                                    MediaQuery.of(context).size.width * 0.025,
+                      return Column(
+                        children: <Widget>[
+                          SizedBox(height: height),
+                          Container(
+                            width: MediaQuery.of(context).size.width * .9,
+                            padding: EdgeInsets.symmetric(
+                              vertical:
+                                  MediaQuery.of(context).size.height * 0.012,
+                              horizontal:
+                                  MediaQuery.of(context).size.width * 0.025,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF00CCE5),
+                              borderRadius: BorderRadius.circular(30.0),
+                              border: Border.all(
+                                color: const Color.fromARGB(255, 255, 255, 255),
+                                width: 2.0,
                               ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF00CCE5),
-                                borderRadius: BorderRadius.circular(30.0),
-                              ),
-
-                              // GestureDetector WIDGET, ROW WITH ICON AND TEXT - BUTTON
-                              child: GestureDetector(
-                                // NAVIGATE TO THE CHILD PAGE
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              item['screen']));
-                                },
-                                child: Row(
-                                  children: <Widget>[
-                                    // HORIZONTAL SPACE
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.025,
-                                    ),
-
-                                    // SVG ICON
-                                    SvgPicture.asset(
-                                      item['icon'],
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.05,
-                                    ),
-
-                                    // HORIZONTAL SPACE
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.025,
-                                    ),
-
-                                    // TEXT WIDGET
-                                    Text(item['text'],
-                                        style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.045,
-                                          color: const Color(0xFF000000),
-                                          fontWeight: FontWeight.bold,
-                                        )),
-                                  ],
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color.fromARGB(255, 54, 54, 54),
+                                  offset: Offset(1, 3),
+                                  blurRadius: 1,
+                                  spreadRadius: 1,
                                 ),
+                              ],
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => item['screen']));
+                              },
+                              child: Row(
+                                children: <Widget>[
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.025,
+                                  ),
+                                  SvgPicture.asset(
+                                    item['icon'],
+                                    height: MediaQuery.of(context).size.height *
+                                        0.05,
+                                  ),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.025,
+                                  ),
+                                  Text(item['text'],
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.045,
+                                        color: const Color(0xFF000000),
+                                        fontWeight: FontWeight.bold,
+                                      )),
+                                ],
                               ),
                             ),
-
-                            // 3. BOTTOM BORDER IF LAST ITEM
-                            if (isLast)
-                              Column(children: <Widget>[
-                                // VERTICAL SPACE
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.03,
-                                ),
-
-                                // BOTTOM BORDER
-                                Container(
-                                  color: const Color(0xFF000000),
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.01,
-                                ),
-
-                                // VERTICAL SPACE
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.01,
-                                ),
-                              ])
-                          ],
-                        );
-                      }).toList(),
-                    ),
-          bottomNavigationBar: const RebaIbiciro()),
-    );
+                          ),
+                          if (isLast)
+                            Column(children: <Widget>[
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.03,
+                              ),
+                              Container(
+                                color: const Color(0xFF000000),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.01,
+                              ),
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.01,
+                              ),
+                            ])
+                        ],
+                      );
+                    }).toList(),
+                  ),
+            bottomNavigationBar: const RebaIbiciro());
   }
 }

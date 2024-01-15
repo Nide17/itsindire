@@ -1,12 +1,12 @@
+// ignore_for_file: avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:tegura/models/user.dart';
 import 'package:tegura/firebase_services/profiledb.dart';
 
 // CLASS FOR HANDLING AUTH SERVICES
 class AuthService {
-  
   // INSTANCE OF THE FIREBASE AUTHENTICATION
   final FirebaseAuth _authInstance = FirebaseAuth.instance;
 
@@ -35,33 +35,6 @@ class AuthService {
     });
   }
 
-  // SIGN IN ANONYMOUSLY METHOD
-  Future signInAnon() async {
-    // ASYNC METHOD TO RETURN A FUTURE
-    try {
-      // SIGN IN ANONYMOUSLY REQUEST - RETURN AUTH RESULT FUTURE
-      UserCredential result = await _authInstance.signInAnonymously();
-
-      // GET THE USER FROM THE RESULT
-      User? user = result.user;
-
-      // RETURN THE USER
-      if (user != null) {
-        return _userFromFirebaseUser(user);
-      } else {
-        return null;
-      }
-    } catch (e) {
-      // PRINT THE ERROR
-      if (kDebugMode) {
-        print(e.toString());
-      }
-
-      // RETURN NULL
-      return null;
-    }
-  }
-
   // SIGN IN WITH EMAIL AND PASSWORD METHOD
   Future loginWithEmailAndPassword(String email, String password) async {
     try {
@@ -78,9 +51,7 @@ class AuthService {
         return null;
       }
     } catch (e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      print(e.toString());
 
       // RETURN NULL
       return null;
@@ -88,8 +59,8 @@ class AuthService {
   }
 
   // REGISTER WITH EMAIL AND PASSWORD METHOD
-  Future registerWithEmailAndPassword(
-      String username, String email, String password, bool? urStudent, String? regNbr, String? campus) async {
+  Future registerWithEmailAndPassword(String username, String email,
+      String password, bool? urStudent, String? regNbr, String? campus) async {
     try {
       // REGISTER WITH EMAIL AND PASSWORD REQUEST - RETURN AUTH RESULT FUTURE
       UserCredential result =
@@ -125,10 +96,7 @@ class AuthService {
         return null;
       }
     } catch (e) {
-      // PRINT THE ERROR
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      print(e.toString());
     }
   }
 
@@ -136,17 +104,10 @@ class AuthService {
   Future logOut() async {
     // ASYNC METHOD TO RETURN A FUTURE
     try {
-      if (kDebugMode) {
-        print('logOut');
-      }
-
       // SIGN OUT REQUEST
       return await _authInstance.signOut();
     } catch (e) {
-      // PRINT THE ERROR
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      print(e.toString());
 
       // RETURN NULL
       return null;
@@ -162,13 +123,9 @@ class AuthService {
 
       // RETURN success
       return 'success';
-      
     } catch (e) {
-      // PRINT THE ERROR
-      if (kDebugMode) {
-        print(e.toString());
-        return null;
-      }
+      print(e.toString());
+      return null;
     }
   }
 

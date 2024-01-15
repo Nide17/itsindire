@@ -16,7 +16,6 @@ class ProfileModel extends ChangeNotifier {
   // roleId IS A REFERENCE TYPE TO ROLES COLLECTION
   final DocumentReference? roleId;
 
-  // CONSTRUCTOR
   ProfileModel(
       {this.uid,
       this.username,

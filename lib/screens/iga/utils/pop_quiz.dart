@@ -4,51 +4,44 @@ import 'package:tegura/models/pop_question.dart';
 import 'package:tegura/screens/iga/utils/circle_progress_pq.dart';
 import 'package:tegura/screens/iga/utils/custom_radio_button.dart';
 import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/utilities/appbar.dart';
+import 'package:tegura/utilities/app_bar.dart';
 import 'package:tegura/utilities/direction_button_pq.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class PopQuiz extends StatefulWidget {
   final List<PopQuestionModel> popQuestions;
   final IsomoModel isomo;
-  final ValueChanged<int> courseChangeSkip;
+  final ValueChanged<int> coursechangeSkipNumber;
 
-  const PopQuiz(
-      {super.key,
-      required this.popQuestions,
-      required this.isomo,
-      required this.courseChangeSkip});
+  const PopQuiz({
+    super.key,
+    required this.popQuestions,
+    required this.isomo,
+    required this.coursechangeSkipNumber,
+  });
 
   @override
   State<PopQuiz> createState() => _PopQuizState();
 }
 
 class _PopQuizState extends State<PopQuiz> {
-  // STATE VARIABLES
   int selectedOption = 0;
   bool isCurrentCorrect = false;
   int currQnID = 0;
 
-  // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
-    // CALLBACK FOR FORWARD BUTTON
     void forward() {
       setState(() {
-
-        // INCREASE THE CURRENT QUESTION ID BY 1 IF NOT THE LAST QUESTION
         if (currQnID < widget.popQuestions.length) {
           currQnID = currQnID + 1;
         }
-
-        // RESET THE SELECTED OPTION
         selectedOption = 0;
-
-        // RESET THE CORRECTNESS OF THE ANSWER
         isCurrentCorrect = false;
 
         // UPDATE THE SKIP VALUE IN THE PARENT WIDGET (IGA_CONTENT) IF THE USER IS ON THE LAST QUESTION
         if (currQnID == widget.popQuestions.length) {
-          widget.courseChangeSkip(5);
+          widget.coursechangeSkipNumber(5);
         }
       });
     }
@@ -72,17 +65,13 @@ class _PopQuizState extends State<PopQuiz> {
     return currQnID >= 0 && currQnID < widget.popQuestions.length
         ? Scaffold(
             backgroundColor: const Color.fromARGB(255, 228, 225, 225),
-
-            // APP BAR
             appBar: const PreferredSize(
               preferredSize: Size.fromHeight(58.0),
               child: AppBarTegura(),
             ),
-            // PAGE BODY
             body: SingleChildScrollView(
               child: Column(
                 children: [
-                  // 1. GRADIENT TITLE
                   Container(
                     padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 4.0),
                     decoration: const BoxDecoration(
@@ -91,13 +80,10 @@ class _PopQuizState extends State<PopQuiz> {
                     child: GradientTitle(
                         title: widget.isomo.title, icon: '', marginTop: 8.0),
                   ),
-
-                  // 2. QUESTION OPTIONS
                   Container(
                     padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
                     child: Column(
                       children: [
-                        // 1. QUESTION TITLE
                         Text(
                           widget.popQuestions[currQnID].title ?? '',
                           style: const TextStyle(
@@ -105,8 +91,6 @@ class _PopQuizState extends State<PopQuiz> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-
-                        // DISPLAY NETWORK IMAGE IF ANY
                         widget.popQuestions[currQnID].imageUrl == null ||
                                 widget.popQuestions[currQnID].imageUrl == ''
                             ? const SizedBox.shrink()
@@ -134,29 +118,29 @@ class _PopQuizState extends State<PopQuiz> {
                                       ),
                                     ],
                                   ),
-                                  child: Image.network(
-                                    widget.popQuestions[currQnID].imageUrl!,
+                                  child: FadeInImage.memoryNetwork(
+                                    placeholder: kTransparentImage,
+                                    image:
+                                        widget.popQuestions[currQnID].imageUrl!,
                                     width:
-                                        MediaQuery.of(context).size.width * 1,
+                                        MediaQuery.of(context).size.width * 0.4,
                                   ),
                                 ),
                               ),
-
                         const SizedBox(height: 10.0),
                         Column(
                           children: widget.popQuestions[currQnID].options
                               .map<Widget>((option) {
                             return CustomRadioButton(
-                              // PROPERTIES
                               option: option,
-                              isSelected: option['id'] == selectedOption,
+                              isSelected: option.id == selectedOption,
                               isThisCorrect: isCurrentCorrect,
 
                               // ON CHANGE
                               onChanged: (value) {
                                 setState(() {
-                                  selectedOption = option['id'];
-                                  isCurrentCorrect = option['isCorrect'];
+                                  selectedOption = option.id;
+                                  isCurrentCorrect = option.isCorrect;
                                 });
                               },
                             );
@@ -185,7 +169,6 @@ class _PopQuizState extends State<PopQuiz> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  // 2. INYUMA BUTTON
                   DirectionButtonPq(
                     buttonText: 'inyuma',
                     direction: 'inyuma',
@@ -195,13 +178,9 @@ class _PopQuizState extends State<PopQuiz> {
                     currQnID: currQnID,
                     isDisabled: selectedOption == 0,
                   ),
-
-                  // 1. PERCENTAGE INDICATOR
                   CircleProgressPq(
                     percent: (currQnID + 1) / widget.popQuestions.length,
                   ),
-
-                  // 3. KOMEZA BUTTON
                   DirectionButtonPq(
                     buttonText: 'komeza',
                     direction: 'komeza',

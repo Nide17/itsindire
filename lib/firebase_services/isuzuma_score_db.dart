@@ -6,12 +6,8 @@ class IsuzumaScoreService {
   final CollectionReference isuzumaScoresCollection =
       FirebaseFirestore.instance.collection('scores');
 
-  // CONSTRUCTOR
   IsuzumaScoreService();
 
-// #############################################################################
-// MODELING DATA
-// #############################################################################
   // GET AMASUZUMA SCORES FROM A SNAPSHOT USING THE Isuzuma MODEL - _amasuzumaScoreFromSnapshot
   List<IsuzumaScoreModel> _amasuzumaScoreFromSnapshot(
       QuerySnapshot querySnapshot) {
@@ -53,7 +49,6 @@ class IsuzumaScoreService {
 
       // RETURN A LIST OF AMASUZUMA SCORES FROM THE SNAPSHOT
       return IsuzumaScoreModel(
-        // AMASUZUMA SCORES DATA
         id: id,
         isuzumaID: isuzumaID,
         takerID: takerID,
@@ -98,7 +93,6 @@ class IsuzumaScoreService {
 
     // RETURN A LIST OF AMASUZUMA SCORES FROM THE SNAPSHOT
     return IsuzumaScoreModel(
-      // AMASUZUMA SCORES
       id: id,
       isuzumaID: isuzumaID,
       takerID: takerID,
@@ -111,9 +105,6 @@ class IsuzumaScoreService {
     );
   }
 
-// #############################################################################
-// GET DATA
-// #############################################################################
   // GET ALL AMASUZUMA SCORES
   Stream<List<IsuzumaScoreModel>> get amasuzumabumenyiScores {
     return isuzumaScoresCollection.snapshots().map(_amasuzumaScoreFromSnapshot);
@@ -135,7 +126,9 @@ class IsuzumaScoreService {
           .snapshots()
           .map(_amasuzumaScoreFromSnapshot);
     } else {
-      return isuzumaScoresCollection.snapshots().map(_amasuzumaScoreFromSnapshot);
+      return isuzumaScoresCollection
+          .snapshots()
+          .map(_amasuzumaScoreFromSnapshot);
     }
   }
 
@@ -173,12 +166,8 @@ class IsuzumaScoreService {
       });
       return true;
     } catch (e) {
-      print('Error creating or updating score');
       print(e.toString());
       return false;
     }
   }
 }
-// #############################################################################
-// END OF FILE
-// #############################################################################

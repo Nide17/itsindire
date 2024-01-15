@@ -4,6 +4,7 @@ class PaymentModel {
   DateTime endAt;
   String? userId;
   String? ifatabuguziID;
+  String? igiciro;
   bool? isApproved;
   String? phone;
 
@@ -13,31 +14,29 @@ class PaymentModel {
     required this.endAt,
     this.userId,
     this.ifatabuguziID,
+    this.igiciro,
     this.isApproved,
     this.phone,
   });
 
   // GET REMAINING DAYS
   int getRemainingDays() {
-    // GET THE CURRENT DATE
     DateTime now = DateTime.now();
-
-    // GET THE DIFFERENCE
     int diff = endAt.difference(now).inDays;
-
-    // RETURN THE DIFFERENCE
     return diff + 1;
   }
 
   // GET FORMATED END DATE - 2021-09-30
   String getFormatedEndDate() {
-    // GET THE END DATE
     DateTime end = endAt;
+    String formatedEnd = '${end.day}-${end.month}-${end.year}';
+    return formatedEnd;
+  }
 
-    // FORMAT THE END DATE
-    String formatedEnd = '${end.year}-${end.month}-${end.day}';
-
-    // RETURN THE FORMATED END DATE
+  String getFormatedEndDateTime() {
+    DateTime end = endAt;
+    String formatedEnd =
+        '${end.day}-${end.month}-${end.year} ${end.hour}:${end.minute}';
     return formatedEnd;
   }
 
@@ -49,6 +48,7 @@ class PaymentModel {
       endAt: json['endAt'].toDate(),
       userId: json['userId'],
       ifatabuguziID: json['ifatabuguziID'],
+      igiciro: json['igiciro'],
       isApproved: json['isApproved'],
       phone: json['phone'],
     );
@@ -62,6 +62,7 @@ class PaymentModel {
       'endAt': endAt,
       'userId': userId,
       'ifatabuguziID': ifatabuguziID,
+      'igiciro': igiciro,
       'isApproved': isApproved,
       'phone': phone,
     };
@@ -70,6 +71,6 @@ class PaymentModel {
   // TO STRING
   @override
   String toString() {
-    return 'PaymentModel(id: $id, createdAt: $createdAt, endAt: $endAt, userId: $userId, ifatabuguziID: $ifatabuguziID, isApproved: $isApproved, phone: $phone)';
+    return 'PaymentModel(id: $id, createdAt: $createdAt, endAt: $endAt, userId: $userId, ifatabuguziID: $ifatabuguziID, igiciro: $igiciro, isApproved: $isApproved, phone: $phone)';
   }
 }

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
 class IgaCard extends StatelessWidget {
-  // INSTANCE VARIABLES
   final String title;
   final String icon;
   final Widget screen;
 
-  // CONSTRUCTOR
   const IgaCard(
       {super.key,
       required this.title,
@@ -36,10 +34,8 @@ class IgaCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // TITLE
             Padding(
-              padding:
-                  const EdgeInsets.all(2.0),
+              padding: const EdgeInsets.all(2.0),
               child: Text(
                 title.toUpperCase(),
                 textAlign: TextAlign.center,
@@ -51,14 +47,10 @@ class IgaCard extends StatelessWidget {
                 ),
               ),
             ),
-
-            // BOTTOM BORDER OF THE ABOVE SECTION
             Container(
               color: const Color(0xFFFFBD59),
               height: MediaQuery.of(context).size.height * 0.009,
             ),
-
-            // PNG ICON
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 8.0,

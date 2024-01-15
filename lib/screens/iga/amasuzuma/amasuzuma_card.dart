@@ -6,20 +6,16 @@ import 'package:tegura/models/isuzuma.dart';
 import 'package:tegura/models/isuzuma_score.dart';
 import 'package:tegura/models/payment.dart';
 import 'package:tegura/models/user.dart';
-import 'package:tegura/screens/auth/injira.dart';
+import 'package:tegura/screens/auth/iyandikishe.dart';
 import 'package:tegura/screens/iga/amasuzuma/amanota.dart';
+import 'package:tegura/screens/iga/utils/tegura_alert.dart';
 import 'package:tegura/screens/iga/amasuzuma/isuzuma_overview.dart';
-import 'package:tegura/utilities/spinner.dart';
+import 'package:tegura/utilities/loading_widget.dart';
 
 class AmasuzumaCard extends StatefulWidget {
   final IsuzumaModel isuzuma;
-  final IsuzumaScoreModel? userScore;
 
-  const AmasuzumaCard({
-    Key? key,
-    required this.isuzuma,
-    this.userScore,
-  }) : super(key: key);
+  const AmasuzumaCard({super.key, required this.isuzuma});
 
   @override
   State<AmasuzumaCard> createState() => _AmasuzumaCardState();
@@ -30,29 +26,24 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
   bool loading = false;
 
   Future<bool> _isPaymentApproved() async {
-    // SET THE LOADING STATE TO TRUE
     setState(() => loading = true);
 
     if (FirebaseAuth.instance.currentUser != null) {
       PaymentModel? pymt = await PaymentService()
-          .getUserLatestPaymentData(FirebaseAuth.instance.currentUser!.uid);
+          .getUserLatestPytData(FirebaseAuth.instance.currentUser!.uid);
 
       setState(() {
         payment = pymt;
         loading = false;
       });
 
-      // IF THE USER HAS A PAYMENT PLAN APPROVED
       if (pymt != null && pymt.isApproved == true) {
-        // RETURN TRUE
         return true;
       } else {
-        // RETURN FALSE
         return false;
       }
     } else {
       loading = false;
-      // RETURN FALSE
       return false;
     }
   }
@@ -66,12 +57,21 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
   @override
   Widget build(BuildContext context) {
     final usr = Provider.of<UserModel?>(context);
+    final amaUserScores = Provider.of<List<IsuzumaScoreModel>?>(context);
+    IsuzumaScoreModel? userScore;
+    if (amaUserScores != null) {
+      for (var i = 0; i < amaUserScores.length; i++) {
+        if (amaUserScores[i].isuzumaID == widget.isuzuma.id) {
+          userScore = amaUserScores[i];
+          break;
+        }
+      }
+    }
 
     return loading
-        ? const Spinner()
+        ? const LoadingWidget()
         : Column(
             children: [
-              // CARDS ROW FOR IGAZETI, AND IBYAPA - FLEX 50%
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -82,49 +82,38 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
                           ? Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const Injira(
+                                  builder: (context) => const Iyandikishe(
                                       message:
-                                          'Banza winjire, ube warishyuye ubone aya masuzumabumenyi yose!')))
+                                          'Banza wiyandikishe, wishyure ubone aya masuzumabumenyi yose!')))
                           : payment != null && payment.isApproved == true
                               ? Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => IsuzumaOverview(
-                                          isuzuma: widget.isuzuma,
-                                          scoreUserIsuzuma: widget.userScore)),
+                                            isuzuma: widget.isuzuma,
+                                          )),
                                 )
-                              :
-                              // SHOW ALERT DIALOG
-                              showDialog(
+                              : showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text(
-                                        'Ntibyagenze neza',
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                      content: Text(payment == null
-                                          ? 'Nturishyura'
-                                          : payment.isApproved == false
-                                              ? 'Ifatabuguzi ryawe ntiriremezwa'
-                                              : 'Ongera ugerageze!'),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('OK'))
-                                      ],
-                                    );
+                                    return TeguraAlert(
+                                        errorTitle: 'Ntibyagenze neza',
+                                        errorMsg: payment == null
+                                            ? 'Nturishyura'
+                                            : payment.isApproved == false
+                                                ? 'Ifatabuguzi ryawe ntiriremezwa'
+                                                : 'Ongera ugerageze!',
+                                        alertType: 'error');
                                   });
                     },
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.4,
                       decoration: BoxDecoration(
                         color: const Color(0xFF00CCE5),
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(
+                            MediaQuery.of(context).size.width * 0.03),
                         border: Border.all(
-                          width: 2.0,
+                          width: MediaQuery.of(context).size.width * 0.006,
                           color: const Color(0xFFFFBD59),
                         ),
                       ),
@@ -132,9 +121,10 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // TITLE
                           Padding(
-                            padding: const EdgeInsets.all(2.0),
+                            padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width * 0.01,
+                            ),
                             child: Text(
                               widget.isuzuma.title.toUpperCase(),
                               textAlign: TextAlign.center,
@@ -147,14 +137,10 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
                               ),
                             ),
                           ),
-
-                          // BOTTOM BORDER OF THE ABOVE SECTION
                           Container(
                             color: const Color(0xFFFFBD59),
                             height: MediaQuery.of(context).size.height * 0.009,
                           ),
-
-                          // PNG ICON
                           Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8.0,
@@ -169,27 +155,18 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
                       ),
                     ),
                   ),
-                  widget.userScore != null
-                      ? Amanota(
-                          score: widget.userScore != null
-                              ? widget.userScore!.marks
-                              : 0,
-                          maxScore: widget.userScore != null
-                              ? widget.userScore!.totalMarks
-                              : 0,
-                        )
-                      : const Text(
-                          'Nturarikora!',
+                  usr == null
+                      ? Text(
+                          '/${widget.isuzuma.questions.length}',
                           style: TextStyle(
                             color: Colors.red,
-                            fontSize: 20,
+                            fontSize: MediaQuery.of(context).size.width * 0.08,
                             fontWeight: FontWeight.bold,
                           ),
-                        ),
+                        )
+                      : Amanota(userScore: userScore)
                 ],
               ),
-
-              // 3. VERTICAL SPACE
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.04,
               ),
