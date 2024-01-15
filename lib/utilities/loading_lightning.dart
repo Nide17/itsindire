@@ -4,7 +4,8 @@ import 'package:tegura/screens/home/home.dart';
 import 'dart:math';
 
 class LoadingLightning extends StatefulWidget {
-  const LoadingLightning({Key? key}) : super(key: key);
+  final int duration;
+  const LoadingLightning({super.key, required this.duration});
 
   // CREATE STATE
   @override
@@ -26,7 +27,7 @@ class _LoadingLightningState extends State<LoadingLightning>
 
     // INITIALIZE THE CONTROLLER WITH DURATION AND VSYNC
     _controller = AnimationController(
-      duration: const Duration(seconds: 4),
+      duration: Duration(seconds: widget.duration),
       vsync: this,
     );
 
@@ -36,29 +37,25 @@ class _LoadingLightningState extends State<LoadingLightning>
     ).animate(_controller);
     _controller.forward();
 
-    // FUTURE TO REDIRECT TO THE NEXT PAGE AFTER 4 SECONDS
-    Future.delayed(const Duration(seconds: 4), () {
-      // NAVIGATE TO THE NEXT PAGE, PUSH REPLACES THE CURRENT PAGE
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            // BUILDER TO BUILD THE HOME PAGE
-            builder: (context) => const HomePage()),
-      );
-    });
+    if (widget.duration > 0) {
+      // FUTURE TO REDIRECT TO THE NEXT PAGE AFTER 4 SECONDS
+      Future.delayed(Duration(seconds: widget.duration), () {
+        // NAVIGATE TO THE NEXT PAGE, PUSH REPLACES THE CURRENT PAGE
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              // BUILDER TO BUILD THE HOME PAGE
+              builder: (context) => const HomePage()),
+        );
+      });
+    }
   }
 
-  // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
-    // final conn = Provider.of<ConnectionStatus>(context);
-    // print("conn in loading ${conn.isOnline}");
 
     return Scaffold(
         body:
-            // // IF THERE IS NO INTERNET - SHOW "No internet" and BUTTON UNDER IT TO REFRESH BOTH CENTERED HOR. AND VERT.
-            // conn.isOnline == false
-            //     ? const NoInternet():
             Container(
       width: double.infinity, // FULL WIDTH
 

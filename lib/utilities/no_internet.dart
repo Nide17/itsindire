@@ -46,7 +46,7 @@ class _NoInternetState extends State<NoInternet> {
                 setState(() {});
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: const Color(0xFF00A651),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),

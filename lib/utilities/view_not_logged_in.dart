@@ -23,7 +23,7 @@ class ViewNotLoggedIn extends StatelessWidget {
 
         // 5. ADD 10.0 PIXELS OF SPACE
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.045,
+          height: MediaQuery.of(context).size.height * 0.06,
         ),
 
         // 6. BUTTONS FOR INJIRA & IYANDIKISHE
@@ -40,14 +40,20 @@ class ViewNotLoggedIn extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   fixedSize: Size(
                     MediaQuery.of(context).size.width * 0.4,
-                    MediaQuery.of(context).size.height * 0.08,
+                    MediaQuery.of(context).size.height * 0.07,
                   ),
                   backgroundColor: const Color(0xFF00CCE5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(32.0),
+                    side: const BorderSide(
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      width: 3.0,
+                    ),
                   ),
                   padding: const EdgeInsets.symmetric(
                       horizontal: 20.0, vertical: 12.0),
+                      elevation: 8.0,
+                      shadowColor: const Color.fromARGB(255, 0, 0, 0),
                 ),
                 child: Text(
                   'Injira',
@@ -72,10 +78,15 @@ class ViewNotLoggedIn extends StatelessWidget {
                   backgroundColor: const Color(0xFF00CCE5),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(32.0),
+                    side: const BorderSide(
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      width: 3.0,
+                    ),
                   ),
-                  padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.04,
-                      vertical: MediaQuery.of(context).size.height * 0.016),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 12.0),
+                  elevation: 8.0,
+                  shadowColor: const Color.fromARGB(255, 0, 0, 0),
                 ),
                 child: Text(
                   'Iyandikishe',

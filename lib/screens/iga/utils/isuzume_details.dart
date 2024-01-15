@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/models/course_progress.dart';
 import 'package:tegura/models/isomo.dart';
+import 'package:tegura/models/pop_question.dart';
 import 'package:tegura/screens/iga/utils/custom_radio_button.dart';
 import 'package:tegura/screens/iga/utils/gradient_title.dart';
 import 'package:tegura/providers/quiz_score_provider.dart';
-// import 'package:tegura/firebase_services/isomo_progress.dart';
+import 'package:tegura/firebase_services/isomo_progress.dart';
 import 'package:tegura/utilities/ikibazo_button.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 typedef ShowQnCallback = void Function(int index);
-typedef SetSetSelectedOption = void Function(Map<String, dynamic>? option);
+typedef SetSetSelectedOption = void Function(OptionPopQn? option);
 
 class IsuzumeDetails extends StatefulWidget {
-  // INSTANCE VARIABLES
   final IsomoModel isomo;
   final String userID;
   final CourseProgressModel? courseProgress;
@@ -41,7 +42,6 @@ class IsuzumeDetails extends StatefulWidget {
 class _IsuzumeDetailsState extends State<IsuzumeDetails> {
   @override
   Widget build(BuildContext context) {
-    // GET THE SCORE PROVIDER MODEL OBJECT
     final QuizScoreProvider scoreProviderModel =
         Provider.of<QuizScoreProvider>(context);
 
@@ -51,8 +51,7 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
 
     // GET THE POP QUESTIONS LENGTH
     final scorePopQnsLength = scoreProviderModel.quizScore.questions.length;
-    
-    // RETURN THE CONTENT
+
     return Consumer<QuizScoreProvider>(
         builder: (context, scoreProviderModel, child) {
       return Container(
@@ -75,33 +74,12 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Center(
-                          child: Text('Nta bibibazo byabonetse!'),
+                          child: Text('Nta bibazo byabonetse!'),
                         ),
-                        // const SizedBox(height: 16.0),
-                        // ElevatedButton(
-                        //   onPressed: () {
-                        //     CourseProgressService().updateUserCourseProgress(
-                        //       widget.courseProgress != null
-                        //           ? widget.courseProgress!.userId
-                        //           : widget.userID,
-                        //       widget.courseProgress != null
-                        //           ? widget.courseProgress!.courseId
-                        //           : 0,
-                        //       widget.courseProgress != null
-                        //           ? widget.courseProgress!.totalIngingos
-                        //           : 1,
-                        //       0,
-                        //     );
-                        //     // GO BACK TO THE COURSE PAGE
-                        //     Navigator.pop(context);
-                        //   },
-                        //   child: const Text('Ongera utangire iri somo!'),
-                        // ),
                       ],
                     )
                   : Column(
                       children: [
-                        // IKIBAZO NUMBER BUTTONS
                         Align(
                           alignment: Alignment.topCenter,
                           child: Container(
@@ -109,40 +87,17 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                 horizontal:
                                     MediaQuery.of(context).size.width * 0.008,
                               ),
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFD9D9D9),
-                                border: Border(
-                                  top: BorderSide(
-                                    color: Color(0xFF00A651),
-                                    width: 2.0,
-                                  ),
-                                  bottom: BorderSide(
-                                    color: Color(0xFF00A651),
-                                    width: 4.0,
-                                  ),
-                                  left: BorderSide(
-                                    color: Color(0xFF00A651),
-                                    width: 2.0,
-                                  ),
-                                  right: BorderSide(
-                                    color: Color(0xFF00A651),
-                                    width: 2.0,
-                                  ),
-                                ),
-                              ),
                               child: Wrap(
                                   spacing: 10.0,
                                   direction: Axis.horizontal,
                                   children: List.generate(
                                     scorePopQnsLength,
                                     (index) => IkibazoButton(
-                                      buttonText: 'Ikibazo ${index + 1}',
-                                      // MAKE THE FIRST QUESTION ACTIVE BY DEFAULT ON PAGE LOAD
                                       isActive: index == widget.qnIndex
                                           ? true
                                           : false,
                                       showQn: widget.showQn,
-                                      index: index,
+                                      qnIndex: index,
                                     ),
                                   ))),
                         ),
@@ -213,8 +168,9 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                                 ),
                                               ],
                                             ),
-                                            child: Image.network(
-                                              scorePopQns[widget.qnIndex]
+                                            child: FadeInImage.memoryNetwork(
+                                              placeholder: kTransparentImage,
+                                              image: scorePopQns[widget.qnIndex]
                                                   .popQuestion
                                                   .imageUrl!,
                                               width: MediaQuery.of(context)
@@ -235,7 +191,6 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                         .options
                                         .map<Widget>((option) {
                                       return CustomRadioButton(
-                                        // VARIABLES PROPERTIES
                                         option: option,
                                         choosenOption: scoreProviderModel
                                             .quizScore
@@ -251,7 +206,7 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                             .isAnswerCorrect,
                                         isThisCorrect: widget.isCurrentCorrect,
                                         scoreProviderModel: scoreProviderModel,
-                                        isSelected: option['id'] ==
+                                        isSelected: option.id ==
                                             widget.selectedOption,
                                         currentQuestion:
                                             scorePopQns[widget.qnIndex]
@@ -272,27 +227,6 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                       );
                                     }).toList(),
                                   ),
-                                  // ElevatedButton(
-                                  //   onPressed: () {
-                                  //     CourseProgressService()
-                                  //         .updateUserCourseProgress(
-                                  //       widget.courseProgress != null
-                                  //           ? widget.courseProgress!.userId
-                                  //           : widget.userID,
-                                  //       widget.courseProgress != null
-                                  //           ? widget.courseProgress!.courseId
-                                  //           : 0,
-                                  //       widget.courseProgress != null
-                                  //           ? widget
-                                  //               .courseProgress!.totalIngingos
-                                  //           : 1,
-                                  //       0,
-                                  //     );
-                                  //     // GO BACK TO THE COURSE PAGE
-                                  //     Navigator.pop(context);
-                                  //   },
-                                  //   child: const Text('Ongera utangire iri somo!'),
-                                  // ),
                                 ],
                               ),
                             ),
@@ -300,6 +234,25 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                         ),
                       ],
                     )),
+          ElevatedButton(
+            onPressed: () {
+              CourseProgressService().updateUserCourseProgress(
+                widget.courseProgress != null
+                    ? widget.courseProgress!.userId
+                    : widget.userID,
+                widget.courseProgress != null
+                    ? widget.courseProgress!.courseId
+                    : 0,
+                0,
+                widget.courseProgress != null
+                    ? widget.courseProgress!.totalIngingos
+                    : 1,
+              );
+              // GO BACK TO THE COURSE PAGE
+              Navigator.pop(context);
+            },
+            child: const Text('Ongera utangire iri somo!'),
+          ),
         ]),
       );
     });

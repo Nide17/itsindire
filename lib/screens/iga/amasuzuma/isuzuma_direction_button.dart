@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:tegura/screens/iga/utils/tegura_alert.dart';
 
 class IsuzumaDirectionButton extends StatefulWidget {
-  // INSTANCE VARIABLES
   final String direction;
   final Function? forward;
   final Function? backward;
@@ -10,13 +10,13 @@ class IsuzumaDirectionButton extends StatefulWidget {
   final int qnsLength;
 
   const IsuzumaDirectionButton({
-    Key? key,
+    super.key,
     required this.direction,
     this.forward,
     this.backward,
     required this.currQnID,
     required this.qnsLength,
-  }) : super(key: key);
+  });
 
   @override
   State<IsuzumaDirectionButton> createState() => _IsuzumaDirectionButtonState();
@@ -25,7 +25,6 @@ class IsuzumaDirectionButton extends StatefulWidget {
 class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
   @override
   Widget build(BuildContext context) {
-    // CHECK IF THE BUTTON IS DISABLED
     bool isDisabled = widget.direction == 'inyuma' && widget.currQnID <= 1
         ? true
         : widget.direction == 'komeza' && widget.currQnID >= widget.qnsLength
@@ -51,46 +50,33 @@ class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
       child: ElevatedButton(
         onPressed: () {
           if (widget.direction == 'inyuma' && (widget.currQnID >= 1)) {
-            // DECREASE SKIP STATE
-            widget.backward!();
-
-            // IF NO MORE PREVIOUS PAGES, ALERT THE USER
             if (widget.currQnID == 1) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Iki kibazo nicyo cya ${widget.currQnID}!',
-                    style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.03,
-                    ),
-                  ),
-                  duration: const Duration(seconds: 3),
-                  backgroundColor: Colors.red,
-                ),
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return const TeguraAlert(
+                      errorTitle: 'Ikosa!',
+                      errorMsg: 'Iki ni ikibazo cya mbere!',
+                      alertType: 'warning',);
+                },
               );
+            } else {
+              widget.backward!();
             }
-          } else if (widget.direction == 'komeza' &&
-              widget.currQnID <= widget.qnsLength) {
-            // INCREASE SKIP STATE
-            widget.forward!();
-
-            // IF NO MORE NEXT PAGES, ALERT THE USER
+          } else if (widget.direction == 'komeza') {
             if (widget.currQnID == widget.qnsLength) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Iki kibazo cya ${widget.qnsLength} nicyo cyanyuma!',
-                    style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width * 0.03,
-                    ),
-                  ),
-                  duration: const Duration(seconds: 3),
-                  backgroundColor: Colors.red,
-                ),
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return const TeguraAlert(
+                      errorTitle: 'Ikosa!',
+                      errorMsg: 'Iki ni ikibazo cya nyuma!',
+                      alertType: 'warning',);
+                },
               );
+            } else {
+              widget.forward!();
             }
-          } else {
-            // DO NOTHING
           }
         },
         style: ElevatedButton.styleFrom(
