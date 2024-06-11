@@ -36,25 +36,11 @@ class _AppBarTeguraState extends State<AppBarTegura> {
   @override
   void initState() {
     super.initState();
-    final user = FirebaseAuth.instance.currentUser;
-    final authState = Provider.of<AuthState>(context, listen: false);
-
-    AndroidId androidId = AndroidId();
-    androidId.getId().then((value) {
-      if (!mounted) return;
-
-      if (user != null) {
-        authState.setCurrentUser(user);
-        authState.setIsLoggedIn(true);
-      }
-
-      currentDeviceId = value ?? '';
-      deviceCheckCompleted = true;
-    });
 
     payments.listen((event) {
       for (var change in event.docChanges) {
         dynamic doc = change.doc.data();
+
         if (change.type == DocumentChangeType.modified &&
             doc['userId'] == FirebaseAuth.instance.currentUser!.uid) {
           String msg = doc['isApproved'] == true
@@ -82,6 +68,8 @@ class _AppBarTeguraState extends State<AppBarTegura> {
 
   @override
   Widget build(BuildContext context) {
+    AuthState authState = Provider.of<AuthState>(context);
+     print('Auth state - App bar - provider: ${authState.currentUser}');
     return MultiProvider(
       providers: [
         StreamProvider<PaymentModel?>.value(
@@ -106,34 +94,10 @@ class _AppBarTeguraState extends State<AppBarTegura> {
         ),
       ],
       child: Consumer<AuthState>(builder: (context, authState, _) {
+        print('Auth state - App bar - consumer: ${authState.currentUser}');
         return Consumer<ProfileModel?>(builder: (context, profile, _) {
           return Consumer<PaymentModel?>(builder: (context, newestPyt, _) {
             final user = FirebaseAuth.instance.currentUser;
-
-            if (deviceCheckCompleted && user != null && profile != null) {
-              String? profileDevice = profile.lastLoggedInDeviceId;
-
-              print('Log out - Current device: $currentDeviceId');
-
-              if (profileDevice == null || profileDevice.isEmpty) {
-                print('Log out - Null Profile device: $profileDevice');
-                DocumentReference profileRef;
-                final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-                profileRef = _firestore.collection('profiles').doc(user.uid);
-
-                // Update the lastLoggedInDeviceId
-                profileRef.update({'lastLoggedInDeviceId': currentDeviceId});
-              }
-
-              if (currentDeviceId.isNotEmpty &&
-                  profileDevice != null &&
-                  currentDeviceId != profileDevice) {
-                print(
-                    'Log out - Device check completed: $deviceCheckCompleted');
-                authState.logOut();
-              }
-            }
 
             return AppBar(
               backgroundColor: const Color(0xFF5B8BDF),

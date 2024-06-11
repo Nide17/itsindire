@@ -36,13 +36,9 @@ class AuthState with ChangeNotifier {
     // Listen to auth state changes
     _authSubscription = _authInstance.authStateChanges().listen((user) {
       if (!isDisposed) {
-        print('\n\nAuthStateChanges: $user');
         _currentUser = user;
         _isLoggedIn = _currentUser != null;
-
         _currentUser != null ? _updateProfile(_currentUser) : null;
-        print('\n\nProfile updated: $_currentProfile');
-
         print('\nAuthStateChanges Current user: $_currentUser');
         print('\nAuthStateChanges Current profile: $_currentProfile');
         notifyListeners();
@@ -65,9 +61,6 @@ class AuthState with ChangeNotifier {
   ProfileModel? get currentProfile => _currentProfile;
 
   void setCurrentProfile(ProfileModel? profile) {
-    print('\n\nSetting current profile: $profile');
-    print('\n\Prev profile: $_currentProfile');
-
     if (_currentProfile != profile) {
       _currentProfile = profile;
       notifyListeners();
@@ -93,7 +86,6 @@ class AuthState with ChangeNotifier {
   }
 
   void _updateProfile(User? user) async {
-    print('\n\nUpdating profile_updateProfile: $user');
     if (user != null) {
       _profileService.getCurrentProfileByID(user.uid).listen((profile) {
         // if current profile's lastLoggedInDeviceId is equal to the current device ID
@@ -102,7 +94,6 @@ class AuthState with ChangeNotifier {
         getAndroidId().then((value) {
           print(
               '\n\nProfile - Notifier: $profile\nCurrent device ID: ${value}');
-          print('\n\nAndroid ID value: $value');
 
           if (profile != null && profile.lastLoggedInDeviceId == value) {
             print('\n\nProfile - Setting current profile: $profile');
@@ -119,10 +110,8 @@ class AuthState with ChangeNotifier {
   Future<String?> getAndroidId() async {
     try {
       String? androidId = await AndroidId().getId();
-      print("\n\nAndroid ID - Auth service: $androidId");
       return androidId;
     } catch (e) {
-      print("Failed to get Android ID-Auth service: $e");
       return null;
     }
   }
@@ -167,7 +156,6 @@ class AuthState with ChangeNotifier {
   // LOGIN WITH EMAIL AND PASSWORD METHOD
   Future userLogin(String email, String password) async {
     try {
-      print('\n\nTrying to login...');
       UserCredential result = await _authInstance.signInWithEmailAndPassword(
           email: email, password: password);
 
@@ -179,39 +167,33 @@ class AuthState with ChangeNotifier {
         DocumentSnapshot profileSnapshot = await profileRef.get();
         String? deviceId = await getAndroidId();
 
-        if (profileSnapshot.exists && deviceId != null && deviceId.isNotEmpty) {
+        if (profileSnapshot.exists) {
           String? prevDeviceId = profileSnapshot.get('lastLoggedInDeviceId');
+          await profileRef.update({'lastLoggedInDeviceId': deviceId});
 
-          if (deviceId.isNotEmpty && deviceId != '') {
-            await profileRef.update({'lastLoggedInDeviceId': deviceId});
-          }
-
-          if (prevDeviceId == null || prevDeviceId == '') {
-            print('\n\nPrevious device ID: $prevDeviceId');
-            print('Current device ID: $deviceId');
-            print('First time login on this device.');
-
-            // Return success message
-            return AuthResult(value: _userFromFirebaseUser(result.user!));
-          } else if (prevDeviceId != '' &&
+          if (prevDeviceId != '' &&
+              prevDeviceId != null &&
               prevDeviceId.isNotEmpty &&
               prevDeviceId != deviceId) {
-            print('\n\nPrevious device ID: $prevDeviceId');
-            print('Current device ID: $deviceId');
-            print('Logged in on another device.');
+            return AuthResult(
+                error:
+                    'Mwemerwe gukoresha konti imwe muri telefoni imwe. Duhamagare kuri 0794033360 tugufashe!');
           }
         }
-
         return _userFromFirebaseUser(result.user!);
       } else {
+
         return null;
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
+
         return AuthResult(error: 'Konti ntibashije kuboneka. Iyandikishe!');
       } else if (e.code == 'wrong-password') {
+        
         return AuthResult(error: 'Ijambo banga siryo!');
       } else {
+
         print("e.toString()) - ${e.toString()}");
       }
     } catch (e) {

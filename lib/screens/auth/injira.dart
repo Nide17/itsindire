@@ -23,6 +23,7 @@ class Injira extends StatefulWidget {
 
 class _InjiraState extends State<Injira> {
   final _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String email = '';
   String password = '';
   bool loading = false;
@@ -34,7 +35,11 @@ class _InjiraState extends State<Injira> {
       widget.connectionStatus!.setOnline();
     }
     if (FirebaseAuth.instance.currentUser != null) {
-      Navigator.pop(context);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/iga-landing');
+        }
+      });
     }
   }
 
@@ -43,20 +48,19 @@ class _InjiraState extends State<Injira> {
     return loading
         ? const LoadingWidget()
         : StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-
-              // User is logged in, pop the widget
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
               if (snapshot.data?.uid != null) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (mounted) {
-                    Navigator.pop(context);
+                    Navigator.pushReplacementNamed(context, '/iga-landing');
                   }
                 });
               }
 
-            return Consumer<AuthState>(builder: (context, authState, _) {
+              return Consumer<AuthState>(builder: (context, authState, _) {
                 return Scaffold(
+                    key: _scaffoldKey,
                     backgroundColor: const Color.fromARGB(255, 71, 103, 158),
                     appBar: PreferredSize(
                       preferredSize: Size.fromHeight(58.0),
@@ -75,12 +79,15 @@ class _InjiraState extends State<Injira> {
                         children: [
                           widget.message != null
                               ? Container(
-                                  width: MediaQuery.of(context).size.width * 0.8,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
                                   margin: EdgeInsets.symmetric(
                                     horizontal:
-                                        MediaQuery.of(context).size.width * 0.05,
+                                        MediaQuery.of(context).size.width *
+                                            0.05,
                                     vertical:
-                                        MediaQuery.of(context).size.height * 0.03,
+                                        MediaQuery.of(context).size.height *
+                                            0.03,
                                   ),
                                   padding: EdgeInsets.all(
                                     MediaQuery.of(context).size.width * 0.04,
@@ -89,7 +96,8 @@ class _InjiraState extends State<Injira> {
                                     color: const Color(0xFFFFDE59),
                                     border: Border.all(
                                       width: 2.0,
-                                      color: const Color.fromARGB(255, 255, 204, 0),
+                                      color: const Color.fromARGB(
+                                          255, 255, 204, 0),
                                     ),
                                     borderRadius: BorderRadius.circular(24.0),
                                     boxShadow: const [
@@ -107,20 +115,22 @@ class _InjiraState extends State<Injira> {
                                         widget.message!,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          fontSize:
-                                              MediaQuery.of(context).size.width *
-                                                  0.04,
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.04,
                                           fontWeight: FontWeight.w900,
-                                          color: const Color.fromARGB(255, 0, 0, 0),
+                                          color: const Color.fromARGB(
+                                              255, 0, 0, 0),
                                         ),
                                       ),
                                     ],
                                   ),
                                 )
                               : Container(),
-            
                           const GradientTitle(
-                              title: 'INJIRA', icon: 'assets/images/injira.svg'),
+                              title: 'INJIRA',
+                              icon: 'assets/images/injira.svg'),
                           const Description(
                               text: 'Injira kugirango ubashe kubona byose!'),
                           Row(
@@ -129,8 +139,10 @@ class _InjiraState extends State<Injira> {
                               children: [
                                 Image.asset(
                                   'assets/images/house_keys.png',
-                                  height: MediaQuery.of(context).size.height * 0.2,
-                                  width: MediaQuery.of(context).size.width * 0.2,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.2,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.2,
                                 ),
                               ]),
                           Padding(
@@ -150,7 +162,6 @@ class _InjiraState extends State<Injira> {
                                       setState(() => email = value);
                                     },
                                   ),
-            
                                   DefaultInput(
                                     placeholder: 'Ijambobanga',
                                     validation: 'Injiza ijambobanga!',
@@ -163,65 +174,76 @@ class _InjiraState extends State<Injira> {
                                       if (_formKey.currentState!.validate()) {
                                         _formKey.currentState!.save();
                                         setState(() => loading = true);
-            
-                                        dynamic result = await authState.userLogin(
-                                            email, password);
-            
+
+                                        dynamic result = await authState
+                                            .userLogin(email, password);
+
                                         setState(() => loading = false);
-            
+
                                         print('\nResult: $result\n');
-            
+
+                                        if (!mounted) return;
+
                                         if (result == null) {
-                                          print('\nKwinjira ntibyagenze neza!\n');
-                                          // showDialog(
-                                          //   context: context,
-                                          //   builder: (BuildContext context) {
-                                          //     return TeguraAlert(
-                                          //       errorTitle:
-                                          //           'Kwinjira ntibyagenze neza!',
-                                          //       errorMsg:
-                                          //           'Kwinjira ntibyagenze neza, hamagara 0794033360 tugufashe!',
-                                          //       alertType: 'error',
-                                          //       firstButtonTitle: 'Funga',
-                                          //       firstButtonFunction: () {
-                                          //         Navigator.pop(context);
-                                          //       },
-                                          //       secondButtonTitle: 'Injira',
-                                          //       secondButtonFunction: () {
-                                          //         Navigator.pop(context);
-                                          //         Navigator.pushReplacementNamed(
-                                          //             context, '/injira');
-                                          //       },
-                                          //       secondButtonColor:
-                                          //           Color(0xFF00A651),
-                                          //     );
-                                          //   },
-                                          // );
+                                          print(
+                                              '\nKwinjira ntibyagenze neza!\n');
+                                          showCustomSnackBar(
+                                              context,
+                                              'Kwinjira ntibyagenze neza, hamagara 0794033360 tugufashe!',
+                                              Colors.red);
                                         } else if (result.runtimeType !=
                                                 UserModel &&
                                             result.error != null) {
                                           print('\nError: ${result.error}\n');
+                                          authState.logOut();
+                                          // showCustomSnackBar(context,
+                                          //     result.error, Colors.red);
+
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: const Text('Ijambo banga!'),
+                                                content: Text(result.error),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    child: const Text('Oya'),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
                                         } else if (result.runtimeType !=
                                                 UserModel &&
                                             result.warning != null) {
-                                          print('\nWarning: ${result.warning}\n');
-                                          authState.setCurrentUser(
-                                              FirebaseAuth.instance.currentUser);
+                                          print(
+                                              '\nWarning: ${result.warning}\n');
+
+                                          authState.logOut();
+                                          showCustomSnackBar(context,
+                                              result.warning, Colors.orange);
                                         } else {
+                                          showCustomSnackBar(
+                                              context,
+                                              'Kwinjira byagenze neza!',
+                                              Colors.green);
                                           print('\nKwinjira-User: ${result}\n');
-                                          authState.setCurrentUser(
-                                              FirebaseAuth.instance.currentUser);
+                                          authState.setCurrentUser(FirebaseAuth
+                                              .instance.currentUser);
                                         }
                                       }
                                     },
                                   ),
-            
+
                                   // SIZED BOX
                                   SizedBox(
-                                    height:
-                                        MediaQuery.of(context).size.height * 0.02,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.02,
                                   ),
-            
+
                                   // CTA LINK
                                   const CtaAuthLink(
                                     text1: 'Wibagiwe ijambobanga? ',
@@ -230,13 +252,13 @@ class _InjiraState extends State<Injira> {
                                     color2: Color.fromARGB(255, 0, 27, 116),
                                     route: '/wibagiwe',
                                   ),
-            
+
                                   // SIZED BOX
                                   SizedBox(
-                                    height:
-                                        MediaQuery.of(context).size.height * 0.02,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.02,
                                   ),
-            
+
                                   // CTA LINK
                                   const CtaAuthLink(
                                     text1: 'Niba utariyandikisha, ',
@@ -253,7 +275,24 @@ class _InjiraState extends State<Injira> {
                       ),
                     ));
               });
-          }
-        );
+            });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void showCustomSnackBar(
+      BuildContext context, String message, Color backgroundColor) {
+    if (ScaffoldMessenger.maybeOf(context) != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: backgroundColor,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
   }
 }

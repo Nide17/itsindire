@@ -42,7 +42,7 @@ class _UrStudentState extends State<UrStudent> {
   Widget build(BuildContext context) {
     return Consumer<AuthState>(builder: (context, authState, _) {
       if (authState.currentUser != null) {
-        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, '/iga-landing');
       }
       return Scaffold(
           backgroundColor: const Color.fromARGB(255, 71, 103, 158),

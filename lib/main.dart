@@ -208,6 +208,7 @@ class _TeguraAppState extends State<TeguraApp> {
         ),
       ],
       child: Consumer<AuthState>(builder: (context, authState, _) {
+        print('AuthState - Main: ${authState.currentUser}');
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(primarySwatch: Colors.blue),
