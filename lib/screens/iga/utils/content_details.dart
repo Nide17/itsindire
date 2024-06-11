@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/firebase_services/ingingo_db.dart';
@@ -5,8 +6,8 @@ import 'package:tegura/models/course_progress.dart';
 import 'package:tegura/models/ingingo.dart';
 import 'package:tegura/models/isomo.dart';
 import 'package:tegura/firebase_services/isomo_progress.dart';
-import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/iga/utils/content_title_text.dart';
+import 'package:tegura/screens/iga/utils/iga_content.dart';
 import 'package:tegura/screens/iga/utils/option_content.dart';
 import 'package:tegura/utilities/loading_widget.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -46,7 +47,7 @@ class _ContentDetailsState extends State<ContentDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final usr = Provider.of<UserModel?>(context);
+    final usr = FirebaseAuth.instance.currentUser;
     final currPageIngingos = Provider.of<List<IngingoModel>?>(context) ?? [];
     final courseProgress = Provider.of<CourseProgressModel?>(context);
     final totalIngingos = courseProgress?.totalIngingos ?? 0;
@@ -83,7 +84,14 @@ class _ContentDetailsState extends State<ContentDetails> {
                             0,
                             totalIngingos,
                           );
-                          Navigator.pop(context);
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => IgaContent(
+                                      isomo: widget.isomo,
+                                      courseProgress: courseProgress,
+                                      thisCourseTotalIngingos:
+                                          thisCourseTotalIngingos)));
                         },
                         child: const Text('Ongera utangire iri somo!'),
                       ),

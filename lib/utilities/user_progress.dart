@@ -91,10 +91,11 @@ class _UserProgressState extends State<UserProgress> {
             showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return payment != null && payment.isApproved != true
+                  return payment != null &&
+                          payment.isApproved != true
                       ? const TeguraAlert(
                           errorTitle: 'Ntibyagenze neza',
-                          errorMsg: 'Ifatabuguzi ryawe ntiryemeje!',
+                          errorMsg: 'Ifatabuguzi ryawe ntiriremezwa!',
                           alertType: 'error',
                         )
                       : percent != 1.0
@@ -132,10 +133,16 @@ class _UserProgressState extends State<UserProgress> {
                               secondButtonColor: const Color(0xFF00A651),
                               alertType: 'success',
                             )
-                          : IsuzumeContent(
-                              isomo: widget.isomo,
-                              courseProgress: widget.courseProgress,
-                            );
+                          : (payment == null ||
+                                  !payment.endAt.isAfter(DateTime.now()))
+                              ? Ibiciro(
+                                  message: isUrStudent
+                                      ? 'Buy a package to continue learning!'
+                                      : 'Banza ugure ifatabuguzi!')
+                              : IsuzumeContent(
+                                  isomo: widget.isomo,
+                                  courseProgress: widget.courseProgress,
+                                );
                 });
           },
           child: Container(

@@ -17,69 +17,75 @@ class _IgazetiIbimurikaState extends State<IgazetiIbimurika> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFD9D9D9),
-      //   Body with a floating top bar
-      body: CustomScrollView(
-        slivers: [
-          const QBAppBar(),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                Container(
-                  padding:
-                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
-                  child: Column(
-                    children: [
-                      const Center(
-                        child: QBTitle(title: 'IBIMENYETSO BIMURIKA'),
+      body: ScrollbarTheme(
+        data: ScrollbarThemeData(
+          thumbColor: WidgetStateProperty.all(Color(0xFFFFBD59)),
+        ),
+        child: Scrollbar(
+          child: CustomScrollView(
+            slivers: [
+              const QBAppBar(),
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    Container(
+                      padding:
+                          EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+                      child: Column(
+                        children: [
+                          const Center(
+                            child: QBTitle(title: 'IBIMENYETSO BIMURIKA'),
+                          ),
+          
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            child: FadeInImage.memoryNetwork(
+                              placeholder: kTransparentImage,
+                              image:
+                                  'https://firebasestorage.googleapis.com/v0/b/tegura-rw.appspot.com/o/ibimurika%2FIbimenyetso%20bimurika.png?alt=media&token=324800c8-f077-47f3-95df-3d6deb3aff21',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+          
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                              vertical: MediaQuery.of(context).size.width * 0.04,
+                              horizontal: MediaQuery.of(context).size.width * 0.02,
+                            ),
+                            child: Text(
+                                '📝 Amatara y\'ibimenyetso bimurika mu buryo bw\'amatara atatu asobanuye atya:',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: const Color.fromARGB(255, 0, 0, 0),
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.04,
+                                )),
+                          ),
+          
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: ibimurika.length,
+                            itemBuilder: (context, index) {
+                              return IbimurikaRow(
+                                title: ibimurika[index]['title'],
+                                txt: ibimurika[index]['txt'],
+                                imgUrl: ibimurika[index]['imgUrl'],
+                                color: ibimurika[index]['color'],
+                              );
+                            },
+                          ),
+                          // FOOTER
+                          const QBAppFooter(),
+                        ],
                       ),
-
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        child: FadeInImage.memoryNetwork(
-                          placeholder: kTransparentImage,
-                          image:
-                              'https://firebasestorage.googleapis.com/v0/b/tegura-rw.appspot.com/o/ibimurika%2FIbimenyetso%20bimurika.png?alt=media&token=324800c8-f077-47f3-95df-3d6deb3aff21',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-
-                      Container(
-                        margin: EdgeInsets.symmetric(
-                          vertical: MediaQuery.of(context).size.width * 0.04,
-                          horizontal: MediaQuery.of(context).size.width * 0.02,
-                        ),
-                        child: Text(
-                            '📝 Amatara y\'ibimenyetso bimurika mu buryo bw\'amatara atatu asobanuye atya:',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: const Color.fromARGB(255, 0, 0, 0),
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.04,
-                            )),
-                      ),
-
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: ibimurika.length,
-                        itemBuilder: (context, index) {
-                          return IbimurikaRow(
-                            title: ibimurika[index]['title'],
-                            txt: ibimurika[index]['txt'],
-                            imgUrl: ibimurika[index]['imgUrl'],
-                            color: ibimurika[index]['color'],
-                          );
-                        },
-                      ),
-                      // FOOTER
-                      const QBAppFooter(),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

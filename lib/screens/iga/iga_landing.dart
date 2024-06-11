@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -6,7 +7,6 @@ import 'package:tegura/firebase_services/isomo_progress.dart';
 import 'package:tegura/main.dart';
 import 'package:tegura/models/course_progress.dart';
 import 'package:tegura/models/isomo.dart';
-import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
 import 'package:tegura/utilities/app_bar.dart';
 import 'package:tegura/screens/iga/iga_data.dart';
@@ -26,7 +26,7 @@ class _IgaLandingState extends State<IgaLanding> {
   @override
   Widget build(BuildContext context) {
     final conn = Provider.of<ConnectionStatus>(context);
-    final usr = Provider.of<UserModel?>(context);
+    final usr = FirebaseAuth.instance.currentUser;
     final List<CourseProgressModel?>? allUserProgresses =
         Provider.of<List<CourseProgressModel?>?>(context);
     final List<IsomoModel?>? allAmasomos =
@@ -35,17 +35,18 @@ class _IgaLandingState extends State<IgaLanding> {
     // FOR EACH COURSE, UPDATE THE PROGRESS IF ALL USER PROGRESSES LENGTH IS 0
     if (allAmasomos != null &&
         allAmasomos.isNotEmpty &&
-        allUserProgresses!.isEmpty) {
+        usr != null &&
+        allUserProgresses != null &&
+        allUserProgresses.isEmpty) {
       loading = true;
       for (var isomo in allAmasomos) {
-        
         // GET THE TOTAL INGINGOS FOR THE COURSE AND UPDATE THE PROGRESS'S TOTAL INGINGOS
         Stream<IsomoIngingoSum> totalIngingos =
             IngingoService().getTotalIsomoIngingos(isomo!.id);
 
         totalIngingos.listen((event) {
           CourseProgressService().updateUserCourseProgress(
-            usr!.uid,
+            usr.uid,
             isomo.id,
             0,
             event.totalIngingos,
@@ -101,7 +102,7 @@ class _IgaLandingState extends State<IgaLanding> {
         ? const LoadingWidget()
         : Scaffold(
             backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-            appBar: const PreferredSize(
+            appBar: PreferredSize(
               preferredSize: Size.fromHeight(58.0),
               child: AppBarTegura(),
             ),

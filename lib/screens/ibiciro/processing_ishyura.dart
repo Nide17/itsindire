@@ -1,10 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tegura/firebase_services/payment_db.dart';
 import 'package:tegura/models/ifatabuguzi.dart';
 import 'package:tegura/models/payment.dart';
-import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/ibiciro/ifatabuguzi.dart';
 import 'package:tegura/screens/iga/utils/tegura_alert.dart';
 import 'package:tegura/utilities/app_bar.dart';
@@ -31,8 +29,9 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
 
   Future<void> _loadPaymentData() async {
     if (FirebaseAuth.instance.currentUser != null) {
-      PaymentModel pymt = await PaymentService()
-          .getUserLatestPytData(FirebaseAuth.instance.currentUser!.uid);
+      PaymentModel pymt = FirebaseAuth.instance.currentUser != null
+          ? await PaymentService()
+          .getUserLatestPytData(FirebaseAuth.instance.currentUser!.uid) : null;
       setState(() {
         payment = pymt;
       });
@@ -41,7 +40,7 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
 
   @override
   Widget build(BuildContext context) {
-    final usr = Provider.of<UserModel?>(context);
+    final usr = FirebaseAuth.instance.currentUser;
     final String message = widget.ifatabuguzi.type != 'ur'
         ? 'Andika nimero ugiye gukoresha wishyura yawe hasi aho, ubundi wishyure ${widget.ifatabuguzi.igiciro} RWF kuri MoMo: 0794033360'
         : 'Provide your payment number below, then pay ${widget.ifatabuguzi.igiciro} RWF on MoMo: 0794033360';
@@ -53,7 +52,7 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
         ? const Spinner()
         : Scaffold(
             backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-            appBar: const PreferredSize(
+            appBar: PreferredSize(
               preferredSize: Size.fromHeight(58.0),
               child: AppBarTegura(),
             ),

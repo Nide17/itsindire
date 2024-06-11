@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tegura/models/pop_question.dart';
 
 class QuizScoreProvider extends ChangeNotifier {
+  
   final QuizScore quizScore = QuizScore(
     questions: [],
     userID: '',

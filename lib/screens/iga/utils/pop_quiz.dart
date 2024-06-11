@@ -65,7 +65,7 @@ class _PopQuizState extends State<PopQuiz> {
     return currQnID >= 0 && currQnID < widget.popQuestions.length
         ? Scaffold(
             backgroundColor: const Color.fromARGB(255, 228, 225, 225),
-            appBar: const PreferredSize(
+            appBar: PreferredSize(
               preferredSize: Size.fromHeight(58.0),
               child: AppBarTegura(),
             ),

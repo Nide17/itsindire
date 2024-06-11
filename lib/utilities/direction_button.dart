@@ -40,16 +40,24 @@ class _DirectionButtonState extends State<DirectionButton> {
   Widget build(BuildContext context) {
     final pageIngingos = Provider.of<List<IngingoModel>?>(context) ?? [];
     final courseProgress = Provider.of<CourseProgressModel?>(context);
-    final List<int> listIngingosID =
-        pageIngingos.map((ing) => ing.id + widget.increment).toList();
-        
+    final int ingingoID = pageIngingos.isNotEmpty ? pageIngingos[0].id : 0;
+
+        // Generate a list of ingingos IDs from ingingoID
+        List<int> listIngingosID2 = [];
+        for (int i = 0; i < 5; i++) {
+          listIngingosID2.add(ingingoID + i);
+        }
+    // print("pageIngingos: $pageIngingos");
+    // print("ingingoID: $ingingoID");
+    // print("listIngingosID2: $listIngingosID2");
+
     return MultiProvider(
       providers: [
         StreamProvider<List<PopQuestionModel>?>.value(
-          value: listIngingosID.isNotEmpty
+          value: listIngingosID2.isNotEmpty
               ? PopQuestionService().getPopQuestionsByIngingoIDs(
                   widget.isomo.id,
-                  listIngingosID,
+                  listIngingosID2,
                 )
               : null,
           initialData: null,
@@ -69,6 +77,7 @@ class _DirectionButtonState extends State<DirectionButton> {
 
         // print('isIngingosHavePopQuestions: $isIngingosHavePopQuestions');
         // print('popQuestions: $popQuestions');
+
         return ElevatedButton(
           onPressed: () {
             widget.scrollTop();
@@ -80,6 +89,12 @@ class _DirectionButtonState extends State<DirectionButton> {
                   widget.skip <= courseProgress!.totalIngingos &&
                   pageIngingos.length + widget.skip >
                       courseProgress.currentIngingo) {
+                // print('Updating current ingingo');
+                // print('courseProgress.userId: ${courseProgress.userId}');
+                // print('widget.isomo.id: ${widget.isomo.id}');
+                // print('widget.skip + pageIngingos.length: ${widget.skip + pageIngingos.length}');
+                // print('courseProgress.totalIngingos: ${courseProgress.totalIngingos}');
+
                 CourseProgressService().updateUserCourseProgress(
                   courseProgress.userId,
                   widget.isomo.id,

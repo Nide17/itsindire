@@ -20,10 +20,26 @@ class PaymentModel {
   });
 
   // GET REMAINING DAYS
-  int getRemainingDays() {
+int getRemainingDays() {
     DateTime now = DateTime.now();
-    int diff = endAt.difference(now).inDays;
-    return diff + 1;
+    Duration diff = endAt.difference(now);
+    int daysDifference = diff.inDays;
+
+    // Check if there is any remaining time in the day beyond the full days difference
+    if (diff.inHours % 24 > 0 ||
+        diff.inMinutes % 1440 > 0 ||
+        diff.inSeconds % 86400 > 0) {
+      if (diff.isNegative) {
+        daysDifference -=
+            1; // Passed time within a day should be considered as a full day passed
+      } else {
+        daysDifference +=
+            1; // Remaining time within a day should be considered as a full day remaining
+      }
+    }
+
+    print('\nEndAt: $endAt\nNow: $now\nDays Difference: $daysDifference\n');
+    return daysDifference;
   }
 
   // GET FORMATED END DATE - 2021-09-30

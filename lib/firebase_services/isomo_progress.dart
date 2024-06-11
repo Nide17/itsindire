@@ -81,22 +81,27 @@ class CourseProgressService {
   // FINISHED PROGRESSES STREAM
   Stream<List<CourseProgressModel?>>? getFinishedProgresses(String? uid) {
     if (uid == null || uid == '') return null;
-    return progressCollection
-        .where('userId', isEqualTo: uid)
-        .where('totalIngingos', isEqualTo: 'currentIngingo')
-        .snapshots()
-        .map(_progressesFromSnapshot);
+
+    final userProgresses = getUserProgresses(uid);
+
+    return userProgresses!.map((progresses) {
+      return progresses.where((progress) {
+        return progress!.currentIngingo == progress.totalIngingos;
+      }).toList();
+    });
   }
 
   Stream<List<CourseProgressModel?>>? getUnfinishedProgresses(String? uid) {
     if (uid == null || uid == '') return null;
-    return progressCollection
-        .where('userId', isEqualTo: uid)
-        .where('totalIngingos', isNotEqualTo: 'currentIngingo')
-        .snapshots()
-        .map(_progressesFromSnapshot);
-  }
 
+    final userProgresses = getUserProgresses(uid);
+
+    return userProgresses!.map((progresses) {
+      return progresses.where((progress) {
+        return progress!.currentIngingo < progress.totalIngingos;
+      }).toList();
+    });
+  }
 
   // THIS FUNCTION WILL UPDATE THE USER PROGRESS ON A COURSE IN THE DATABASE
   //WHEN THE USER START AND WHEN THE USER IS LEARNING A COURSE AND WHEN THE USER FINISHES A COURSE
@@ -106,7 +111,7 @@ class CourseProgressService {
     int currentIngingo,
     int totalIngingos,
   ) async {
-        print('$uid $courseId $currentIngingo $totalIngingos');
+    print('$uid $courseId $currentIngingo $totalIngingos');
     return await progressCollection.doc('${courseId}_$uid').set({
       'id': '${courseId}_$uid',
       'userId': uid,

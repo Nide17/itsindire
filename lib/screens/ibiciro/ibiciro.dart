@@ -88,87 +88,97 @@ class _IbiciroState extends State<Ibiciro> {
     } else {
       return Scaffold(
           backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-          appBar: const PreferredSize(
+          appBar: PreferredSize(
             preferredSize: Size.fromHeight(58.0),
             child: AppBarTegura(),
           ),
           body: conn.isOnline == false
               ? const NoInternet()
-              : ListView(
-                  children: [
-                    widget.message != null
-                        ? Container(
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            margin: EdgeInsets.symmetric(
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 0.05,
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.03,
-                            ),
-                            padding: EdgeInsets.all(
-                              MediaQuery.of(context).size.width * 0.04,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFFDE59),
-                              border: Border.all(
-                                width: 2.0,
-                                color: const Color.fromARGB(255, 255, 204, 0),
-                              ),
-                              borderRadius: BorderRadius.circular(24.0),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color.fromARGB(255, 59, 57, 77),
-                                  offset: Offset(0, 3),
-                                  blurRadius: 8,
-                                  spreadRadius: -7,
+              : ScrollbarTheme(
+                  data: ScrollbarThemeData(
+                    thumbColor: WidgetStateProperty.all(Color(0xFFFFBD59)),
+                  ),
+                  child: Scrollbar(
+                    child: ListView(
+                      children: [
+                        widget.message != null
+                            ? Container(
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                margin: EdgeInsets.symmetric(
+                                  horizontal:
+                                      MediaQuery.of(context).size.width * 0.05,
+                                  vertical:
+                                      MediaQuery.of(context).size.height * 0.03,
                                 ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                Text(
-                                  widget.message!,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.04,
-                                    fontWeight: FontWeight.w900,
-                                    color: const Color.fromARGB(255, 0, 0, 0),
+                                padding: EdgeInsets.all(
+                                  MediaQuery.of(context).size.width * 0.04,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFDE59),
+                                  border: Border.all(
+                                    width: 2.0,
+                                    color:
+                                        const Color.fromARGB(255, 255, 204, 0),
                                   ),
+                                  borderRadius: BorderRadius.circular(24.0),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Color.fromARGB(255, 59, 57, 77),
+                                      offset: Offset(0, 3),
+                                      blurRadius: 8,
+                                      spreadRadius: -7,
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          )
-                        : Container(),
-                    GradientTitle(
-                        title: isUrStudent == true
-                            ? ' UR STUDENTS PACKAGES'
-                            : 'IBICIRO BYO KWIGA',
-                        icon: 'assets/images/ibiciro.svg'),
-                    Description(
-                        text: profile?.urStudent == true
-                            ? 'Please pay for the package you want to use, then start learning.'
-                            : 'Ishyura amafaranga ahwanye n\'ifatabuguzi wifuza, uhite utangira kwiga.'),
-                    Column(
-                      children: subscriptionsToUse.asMap().entries.map((entry) {
-                        int index = entry.key;
-                        final IfatabuguziModel? item = entry.value;
-                        return Ifatabuguzi(
-                            index: index,
-                            ifatabuguzi: item ??
-                                IfatabuguziModel(
-                                  id: '',
-                                  igihe: '',
-                                  igiciro: 0,
-                                  ibirimo: [],
-                                  ubusobanuro: '',
-                                  type: '',
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      widget.message!,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.04,
+                                        fontWeight: FontWeight.w900,
+                                        color:
+                                            const Color.fromARGB(255, 0, 0, 0),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                            curWidget: runtimeType.toString());
-                      }).toList(),
+                              )
+                            : Container(),
+                        GradientTitle(
+                            title: isUrStudent == true
+                                ? ' UR STUDENTS PACKAGES'
+                                : 'IBICIRO BYO KWIGA',
+                            icon: 'assets/images/ibiciro.svg'),
+                        Description(
+                            text: profile?.urStudent == true
+                                ? 'Please pay for the package you want to use, then start learning.'
+                                : 'Ishyura amafaranga ahwanye n\'ifatabuguzi wifuza, uhite utangira kwiga.'),
+                        Column(
+                          children:
+                              subscriptionsToUse.asMap().entries.map((entry) {
+                            int index = entry.key;
+                            final IfatabuguziModel? item = entry.value;
+                            return Ifatabuguzi(
+                                index: index,
+                                ifatabuguzi: item ??
+                                    IfatabuguziModel(
+                                      id: '',
+                                      igihe: '',
+                                      igiciro: 0,
+                                      ibirimo: [],
+                                      ubusobanuro: '',
+                                      type: '',
+                                    ),
+                                curWidget: runtimeType.toString());
+                          }).toList(),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ));
     }
   }

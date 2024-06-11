@@ -7,6 +7,7 @@ import 'package:tegura/screens/iga/utils/custom_radio_button.dart';
 import 'package:tegura/screens/iga/utils/gradient_title.dart';
 import 'package:tegura/providers/quiz_score_provider.dart';
 import 'package:tegura/firebase_services/isomo_progress.dart';
+import 'package:tegura/screens/iga/utils/iga_content.dart';
 import 'package:tegura/utilities/ikibazo_button.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -243,7 +244,15 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                 0,
                 widget.courseProgress!.totalIngingos,
               );
-              Navigator.pop(context);
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => IgaContent(
+                            isomo: widget.isomo,
+                            courseProgress: widget.courseProgress,
+                            thisCourseTotalIngingos:
+                                widget.courseProgress!.totalIngingos,
+                          )));
             },
             child: const Text('Ongera utangire iri somo!'),
           ),

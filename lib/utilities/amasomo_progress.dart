@@ -17,6 +17,7 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
   @override
   Widget build(BuildContext context) {
     final allAmasomos = Provider.of<List<IsomoModel?>?>(context);
+
 // SORT THE PROGRESSES TO SHOW
     if (widget.progressesToShow != null) {
       widget.progressesToShow?.sort(
@@ -28,15 +29,17 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
           ?.sort((a, b) => a!.courseId.compareTo(b!.courseId));
     }
 
-    if (widget.progressesToShow != null) {
-      widget.progressesToShow
-          ?.sort((a, b) => b!.totalIngingos.compareTo(a!.totalIngingos));
-    }
+    // if (widget.progressesToShow != null) {
+    //   widget.progressesToShow
+    //       ?.sort((a, b) => b!.totalIngingos.compareTo(a!.totalIngingos));
+    // }
 
-    return widget.progressesToShow == null
+    // print('widget.progressesToShow: ${widget.progressesToShow}');
+
+    return widget.progressesToShow == null || widget.progressesToShow!.isEmpty
         ? Center(
             child: Text(
-              'Nta masomo yabonetse!',
+              'Nta masomo urasoza!',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width * 0.04,
                 fontWeight: FontWeight.w900,

@@ -1,8 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/models/ifatabuguzi.dart';
 import 'package:tegura/models/profile.dart';
-import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/auth/iyandikishe.dart';
 import 'package:tegura/screens/ibiciro/processing_ishyura.dart';
 
@@ -19,7 +19,6 @@ class Ifatabuguzi extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final usr = Provider.of<UserModel?>(context);
     final profile = Provider.of<ProfileModel?>(context);
     final bool isUrStudent = profile?.urStudent ?? false;
 
@@ -95,10 +94,9 @@ class Ifatabuguzi extends StatelessWidget {
                                 TextSpan(
                                   children: [
                                     TextSpan(
-                                      text:
-                                      isUrStudent == true ?
-                                          'Period: ${ifatabuguzi.igihe.toUpperCase()} \n\nPrice: ${ifatabuguzi.igiciro} RWF     ':
-                                      'Igihe: ${ifatabuguzi.igihe.toUpperCase()} \n\nIgiciro: ${ifatabuguzi.igiciro} RWF     ',
+                                      text: isUrStudent == true
+                                          ? 'Period: ${ifatabuguzi.igihe.toUpperCase()} \n\nPrice: ${ifatabuguzi.igiciro} RWF     '
+                                          : 'Igihe: ${ifatabuguzi.igihe.toUpperCase()} \n\nIgiciro: ${ifatabuguzi.igiciro} RWF     ',
                                       style: TextStyle(
                                         fontWeight: FontWeight.w700,
                                         fontSize:
@@ -175,12 +173,15 @@ class Ifatabuguzi extends StatelessWidget {
                                             Navigator.push(context,
                                                 MaterialPageRoute(
                                                     builder: (context) {
-                                              return usr != null
+                                              return FirebaseAuth.instance
+                                                          .currentUser != null
                                                   ? ProcessingIshyura(
                                                       ifatabuguzi: ifatabuguzi)
                                                   : Iyandikishe(
-                                                      message:
-                                                      isUrStudent == true ? "Register first, then pay and start learning!" : "Banza wiyandikishe, ubone kwishyura wige!",
+                                                      message: isUrStudent ==
+                                                              true
+                                                          ? "Register first, then pay and start learning!"
+                                                          : "Banza wiyandikishe, ubone kwishyura wige!",
                                                     );
                                             }));
                                           },
@@ -237,8 +238,7 @@ class Ifatabuguzi extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.center,
                     child: Text(
-                      isUrStudent == true
-                          ? 'INCLUDES:' : 'HARIMO:',
+                      isUrStudent == true ? 'INCLUDES:' : 'HARIMO:',
                       style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: MediaQuery.of(context).size.width * 0.042,

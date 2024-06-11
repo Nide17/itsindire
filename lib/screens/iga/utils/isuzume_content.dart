@@ -1,9 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/models/course_progress.dart';
 import 'package:tegura/models/isomo.dart';
 import 'package:tegura/models/pop_question.dart';
-import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/iga/utils/tegura_alert.dart';
 import 'package:tegura/screens/iga/utils/isuzume_details.dart';
 import 'package:tegura/providers/quiz_score_provider.dart';
@@ -28,7 +28,6 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
 
   @override
   Widget build(BuildContext context) {
-    final usr = Provider.of<UserModel?>(context);
 
     return MultiProvider(
       providers: [
@@ -51,7 +50,10 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                 return const LoadingWidget();
               }
 
-              scoreProviderModel.quizScore.setUserID(usr!.uid);
+              FirebaseAuth.instance.currentUser != null
+                  ? scoreProviderModel.quizScore.setUserID(
+                      FirebaseAuth.instance.currentUser!.uid)
+                  : null;
               scoreProviderModel.quizScore.setIsomoID(widget.isomo.id);
 
               // CREATE THE QUESTIONS IN QUIZ SCORE - IF THEY DON'T EXIST
@@ -142,13 +144,13 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                 },
                 child: Scaffold(
                   backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                  appBar: const PreferredSize(
+                  appBar: PreferredSize(
                     preferredSize: Size.fromHeight(58.0),
                     child: AppBarTegura(),
                   ),
                   body: IsuzumeDetails(
                     isomo: widget.isomo,
-                    userID: usr.uid,
+                    userID: FirebaseAuth.instance.currentUser!.uid,
                     courseProgress: widget.courseProgress,
                     qnIndex: qnIndex,
                     selectedOption: selectedOption,

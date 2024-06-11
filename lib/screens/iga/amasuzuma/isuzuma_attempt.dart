@@ -1,10 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/firebase_services/isuzuma_score_db.dart';
 import 'package:tegura/models/isuzuma.dart';
 import 'package:tegura/models/isuzuma_score.dart';
-import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/iga/amasuzuma/isuzuma_score_review.dart';
 import 'package:tegura/screens/iga/amasuzuma/isuzuma_views.dart';
 import 'package:tegura/screens/iga/utils/tegura_alert.dart';
@@ -29,7 +29,7 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
 
   @override
   Widget build(BuildContext context) {
-    final usr = Provider.of<UserModel?>(context);
+    final usr = FirebaseAuth.instance.currentUser;
     print(
         "Next isuzuma received from overview in attempt: ${widget.nextIsuzuma?.id}");
 
@@ -138,7 +138,7 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
             },
             child: Scaffold(
               backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-              appBar: const PreferredSize(
+              appBar: PreferredSize(
                 preferredSize: Size.fromHeight(58.0),
                 child: AppBarTegura(),
               ),

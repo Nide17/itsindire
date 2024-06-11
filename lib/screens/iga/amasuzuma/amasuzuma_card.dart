@@ -5,7 +5,6 @@ import 'package:tegura/firebase_services/payment_db.dart';
 import 'package:tegura/models/isuzuma.dart';
 import 'package:tegura/models/isuzuma_score.dart';
 import 'package:tegura/models/payment.dart';
-import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/auth/iyandikishe.dart';
 import 'package:tegura/screens/iga/amasuzuma/amanota.dart';
 import 'package:tegura/screens/iga/utils/tegura_alert.dart';
@@ -29,8 +28,10 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
     setState(() => loading = true);
 
     if (FirebaseAuth.instance.currentUser != null) {
-      PaymentModel? pymt = await PaymentService()
-          .getUserLatestPytData(FirebaseAuth.instance.currentUser!.uid);
+      PaymentModel? pymt = FirebaseAuth.instance.currentUser != null
+          ? await PaymentService()
+              .getUserLatestPytData(FirebaseAuth.instance.currentUser!.uid)
+          : null;
 
       setState(() {
         payment = pymt;
@@ -56,7 +57,7 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
 
   @override
   Widget build(BuildContext context) {
-    final usr = Provider.of<UserModel?>(context);
+    final usr = FirebaseAuth.instance.currentUser;
     final amaUserScores = Provider.of<List<IsuzumaScoreModel>?>(context);
     IsuzumaScoreModel? userScore;
     if (amaUserScores != null) {
@@ -85,7 +86,9 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
                                   builder: (context) => const Iyandikishe(
                                       message:
                                           'Banza wiyandikishe, wishyure ubone aya masuzumabumenyi yose!')))
-                          : payment != null && payment.isApproved == true
+                          : payment != null &&
+                                  payment.isApproved == true &&
+                                  payment.endAt.isAfter(DateTime.now())
                               ? Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -102,7 +105,10 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
                                             ? 'Nturishyura'
                                             : payment.isApproved == false
                                                 ? 'Ifatabuguzi ryawe ntiriremezwa'
-                                                : 'Ongera ugerageze!',
+                                                : !payment.endAt
+                                                        .isAfter(DateTime.now())
+                                                    ? 'Ifatabuguzi ryawe ryararangiye'
+                                                    : 'Ibyo wifuza ntibyagenze neza. Ongera ushyure kugira ngo ugerageze!',
                                         alertType: 'error');
                                   });
                     },

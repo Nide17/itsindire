@@ -17,65 +17,71 @@ class _IgazetiInyongeraState extends State<IgazetiInyongera> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFD9D9D9),
-      //   Body with a floating top bar
-      body: CustomScrollView(
-        slivers: [
-          const QBAppBar(),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                Container(
-                  padding:
-                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
-                  child: Column(
-                    children: [
-                      const Center(
-                        child:
-                            QBTitle(title: 'IBYAPA NYONGERA N\'IBINTU NGOBOKA'),
+      body: ScrollbarTheme(
+        data: ScrollbarThemeData(
+          thumbColor: WidgetStateProperty.all(Color(0xFFFFBD59)),
+        ),
+        child: Scrollbar(
+          child: CustomScrollView(
+            slivers: [
+              const QBAppBar(),
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    Container(
+                      padding:
+                          EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+                      child: Column(
+                        children: [
+                          const Center(
+                            child:
+                                QBTitle(title: 'IBYAPA NYONGERA N\'IBINTU NGOBOKA'),
+                          ),
+          
+                          const QBSubTitle(
+                            no: '',
+                            title: 'A) IBYAPA NYONGERA ',
+                          ),
+          
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: nyongera.length,
+                            itemBuilder: (context, index) {
+                              return InyongeraRow(
+                                txt: nyongera[index]['txt'],
+                                imgUrl: nyongera[index]['imgUrl'],
+                              );
+                            },
+                          ),
+                          const QBSubTitle(
+                            no: '',
+                            title: 'B) IBINTU NGOBOKA',
+                          ),
+          
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: ngoboka.length,
+                            itemBuilder: (context, index) {
+                              return InyongeraRow(
+                                txt: ngoboka[index]['txt'],
+                                imgUrl: ngoboka[index]['imgUrl'],
+                              );
+                            },
+                          ),
+          
+                          // FOOTER
+                          const QBAppFooter(),
+                        ],
                       ),
-
-                      const QBSubTitle(
-                        no: '',
-                        title: 'A) IBYAPA NYONGERA ',
-                      ),
-
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: nyongera.length,
-                        itemBuilder: (context, index) {
-                          return InyongeraRow(
-                            txt: nyongera[index]['txt'],
-                            imgUrl: nyongera[index]['imgUrl'],
-                          );
-                        },
-                      ),
-                      const QBSubTitle(
-                        no: '',
-                        title: 'B) IBINTU NGOBOKA',
-                      ),
-
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: ngoboka.length,
-                        itemBuilder: (context, index) {
-                          return InyongeraRow(
-                            txt: ngoboka[index]['txt'],
-                            imgUrl: ngoboka[index]['imgUrl'],
-                          );
-                        },
-                      ),
-
-                      // FOOTER
-                      const QBAppFooter(),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

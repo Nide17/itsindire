@@ -12,7 +12,7 @@ class IgazetiBook extends StatefulWidget {
 
 class _IgazetiBookState extends State<IgazetiBook> {
   bool _isLoading = true;
-  late PDFDocument document;
+  late PDFDocument document = PDFDocument();
 
   @override
   void initState() {
@@ -28,12 +28,14 @@ class _IgazetiBookState extends State<IgazetiBook> {
 
   @override
   Widget build(BuildContext context) {
+    print(_isLoading);
+
     if (_isLoading) {
       return const LoadingWidget();
     }
 
     return Scaffold(
-      appBar: const PreferredSize(
+      appBar: PreferredSize(
         preferredSize: Size.fromHeight(58.0),
         child: AppBarTegura(),
       ),

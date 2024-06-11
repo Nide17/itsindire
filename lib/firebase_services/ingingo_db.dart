@@ -46,10 +46,10 @@ class IngingoService {
     final documentsStream =
         ingingoCollection.where('isomoID', isEqualTo: isomoID).snapshots();
 
-    // print them
-    documentsStream.listen((event) {
-      print('Total ingingos: ${event.docs.length}');
-    });
+    // // print them
+    // documentsStream.listen((event) {
+    //   print('Total ingingos: ${event.docs.length}');
+    // });
     return documentsStream
         .map((event) => IsomoIngingoSum(realTotalIngingos: event.docs.length));
   }

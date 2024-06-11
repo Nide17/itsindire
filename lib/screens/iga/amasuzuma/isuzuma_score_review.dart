@@ -1,10 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/firebase_services/isuzuma_db.dart';
 import 'package:tegura/firebase_services/isuzuma_score_db.dart';
 import 'package:tegura/models/isuzuma.dart';
 import 'package:tegura/models/isuzuma_score.dart';
-import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/iga/amasuzuma/amasuzuma.dart';
 import 'package:tegura/screens/iga/amasuzuma/isuzuma_custom_radio_button.dart';
 import 'package:tegura/screens/iga/amasuzuma/isuzuma_direction_button.dart';
@@ -33,7 +33,7 @@ class _IsuzumaScoreReviewState extends State<IsuzumaScoreReview> {
   Widget build(BuildContext context) {
     String nextIsuzumaTitle =
         '${widget.isuzuma.title.split(' ')[0]} ${widget.isuzuma.title.split(' ')[1]} ${int.parse(widget.isuzuma.title.split(' ')[2]) + 1}';
-    final usr = Provider.of<UserModel?>(context);
+    final usr = FirebaseAuth.instance.currentUser;
 
     return MultiProvider(
       providers: [
@@ -80,8 +80,7 @@ class _IsuzumaScoreReviewState extends State<IsuzumaScoreReview> {
                   ? const TeguraAlert(
                       errorTitle: 'Amasuzuma yarangiye!',
                       errorMsg: 'Nta suzuma rindi ryabashije kuboneka!',
-                      alertType: 'warning'
-                    )
+                      alertType: 'warning')
                   : IsuzumaOverview(
                       isuzuma: nextIsuzuma,
                     ),
@@ -104,7 +103,7 @@ class _IsuzumaScoreReviewState extends State<IsuzumaScoreReview> {
                 'Wagize ${scorePrModel.marks}/${scorePrModel.totalMarks}';
 
             return Scaffold(
-              appBar: const PreferredSize(
+              appBar: PreferredSize(
                 preferredSize: Size.fromHeight(58.0),
                 child: AppBarTegura(),
               ),

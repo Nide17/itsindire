@@ -63,7 +63,7 @@ class TeguraAlert extends StatelessWidget {
             },
             child: Container(
               padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.016,
+                horizontal: MediaQuery.of(context).size.width * 0.012,
                 vertical: MediaQuery.of(context).size.height * 0.006,
               ),
               decoration: BoxDecoration(
@@ -82,14 +82,14 @@ class TeguraAlert extends StatelessWidget {
                 ),
               ),
             )),
-        if (secondButtonTitle != null)
+        if (secondButtonTitle != null && secondButtonFunction != null)
           TextButton(
               onPressed: () {
                 secondButtonFunction!();
               },
               child: Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.016,
+                  horizontal: MediaQuery.of(context).size.width * 0.012,
                   vertical: MediaQuery.of(context).size.height * 0.006,
                 ),
                 decoration: BoxDecoration(

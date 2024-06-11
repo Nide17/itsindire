@@ -1,0 +1,38 @@
+REQUIRES RDB DOCUMENTS: 
+
+
+
+
+
+
+
+SIGNED UP: nidedrogba@gmail.com:Jesus@12
+
+UUID - https://www.uuidgenerator.net/ - api user id
+0f34a35b-aa13-458f-912f-a50592945752
+
+api key
+"apiKey": "9bbe002e96a94a4b9c0237490d16a1e6"
+
+JWT TOKEN: https://www.uuidgenerator.net/ - api user id: api key
+encoded: MGYzNGEzNWItYWExMy00NThmLTkxMmYtYTUwNTkyOTQ1NzUyOjliYmUwMDJlOTZhOTRhNGI5YzAyMzc0OTBkMTZhMWU2
+
+Authorization: Basic MGYzNGEzNWItYWExMy00NThmLTkxMmYtYTUwNTkyOTQ1NzUyOjliYmUwMDJlOTZhOTRhNGI5YzAyMzc0OTBkMTZhMWU2
+
+{
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSMjU2In0.eyJjbGllbnRJZCI6IjBmMzRhMzViLWFhMTMtNDU4Zi05MTJmLWE1MDU5Mjk0NTc1MiIsImV4cGlyZXMiOiIyMDIzLTA4LTIyVDExOjE4OjQwLjYxNyIsInNlc3Npb25JZCI6IjE4YzY4NzI0LWY2YTItNDBmZC1hYTczLTI1NjhjM2NlMDhjZSJ9.V5vZZnpBTHrwIi9u1_DZC5ue0wbB5KJAiwghWM1QQ-UC8UJCbGLr19QCShrOp4SsiHWLsCOGNQZQH1D72xNs1HbSnKwz60B3iS-pPIo28pZ_CkjjqPoyYjLnj72pNauJWHMRlC9EdGJmmaTIt8Xq3UU9tPMZLoQr1PnNp1jOeVZAq8E1eHfLBIU0BjgoKnMyHjB_zMK7F2nm3FSx8imTQU2iRVQOBXkBvfjWdAx50wG8Ht642bpuinGvOl0XCUp_-AoeXKvZlpjfXmfzozArPwK4wm3fM4WBrQ5ocK2UC7KHfUEsXMQU4miYDqFZ0DknctUoruWLSTpI0ejBDgh76Q",
+  "token_type": "access_token",
+  "expires_in": 3600
+}
+
+request to pay: 
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSMjU2In0.eyJjbGllbnRJZCI6IjBmMzRhMzViLWFhMTMtNDU4Zi05MTJmLWE1MDU5Mjk0NTc1MiIsImV4cGlyZXMiOiIyMDIzLTA4LTIyVDExOjE4OjQwLjYxNyIsInNlc3Npb25JZCI6IjE4YzY4NzI0LWY2YTItNDBmZC1hYTczLTI1NjhjM2NlMDhjZSJ9.V5vZZnpBTHrwIi9u1_DZC5ue0wbB5KJAiwghWM1QQ-UC8UJCbGLr19QCShrOp4SsiHWLsCOGNQZQH1D72xNs1HbSnKwz60B3iS-pPIo28pZ_CkjjqPoyYjLnj72pNauJWHMRlC9EdGJmmaTIt8Xq3UU9tPMZLoQr1PnNp1jOeVZAq8E1eHfLBIU0BjgoKnMyHjB_zMK7F2nm3FSx8imTQU2iRVQOBXkBvfjWdAx50wG8Ht642bpuinGvOl0XCUp_-AoeXKvZlpjfXmfzozArPwK4wm3fM4WBrQ5ocK2UC7KHfUEsXMQU4miYDqFZ0DknctUoruWLSTpI0ejBDgh76Q
+
+CHECKLIST
+1. Business Bank Account
+2. Certified RDB Business Registration documents
+3. Proof of particulars of Directors/Secretary
+4. Proof of shareholding 
+5. Trading license or permit to operate
+6. National ID 
+7. Proof of address

@@ -1,7 +1,7 @@
 Fixing Java and Gradle incompatibility: 
 - Edit distributionUrl=https\://services.gradle.org/distributions/gradle-8.5-bin.zip -> increase gradle version
 
-
+https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply
 
 0. Custom Radio Button: Using scoreObject instead of popQuestions ✅
 
