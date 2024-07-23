@@ -1,16 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/models/course_progress.dart';
-import 'package:tegura/models/isomo.dart';
-import 'package:tegura/models/pop_question.dart';
-import 'package:tegura/screens/iga/utils/tegura_alert.dart';
-import 'package:tegura/screens/iga/utils/isuzume_details.dart';
-import 'package:tegura/providers/quiz_score_provider.dart';
-import 'package:tegura/firebase_services/pop_question_db.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/utilities/direction_button_isuzume.dart';
-import 'package:tegura/utilities/loading_widget.dart';
+import 'package:itsindire/models/course_progress.dart';
+import 'package:itsindire/models/isomo.dart';
+import 'package:itsindire/models/pop_question.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
+import 'package:itsindire/screens/iga/utils/isuzume_details.dart';
+import 'package:itsindire/providers/quiz_score_provider.dart';
+import 'package:itsindire/firebase_services/pop_question_db.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/utilities/direction_button_isuzume.dart';
+import 'package:itsindire/utilities/loading_widget.dart';
 
 class IsuzumeContent extends StatefulWidget {
   final IsomoModel isomo;
@@ -28,7 +28,6 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
 
   @override
   Widget build(BuildContext context) {
-
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -51,8 +50,8 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
               }
 
               FirebaseAuth.instance.currentUser != null
-                  ? scoreProviderModel.quizScore.setUserID(
-                      FirebaseAuth.instance.currentUser!.uid)
+                  ? scoreProviderModel.quizScore
+                      .setUserID(FirebaseAuth.instance.currentUser!.uid)
                   : null;
               scoreProviderModel.quizScore.setIsomoID(widget.isomo.id);
 
@@ -79,7 +78,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
               void forward() {
                 if (qnIndex >=
                     scoreProviderModel.quizScore.questions.length - 1) {
-                  const TeguraAlert(
+                  const ItsindireAlert(
                     errorTitle: 'Ikibazo cyanyuma!',
                     errorMsg: 'Ibibazo byose byasubije!',
                     alertType: 'warning',
@@ -121,7 +120,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return TeguraAlert(
+                        return ItsindireAlert(
                           errorTitle: 'Subiza byose',
                           errorMsg: 'Ushaka gusohoka udasubije ibibazo byose?',
                           firstButtonTitle: 'OYA',
@@ -146,7 +145,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                   backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                   appBar: PreferredSize(
                     preferredSize: Size.fromHeight(58.0),
-                    child: AppBarTegura(),
+                    child: AppBarItsindire(),
                   ),
                   body: IsuzumeDetails(
                     isomo: widget.isomo,
@@ -191,7 +190,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                                     showDialog(
                                       context: context,
                                       builder: (context) {
-                                        return TeguraAlert(
+                                        return ItsindireAlert(
                                           errorTitle: 'Subiza byose',
                                           errorMsg:
                                               'Ushaka gusohoka udasubije ibibazo byose?',
@@ -217,7 +216,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                                   showDialog(
                                       context: context,
                                       builder: (context) {
-                                        return TeguraAlert(
+                                        return ItsindireAlert(
                                           errorTitle: 'Wasoje kwisuzuma!',
                                           errorMsg:
                                               'Wabonye ${popQuestions.length}/${popQuestions.length}',

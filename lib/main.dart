@@ -2,38 +2,38 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/firebase_services/profiledb.dart';
-import 'package:tegura/models/profile.dart';
+import 'package:itsindire/firebase_services/profiledb.dart';
+import 'package:itsindire/models/profile.dart';
 import 'firebase_options.dart';
 import 'firebase_services/isuzuma_score_db.dart';
 
-import 'package:tegura/firebase_services/auth.dart';
-import 'package:tegura/firebase_services/ibibazo_bibaza_db.dart';
-import 'package:tegura/firebase_services/ifatabuguzi_db.dart';
-import 'package:tegura/firebase_services/isuzuma_db.dart';
-import 'package:tegura/firebase_services/payment_db.dart';
-import 'package:tegura/firebase_services/isomo_progress.dart';
-import 'package:tegura/firebase_services/isomo_db.dart';
+import 'package:itsindire/firebase_services/auth.dart';
+import 'package:itsindire/firebase_services/ibibazo_bibaza_db.dart';
+import 'package:itsindire/firebase_services/ifatabuguzi_db.dart';
+import 'package:itsindire/firebase_services/isuzuma_db.dart';
+import 'package:itsindire/firebase_services/payment_db.dart';
+import 'package:itsindire/firebase_services/isomo_progress.dart';
+import 'package:itsindire/firebase_services/isomo_db.dart';
 
-import 'package:tegura/models/ibibazo_bibaza.dart';
-import 'package:tegura/models/ifatabuguzi.dart';
-import 'package:tegura/models/isuzuma.dart';
-import 'package:tegura/models/isuzuma_score.dart';
-import 'package:tegura/models/payment.dart';
-import 'package:tegura/models/course_progress.dart';
-import 'package:tegura/models/isomo.dart';
+import 'package:itsindire/models/ibibazo_bibaza.dart';
+import 'package:itsindire/models/ifatabuguzi.dart';
+import 'package:itsindire/models/isuzuma.dart';
+import 'package:itsindire/models/isuzuma_score.dart';
+import 'package:itsindire/models/payment.dart';
+import 'package:itsindire/models/course_progress.dart';
+import 'package:itsindire/models/isomo.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'package:tegura/screens/auth/injira.dart';
-import 'package:tegura/screens/auth/iyandikishe.dart';
-import 'package:tegura/screens/auth/ur_student.dart';
-import 'package:tegura/screens/auth/wibagiwe.dart';
-import 'package:tegura/screens/ibiciro/ibiciro.dart';
-import 'package:tegura/screens/iga/iga_landing.dart';
+import 'package:itsindire/screens/auth/injira.dart';
+import 'package:itsindire/screens/auth/iyandikishe.dart';
+import 'package:itsindire/screens/auth/ur_student.dart';
+import 'package:itsindire/screens/auth/wibagiwe.dart';
+import 'package:itsindire/screens/ibiciro/ibiciro.dart';
+import 'package:itsindire/screens/iga/iga_landing.dart';
 
-import 'package:tegura/utilities/loading_lightning.dart';
+import 'package:itsindire/utilities/loading_lightning.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -44,7 +44,7 @@ Future main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const TeguraApp());
+  runApp(const ItsindireApp());
 }
 
 class ConnectionStatus extends ChangeNotifier {
@@ -71,13 +71,13 @@ class ConnectionStatus extends ChangeNotifier {
   }
 }
 
-class TeguraApp extends StatefulWidget {
-  const TeguraApp({super.key});
+class ItsindireApp extends StatefulWidget {
+  const ItsindireApp({super.key});
   @override
-  State<TeguraApp> createState() => _TeguraAppState();
+  State<ItsindireApp> createState() => _ItsindireAppState();
 }
 
-class _TeguraAppState extends State<TeguraApp> {
+class _ItsindireAppState extends State<ItsindireApp> {
   List<ConnectivityResult> _connectionStatusList = [ConnectivityResult.none];
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
@@ -111,7 +111,7 @@ class _TeguraAppState extends State<TeguraApp> {
         _currentStatus.setOnline();
       }
     } on PlatformException catch (e) {
-      print(e.toString());
+      print("\n${e.toString()}\n");
       _currentStatus.setOffline();
       return;
     }
@@ -208,7 +208,7 @@ class _TeguraAppState extends State<TeguraApp> {
         ),
       ],
       child: Consumer<AuthState>(builder: (context, authState, _) {
-        print('AuthState - Main: ${authState.currentUser}');
+        
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(primarySwatch: Colors.blue),

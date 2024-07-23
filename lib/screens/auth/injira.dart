@@ -1,16 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
-import 'package:tegura/main.dart';
-import 'package:tegura/models/user.dart';
-import 'package:tegura/utilities/cta_button.dart';
-import 'package:tegura/utilities/cta_link.dart';
-import 'package:tegura/utilities/default_input.dart';
-import 'package:tegura/utilities/description.dart';
-import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/firebase_services/auth.dart';
-import 'package:tegura/utilities/loading_widget.dart';
+import 'package:itsindire/main.dart';
+import 'package:itsindire/models/user.dart';
+import 'package:itsindire/utilities/cta_button.dart';
+import 'package:itsindire/utilities/cta_link.dart';
+import 'package:itsindire/utilities/default_input.dart';
+import 'package:itsindire/utilities/description.dart';
+import 'package:itsindire/screens/iga/utils/gradient_title.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/firebase_services/auth.dart';
+import 'package:itsindire/utilities/loading_widget.dart';
 
 class Injira extends StatefulWidget {
   final String? message;
@@ -34,6 +34,7 @@ class _InjiraState extends State<Injira> {
     if (widget.connectionStatus != null) {
       widget.connectionStatus!.setOnline();
     }
+
     if (FirebaseAuth.instance.currentUser != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
@@ -41,6 +42,15 @@ class _InjiraState extends State<Injira> {
         }
       });
     }
+  }
+
+  void _showSnackbar(String message, Color? color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+      ),
+    );
   }
 
   @override
@@ -64,7 +74,7 @@ class _InjiraState extends State<Injira> {
                     backgroundColor: const Color.fromARGB(255, 71, 103, 158),
                     appBar: PreferredSize(
                       preferredSize: Size.fromHeight(58.0),
-                      child: AppBarTegura(),
+                      child: AppBarItsindire(),
                     ),
                     body: Container(
                       decoration: const BoxDecoration(
@@ -180,59 +190,30 @@ class _InjiraState extends State<Injira> {
 
                                         setState(() => loading = false);
 
-                                        print('\nResult: $result\n');
-
-                                        if (!mounted) return;
+                                        if (!mounted) {
+                                          return;
+                                        }
 
                                         if (result == null) {
-                                          print(
-                                              '\nKwinjira ntibyagenze neza!\n');
-                                          showCustomSnackBar(
-                                              context,
-                                              'Kwinjira ntibyagenze neza, hamagara 0794033360 tugufashe!',
+                                          _showSnackbar(
+                                              'Kwinjira ntibyagenze neza!',
                                               Colors.red);
                                         } else if (result.runtimeType !=
-                                                UserModel &&
-                                            result.error != null) {
-                                          print('\nError: ${result.error}\n');
+                                            UserModel) {
+                                          if (result.error != null) {
+                                            _showSnackbar(
+                                                result.error, Colors.red);
+                                          } else if (result.warning != null) {
+                                            _showSnackbar(
+                                                result.warning, Colors.yellow);
+                                          }
                                           authState.logOut();
-                                          // showCustomSnackBar(context,
-                                          //     result.error, Colors.red);
-
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text('Ijambo banga!'),
-                                                content: Text(result.error),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child: const Text('Oya'),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        } else if (result.runtimeType !=
-                                                UserModel &&
-                                            result.warning != null) {
-                                          print(
-                                              '\nWarning: ${result.warning}\n');
-
-                                          authState.logOut();
-                                          showCustomSnackBar(context,
-                                              result.warning, Colors.orange);
                                         } else {
-                                          showCustomSnackBar(
-                                              context,
-                                              'Kwinjira byagenze neza!',
-                                              Colors.green);
-                                          print('\nKwinjira-User: ${result}\n');
                                           authState.setCurrentUser(FirebaseAuth
                                               .instance.currentUser);
+                                          _showSnackbar(
+                                              'Kwinjira byagenze neza!',
+                                              Colors.green);
                                         }
                                       }
                                     },
@@ -276,23 +257,5 @@ class _InjiraState extends State<Injira> {
                     ));
               });
             });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  void showCustomSnackBar(
-      BuildContext context, String message, Color backgroundColor) {
-    if (ScaffoldMessenger.maybeOf(context) != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: backgroundColor,
-          duration: Duration(seconds: 3),
-        ),
-      );
-    }
   }
 }

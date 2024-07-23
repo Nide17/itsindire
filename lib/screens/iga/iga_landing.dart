@@ -2,16 +2,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/firebase_services/ingingo_db.dart';
-import 'package:tegura/firebase_services/isomo_progress.dart';
-import 'package:tegura/main.dart';
-import 'package:tegura/models/course_progress.dart';
-import 'package:tegura/models/isomo.dart';
-import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/screens/iga/iga_data.dart';
-import 'package:tegura/utilities/loading_widget.dart';
-import 'package:tegura/utilities/no_internet.dart';
+import 'package:itsindire/firebase_services/ingingo_db.dart';
+import 'package:itsindire/firebase_services/isomo_progress.dart';
+import 'package:itsindire/main.dart';
+import 'package:itsindire/models/course_progress.dart';
+import 'package:itsindire/models/isomo.dart';
+import 'package:itsindire/screens/ibiciro/reba_ibiciro_button.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/screens/iga/iga_data.dart';
+import 'package:itsindire/utilities/loading_widget.dart';
+import 'package:itsindire/utilities/no_internet.dart';
 
 class IgaLanding extends StatefulWidget {
   const IgaLanding({super.key});
@@ -104,7 +104,7 @@ class _IgaLandingState extends State<IgaLanding> {
             backgroundColor: const Color.fromARGB(255, 71, 103, 158),
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(58.0),
-              child: AppBarTegura(),
+              child: AppBarItsindire(),
             ),
             body: conn.isOnline == false
                 ? const NoInternet()

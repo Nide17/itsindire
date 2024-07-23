@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/models/course_progress.dart';
-import 'package:tegura/models/isomo.dart';
-import 'package:tegura/utilities/user_progress.dart';
+import 'package:itsindire/models/course_progress.dart';
+import 'package:itsindire/models/isomo.dart';
+import 'package:itsindire/utilities/user_progress.dart';
 
 class AmasomoProgress extends StatefulWidget {
   final List<CourseProgressModel?>? progressesToShow;
@@ -29,12 +29,10 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
           ?.sort((a, b) => a!.courseId.compareTo(b!.courseId));
     }
 
-    // if (widget.progressesToShow != null) {
-    //   widget.progressesToShow
-    //       ?.sort((a, b) => b!.totalIngingos.compareTo(a!.totalIngingos));
-    // }
-
-    // print('widget.progressesToShow: ${widget.progressesToShow}');
+    if (widget.progressesToShow != null) {
+      widget.progressesToShow
+          ?.sort((a, b) => b!.totalIngingos.compareTo(a!.totalIngingos));
+    }
 
     return widget.progressesToShow == null || widget.progressesToShow!.isEmpty
         ? Center(

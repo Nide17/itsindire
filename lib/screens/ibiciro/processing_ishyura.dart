@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tegura/firebase_services/payment_db.dart';
-import 'package:tegura/models/ifatabuguzi.dart';
-import 'package:tegura/models/payment.dart';
-import 'package:tegura/screens/ibiciro/ifatabuguzi.dart';
-import 'package:tegura/screens/iga/utils/tegura_alert.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/utilities/default_input.dart';
-import 'package:tegura/utilities/spinner.dart';
+import 'package:itsindire/firebase_services/payment_db.dart';
+import 'package:itsindire/models/ifatabuguzi.dart';
+import 'package:itsindire/models/payment.dart';
+import 'package:itsindire/screens/ibiciro/ifatabuguzi.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/utilities/default_input.dart';
+import 'package:itsindire/utilities/spinner.dart';
 
 class ProcessingIshyura extends StatefulWidget {
   final IfatabuguziModel ifatabuguzi;
@@ -31,7 +31,8 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
     if (FirebaseAuth.instance.currentUser != null) {
       PaymentModel pymt = FirebaseAuth.instance.currentUser != null
           ? await PaymentService()
-          .getUserLatestPytData(FirebaseAuth.instance.currentUser!.uid) : null;
+              .getUserLatestPytData(FirebaseAuth.instance.currentUser!.uid)
+          : null;
       setState(() {
         payment = pymt;
       });
@@ -54,7 +55,7 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
             backgroundColor: const Color.fromARGB(255, 71, 103, 158),
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(58.0),
-              child: AppBarTegura(),
+              child: AppBarItsindire(),
             ),
             body: ListView(
               // YELLOW MOMO PAYING CONTAINER
@@ -153,7 +154,7 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
                                   showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
-                                        return TeguraAlert(
+                                        return ItsindireAlert(
                                             errorTitle: 'Error',
                                             errorMsg: error,
                                             alertType: 'error');

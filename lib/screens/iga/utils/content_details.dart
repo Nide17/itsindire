@@ -1,15 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/firebase_services/ingingo_db.dart';
-import 'package:tegura/models/course_progress.dart';
-import 'package:tegura/models/ingingo.dart';
-import 'package:tegura/models/isomo.dart';
-import 'package:tegura/firebase_services/isomo_progress.dart';
-import 'package:tegura/screens/iga/utils/content_title_text.dart';
-import 'package:tegura/screens/iga/utils/iga_content.dart';
-import 'package:tegura/screens/iga/utils/option_content.dart';
-import 'package:tegura/utilities/loading_widget.dart';
+import 'package:itsindire/firebase_services/ingingo_db.dart';
+import 'package:itsindire/models/course_progress.dart';
+import 'package:itsindire/models/ingingo.dart';
+import 'package:itsindire/models/isomo.dart';
+import 'package:itsindire/firebase_services/isomo_progress.dart';
+import 'package:itsindire/screens/iga/utils/content_title_text.dart';
+import 'package:itsindire/screens/iga/utils/iga_content.dart';
+import 'package:itsindire/screens/iga/utils/option_content.dart';
+import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class ContentDetails extends StatefulWidget {

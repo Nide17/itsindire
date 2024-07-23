@@ -1,12 +1,12 @@
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
-import 'package:tegura/utilities/cta_button.dart';
-import 'package:tegura/utilities/cta_link.dart';
-import 'package:tegura/utilities/default_input.dart';
-import 'package:tegura/utilities/description.dart';
-import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/firebase_services/auth.dart';
+import 'package:itsindire/utilities/cta_button.dart';
+import 'package:itsindire/utilities/cta_link.dart';
+import 'package:itsindire/utilities/default_input.dart';
+import 'package:itsindire/utilities/description.dart';
+import 'package:itsindire/screens/iga/utils/gradient_title.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/firebase_services/auth.dart';
 
 class Wibagiwe extends StatefulWidget {
   const Wibagiwe({super.key});
@@ -31,7 +31,7 @@ class _WibagiweState extends State<Wibagiwe> {
           backgroundColor: const Color.fromARGB(255, 71, 103, 158),
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(58.0),
-            child: AppBarTegura(),
+            child: AppBarItsindire(),
           ),
           body: Container(
             decoration: const BoxDecoration(

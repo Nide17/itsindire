@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tegura/models/isomo.dart';
+import 'package:itsindire/models/isomo.dart';
 
 class IsomoService {
   final CollectionReference amasomoCollection =
@@ -70,7 +70,6 @@ class IsomoService {
       return null;
     }
   }
-
 
   Future<List<String>> getAmasomoTitlesByIds(List<String> ids) async {
     List<String> amasomoTitles = [];

@@ -3,15 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/firebase_services/ingingo_db.dart';
-import 'package:tegura/models/course_progress.dart';
-import 'package:tegura/models/isomo.dart';
-import 'package:tegura/models/payment.dart';
-import 'package:tegura/models/profile.dart';
-import 'package:tegura/screens/ibiciro/ibiciro.dart';
-import 'package:tegura/screens/iga/utils/tegura_alert.dart';
-import 'package:tegura/screens/iga/utils/iga_content.dart';
-import 'package:tegura/screens/iga/utils/isuzume_content.dart';
+import 'package:itsindire/firebase_services/ingingo_db.dart';
+import 'package:itsindire/models/course_progress.dart';
+import 'package:itsindire/models/isomo.dart';
+import 'package:itsindire/models/payment.dart';
+import 'package:itsindire/models/profile.dart';
+import 'package:itsindire/screens/ibiciro/ibiciro.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
+import 'package:itsindire/screens/iga/utils/iga_content.dart';
+import 'package:itsindire/screens/iga/utils/isuzume_content.dart';
 
 class UserProgress extends StatefulWidget {
   final IsomoModel isomo;
@@ -93,13 +93,13 @@ class _UserProgressState extends State<UserProgress> {
                 builder: (BuildContext context) {
                   return payment != null &&
                           payment.isApproved != true
-                      ? const TeguraAlert(
+                      ? const ItsindireAlert(
                           errorTitle: 'Ntibyagenze neza',
                           errorMsg: 'Ifatabuguzi ryawe ntiriremezwa!',
                           alertType: 'error',
                         )
                       : percent != 1.0
-                          ? TeguraAlert(
+                          ? ItsindireAlert(
                               errorTitle: 'IBIJYANYE NIRI SOMO',
                               errorMsg: loadingRealTotalIngingos
                                   ? 'Tegereza gato ...'

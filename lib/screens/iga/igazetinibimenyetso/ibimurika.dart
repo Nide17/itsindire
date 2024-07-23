@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/ibimurika_row.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/qb_app_bar.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/qb_app_footer.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/qb_title.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/ibimurika_row.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/qb_app_bar.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/qb_app_footer.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/qb_title.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class IgazetiIbimurika extends StatefulWidget {
@@ -29,14 +29,14 @@ class _IgazetiIbimurikaState extends State<IgazetiIbimurika> {
                 delegate: SliverChildListDelegate(
                   [
                     Container(
-                      padding:
-                          EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width * 0.02),
                       child: Column(
                         children: [
                           const Center(
                             child: QBTitle(title: 'IBIMENYETSO BIMURIKA'),
                           ),
-          
+
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.4,
                             child: FadeInImage.memoryNetwork(
@@ -46,11 +46,13 @@ class _IgazetiIbimurikaState extends State<IgazetiIbimurika> {
                               fit: BoxFit.cover,
                             ),
                           ),
-          
+
                           Container(
                             margin: EdgeInsets.symmetric(
-                              vertical: MediaQuery.of(context).size.width * 0.04,
-                              horizontal: MediaQuery.of(context).size.width * 0.02,
+                              vertical:
+                                  MediaQuery.of(context).size.width * 0.04,
+                              horizontal:
+                                  MediaQuery.of(context).size.width * 0.02,
                             ),
                             child: Text(
                                 '📝 Amatara y\'ibimenyetso bimurika mu buryo bw\'amatara atatu asobanuye atya:',
@@ -61,7 +63,7 @@ class _IgazetiIbimurikaState extends State<IgazetiIbimurika> {
                                       MediaQuery.of(context).size.width * 0.04,
                                 )),
                           ),
-          
+
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),

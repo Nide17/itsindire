@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/models/isuzuma_score.dart';
+import 'package:itsindire/models/isuzuma_score.dart';
 
 class Amanota extends StatelessWidget {
   final IsuzumaScoreModel? userScore;

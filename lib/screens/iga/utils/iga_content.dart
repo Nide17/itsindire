@@ -1,19 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/firebase_services/isomo_db.dart';
-import 'package:tegura/models/course_progress.dart';
-import 'package:tegura/models/ingingo.dart';
-import 'package:tegura/models/isomo.dart';
-import 'package:tegura/firebase_services/isomo_progress.dart';
-import 'package:tegura/screens/iga/utils/tegura_alert.dart';
-import 'package:tegura/screens/iga/wasoje/wasoje.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/utilities/direction_button.dart';
-import 'package:tegura/firebase_services/ingingo_db.dart';
-import 'package:tegura/screens/iga/utils/circle_progress.dart';
-import 'package:tegura/screens/iga/utils/content_details.dart';
-import 'package:tegura/utilities/loading_widget.dart';
+import 'package:itsindire/firebase_services/isomo_db.dart';
+import 'package:itsindire/models/course_progress.dart';
+import 'package:itsindire/models/ingingo.dart';
+import 'package:itsindire/models/isomo.dart';
+import 'package:itsindire/firebase_services/isomo_progress.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
+import 'package:itsindire/screens/iga/wasoje/wasoje.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/utilities/direction_button.dart';
+import 'package:itsindire/firebase_services/ingingo_db.dart';
+import 'package:itsindire/screens/iga/utils/circle_progress.dart';
+import 'package:itsindire/screens/iga/utils/content_details.dart';
+import 'package:itsindire/utilities/loading_widget.dart';
 
 class IgaContent extends StatefulWidget {
   final IsomoModel isomo;
@@ -149,7 +149,7 @@ class _IgaContentState extends State<IgaContent> {
                     )
                   : currentIngingo >= totalIngingos
                       ? Scaffold(
-                          body: TeguraAlert(
+                          body: ItsindireAlert(
                               errorTitle: 'Isomo rirarangiye!',
                               errorMsg:
                                   'Wasoje neza ingingo zose zigize iri somo 🙂!',
@@ -167,11 +167,11 @@ class _IgaContentState extends State<IgaContent> {
                                   nextIsomo != null ? 'Irindi somo' : '',
                               secondButtonFunction: nextIsomo != null
                                   ? () {
-                                      // Open dialog for next isomo in the list using TeguraAlert
+                                      // Open dialog for next isomo in the list using ItsindireAlert
                                       showDialog(
                                           context: context,
                                           builder: (BuildContext context) {
-                                            return TeguraAlert(
+                                            return ItsindireAlert(
                                               errorTitle: 'IBIJYANYE NIRI SOMO',
                                               errorMsg:
                                                   'Ugiye kwiga isomo ryitwa "${nextIsomo!.title}" rigizwe n’ingingo "${nextIsomoTotalIngingos}" ni iminota "${(nextIsomo!.duration != null && nextIsomo!.duration! > 0) ? nextIsomo!.duration : nextIsomoTotalIngingos * 3}" gusa!',
@@ -218,7 +218,7 @@ class _IgaContentState extends State<IgaContent> {
                               const Color.fromARGB(255, 255, 255, 255),
                           appBar: PreferredSize(
                             preferredSize: Size.fromHeight(58.0),
-                            child: AppBarTegura(),
+                            child: AppBarItsindire(),
                           ),
                           body: ScrollbarTheme(
                             data: ScrollbarThemeData(

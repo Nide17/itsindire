@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/firebase_services/auth.dart';
-import 'package:tegura/utilities/app_bar.dart';
+import 'package:itsindire/firebase_services/auth.dart';
+import 'package:itsindire/utilities/app_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,7 +14,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    
     return Consumer<AuthState>(builder: (context, authState, _) {
       String msg = DateTime.now().hour < 12 ? 'Mwaramutse' : 'Mwiriwe';
       String username = authState.currentProfile?.username ?? '';
@@ -22,13 +21,13 @@ class _HomePageState extends State<HomePage> {
           ? '$msg, ${capitalizeWords(username.split(' ')[0])}!'
           : '$msg!';
 
-      print("Home authState._currentProfile: ${authState.currentProfile}");
+      print("\nHome authState._currentProfile: ${authState.currentProfile}");
 
       return Scaffold(
         backgroundColor: const Color.fromARGB(255, 71, 103, 158),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(58.0),
-          child: AppBarTegura(),
+          child: AppBarItsindire(),
         ),
         body: ListView(
           padding: EdgeInsets.symmetric(

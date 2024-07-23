@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:tegura/utilities/default_input.dart';
+import 'package:itsindire/utilities/default_input.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
-import 'package:tegura/utilities/loading_widget.dart';
+import 'package:itsindire/utilities/loading_widget.dart';
 
 class ContactForm extends StatefulWidget {
   const ContactForm({super.key});
@@ -31,7 +31,7 @@ class _ContactFormState extends State<ContactForm> {
 
       final message = Message()
         ..from = Address('$email', '$_name')
-        ..recipients.add('tegura.rw@gmail.com')
+        ..recipients.add('itsindire.rw@gmail.com')
         ..ccRecipients.addAll(['quizblog.rw@gmail.com'])
         ..subject = 'Message from $_name[$email]'
         ..text = _message;

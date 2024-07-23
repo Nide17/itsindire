@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/models/ifatabuguzi.dart';
-import 'package:tegura/models/profile.dart';
-import 'package:tegura/screens/auth/iyandikishe.dart';
-import 'package:tegura/screens/ibiciro/processing_ishyura.dart';
+import 'package:itsindire/models/ifatabuguzi.dart';
+import 'package:itsindire/models/profile.dart';
+import 'package:itsindire/screens/auth/iyandikishe.dart';
+import 'package:itsindire/screens/ibiciro/processing_ishyura.dart';
 
 class Ifatabuguzi extends StatelessWidget {
   final int index;
@@ -174,7 +174,8 @@ class Ifatabuguzi extends StatelessWidget {
                                                 MaterialPageRoute(
                                                     builder: (context) {
                                               return FirebaseAuth.instance
-                                                          .currentUser != null
+                                                          .currentUser !=
+                                                      null
                                                   ? ProcessingIshyura(
                                                       ifatabuguzi: ifatabuguzi)
                                                   : Iyandikishe(

@@ -1,15 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/firebase_services/payment_db.dart';
-import 'package:tegura/models/isuzuma.dart';
-import 'package:tegura/models/isuzuma_score.dart';
-import 'package:tegura/models/payment.dart';
-import 'package:tegura/screens/auth/iyandikishe.dart';
-import 'package:tegura/screens/iga/amasuzuma/amanota.dart';
-import 'package:tegura/screens/iga/utils/tegura_alert.dart';
-import 'package:tegura/screens/iga/amasuzuma/isuzuma_overview.dart';
-import 'package:tegura/utilities/loading_widget.dart';
+import 'package:itsindire/firebase_services/payment_db.dart';
+import 'package:itsindire/models/isuzuma.dart';
+import 'package:itsindire/models/isuzuma_score.dart';
+import 'package:itsindire/models/payment.dart';
+import 'package:itsindire/screens/auth/iyandikishe.dart';
+import 'package:itsindire/screens/iga/amasuzuma/amanota.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
+import 'package:itsindire/screens/iga/amasuzuma/isuzuma_overview.dart';
+import 'package:itsindire/utilities/loading_widget.dart';
 
 class AmasuzumaCard extends StatefulWidget {
   final IsuzumaModel isuzuma;
@@ -99,7 +99,7 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
                               : showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return TeguraAlert(
+                                    return ItsindireAlert(
                                         errorTitle: 'Ntibyagenze neza',
                                         errorMsg: payment == null
                                             ? 'Nturishyura'

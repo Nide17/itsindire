@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/models/ingingo.dart';
+import 'package:itsindire/models/ingingo.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class OptionContent extends StatelessWidget {

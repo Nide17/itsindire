@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TeguraAlert extends StatelessWidget {
+class ItsindireAlert extends StatelessWidget {
   final String errorTitle;
   final String errorMsg;
   final String? firstButtonTitle;
@@ -11,7 +11,7 @@ class TeguraAlert extends StatelessWidget {
   final Color? secondButtonColor;
   final String? alertType;
 
-  const TeguraAlert(
+  const ItsindireAlert(
       {super.key,
       required this.errorTitle,
       required this.errorMsg,

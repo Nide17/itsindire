@@ -1,7 +1,7 @@
 // WIDGET FOR HOLDING TITLE WITH ICON AND TEXT
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:tegura/screens/iga/baza/social_data.dart';
+import 'package:itsindire/screens/iga/baza/social_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Social extends StatelessWidget {

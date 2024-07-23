@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/models/course_progress.dart';
+import 'package:itsindire/models/course_progress.dart';
+
 class CircleProgress extends StatelessWidget {
   const CircleProgress({super.key});
 

@@ -106,7 +106,7 @@ class QBAppBar extends StatelessWidget {
                                 width:
                                     MediaQuery.of(context).size.height * 0.008,
                               ),
-                              Text('Tegura.rw', // TEXT WIDGET
+                              Text('Itsindire.rw', // TEXT WIDGET
                                   style: TextStyle(
                                     color: const Color(0xFFFFBD59),
                                     fontWeight: FontWeight.w900,
@@ -114,7 +114,7 @@ class QBAppBar extends StatelessWidget {
                                         MediaQuery.of(context).size.width *
                                             0.032,
                                   )),
-                                  // SPACING BETWEEN THE TWO WIDGETS
+                              // SPACING BETWEEN THE TWO WIDGETS
                               SizedBox(
                                 width:
                                     MediaQuery.of(context).size.height * 0.008,

@@ -1,15 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tegura/models/profile.dart';
+import 'package:itsindire/models/profile.dart';
 
 class ProfileService extends ChangeNotifier {
-
   final CollectionReference profilesCollection =
       FirebaseFirestore.instance.collection('profiles');
   final CollectionReference roles =
       FirebaseFirestore.instance.collection('roles');
-  final FirebaseAuth _authInstance = FirebaseAuth.instance;
   final String? uid;
 
   ProfileService({this.uid});
@@ -28,7 +25,6 @@ class ProfileService extends ChangeNotifier {
       String campus,
       DocumentReference roleId,
       String lastLoggedInDeviceId) async {
-
     // RETURN THE USER DATA - IF THE DOC DOESN'T EXIST, IT WILL BE CREATED BY FIRESTORE
     return await profilesCollection.doc(uid).set({
       'uid': uid,

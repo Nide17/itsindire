@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:tegura/screens/home/home.dart';
+import 'package:itsindire/screens/home/home.dart';
 import 'dart:math';
 
 class LoadingLightning extends StatefulWidget {
@@ -41,8 +41,7 @@ class _LoadingLightningState extends State<LoadingLightning>
       Future.delayed(Duration(seconds: widget.duration), () {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       });
     }
@@ -50,10 +49,8 @@ class _LoadingLightningState extends State<LoadingLightning>
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-        body:
-            Container(
+        body: Container(
       width: double.infinity,
 
       // BACKGROUND IMAGE OF THE APP
@@ -68,7 +65,7 @@ class _LoadingLightningState extends State<LoadingLightning>
       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
         SizedBox(height: MediaQuery.of(context).size.height * 0.24),
         const Text(
-          "TEGURA",
+          "ITSINDIRE",
           style: TextStyle(
             fontSize: 32.0,
             color: Color(0xFFFAD201),

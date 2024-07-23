@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/utilities/description.dart';
-import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
-import 'package:tegura/screens/iga/baza/contact_form.dart';
-import 'package:tegura/screens/iga/baza/social.dart';
-import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/utilities/app_bar.dart';
+import 'package:itsindire/utilities/description.dart';
+import 'package:itsindire/screens/ibiciro/reba_ibiciro_button.dart';
+import 'package:itsindire/screens/iga/baza/contact_form.dart';
+import 'package:itsindire/screens/iga/baza/social.dart';
+import 'package:itsindire/screens/iga/utils/gradient_title.dart';
+import 'package:itsindire/utilities/app_bar.dart';
 
 class Baza extends StatefulWidget {
   const Baza({super.key});
@@ -20,7 +20,7 @@ class _BazaState extends State<Baza> {
         backgroundColor: const Color.fromARGB(255, 71, 103, 158),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(58.0),
-          child: AppBarTegura(),
+          child: AppBarItsindire(),
         ),
         body: ScrollbarTheme(
           data: ScrollbarThemeData(

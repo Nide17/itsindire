@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tegura/models/ingingo.dart';
+import 'package:itsindire/models/ingingo.dart';
 
 class IngingoService {
   // COLLECTIONS REFERENCE - FIRESTORE

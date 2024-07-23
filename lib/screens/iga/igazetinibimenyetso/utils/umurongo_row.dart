@@ -54,7 +54,8 @@ class UmurongoRow extends StatelessWidget {
                               10), // Adjust the radius as needed
                           child: FadeInImage.memoryNetwork(
                             placeholder: kTransparentImage,
-                            image: 'https://firebasestorage.googleapis.com/v0/b/tegura-rw.appspot.com/o/imirongo%2Ftitle.png?alt=media&token=ea01425f-45fa-4187-a0b6-6a6d168daf4d',
+                            image:
+                                'https://firebasestorage.googleapis.com/v0/b/tegura-rw.appspot.com/o/imirongo%2Ftitle.png?alt=media&token=ea01425f-45fa-4187-a0b6-6a6d168daf4d',
                             fit: BoxFit.cover,
                             width: MediaQuery.of(context).size.width * 0.1,
                           ),
@@ -160,8 +161,8 @@ List<TextSpan> formatText(String input) {
   // Match all text inside: single quotes, double quotes, backticks, ”, “, «, »
   // RegExp regex = RegExp(r'''(['"`“”«»“”])(.*?)\1''');
   // full form
-  RegExp regex = RegExp(
-      r'«(.*?)» | "(.*?)" | “(.*?)” | ‘(.*?)’ | ‘(.*?)’ | `(.*?)`');
+  RegExp regex =
+      RegExp(r'«(.*?)» | "(.*?)" | “(.*?)” | ‘(.*?)’ | ‘(.*?)’ | `(.*?)`');
   Iterable<Match> matches = regex.allMatches(input);
 
   int start = 0;

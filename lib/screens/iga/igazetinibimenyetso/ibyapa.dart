@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/ikimenyetso_row.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/qb_app_bar.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/qb_app_footer.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/qb_subtitle.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/qb_title.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/data/biburira.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/data/gutambuka_mbere.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/data/bibuza.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/data/bitegeka.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/data/ndanga.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/ikimenyetso_row.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/qb_app_bar.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/qb_app_footer.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/qb_subtitle.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/qb_title.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/data/biburira.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/data/gutambuka_mbere.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/data/bibuza.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/data/bitegeka.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/data/ndanga.dart';
 
 class IgazetiIbyapa extends StatefulWidget {
   const IgazetiIbyapa({super.key});
@@ -18,7 +18,6 @@ class IgazetiIbyapa extends StatefulWidget {
 }
 
 class _IgazetiIbyapaState extends State<IgazetiIbyapa> {
-
   @override
   Widget build(BuildContext context) {
     List<String> list = [
@@ -43,8 +42,8 @@ class _IgazetiIbyapaState extends State<IgazetiIbyapa> {
                 delegate: SliverChildListDelegate(
                   [
                     Container(
-                      padding:
-                          EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width * 0.02),
                       child: Column(
                         children: [
                           const Center(
@@ -54,9 +53,10 @@ class _IgazetiIbyapaState extends State<IgazetiIbyapa> {
                               'Ibyapa byo ku mihanda bigizwe n\'amoko 5 akurikira:',
                               style: TextStyle(
                                 color: const Color.fromARGB(255, 0, 0, 0),
-                                fontSize: MediaQuery.of(context).size.width * 0.04,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.04,
                               )),
-          
+
                           //   ordered list of text
                           Container(
                             padding: EdgeInsets.all(
@@ -69,10 +69,12 @@ class _IgazetiIbyapaState extends State<IgazetiIbyapa> {
                                       Text(
                                         '\t\t\t\t\t\t\t${i + 1}. ${list[i]}',
                                         style: TextStyle(
-                                          color: const Color.fromARGB(255, 0, 0, 0),
-                                          fontSize:
-                                              MediaQuery.of(context).size.width *
-                                                  0.04,
+                                          color: const Color.fromARGB(
+                                              255, 0, 0, 0),
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.04,
                                         ),
                                       ),
                                     ],
@@ -80,13 +82,13 @@ class _IgazetiIbyapaState extends State<IgazetiIbyapa> {
                               ],
                             ),
                           ),
-          
+
                           // sub title: 1. IBYAPA BIBURIRA
                           const QBSubTitle(
                             no: '1',
                             title: 'Ibyapa biburira',
                           ),
-          
+
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -98,13 +100,13 @@ class _IgazetiIbyapaState extends State<IgazetiIbyapa> {
                               );
                             },
                           ),
-          
+
                           // sub title: 2. IBYAPA BYO GUTAMBUKA MBERE
                           const QBSubTitle(
                             no: '2',
                             title: 'Ibyapa byo gutambuka mbere',
                           ),
-          
+
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -116,13 +118,13 @@ class _IgazetiIbyapaState extends State<IgazetiIbyapa> {
                               );
                             },
                           ),
-          
+
                           // sub title: 3. IBYAPA BIBUZA
                           const QBSubTitle(
                             no: '3',
                             title: 'Ibyapa bibuza',
                           ),
-          
+
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -134,13 +136,13 @@ class _IgazetiIbyapaState extends State<IgazetiIbyapa> {
                               );
                             },
                           ),
-          
+
                           // sub title: 4. IBYAPA BITEGEKA
                           const QBSubTitle(
                             no: '4',
                             title: 'Ibyapa bitegeka',
                           ),
-          
+
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -152,13 +154,13 @@ class _IgazetiIbyapaState extends State<IgazetiIbyapa> {
                               );
                             },
                           ),
-          
+
                           // sub title: 5. IBYAPA NDANGA CG BIYOBORA
                           const QBSubTitle(
                             no: '5',
                             title: 'Ibyapa ndanga (biyobora)',
                           ),
-          
+
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -170,7 +172,7 @@ class _IgazetiIbyapaState extends State<IgazetiIbyapa> {
                               );
                             },
                           ),
-          
+
                           // FOOTER
                           const QBAppFooter(),
                         ],

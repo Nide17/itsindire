@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tegura/models/isuzuma_score.dart';
+import 'package:itsindire/models/isuzuma_score.dart';
 
 class IsuzumaScoreService {
   // COLLECTIONS REFERENCE - FIRESTORE
@@ -166,7 +166,7 @@ class IsuzumaScoreService {
       });
       return true;
     } catch (e) {
-      print(e.toString());
+      print("\n${e.toString()}\n");
       return false;
     }
   }

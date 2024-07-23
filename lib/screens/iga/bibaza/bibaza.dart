@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/models/ibibazo_bibaza.dart';
-import 'package:tegura/utilities/description.dart';
-import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
-import 'package:tegura/screens/iga/bibaza/faq.dart';
-import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/utilities/loading_widget.dart';
+import 'package:itsindire/models/ibibazo_bibaza.dart';
+import 'package:itsindire/utilities/description.dart';
+import 'package:itsindire/screens/ibiciro/reba_ibiciro_button.dart';
+import 'package:itsindire/screens/iga/bibaza/faq.dart';
+import 'package:itsindire/screens/iga/utils/gradient_title.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/utilities/loading_widget.dart';
 
 class Bibaza extends StatefulWidget {
   const Bibaza({super.key});
@@ -22,7 +22,7 @@ class _BibazaState extends State<Bibaza> {
     {
       'question': 'Ese iyi App yagufasha gutsinda?',
       'answer':
-          'Yego, kuko intego yambere yacu nukukwigisha ukabimenya ndetse tunagutegura gutsindira provisoire.',
+          'Yego, kuko intego yambere yacu nukukwigisha ukabimenya ndetse tunaguitsindire gutsindira provisoire.',
       'qIcon': 'assets/images/question.svg',
       'aIcon': 'assets/images/answer.svg',
     },
@@ -42,7 +42,7 @@ class _BibazaState extends State<Bibaza> {
         backgroundColor: const Color.fromARGB(255, 71, 103, 158),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(58.0),
-          child: AppBarTegura(),
+          child: AppBarItsindire(),
         ),
         body: ScrollbarTheme(
           data: ScrollbarThemeData(

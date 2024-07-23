@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/models/isuzuma_score.dart';
+import 'package:itsindire/models/isuzuma_score.dart';
 
 class IsuzumaCustomRadioButton extends StatefulWidget {
   final ScoreOptionI? option;
@@ -67,7 +67,8 @@ class _IsuzumaCustomRadioButtonState extends State<IsuzumaCustomRadioButton> {
                 color: widget.isReviewing == true
                     ? getReviewChoosenColor()
                     : Colors.white,
-                borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.02),
+                borderRadius: BorderRadius.circular(
+                    MediaQuery.of(context).size.width * 0.02),
                 border: Border.all(
                   color: widget.isReviewing == true
                       ? getDisplayColor(
@@ -135,9 +136,10 @@ class _IsuzumaCustomRadioButtonState extends State<IsuzumaCustomRadioButton> {
             ),
 
             // THE DESCRIPTION SUBTITLE IF SELECTED
-            widget.isReviewing == true && (widget.option!.isCorrect == true ||
-                    (widget.option!.isCorrect == false &&
-                        widget.option!.isChoosen == true))
+            widget.isReviewing == true &&
+                    (widget.option!.isCorrect == true ||
+                        (widget.option!.isCorrect == false &&
+                            widget.option!.isChoosen == true))
                 ? Container(
                     margin: EdgeInsets.only(
                       left: MediaQuery.of(context).size.width * 0.01,

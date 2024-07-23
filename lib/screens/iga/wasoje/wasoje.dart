@@ -1,16 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/firebase_services/auth.dart';
-import 'package:tegura/firebase_services/isomo_progress.dart';
-import 'package:tegura/models/course_progress.dart';
-import 'package:tegura/models/isomo.dart';
-import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
-import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/utilities/amasomo_progress.dart';
-import 'package:tegura/utilities/view_not_logged_in.dart';
-import 'package:tegura/utilities/progress_circle.dart';
-import 'package:tegura/utilities/app_bar.dart';
+import 'package:itsindire/firebase_services/auth.dart';
+import 'package:itsindire/firebase_services/isomo_progress.dart';
+import 'package:itsindire/models/course_progress.dart';
+import 'package:itsindire/models/isomo.dart';
+import 'package:itsindire/screens/ibiciro/reba_ibiciro_button.dart';
+import 'package:itsindire/screens/iga/utils/gradient_title.dart';
+import 'package:itsindire/utilities/amasomo_progress.dart';
+import 'package:itsindire/utilities/view_not_logged_in.dart';
+import 'package:itsindire/utilities/progress_circle.dart';
+import 'package:itsindire/utilities/app_bar.dart';
 
 class Wasoje extends StatefulWidget {
   const Wasoje({super.key});
@@ -50,7 +50,7 @@ class _WasojeState extends State<Wasoje> {
                   backgroundColor: const Color.fromARGB(255, 71, 103, 158),
                   appBar: PreferredSize(
                     preferredSize: Size.fromHeight(58.0),
-                    child: AppBarTegura(),
+                    child: AppBarItsindire(),
                   ),
                   body: ScrollbarTheme(
                     data: ScrollbarThemeData(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:tegura/models/pop_question.dart';
+import 'package:itsindire/models/pop_question.dart';
 
 class DirectionButtonPq extends StatefulWidget {
   final String buttonText;

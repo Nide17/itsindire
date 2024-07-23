@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tegura/models/course_progress.dart';
+import 'package:itsindire/models/course_progress.dart';
 
 class CourseProgressService {
   // COLLECTIONS REFERENCE - FIRESTORE

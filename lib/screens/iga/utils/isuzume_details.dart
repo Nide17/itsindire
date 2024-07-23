@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/models/course_progress.dart';
-import 'package:tegura/models/isomo.dart';
-import 'package:tegura/models/pop_question.dart';
-import 'package:tegura/screens/iga/utils/custom_radio_button.dart';
-import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/providers/quiz_score_provider.dart';
-import 'package:tegura/firebase_services/isomo_progress.dart';
-import 'package:tegura/screens/iga/utils/iga_content.dart';
-import 'package:tegura/utilities/ikibazo_button.dart';
+import 'package:itsindire/models/course_progress.dart';
+import 'package:itsindire/models/isomo.dart';
+import 'package:itsindire/models/pop_question.dart';
+import 'package:itsindire/screens/iga/utils/custom_radio_button.dart';
+import 'package:itsindire/screens/iga/utils/gradient_title.dart';
+import 'package:itsindire/providers/quiz_score_provider.dart';
+import 'package:itsindire/firebase_services/isomo_progress.dart';
+import 'package:itsindire/screens/iga/utils/iga_content.dart';
+import 'package:itsindire/utilities/ikibazo_button.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 typedef ShowQnCallback = void Function(int index);

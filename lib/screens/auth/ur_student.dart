@@ -1,13 +1,13 @@
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
-import 'package:tegura/models/user.dart';
-import 'package:tegura/screens/iga/utils/tegura_alert.dart';
-import 'package:tegura/utilities/cta_button.dart';
-import 'package:tegura/utilities/default_input.dart';
-import 'package:tegura/utilities/description.dart';
-import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/firebase_services/auth.dart';
+import 'package:itsindire/models/user.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
+import 'package:itsindire/utilities/cta_button.dart';
+import 'package:itsindire/utilities/default_input.dart';
+import 'package:itsindire/utilities/description.dart';
+import 'package:itsindire/screens/iga/utils/gradient_title.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/firebase_services/auth.dart';
 
 class UrStudent extends StatefulWidget {
   const UrStudent({super.key});
@@ -48,7 +48,7 @@ class _UrStudentState extends State<UrStudent> {
           backgroundColor: const Color.fromARGB(255, 71, 103, 158),
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(58.0),
-            child: AppBarTegura(),
+            child: AppBarItsindire(),
           ),
           body: Container(
             decoration: const BoxDecoration(
@@ -186,7 +186,7 @@ class _UrStudentState extends State<UrStudent> {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return TeguraAlert(
+                                      return ItsindireAlert(
                                         errorTitle: 'Error signing up!',
                                         errorMsg: error,
                                         alertType: 'error',
@@ -211,7 +211,7 @@ class _UrStudentState extends State<UrStudent> {
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return TeguraAlert(
+                                      return ItsindireAlert(
                                         errorTitle: 'Register failed!',
                                         errorMsg: result.error ==
                                                 'Ijambo banga ntiryujuje ibisabwa!'

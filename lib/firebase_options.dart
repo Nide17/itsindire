@@ -52,7 +52,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1080577461306',
     projectId: 'tegura-rw',
     storageBucket: 'tegura-rw.appspot.com',
-    iosClientId: '1080577461306-ng1nidkiuq62jub56othtrdigj13tfnu.apps.googleusercontent.com',
-    iosBundleId: 'com.example.tegura',
+    iosClientId:
+        '1080577461306-ng1nidkiuq62jub56othtrdigj13tfnu.apps.googleusercontent.com',
+    iosBundleId: 'com.example.itsindire',
   );
 }

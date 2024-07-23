@@ -1,4 +1,4 @@
-package com.quizblog.tegura
+package com.quizblog.itsindire
 
 import io.flutter.embedding.android.FlutterActivity
 

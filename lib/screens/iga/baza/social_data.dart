@@ -11,27 +11,27 @@ List<Map<String, dynamic>> socialData = [
   },
   {
     'icon': 'assets/images/email.svg',
-    'title': 'tegura.rw@gmail.com',
-    'url': 'mailto:tegura.rw@gmail.com',
+    'title': 'itsindire.rw@gmail.com',
+    'url': 'mailto:itsindire.rw@gmail.com',
   },
   {
     'icon': 'assets/images/twitter.svg',
-    'title': 'TeguraRw',
-    'url': 'https://twitter.com/TeguraRw',
+    'title': 'ItsindireRw',
+    'url': 'https://twitter.com/ItsindireRw',
   },
   {
     'icon': 'assets/images/instagram.svg',
-    'title': 'tegurarw',
-    'url': 'https://www.instagram.com/tegurarw',
+    'title': 'itsindirerw',
+    'url': 'https://www.instagram.com/itsindirerw',
   },
   {
     'icon': 'assets/images/linkedin.svg',
-    'title': 'tegurarw',
-    'url': 'https://www.linkedin.com/company/tegurarw',
+    'title': 'itsindirerw',
+    'url': 'https://www.linkedin.com/company/itsindirerw',
   },
   {
     'icon': 'assets/images/facebook.svg',
-    'title': 'TeguraRw',
-    'url': 'https://www.facebook.com/TeguraRw',
+    'title': 'ItsindireRw',
+    'url': 'https://www.facebook.com/ItsindireRw',
   },
 ];

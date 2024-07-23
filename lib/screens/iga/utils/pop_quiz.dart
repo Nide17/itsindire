@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/models/isomo.dart';
-import 'package:tegura/models/pop_question.dart';
-import 'package:tegura/screens/iga/utils/circle_progress_pq.dart';
-import 'package:tegura/screens/iga/utils/custom_radio_button.dart';
-import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/utilities/direction_button_pq.dart';
+import 'package:itsindire/models/isomo.dart';
+import 'package:itsindire/models/pop_question.dart';
+import 'package:itsindire/screens/iga/utils/circle_progress_pq.dart';
+import 'package:itsindire/screens/iga/utils/custom_radio_button.dart';
+import 'package:itsindire/screens/iga/utils/gradient_title.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/utilities/direction_button_pq.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class PopQuiz extends StatefulWidget {
@@ -67,7 +67,7 @@ class _PopQuizState extends State<PopQuiz> {
             backgroundColor: const Color.fromARGB(255, 228, 225, 225),
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(58.0),
-              child: AppBarTegura(),
+              child: AppBarItsindire(),
             ),
             body: SingleChildScrollView(
               child: Column(

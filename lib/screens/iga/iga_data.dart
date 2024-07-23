@@ -1,10 +1,10 @@
 // DATA FOR THE LIST VIEW
-import 'package:tegura/screens/iga/amasuzuma/amasuzuma.dart';
-import 'package:tegura/screens/iga/hagati/hagati.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/igazeti_n_ibimenyetso.dart';
-import 'package:tegura/screens/iga/wasoje/wasoje.dart';
-import 'package:tegura/screens/iga/bibaza/bibaza.dart';
-import 'package:tegura/screens/iga/baza/baza.dart';
+import 'package:itsindire/screens/iga/amasuzuma/amasuzuma.dart';
+import 'package:itsindire/screens/iga/hagati/hagati.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/igazeti_n_ibimenyetso.dart';
+import 'package:itsindire/screens/iga/wasoje/wasoje.dart';
+import 'package:itsindire/screens/iga/bibaza/bibaza.dart';
+import 'package:itsindire/screens/iga/baza/baza.dart';
 
 final List<Map<String, dynamic>> igaList = [
   {
@@ -25,7 +25,7 @@ final List<Map<String, dynamic>> igaList = [
     'route': 'amasuzumabumenyi',
     'screen': const Amasuzumabumenyi(),
   },
-    {
+  {
     'icon': 'assets/images/igazeti.svg',
     'text': 'Igazeti n\'ibimenyetso',
     'route': 'igazeti',

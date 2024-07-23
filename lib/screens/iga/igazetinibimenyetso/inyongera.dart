@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/inyongera_row.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/qb_app_bar.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/qb_app_footer.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/qb_subtitle.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/qb_title.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/inyongera_row.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/qb_app_bar.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/qb_app_footer.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/qb_subtitle.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/qb_title.dart';
 
 class IgazetiInyongera extends StatefulWidget {
   const IgazetiInyongera({super.key});
@@ -29,20 +29,20 @@ class _IgazetiInyongeraState extends State<IgazetiInyongera> {
                 delegate: SliverChildListDelegate(
                   [
                     Container(
-                      padding:
-                          EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width * 0.02),
                       child: Column(
                         children: [
                           const Center(
-                            child:
-                                QBTitle(title: 'IBYAPA NYONGERA N\'IBINTU NGOBOKA'),
+                            child: QBTitle(
+                                title: 'IBYAPA NYONGERA N\'IBINTU NGOBOKA'),
                           ),
-          
+
                           const QBSubTitle(
                             no: '',
                             title: 'A) IBYAPA NYONGERA ',
                           ),
-          
+
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -58,7 +58,7 @@ class _IgazetiInyongeraState extends State<IgazetiInyongera> {
                             no: '',
                             title: 'B) IBINTU NGOBOKA',
                           ),
-          
+
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
@@ -70,7 +70,7 @@ class _IgazetiInyongeraState extends State<IgazetiInyongera> {
                               );
                             },
                           ),
-          
+
                           // FOOTER
                           const QBAppFooter(),
                         ],

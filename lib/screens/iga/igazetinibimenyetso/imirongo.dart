@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/qb_app_bar.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/qb_app_footer.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/qb_title.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/umurongo_row.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/utils/data/imirongo.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/qb_app_bar.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/qb_app_footer.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/qb_title.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/umurongo_row.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/utils/data/imirongo.dart';
 
 class IgazetiImirongo extends StatefulWidget {
   const IgazetiImirongo({super.key});
@@ -29,20 +29,22 @@ class _IgazetiImirongoState extends State<IgazetiImirongo> {
                 delegate: SliverChildListDelegate(
                   [
                     Container(
-                      padding:
-                          EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+                      padding: EdgeInsets.all(
+                          MediaQuery.of(context).size.width * 0.02),
                       child: Column(
                         children: [
                           const Center(
-                            child: QBTitle(title: 'IBIMENYETSO BIRI MU MUHANDA'),
+                            child:
+                                QBTitle(title: 'IBIMENYETSO BIRI MU MUHANDA'),
                           ),
                           Text(
                               '👉 Ibimenyetso birombereje bigizwe n\'imirongo iteganye n\'umurongo ugabanya umuhanda mo kabiri. Ibyo bimenyetso bishobora kuba bigizwe na:',
                               style: TextStyle(
                                 color: const Color.fromARGB(255, 0, 0, 0),
-                                fontSize: MediaQuery.of(context).size.width * 0.04,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.04,
                               )),
-          
+
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),

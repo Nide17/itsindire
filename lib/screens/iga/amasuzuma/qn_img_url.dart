@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/models/isuzuma_score.dart';
+import 'package:itsindire/models/isuzuma_score.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class QuestionImgUrl extends StatelessWidget {

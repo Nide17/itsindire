@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:tegura/screens/iga/utils/tegura_alert.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
 
 class IsuzumaDirectionButton extends StatefulWidget {
   final String direction;
@@ -54,10 +54,11 @@ class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return const TeguraAlert(
-                      errorTitle: 'Ikosa!',
-                      errorMsg: 'Iki ni ikibazo cya mbere!',
-                      alertType: 'warning',);
+                  return const ItsindireAlert(
+                    errorTitle: 'Ikosa!',
+                    errorMsg: 'Iki ni ikibazo cya mbere!',
+                    alertType: 'warning',
+                  );
                 },
               );
             } else {
@@ -68,10 +69,11 @@ class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return const TeguraAlert(
-                      errorTitle: 'Ikosa!',
-                      errorMsg: 'Iki ni ikibazo cya nyuma!',
-                      alertType: 'warning',);
+                  return const ItsindireAlert(
+                    errorTitle: 'Ikosa!',
+                    errorMsg: 'Iki ni ikibazo cya nyuma!',
+                    alertType: 'warning',
+                  );
                 },
               );
             } else {

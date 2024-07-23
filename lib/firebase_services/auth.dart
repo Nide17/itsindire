@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tegura/models/profile.dart';
-import 'package:tegura/models/user.dart';
+import 'package:itsindire/models/profile.dart';
+import 'package:itsindire/models/user.dart';
 import 'package:android_id/android_id.dart';
-import 'package:tegura/firebase_services/profiledb.dart';
+import 'package:itsindire/firebase_services/profiledb.dart';
 
 class AuthResult<T> {
   late final T? value;
@@ -19,10 +19,11 @@ class AuthResult<T> {
 class AuthState with ChangeNotifier {
   final FirebaseAuth _authInstance = FirebaseAuth.instance;
   final ProfileService _profileService = ProfileService();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late StreamSubscription<User?> _authSubscription;
-  final CollectionReference roles =
+  final CollectionReference rolesCollection =
       FirebaseFirestore.instance.collection('roles');
+  final CollectionReference profilesCollection =
+      FirebaseFirestore.instance.collection('profiles');
 
   UserModel? _userFromFirebaseUser(User usr) {
     return UserModel(usr.email, uid: usr.uid);
@@ -39,8 +40,6 @@ class AuthState with ChangeNotifier {
         _currentUser = user;
         _isLoggedIn = _currentUser != null;
         _currentUser != null ? _updateProfile(_currentUser) : null;
-        print('\nAuthStateChanges Current user: $_currentUser');
-        print('\nAuthStateChanges Current profile: $_currentProfile');
         notifyListeners();
       }
     });
@@ -65,12 +64,9 @@ class AuthState with ChangeNotifier {
       _currentProfile = profile;
       notifyListeners();
     }
-
-    print('\nCurrent profile updated: $_currentProfile');
   }
 
   void setCurrentUser(User? user) {
-    print('\n\nSetting current user: $user');
     if (_currentUser != user) {
       _currentUser = user;
       notifyListeners();
@@ -78,7 +74,6 @@ class AuthState with ChangeNotifier {
   }
 
   void setIsLoggedIn(bool isLoggedIn) {
-    print('\n\nSetting isLoggedIn: $isLoggedIn');
     if (_isLoggedIn != isLoggedIn) {
       _isLoggedIn = isLoggedIn;
       notifyListeners();
@@ -88,15 +83,9 @@ class AuthState with ChangeNotifier {
   void _updateProfile(User? user) async {
     if (user != null) {
       _profileService.getCurrentProfileByID(user.uid).listen((profile) {
-        // if current profile's lastLoggedInDeviceId is equal to the current device ID
-        // then set the current profile to the profile
-
         getAndroidId().then((value) {
-          print(
-              '\n\nProfile - Notifier: $profile\nCurrent device ID: ${value}');
 
           if (profile != null && profile.lastLoggedInDeviceId == value) {
-            print('\n\nProfile - Setting current profile: $profile');
             setCurrentProfile(profile);
           }
         });
@@ -118,23 +107,22 @@ class AuthState with ChangeNotifier {
 
   // LOG OUT METHOD
   Future logOut() async {
-    DocumentReference profileRef;
 
-    // Get the current user profile reference
     if (currentUser == null) {
       return;
     }
 
-    profileRef = _firestore.collection('profiles').doc(currentUser!.uid);
+    // Clear the current user and profile
+    String? loggedOutUserName = currentProfile?.username ?? currentUser?.email;
 
     // Sign out
     await _authInstance.signOut();
 
     // Update the lastLoggedInDeviceId to empty string
-    await profileRef.update({'lastLoggedInDeviceId': null});
+    await profilesCollection.doc(currentUser?.uid).update({
+      'lastLoggedInDeviceId': null,
+    });
 
-    // Clear the current user and profile
-    String? loggedOutUserName = currentProfile?.username;
     setCurrentUser(null);
     setCurrentProfile(null);
     setIsLoggedIn(false);
@@ -148,7 +136,6 @@ class AuthState with ChangeNotifier {
       await _authInstance.sendPasswordResetEmail(email: email);
       return 'success';
     } catch (e) {
-      print(e.toString());
       return null;
     }
   }
@@ -159,22 +146,26 @@ class AuthState with ChangeNotifier {
       UserCredential result = await _authInstance.signInWithEmailAndPassword(
           email: email, password: password);
 
-      print('\n\nLogged in...: $result');
-
       if (result.user != null && result.user!.uid.isNotEmpty) {
-        DocumentReference profileRef =
-            _firestore.collection('profiles').doc(result.user?.uid);
-        DocumentSnapshot profileSnapshot = await profileRef.get();
+
+        DocumentSnapshot profileSnapshot =
+            await profilesCollection.doc(result.user?.uid).get();
+
         String? deviceId = await getAndroidId();
+
+        if (deviceId == null) {
+          return AuthResult(error: 'Unknown error occurred: Device error');
+        }
 
         if (profileSnapshot.exists) {
           String? prevDeviceId = profileSnapshot.get('lastLoggedInDeviceId');
-          await profileRef.update({'lastLoggedInDeviceId': deviceId});
 
-          if (prevDeviceId != '' &&
-              prevDeviceId != null &&
-              prevDeviceId.isNotEmpty &&
-              prevDeviceId != deviceId) {
+          // Update the lastLoggedInDeviceId
+          await profilesCollection.doc(result.user?.uid).update({
+            'lastLoggedInDeviceId': deviceId,
+          });
+
+          if (prevDeviceId != null && prevDeviceId != deviceId) {
             return AuthResult(
                 error:
                     'Mwemerwe gukoresha konti imwe muri telefoni imwe. Duhamagare kuri 0794033360 tugufashe!');
@@ -182,22 +173,17 @@ class AuthState with ChangeNotifier {
         }
         return _userFromFirebaseUser(result.user!);
       } else {
-
         return null;
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-
         return AuthResult(error: 'Konti ntibashije kuboneka. Iyandikishe!');
       } else if (e.code == 'wrong-password') {
-        
         return AuthResult(error: 'Ijambo banga siryo!');
       } else {
-
-        print("e.toString()) - ${e.toString()}");
+        return AuthResult(error: 'Unknown FirebaseAuthException occurred');
       }
     } catch (e) {
-      print(e);
       return AuthResult(error: 'Unknown error occurred');
     }
   }
@@ -226,7 +212,7 @@ class AuthState with ChangeNotifier {
           urStudent ?? false,
           regNbr ?? '',
           campus ?? '',
-          roles.doc('1'),
+          rolesCollection.doc('1'),
           '',
         );
 
@@ -240,11 +226,9 @@ class AuthState with ChangeNotifier {
       } else if (e.code == 'email-already-in-use') {
         return AuthResult(error: 'Iyi imeyili yarakoreshejwe! Injira!');
       } else {
-        print('FirebaseAuthException: $e');
         return AuthResult(error: 'Unknown Firebase Auth error occurred');
       }
     } catch (e) {
-      print(e);
       return AuthResult(error: 'Unknown error occurred');
     }
   }

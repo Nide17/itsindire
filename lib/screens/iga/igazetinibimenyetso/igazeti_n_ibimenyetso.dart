@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/inyongera.dart';
-import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/igazeti.dart';
-import 'package:tegura/screens/iga/iga_card.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/ibimurika.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/ibyapa.dart';
-import 'package:tegura/screens/iga/igazetinibimenyetso/imirongo.dart';
-import 'package:tegura/utilities/app_bar.dart';
+import 'package:itsindire/screens/ibiciro/reba_ibiciro_button.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/inyongera.dart';
+import 'package:itsindire/screens/iga/utils/gradient_title.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/igazeti.dart';
+import 'package:itsindire/screens/iga/iga_card.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/ibimurika.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/ibyapa.dart';
+import 'package:itsindire/screens/iga/igazetinibimenyetso/imirongo.dart';
+import 'package:itsindire/utilities/app_bar.dart';
 
 class Igazeti extends StatefulWidget {
   const Igazeti({super.key});
@@ -23,7 +23,7 @@ class _IgazetiState extends State<Igazeti> {
         backgroundColor: const Color.fromARGB(255, 71, 103, 158),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(58.0),
-          child: AppBarTegura(),
+          child: AppBarItsindire(),
         ),
         body: ScrollbarTheme(
           data: ScrollbarThemeData(

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/models/isuzuma.dart';
-import 'package:tegura/screens/iga/amasuzuma/amasuzuma_card.dart';
-import 'package:tegura/utilities/description.dart';
-import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
-import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/utilities/app_bar.dart';
+import 'package:itsindire/models/isuzuma.dart';
+import 'package:itsindire/screens/iga/amasuzuma/amasuzuma_card.dart';
+import 'package:itsindire/utilities/description.dart';
+import 'package:itsindire/screens/ibiciro/reba_ibiciro_button.dart';
+import 'package:itsindire/screens/iga/utils/gradient_title.dart';
+import 'package:itsindire/utilities/app_bar.dart';
 
 class Amasuzumabumenyi extends StatefulWidget {
   const Amasuzumabumenyi({super.key});
@@ -26,7 +26,7 @@ class _AmasuzumabumenyiState extends State<Amasuzumabumenyi> {
           backgroundColor: const Color.fromARGB(255, 71, 103, 158),
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(58.0),
-            child: AppBarTegura(),
+            child: AppBarItsindire(),
           ),
           body: ScrollbarTheme(
             data: ScrollbarThemeData(

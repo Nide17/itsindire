@@ -1,23 +1,22 @@
-import 'package:android_id/android_id.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/firebase_services/auth.dart';
-import 'package:tegura/firebase_services/payment_db.dart';
-import 'package:tegura/firebase_services/profiledb.dart';
-import 'package:tegura/models/payment.dart';
-import 'package:tegura/models/profile.dart';
+import 'package:itsindire/firebase_services/auth.dart';
+import 'package:itsindire/firebase_services/payment_db.dart';
+import 'package:itsindire/firebase_services/profiledb.dart';
+import 'package:itsindire/models/payment.dart';
+import 'package:itsindire/models/profile.dart';
 
-class AppBarTegura extends StatefulWidget {
-  const AppBarTegura({super.key});
+class AppBarItsindire extends StatefulWidget {
+  const AppBarItsindire({super.key});
 
   @override
-  State<AppBarTegura> createState() => _AppBarTeguraState();
+  State<AppBarItsindire> createState() => _AppBarItsindireState();
 }
 
-class _AppBarTeguraState extends State<AppBarTegura> {
+class _AppBarItsindireState extends State<AppBarItsindire> {
   final CollectionReference paymentsCollection =
       FirebaseFirestore.instance.collection('payments');
   String currentDeviceId = '';
@@ -68,8 +67,7 @@ class _AppBarTeguraState extends State<AppBarTegura> {
 
   @override
   Widget build(BuildContext context) {
-    AuthState authState = Provider.of<AuthState>(context);
-     print('Auth state - App bar - provider: ${authState.currentUser}');
+
     return MultiProvider(
       providers: [
         StreamProvider<PaymentModel?>.value(
@@ -94,7 +92,7 @@ class _AppBarTeguraState extends State<AppBarTegura> {
         ),
       ],
       child: Consumer<AuthState>(builder: (context, authState, _) {
-        print('Auth state - App bar - consumer: ${authState.currentUser}');
+
         return Consumer<ProfileModel?>(builder: (context, profile, _) {
           return Consumer<PaymentModel?>(builder: (context, newestPyt, _) {
             final user = FirebaseAuth.instance.currentUser;
@@ -118,7 +116,7 @@ class _AppBarTeguraState extends State<AppBarTegura> {
                   SizedBox(
                     width: MediaQuery.of(context).size.height * 0.012,
                   ),
-                  Text('Tegura.rw',
+                  Text('Itsindire.rw',
                       style: TextStyle(
                         color: const Color.fromARGB(255, 0, 0, 0),
                         fontWeight: FontWeight.w900,

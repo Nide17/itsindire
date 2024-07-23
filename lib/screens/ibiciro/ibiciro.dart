@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/main.dart';
-import 'package:tegura/models/ifatabuguzi.dart';
-import 'package:tegura/models/profile.dart';
-import 'package:tegura/screens/ibiciro/ifatabuguzi.dart';
-import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/utilities/description.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/utilities/loading_widget.dart';
-import 'package:tegura/utilities/no_internet.dart';
+import 'package:itsindire/main.dart';
+import 'package:itsindire/models/ifatabuguzi.dart';
+import 'package:itsindire/models/profile.dart';
+import 'package:itsindire/screens/ibiciro/ifatabuguzi.dart';
+import 'package:itsindire/screens/iga/utils/gradient_title.dart';
+import 'package:itsindire/utilities/description.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/utilities/loading_widget.dart';
+import 'package:itsindire/utilities/no_internet.dart';
 
 class Ibiciro extends StatefulWidget {
   final String? message;
@@ -90,7 +90,7 @@ class _IbiciroState extends State<Ibiciro> {
           backgroundColor: const Color.fromARGB(255, 71, 103, 158),
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(58.0),
-            child: AppBarTegura(),
+            child: AppBarItsindire(),
           ),
           body: conn.isOnline == false
               ? const NoInternet()

@@ -2,14 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/firebase_services/isuzuma_score_db.dart';
-import 'package:tegura/models/isuzuma.dart';
-import 'package:tegura/models/isuzuma_score.dart';
-import 'package:tegura/screens/iga/amasuzuma/isuzuma_score_review.dart';
-import 'package:tegura/screens/iga/amasuzuma/isuzuma_views.dart';
-import 'package:tegura/screens/iga/utils/tegura_alert.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/screens/iga/amasuzuma/isuzuma_direction_button.dart';
+import 'package:itsindire/firebase_services/isuzuma_score_db.dart';
+import 'package:itsindire/models/isuzuma.dart';
+import 'package:itsindire/models/isuzuma_score.dart';
+import 'package:itsindire/screens/iga/amasuzuma/isuzuma_score_review.dart';
+import 'package:itsindire/screens/iga/amasuzuma/isuzuma_views.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/screens/iga/amasuzuma/isuzuma_direction_button.dart';
 
 class IsuzumaAttempt extends StatefulWidget {
   final IsuzumaModel isuzuma;
@@ -114,7 +114,7 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
               showDialog(
                 context: context,
                 builder: (context) {
-                  return TeguraAlert(
+                  return ItsindireAlert(
                     errorTitle: 'Ugiye gusohoka udasoje?',
                     errorMsg:
                         'Ushaka gusohoka udasoje kwisuzuma? Ibyo wahisemo birasibama.',
@@ -140,7 +140,7 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
               backgroundColor: const Color.fromARGB(255, 255, 255, 255),
               appBar: PreferredSize(
                 preferredSize: Size.fromHeight(58.0),
-                child: AppBarTegura(),
+                child: AppBarItsindire(),
               ),
               body: IsuzumaViews(
                   userID: usr!.uid,
@@ -177,7 +177,7 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
                             showDialog(
                               context: context,
                               builder: (context) {
-                                return TeguraAlert(
+                                return ItsindireAlert(
                                   errorTitle: 'Hari ibidasubije!',
                                   errorMsg:
                                       'Hari ibibazo utasubije. Ushaka gusoza?',
@@ -218,7 +218,7 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
                             showDialog(
                               context: context,
                               builder: (context) {
-                                return TeguraAlert(
+                                return ItsindireAlert(
                                   errorTitle: 'Gusoza isuzuma!',
                                   errorMsg:
                                       'Wasubije ibibazo byose. Ese ushaka gusoza nonaha?',
