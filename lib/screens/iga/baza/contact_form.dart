@@ -1,11 +1,11 @@
-// ignore_for_file: avoid_print
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:itsindire/models/profile.dart';
 import 'package:itsindire/utilities/default_input.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:itsindire/utilities/loading_widget.dart';
+import 'package:provider/provider.dart';
 
 class ContactForm extends StatefulWidget {
   const ContactForm({super.key});
@@ -16,37 +16,64 @@ class ContactForm extends StatefulWidget {
 
 class _ContactFormState extends State<ContactForm> {
   final _formKey = GlobalKey<FormState>();
-
-  String? _name;
-  String? email;
-  String? _message;
+  String? _name, _email, _message;
   bool isLoading = false;
 
+  Future<void> sendEmail() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      final isSent = await EmailService.sendEmail(
+        name: _name!,
+        email: _email!,
+        message: _message!,
+      );
+
+      setState(() {
+        isLoading = false;
+      });
+
+      final snackBarMessage =
+          isSent ? 'Ubutumwa bwawe bwagiye!' : 'Ubutumwa bwawe ntibwagiye!';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            snackBarMessage,
+            textAlign: TextAlign.center,
+          ),
+          duration: const Duration(seconds: 10),
+          backgroundColor: isSent ? const Color(0xFF00A651) : Colors.red,
+        ),
+      );
+
+      if (isSent && _formKey.currentState != null) {
+        _formKey.currentState!.reset();
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Error sending email. Please try again.',
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    Future<bool> sendEmail() async {
-      String username = dotenv.env['GMAIL_EMAIL']!;
-      String password = dotenv.env['GMAIL_PASSWORD']!;
-      final smtpServer = gmail(username, password);
+    final profile = Provider.of<ProfileModel?>(context);
 
-      final message = Message()
-        ..from = Address('$email', '$_name')
-        ..recipients.add('itsindire.rw@gmail.com')
-        ..ccRecipients.addAll(['quizblog.rw@gmail.com'])
-        ..subject = 'Message from $_name[$email]'
-        ..text = _message;
+    _name = profile?.username;
+    _email = profile?.email;
 
-      try {
-        final sendReport = await send(message, smtpServer);
-        print('Message sent: $sendReport');
-        return true;
-      } catch (e) {
-        print('Error sending email: $e');
-        rethrow;
-      }
-    }
-
-    return isLoading == true
+    return isLoading
         ? Container(
             padding: EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width * 0.05,
@@ -62,32 +89,24 @@ class _ContactFormState extends State<ContactForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   DefaultInput(
-                    placeholder: 'Izina',
-                    validation: 'Izina ryawe rirakenewe!',
-                    onChanged: (value) {
-                      setState(() {
-                        _name = value;
-                      });
-                    },
+                    placeholder: _name ?? 'Izina',
+                      validation: _name == null
+                        ? 'Izina ryawe rirakenewe!'
+                        : null, // Skip validation if _name is not null
+                        enabled: _name == null,
+                    onChanged: (value) => setState(() => _name = value),
                   ),
                   DefaultInput(
-                    placeholder: 'Imeyili',
-                    validation: 'Imeyili yawe irakenewe!',
-                    onChanged: (value) {
-                      setState(() {
-                        email = value;
-                      });
-                    },
+                    placeholder: _email ?? 'Imeyili',
+                    validation:  _email == null ? 'Imeyili yawe irakenewe!' : null,
+                    enabled: _email == null,
+                    onChanged: (value) => setState(() => _email = value),
                   ),
                   DefaultInput(
                     placeholder: 'Ubutumwa',
                     validation: 'Ubutumwa bwawe burakenewe!',
                     maxLines: 5,
-                    onChanged: (value) {
-                      setState(() {
-                        _message = value;
-                      });
-                    },
+                    onChanged: (value) => setState(() => _message = value),
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.008,
@@ -112,49 +131,9 @@ class _ContactFormState extends State<ContactForm> {
                             vertical:
                                 MediaQuery.of(context).size.height * 0.01),
                       ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          setState(() {
-                            isLoading = true;
-                          });
-
-                          _formKey.currentState!.save();
-                          bool isSent = false;
-                          sendEmail().then((value) {
-                            isSent = value;
-                            setState(() {
-                              isLoading = false;
-                            });
-
-                            if (isSent == true) {
-                              if (_formKey.currentState != null) {
-                                _formKey.currentState!.reset();
-                              }
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                      'Ubutumwa bwawe bwagiye!',
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    duration: Duration(seconds: 10),
-                                    backgroundColor: Color(0xFF00A651)),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Ubutumwa bwawe ntibwagiye!',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  duration: Duration(seconds: 10),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
-                          });
-                        }
-                      },
+                      onPressed: () => _formKey.currentState != null && _formKey.currentState!.validate()
+                          ? sendEmail()
+                          : null,
                       child: Text(
                         'Ohereza',
                         textAlign: TextAlign.right,
@@ -169,5 +148,32 @@ class _ContactFormState extends State<ContactForm> {
               ),
             ),
           );
+  }
+}
+
+class EmailService {
+  static Future<bool> sendEmail({
+    required String name,
+    required String email,
+    required String message,
+  }) async {
+    String username = dotenv.env['GMAIL_EMAIL']!;
+    String password = dotenv.env['GMAIL_PASSWORD']!;
+    final smtpServer = gmail(username, password);
+
+    final emailMessage = Message()
+      ..from = Address(email, name)
+      ..recipients.add('itsindire.rw@gmail.com')
+      ..ccRecipients.addAll(['quizblog.rw@gmail.com'])
+      ..subject = 'Message from $name [$email]'
+      ..text = message;
+
+    try {
+      await send(emailMessage, smtpServer);
+      return true;
+    } catch (e) {
+      print('Error sending email: $e');
+      return false;
+    }
   }
 }

@@ -21,8 +21,6 @@ class _HomePageState extends State<HomePage> {
           ? '$msg, ${capitalizeWords(username.split(' ')[0])}!'
           : '$msg!';
 
-      print("\nHome authState._currentProfile: ${authState.currentProfile}");
-
       return Scaffold(
         backgroundColor: const Color.fromARGB(255, 71, 103, 158),
         appBar: PreferredSize(

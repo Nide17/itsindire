@@ -43,7 +43,7 @@ Future main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  await FirebaseAuth.instance.authStateChanges().first;
   runApp(const ItsindireApp());
 }
 
@@ -78,6 +78,7 @@ class ItsindireApp extends StatefulWidget {
 }
 
 class _ItsindireAppState extends State<ItsindireApp> {
+  
   List<ConnectivityResult> _connectionStatusList = [ConnectivityResult.none];
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
@@ -88,7 +89,6 @@ class _ItsindireAppState extends State<ItsindireApp> {
     super.initState();
     initConnectivity();
     _currentStatus = ConnectionStatus();
-
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatusList);
   }
@@ -209,6 +209,9 @@ class _ItsindireAppState extends State<ItsindireApp> {
       ],
       child: Consumer<AuthState>(builder: (context, authState, _) {
         
+          // print('\n\n Firebase ${FirebaseAuth.instance.currentUser} \n\n');
+          // print('\n\n Auth state ${authState} \n\n');
+          
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(primarySwatch: Colors.blue),

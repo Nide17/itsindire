@@ -60,6 +60,16 @@ class QuizScore {
     return true;
   }
 
+  int getCorrectlyAnsweredQuestionsCount() {
+    int count = 0;
+    for (var i = 0; i < questions.length; i++) {
+      if (questions[i].isAnswerCorrect == true) {
+        count++;
+      }
+    }
+    return count;
+  }
+
   // TO STRING
   @override
   String toString() {

@@ -24,9 +24,7 @@ class _WibagiweState extends State<Wibagiwe> {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthState>(builder: (context, authState, _) {
-      if (authState.isLoggedIn) {
-        Navigator.popUntil(context, (route) => route.isFirst);
-      }
+
       return Scaffold(
           backgroundColor: const Color.fromARGB(255, 71, 103, 158),
           appBar: PreferredSize(

@@ -5,7 +5,6 @@ class UserModel {
   final String uid; // UNIQUE ID OF THE USER - FROM FIREBASE
   final String? email; // UNIQUE EMAIL OF THE USER - FROM FIREBASE
   
-
   UserModel(this.email, {required this.uid});
 
   @override

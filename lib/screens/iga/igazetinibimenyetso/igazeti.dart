@@ -41,8 +41,7 @@ class _IgazetiBookState extends State<IgazetiBook> {
 
   @override
   Widget build(BuildContext context) {
-    print(_isLoading);
-
+    
     if (_isLoading) {
       return const LoadingWidget();
     }

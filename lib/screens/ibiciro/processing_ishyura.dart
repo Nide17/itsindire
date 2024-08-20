@@ -43,8 +43,8 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
   Widget build(BuildContext context) {
     final usr = FirebaseAuth.instance.currentUser;
     final String message = widget.ifatabuguzi.type != 'ur'
-        ? 'Andika nimero ugiye gukoresha wishyura yawe hasi aho, ubundi wishyure ${widget.ifatabuguzi.igiciro} RWF kuri MoMo: 0794033360'
-        : 'Provide your payment number below, then pay ${widget.ifatabuguzi.igiciro} RWF on MoMo: 0794033360';
+        ? 'Andika nimero ugiye gukoresha wishyura yawe hasi aho, ubundi wishyure ${widget.ifatabuguzi.igiciro} RWF kuri MoMo: 0794033360 [Patrice]'
+        : 'Provide your payment number below, then pay ${widget.ifatabuguzi.igiciro} RWF on MoMo: 0794033360 [Patrice]';
     // final String message = widget.ifatabuguzi.type != 'ur'
     //     ? 'Ishyura ${widget.ifatabuguzi.igiciro} RWF kuri MoMo: 0794033360 \n Cyangwa ukande ino mibare kuri telefone yawe ukoreshe numero yawe ya MTN maze wishyure: \n*182*8*1*36921*${widget.ifatabuguzi.igiciro}#'
     //     : 'Provide your number below or Pay ${widget.ifatabuguzi.igiciro} RWF on MoMo: 0794033360 \n or dial the following on your phone using your MTN momo phone number: \n*182*8*1*36921*${widget.ifatabuguzi.igiciro}#';
@@ -91,7 +91,7 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
                         message,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
+                          fontSize: MediaQuery.of(context).size.width * 0.032,
                           fontWeight: FontWeight.w900,
                           color: const Color.fromARGB(255, 0, 0, 0),
                         ),
@@ -264,7 +264,7 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
                             : 'Urahita wemererwa gutangira kwiga!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
+                          fontSize: MediaQuery.of(context).size.width * 0.032,
                           fontWeight: FontWeight.w900,
                           color: const Color.fromARGB(255, 0, 0, 0),
                         ),

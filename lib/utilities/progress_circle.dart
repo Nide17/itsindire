@@ -28,11 +28,11 @@ class ProgressCircle extends StatelessWidget {
                 // 1. TEXT OUTPUT
                 if (usr != null)
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.4,
+                    width: MediaQuery.of(context).size.width * 0.36,
                     child: Text(progress,
                         style: TextStyle(
                           fontWeight: FontWeight.w900,
-                          fontSize: MediaQuery.of(context).size.width * 0.05,
+                          fontSize: MediaQuery.of(context).size.width * 0.045,
                         )),
                   )
                 else

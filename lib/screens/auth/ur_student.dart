@@ -195,7 +195,6 @@ class _UrStudentState extends State<UrStudent> {
                                   );
                                 });
                               } else {
-                                authState.logOut();
                                 if (result.runtimeType == UserModel) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(

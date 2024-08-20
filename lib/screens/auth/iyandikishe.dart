@@ -33,9 +33,11 @@ class _IyandikisheState extends State<Iyandikishe> {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthState>(builder: (context, authState, _) {
+
       if (authState.currentUser != null) {
         Navigator.pushReplacementNamed(context, '/iga-landing');
       }
+      
       return Scaffold(
           backgroundColor: const Color.fromARGB(255, 71, 103, 158),
           appBar: PreferredSize(
@@ -165,8 +167,6 @@ class _IyandikisheState extends State<Iyandikishe> {
                                   );
                                 });
                               } else {
-                                authState.logOut();
-
                                 if (result.runtimeType == UserModel) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(

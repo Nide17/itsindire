@@ -108,7 +108,7 @@ class QBAppBar extends StatelessWidget {
                               ),
                               Text('Itsindire.rw', // TEXT WIDGET
                                   style: TextStyle(
-                                    color: const Color(0xFFFFBD59),
+                                    color: const Color(0xFF157A6E),
                                     fontWeight: FontWeight.w900,
                                     fontSize:
                                         MediaQuery.of(context).size.width *

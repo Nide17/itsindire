@@ -38,6 +38,7 @@ class IsomoService {
   }
 
   Stream<List<IsomoModel?>>? getAllAmasomo(String? uid) {
+    print('getting all amasomo');
     if (uid == null) return null;
     return amasomoCollection.snapshots().map(_amasomoFromSnapshot);
   }

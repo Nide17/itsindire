@@ -39,10 +39,9 @@ class _WasojeState extends State<Wasoje> {
         child: Consumer<AuthState>(builder: (context, authState, _) {
             return Consumer<List<CourseProgressModel?>?>(
                 builder: (context, finishedProgresses, child) {
-              print('finishedProgresses: ${finishedProgresses?.length}');
+              // print('finishedProgresses: ${finishedProgresses?.length}');
             
-              final overallProgress =
-                  authState.isLoggedIn && allAmasomos != null && finishedProgresses != null
+              final overallProgress = allAmasomos != null && finishedProgresses != null
                       ? finishedProgresses.length / allAmasomos.length
                       : 0.0;
             
@@ -65,13 +64,13 @@ class _WasojeState extends State<Wasoje> {
                           height: MediaQuery.of(context).size.height * 0.01,
                         ),
                         ProgressCircle(
-                          percent: authState.isLoggedIn ? overallProgress : 0.0,
-                          progress: authState.isLoggedIn
+                          percent: authState.currentProfile != null ? overallProgress : 0.0,
+                          progress: authState.currentProfile != null
                               ? 'Ugeze kukigero cya ${(overallProgress * 100).toStringAsFixed(0)}% wiga!'
                               : 'Banza winjire!',
                           usr: authState.currentUser,
                         ),
-                        if (authState.isLoggedIn)
+                        if (authState.currentProfile != null)
                           AmasomoProgress(progressesToShow: finishedProgresses)
                         else
                           const ViewNotLoggedIn(),

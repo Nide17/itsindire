@@ -27,7 +27,7 @@ class CircleProgress extends StatelessWidget {
       animation: true,
       percent: percent,
       center: Text(
-        '${(percent * 100).toStringAsFixed(0)}%',
+        '${(courseProgress?.unansweredPopQuestions != 0 && percent > 0.1 ? (percent - 0.1) * 100 : percent * 100).toStringAsFixed(0)}%',
         style: TextStyle(
           fontWeight: FontWeight.w900,
           fontSize: percent < 0.9

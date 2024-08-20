@@ -1,11 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
 import 'package:provider/provider.dart';
 import 'package:itsindire/firebase_services/ingingo_db.dart';
 import 'package:itsindire/models/course_progress.dart';
 import 'package:itsindire/models/ingingo.dart';
 import 'package:itsindire/models/isomo.dart';
-import 'package:itsindire/firebase_services/isomo_progress.dart';
 import 'package:itsindire/screens/iga/utils/content_title_text.dart';
 import 'package:itsindire/screens/iga/utils/iga_content.dart';
 import 'package:itsindire/screens/iga/utils/option_content.dart';
@@ -47,11 +46,12 @@ class _ContentDetailsState extends State<ContentDetails> {
 
   @override
   Widget build(BuildContext context) {
-    final usr = FirebaseAuth.instance.currentUser;
+    
     final currPageIngingos = Provider.of<List<IngingoModel>?>(context) ?? [];
     final courseProgress = Provider.of<CourseProgressModel?>(context);
     final totalIngingos = courseProgress?.totalIngingos ?? 0;
     final currentIngingo = courseProgress?.currentIngingo ?? 0;
+    final unansweredPopQuestions = courseProgress?.unansweredPopQuestions ?? 0;
 
     return loadingTotalIngingos
         ? const LoadingWidget()
@@ -66,7 +66,8 @@ class _ContentDetailsState extends State<ContentDetails> {
                     EdgeInsets.all(MediaQuery.of(context).size.width * 0.024),
                 child: Column(
                   children: [
-                    if (index == 0 && currentIngingo == totalIngingos)
+                    if (index == 0 && currentIngingo == totalIngingos &&
+                        unansweredPopQuestions == 0)
                       Text(
                         'Wasoje kwiga isomo!',
                         style: TextStyle(
@@ -75,27 +76,42 @@ class _ContentDetailsState extends State<ContentDetails> {
                                 MediaQuery.of(context).size.height * 0.023,
                             color: Colors.green),
                       ),
-                    if (index == 0 && currentIngingo == totalIngingos)
+                    if (index == 0 && currentIngingo == totalIngingos &&
+                        unansweredPopQuestions == 0)
                       ElevatedButton(
                         onPressed: () {
-                          CourseProgressService().updateUserCourseProgress(
-                            usr!.uid,
-                            courseProgress!.courseId,
-                            0,
-                            totalIngingos,
-                          );
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => IgaContent(
-                                      isomo: widget.isomo,
-                                      courseProgress: courseProgress,
-                                      thisCourseTotalIngingos:
-                                          thisCourseTotalIngingos)));
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ItsindireAlert(
+                                  errorTitle: 'IBIJYANYE NIRI SOMO',
+                                  errorMsg:
+                                      'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "${totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : totalIngingos * 3}" gusa!',
+                                  firstButtonTitle: 'Inyuma',
+                                  firstButtonFunction: () {
+                                    Navigator.popAndPushNamed(
+                                        context, '/iga-landing');
+                                  },
+                                  firstButtonColor: const Color(0xFFE60000),
+                                  secondButtonTitle: 'Tangira',
+                                  secondButtonFunction: () {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => IgaContent(
+                                                isomo: widget.isomo,
+                                                courseProgress: courseProgress,
+                                                thisCourseTotalIngingos:
+                                                    thisCourseTotalIngingos)));
+                                  },
+                                  secondButtonColor: const Color(0xFF00A651),
+                                );
+                              });
                         },
                         child: const Text('Ongera utangire iri somo!'),
                       ),
-                    if (index == 0 && currentIngingo == totalIngingos)
+                    if (index == 0 && currentIngingo == totalIngingos &&
+                        unansweredPopQuestions == 0)
                       const SizedBox(height: 10.0),
                     if (index == 0 && widget.isomo.introText != '')
                       Text(

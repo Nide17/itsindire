@@ -68,13 +68,13 @@ class _HagatiState extends State<Hagati> {
                         height: MediaQuery.of(context).size.height * 0.01,
                       ),
                       ProgressCircle(
-                        percent: authState.isLoggedIn ? overallProgress : 0.0,
-                        progress: authState.isLoggedIn
+                        percent: authState.currentProfile != null ? overallProgress : 0.0,
+                        progress: authState.currentProfile != null
                             ? 'Ugeze kukigero cya ${(overallProgress * 100).toStringAsFixed(0)}% wiga!'
                             : 'Banza winjire!',
                         usr: authState.currentUser,
                       ),
-                      if (authState.isLoggedIn)
+                      if (authState.currentProfile != null)
                         AmasomoProgress(progressesToShow: notFinishedProgresses)
                       else
                         const ViewNotLoggedIn(),

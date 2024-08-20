@@ -1,11 +1,12 @@
 // MODEL TO REPRESENT THE PROGRESS
 class CourseProgressModel {
-  // TITLE AND DESCRIPTION
+  
   String id = '';
   String userId = '';
   int courseId = 0;
   int currentIngingo = 0;
   int totalIngingos = 0;
+  int unansweredPopQuestions = 0;
 
   CourseProgressModel({
     required this.id,
@@ -13,6 +14,7 @@ class CourseProgressModel {
     required this.courseId,
     required this.currentIngingo,
     required this.totalIngingos,
+    required this.unansweredPopQuestions,
   });
 
 // GET THE PROGRESS PERCENTAGE
@@ -21,6 +23,6 @@ class CourseProgressModel {
   // TO STRING
   @override
   String toString() {
-    return 'CourseProgressModel{id: $id, userId: $userId, courseId: $courseId, currentIngingo: $currentIngingo, totalIngingos: $totalIngingos}';
+    return 'CourseProgressModel{id: $id, userId: $userId, courseId: $courseId, currentIngingo: $currentIngingo, totalIngingos: $totalIngingos, unansweredPopQuestions: $unansweredPopQuestions}';
   }
 }

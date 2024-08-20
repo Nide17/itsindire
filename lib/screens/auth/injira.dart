@@ -22,6 +22,7 @@ class Injira extends StatefulWidget {
 }
 
 class _InjiraState extends State<Injira> {
+  
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String email = '';
@@ -142,7 +143,7 @@ class _InjiraState extends State<Injira> {
                               title: 'INJIRA',
                               icon: 'assets/images/injira.svg'),
                           const Description(
-                              text: 'Injira kugirango ubashe kubona byose!'),
+                              text: 'Injira kugirango ubashe gukomeza!'),
                           Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -194,38 +195,32 @@ class _InjiraState extends State<Injira> {
                                           return;
                                         }
 
-                                        if (result == null) {
+                                        if (result.runtimeType ==
+                                                AuthResult &&
+                                            result.error != null) {
                                           _showSnackbar(
-                                              'Kwinjira ntibyagenze neza!',
-                                              Colors.red);
-                                        } else if (result.runtimeType !=
+                                              result.error, Colors.red);
+                                        } else if (result.runtimeType ==
                                             UserModel) {
-                                          if (result.error != null) {
-                                            _showSnackbar(
-                                                result.error, Colors.red);
-                                          } else if (result.warning != null) {
-                                            _showSnackbar(
-                                                result.warning, Colors.yellow);
-                                          }
-                                          authState.logOut();
-                                        } else {
+                                          print(result.toString());
                                           authState.setCurrentUser(FirebaseAuth
                                               .instance.currentUser);
                                           _showSnackbar(
                                               'Kwinjira byagenze neza!',
                                               Colors.green);
                                         }
+                                        else {
+                                          _showSnackbar(
+                                              'Kwinjira ntibyagenze neza!',
+                                              Colors.red);
+                                        }
                                       }
                                     },
                                   ),
-
-                                  // SIZED BOX
                                   SizedBox(
                                     height: MediaQuery.of(context).size.height *
                                         0.02,
                                   ),
-
-                                  // CTA LINK
                                   const CtaAuthLink(
                                     text1: 'Wibagiwe ijambobanga? ',
                                     text2: 'Risabe',
@@ -233,14 +228,10 @@ class _InjiraState extends State<Injira> {
                                     color2: Color.fromARGB(255, 0, 27, 116),
                                     route: '/wibagiwe',
                                   ),
-
-                                  // SIZED BOX
                                   SizedBox(
                                     height: MediaQuery.of(context).size.height *
                                         0.02,
                                   ),
-
-                                  // CTA LINK
                                   const CtaAuthLink(
                                     text1: 'Niba utariyandikisha, ',
                                     color1: Color.fromARGB(255, 0, 27, 116),

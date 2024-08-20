@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:itsindire/models/ingingo.dart';
 
 class IngingoService {
-  // COLLECTIONS REFERENCE - FIRESTORE
+  
   final CollectionReference ingingoCollection =
       FirebaseFirestore.instance.collection('ingingo');
 
@@ -45,11 +45,6 @@ class IngingoService {
   Stream<IsomoIngingoSum> getTotalIsomoIngingos(int isomoID) {
     final documentsStream =
         ingingoCollection.where('isomoID', isEqualTo: isomoID).snapshots();
-
-    // // print them
-    // documentsStream.listen((event) {
-    //   print('Total ingingos: ${event.docs.length}');
-    // });
     return documentsStream
         .map((event) => IsomoIngingoSum(realTotalIngingos: event.docs.length));
   }

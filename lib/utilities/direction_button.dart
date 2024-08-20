@@ -42,14 +42,13 @@ class _DirectionButtonState extends State<DirectionButton> {
     final courseProgress = Provider.of<CourseProgressModel?>(context);
     final int ingingoID = pageIngingos.isNotEmpty ? pageIngingos[0].id : 0;
 
+    print("courseProgress: $courseProgress");
+
     // Generate a list of ingingos IDs from ingingoID
     List<int> listIngingosID2 = [];
     for (int i = 0; i < 5; i++) {
       listIngingosID2.add(ingingoID + i);
     }
-    // print("\npageIngingos: $pageIngingos");
-    // print("\ningingoID: $ingingoID");
-    // print("\nlistIngingosID2: $listIngingosID2");
 
     return MultiProvider(
       providers: [
@@ -75,31 +74,24 @@ class _DirectionButtonState extends State<DirectionButton> {
                 ? popQuestions[0].ingingoID
                 : 0);
 
-        // print('isIngingosHavePopQuestions: $isIngingosHavePopQuestions');
-        // print('popQuestions: $popQuestions');
-
         return ElevatedButton(
           onPressed: () {
             widget.scrollTop();
             if (widget.direction == 'inyuma') {
               widget.changeSkipNumber(-5);
             } else if (widget.direction == 'komeza') {
+              
               // UPDATE THE CURRENT INGINGO
               if (widget.skip >= 0 &&
                   widget.skip <= courseProgress!.totalIngingos &&
                   pageIngingos.length + widget.skip >
-                      courseProgress.currentIngingo) {
-                // print('Updating current ingingo');
-                // print('courseProgress.userId: ${courseProgress.userId}');
-                // print('widget.isomo.id: ${widget.isomo.id}');
-                // print('widget.skip + pageIngingos.length: ${widget.skip + pageIngingos.length}');
-                // print('courseProgress.totalIngingos: ${courseProgress.totalIngingos}');
-
+                      courseProgress.currentIngingo && popQuestions!.isEmpty) {
                 CourseProgressService().updateUserCourseProgress(
                   courseProgress.userId,
                   widget.isomo.id,
                   widget.skip + pageIngingos.length,
                   courseProgress.totalIngingos,
+                  null,
                 );
               }
 
@@ -112,6 +104,8 @@ class _DirectionButtonState extends State<DirectionButton> {
                     builder: (context) => PopQuiz(
                       popQuestions: popQuestions,
                       isomo: widget.isomo,
+                      courseProgress: courseProgress!,
+                      currentIngingo: widget.skip + pageIngingos.length,
                       coursechangeSkipNumber: widget.changeSkipNumber,
                     ),
                   ),

@@ -16,6 +16,7 @@ class Baza extends StatefulWidget {
 class _BazaState extends State<Baza> {
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 71, 103, 158),
         appBar: PreferredSize(

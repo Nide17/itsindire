@@ -43,6 +43,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
       ],
       child: Consumer<QuizScoreProvider>(
         builder: (context, scoreProviderModel, child) {
+          
           return Consumer<List<PopQuestionModel>?>(
             builder: (context, popQuestions, _) {
               if (popQuestions == null) {
@@ -86,11 +87,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                 } else {
                   setState(() {
                     qnIndex = qnIndex + 1;
-
-                    // RESET THE SELECTED OPTION
                     selectedOption = -1;
-
-                    // RESET THE CORRECTNESS OF THE ANSWER
                     isCurrentCorrect = false;
                   });
                 }
@@ -102,44 +99,21 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                 } else {
                   setState(() {
                     qnIndex = qnIndex - 1;
-
-                    // RESET THE SELECTED OPTION
                     selectedOption = -1;
-
-                    // RESET THE CORRECTNESS OF THE ANSWER
                     isCurrentCorrect = false;
                   });
                 }
               }
 
               // RETURN THE WIDGETS
-              return WillPopScope(
-                onWillPop: () async {
-                  if (!scoreProviderModel.quizScore.isAllAnswered() ||
-                      isCurrentCorrect == false) {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return ItsindireAlert(
-                          errorTitle: 'Subiza byose',
-                          errorMsg: 'Ushaka gusohoka udasubije ibibazo byose?',
-                          firstButtonTitle: 'OYA',
-                          firstButtonFunction: () {
-                            Navigator.of(context).pop();
-                          },
-                          firstButtonColor: const Color(0xFF00A651),
-                          secondButtonTitle: 'YEGO',
-                          secondButtonFunction: () {
-                            Navigator.of(context).pop();
-                            Navigator.pop(context);
-                          },
-                          secondButtonColor: const Color(0xFFE60000),
-                        );
-                      },
-                    );
-                    return false;
-                  }
-                  return true;
+              return PopScope(
+                canPop: false, // prevent back
+                onPopInvoked: (_) async {
+                  _showExitDialog(
+                      context,
+                      scoreProviderModel.quizScore.isAllAnswered(),
+                      isCurrentCorrect,
+                      '${scoreProviderModel.quizScore.getCorrectlyAnsweredQuestionsCount()}/${popQuestions.length}');
                 },
                 child: Scaffold(
                   backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -182,54 +156,13 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               ElevatedButton(
-                                onPressed: () {
-                                  // IF ALL QUESTIONS ARE NOT ANSWERED, ALERT THE USER TO CONFIRM
-                                  if (!scoreProviderModel.quizScore
-                                          .isAllAnswered() ||
-                                      isCurrentCorrect == false) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return ItsindireAlert(
-                                          errorTitle: 'Subiza byose',
-                                          errorMsg:
-                                              'Ushaka gusohoka udasubije ibibazo byose?',
-                                          firstButtonTitle: 'OYA',
-                                          firstButtonFunction: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          firstButtonColor:
-                                              const Color(0xFF00A651),
-                                          secondButtonTitle: 'YEGO',
-                                          secondButtonFunction: () {
-                                            Navigator.of(context).pop();
-                                            Navigator.pop(context);
-                                          },
-                                          secondButtonColor:
-                                              const Color(0xFFE60000),
-                                        );
-                                      },
-                                    );
-                                    return;
-                                  }
-
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return ItsindireAlert(
-                                          errorTitle: 'Wasoje kwisuzuma!',
-                                          errorMsg:
-                                              'Wabonye ${popQuestions.length}/${popQuestions.length}',
-                                          firstButtonTitle: 'Inyuma',
-                                          firstButtonFunction: () {
-                                            Navigator.of(context).pop();
-                                            Navigator.pop(context);
-                                          },
-                                          firstButtonColor:
-                                              const Color(0xFF00A651),
-                                          alertType: 'success',
-                                        );
-                                      });
+                                onPressed: () async {
+                                  _showExitDialog(
+                                      context,
+                                      scoreProviderModel.quizScore
+                                          .isAllAnswered(),
+                                      isCurrentCorrect,
+                                      '${scoreProviderModel.quizScore.getCorrectlyAnsweredQuestionsCount()}/${popQuestions.length}');
                                 },
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,
@@ -286,6 +219,63 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
         },
       ),
     );
+  }
+
+  Future<void> _showExitDialog(BuildContext context, bool isAllAnswered,
+      bool _isCurrentCorrect, String marks) async {
+    if (!isAllAnswered || _isCurrentCorrect == false) {
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return ItsindireAlert(
+            errorTitle: 'Subiza byose',
+            errorMsg: 'Ushaka gusohoka udasubije ibibazo byose?',
+            firstButtonTitle: 'OYA',
+            firstButtonFunction: () {
+              Navigator.of(context).pop();
+            },
+            firstButtonColor: const Color(0xFF00A651),
+            secondButtonTitle: 'YEGO',
+            secondButtonFunction: () {
+              Navigator.of(context).pop();
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return ItsindireAlert(
+                      errorTitle: 'Ntusoje byose!',
+                      errorMsg: 'Wabonye ${marks}',
+                      firstButtonTitle: 'Inyuma',
+                      firstButtonFunction: () {
+                        Navigator.of(context).pop();
+                        Navigator.pop(context);
+                      },
+                      firstButtonColor: const Color(0xFF00A651),
+                      alertType: 'success',
+                    );
+                  });
+            },
+            secondButtonColor: const Color(0xFFE60000),
+          );
+        },
+      );
+    } else {
+      // IF ALL QUESTIONS ARE ANSWERED, SHOW THE SCORE
+      return showDialog(
+          context: context,
+          builder: (context) {
+            return ItsindireAlert(
+              errorTitle: 'Wasoje kwisuzuma!',
+              errorMsg: 'Wabonye ${marks}',
+              firstButtonTitle: 'Inyuma',
+              firstButtonFunction: () {
+                Navigator.of(context).pop();
+                Navigator.pop(context);
+              },
+              firstButtonColor: const Color(0xFF00A651),
+              alertType: 'success',
+            );
+          });
+    }
   }
 
   void showQn(int index) {

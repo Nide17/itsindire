@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
 import 'package:provider/provider.dart';
 import 'package:itsindire/models/course_progress.dart';
 import 'package:itsindire/models/isomo.dart';
@@ -6,7 +7,6 @@ import 'package:itsindire/models/pop_question.dart';
 import 'package:itsindire/screens/iga/utils/custom_radio_button.dart';
 import 'package:itsindire/screens/iga/utils/gradient_title.dart';
 import 'package:itsindire/providers/quiz_score_provider.dart';
-import 'package:itsindire/firebase_services/isomo_progress.dart';
 import 'package:itsindire/screens/iga/utils/iga_content.dart';
 import 'package:itsindire/utilities/ikibazo_button.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -43,14 +43,11 @@ class IsuzumeDetails extends StatefulWidget {
 class _IsuzumeDetailsState extends State<IsuzumeDetails> {
   @override
   Widget build(BuildContext context) {
+
     final QuizScoreProvider scoreProviderModel =
         Provider.of<QuizScoreProvider>(context);
-
-    // GET THE POP QUESTIONS
     final List<ScoreQuestion> scorePopQns =
         scoreProviderModel.quizScore.questions;
-
-    // GET THE POP QUESTIONS LENGTH
     final scorePopQnsLength = scoreProviderModel.quizScore.questions.length;
 
     return Consumer<QuizScoreProvider>(
@@ -237,22 +234,33 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                     )),
           ElevatedButton(
             onPressed: () {
-              print('COURSE PROGRESS --: ${widget.courseProgress}');
-              CourseProgressService().updateUserCourseProgress(
-                widget.courseProgress!.userId,
-                widget.courseProgress!.courseId,
-                0,
-                widget.courseProgress!.totalIngingos,
-              );
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => IgaContent(
-                            isomo: widget.isomo,
-                            courseProgress: widget.courseProgress,
-                            thisCourseTotalIngingos:
-                                widget.courseProgress!.totalIngingos,
-                          )));
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return ItsindireAlert(
+                      errorTitle: 'IBIJYANYE NIRI SOMO',
+                      errorMsg:
+                          'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "${widget.courseProgress!.totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : widget.courseProgress!.totalIngingos * 3}" gusa!',
+                      firstButtonTitle: 'Inyuma',
+                      firstButtonFunction: () {
+                        Navigator.popAndPushNamed(context, '/iga-landing');
+                      },
+                      firstButtonColor: const Color(0xFFE60000),
+                      secondButtonTitle: 'Tangira',
+                      secondButtonFunction: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => IgaContent(
+                                      isomo: widget.isomo,
+                                      courseProgress: widget.courseProgress,
+                                      thisCourseTotalIngingos:
+                                          widget.courseProgress!.totalIngingos,
+                                    )));
+                      },
+                      secondButtonColor: const Color(0xFF00A651),
+                    );
+                  });
             },
             child: const Text('Ongera utangire iri somo!'),
           ),

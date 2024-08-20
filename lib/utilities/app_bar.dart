@@ -17,10 +17,9 @@ class AppBarItsindire extends StatefulWidget {
 }
 
 class _AppBarItsindireState extends State<AppBarItsindire> {
+
   final CollectionReference paymentsCollection =
       FirebaseFirestore.instance.collection('payments');
-  String currentDeviceId = '';
-  bool deviceCheckCompleted = false;
 
   // payments stream
   Stream<QuerySnapshot> get payments {
@@ -37,11 +36,14 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
     super.initState();
 
     payments.listen((event) {
+
       for (var change in event.docChanges) {
+
         dynamic doc = change.doc.data();
 
         if (change.type == DocumentChangeType.modified &&
             doc['userId'] == FirebaseAuth.instance.currentUser!.uid) {
+              
           String msg = doc['isApproved'] == true
               ? 'Ifatabuguzi ryawe ryemejwe. Ubu watangira kwiga!'
               : 'Ifatabuguzi ryawe ryahinduwe. Murakoze!';
@@ -67,7 +69,6 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
 
   @override
   Widget build(BuildContext context) {
-
     return MultiProvider(
       providers: [
         StreamProvider<PaymentModel?>.value(
@@ -92,7 +93,6 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
         ),
       ],
       child: Consumer<AuthState>(builder: (context, authState, _) {
-
         return Consumer<ProfileModel?>(builder: (context, profile, _) {
           return Consumer<PaymentModel?>(builder: (context, newestPyt, _) {
             final user = FirebaseAuth.instance.currentUser;
@@ -125,7 +125,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                 ],
               ),
               actions: <Widget>[
-                if (user != null && profile != null && profile.username != '')
+                if (user != null && profile != null)
                   IconButton(
                     icon: profile.photo == ''
                         ? SvgPicture.asset(
@@ -166,7 +166,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                                 textAlign: TextAlign.center,
                                 TextSpan(
                                     text:
-                                        capitalizeWords(user.displayName ?? ''),
+                                        capitalizeWords(user.displayName ?? profile.username ?? ''),
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold),
                                     children: [
@@ -295,25 +295,13 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                                         dynamic result =
                                             await authState.logOut();
 
-                                        if (result == null) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                  'Gusohoka ntibikunze. Ongera ugerageze!'),
-                                              duration:
-                                                  const Duration(seconds: 10),
-                                              backgroundColor:
-                                                  const Color.fromARGB(
-                                                      255, 255, 0, 0),
-                                            ),
-                                          );
-                                        }
-
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           SnackBar(
-                                            content: Text(result),
+                                            content: Text(result != null
+                                                ? result
+                                                : 'Ntibikunze, ongera ugerageze!',
+                                            ),
                                             duration:
                                                 const Duration(seconds: 10),
                                             backgroundColor:

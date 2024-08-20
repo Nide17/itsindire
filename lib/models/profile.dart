@@ -12,9 +12,8 @@ class ProfileModel {
   bool? urStudent;
   String? regNumber;
   String? campus;
-  // roleId IS A REFERENCE TYPE TO ROLES COLLECTION
-  DocumentReference? roleId;
-  String? lastLoggedInDeviceId;
+  DocumentReference? roleId; // Reference to the role of the user
+  String? sessionID;
 
   ProfileModel(
       {this.uid,
@@ -28,7 +27,7 @@ class ProfileModel {
       this.regNumber,
       this.campus,
       this.roleId,
-      this.lastLoggedInDeviceId});
+      this.sessionID});
 
   // RETURN CURRENT PROFILE OBJECT FOR APPBAR AND NOTIFY LISTENERS
   dynamic get currentUserProfile {
@@ -48,12 +47,12 @@ class ProfileModel {
     this.regNumber = profile.regNumber;
     this.campus = profile.campus;
     this.roleId = profile.roleId;
-    this.lastLoggedInDeviceId = profile.lastLoggedInDeviceId;
+    this.sessionID = profile.sessionID;
   }
 
   // TO STRING
   @override
   String toString() {
-    return "ProfileModel {id: $uid, username: $username, email: $email, phone: $phone, photo: $photo, gender: $gender, dob: $dob, urStudent: $urStudent, regNumber: $regNumber, campus: $campus, roleId: $roleId, lastLoggedInDeviceId: $lastLoggedInDeviceId}";
+    return "ProfileModel {id: $uid, username: $username, email: $email, phone: $phone, photo: $photo, gender: $gender, dob: $dob, urStudent: $urStudent, regNumber: $regNumber, campus: $campus, roleId: $roleId, sessionID: $sessionID}";
   }
 }

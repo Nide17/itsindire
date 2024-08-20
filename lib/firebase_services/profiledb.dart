@@ -24,7 +24,7 @@ class ProfileService extends ChangeNotifier {
       String regNumber,
       String campus,
       DocumentReference roleId,
-      String lastLoggedInDeviceId) async {
+      String sessionID) async {
     // RETURN THE USER DATA - IF THE DOC DOESN'T EXIST, IT WILL BE CREATED BY FIRESTORE
     return await profilesCollection.doc(uid).set({
       'uid': uid,
@@ -38,53 +38,30 @@ class ProfileService extends ChangeNotifier {
       'regNumber': regNumber,
       'campus': campus,
       'roleId': roleId,
-      'lastLoggedInDeviceId': lastLoggedInDeviceId,
+      'sessionID': sessionID,
     });
   }
 
-  // GET A SINGLE PROFILE FROM A SNAPSHOT USING THE PROFILE MODEL - _profileFromSnapshot
+  // SINGLE PROFILE FROM A SNAPSHOT USING THE PROFILE MODEL - _profileFromSnapshot
   // FUNCTION CALLED EVERY TIME THE PROFILE DATA CHANGES
   ProfileModel _profileFromSnapshot(DocumentSnapshot documentSnapshot) {
-    // roleId IS A REFERENCE TYPE TO ROLES COLLECTION
     final CollectionReference roles =
         FirebaseFirestore.instance.collection('roles');
 
     // Get the data from the snapshot
     final data = documentSnapshot.data() as Map<String, dynamic>;
-
-    // Check if the 'username' field exists before accessing it
     final username = data.containsKey('username') ? data['username'] : '';
-
-    // Check if the 'email' field exists before accessing it
     final email = data.containsKey('email') ? data['email'] : '';
-
-    // Check if the 'phone' field exists before accessing it
     final phone = data.containsKey('phone') ? data['phone'] : '';
-
-    // Check if the 'photo' field exists before accessing it
     final photo = data.containsKey('photo') ? data['photo'] : '';
-
-    // Check if the 'gender' field exists before accessing it
     final gender = data.containsKey('gender') ? data['gender'] : '';
-
-    // Check if the 'dob' field exists before accessing it
     final dob = data.containsKey('dob') ? data['dob'] : '';
-
-    // Check if the 'urStudent' field exists before accessing it
     final urStudent = data.containsKey('urStudent') ? data['urStudent'] : false;
-
-    // Check if the 'regNumber' field exists before accessing it
     final regNumber = data.containsKey('regNumber') ? data['regNumber'] : '';
-
-    // Check if the 'campus' field exists before accessing it
     final campus = data.containsKey('campus') ? data['campus'] : '';
-
-    // Check if the 'roleId' field exists before accessing it - DocumentReference
     final roleId = data.containsKey('roleId') ? data['roleId'] : roles.doc('1');
-
-    // Check if the 'lastLoggedInDeviceId' field exists before accessing it
-    final lastLoggedInDeviceId = data.containsKey('lastLoggedInDeviceId')
-        ? data['lastLoggedInDeviceId']
+    final sessionID = data.containsKey('sessionID')
+        ? data['sessionID']
         : '';
 
     // Return the ProfileModel with the extracted data
@@ -100,7 +77,7 @@ class ProfileService extends ChangeNotifier {
       regNumber: regNumber,
       campus: campus,
       roleId: roleId,
-      lastLoggedInDeviceId: lastLoggedInDeviceId,
+      sessionID: sessionID,
     );
   }
 
@@ -115,12 +92,11 @@ class ProfileService extends ChangeNotifier {
   }
 
   // GET A SINGLE USER PROFILE STREAM - CURRENT LOGGED IN USER PROFILE USING UID
-  Stream<ProfileModel?>? getCurrentProfile(String? uid, String? deviceId) {
+  Stream<ProfileModel?>? getCurrentProfile(String? uid, String? sessionID) {
     if (uid == null ||
         uid.isEmpty ||
-        deviceId == null ||
-        deviceId.isEmpty ||
-        deviceId == '') {
+        sessionID == null ||
+        sessionID.isEmpty) {
       return null;
     }
 
@@ -129,7 +105,7 @@ class ProfileService extends ChangeNotifier {
         return _profileFromSnapshot(documentSnapshot);
       } else {
         updateUserProfile(uid, '', '', '', '', '', '', false, '', '',
-            roles.doc('1'), deviceId);
+            roles.doc('1'), sessionID);
         return null;
       }
     });
