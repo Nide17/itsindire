@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class IgaCard extends StatelessWidget {
   final String title;
@@ -16,9 +17,9 @@ class IgaCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => screen),
-        );
+            context,
+            PageTransition(
+                type: PageTransitionType.leftToRight, child: screen));
       },
       child: Container(
         width: MediaQuery.of(context).size.width * 0.4,

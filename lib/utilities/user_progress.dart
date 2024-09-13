@@ -119,6 +119,7 @@ class _UserProgressState extends State<UserProgress> {
                     onTap: () {
                       showDialog(
                           context: context,
+                          barrierDismissible: false, 
                           builder: (BuildContext context) {
                             return payment != null &&
                                     payment.isApproved != true

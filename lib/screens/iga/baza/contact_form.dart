@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:itsindire/models/profile.dart';
 import 'package:itsindire/utilities/default_input.dart';
+import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
-import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:provider/provider.dart';
+
+import '../../../utilities/route_action_button.dart';
 
 class ContactForm extends StatefulWidget {
   const ContactForm({super.key});
@@ -66,6 +68,7 @@ class _ContactFormState extends State<ContactForm> {
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final profile = Provider.of<ProfileModel?>(context);
@@ -90,15 +93,16 @@ class _ContactFormState extends State<ContactForm> {
                 children: [
                   DefaultInput(
                     placeholder: _name ?? 'Izina',
-                      validation: _name == null
+                    validation: _name == null
                         ? 'Izina ryawe rirakenewe!'
                         : null, // Skip validation if _name is not null
-                        enabled: _name == null,
+                    enabled: _name == null,
                     onChanged: (value) => setState(() => _name = value),
                   ),
                   DefaultInput(
                     placeholder: _email ?? 'Imeyili',
-                    validation:  _email == null ? 'Imeyili yawe irakenewe!' : null,
+                    validation:
+                        _email == null ? 'Imeyili yawe irakenewe!' : null,
                     enabled: _email == null,
                     onChanged: (value) => setState(() => _email = value),
                   ),
@@ -113,35 +117,12 @@ class _ContactFormState extends State<ContactForm> {
                   ),
                   Align(
                     alignment: Alignment.topRight,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: Size(
-                          MediaQuery.of(context).size.width * 0.3,
-                          MediaQuery.of(context).size.height * 0.05,
-                        ),
-                        backgroundColor: const Color(0xFF00CCE5),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            MediaQuery.of(context).size.width * 0.02,
-                          ),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.04,
-                            vertical:
-                                MediaQuery.of(context).size.height * 0.01),
-                      ),
-                      onPressed: () => _formKey.currentState != null && _formKey.currentState!.validate()
+                    child: RouteActionButton(
+                      btnText: 'Ohereza',
+                      action: () => _formKey.currentState != null &&
+                              _formKey.currentState!.validate()
                           ? sendEmail()
                           : null,
-                      child: Text(
-                        'Ohereza',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
-                        ),
-                      ),
                     ),
                   ),
                 ],

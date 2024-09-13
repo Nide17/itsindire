@@ -31,7 +31,7 @@ class _ContentTitlenTextState extends State<ContentTitlenText> {
 
     return Text.rich(
       textAlign: TextAlign.left,
-      style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.027),
+      style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.025),
       TextSpan(
           text: widget.title,
           style: const TextStyle(fontWeight: FontWeight.bold),

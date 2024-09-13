@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
-import 'package:itsindire/models/user.dart';
 import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
 import 'package:itsindire/utilities/cta_button.dart';
 import 'package:itsindire/utilities/default_input.dart';
@@ -39,11 +38,18 @@ class _UrStudentState extends State<UrStudent> {
   String _selectedCampus = '';
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<AuthState>(builder: (context, authState, _) {
-      if (authState.currentUser != null) {
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Provider.of<AuthState>(context, listen: false).currentUser != null) {
         Navigator.pushReplacementNamed(context, '/iga-landing');
       }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<AuthState>(builder: (context, authState, _) {
       return Scaffold(
           backgroundColor: const Color.fromARGB(255, 71, 103, 158),
           appBar: PreferredSize(
@@ -178,63 +184,45 @@ class _UrStudentState extends State<UrStudent> {
                                   true,
                                   regNbr,
                                   _selectedCampus);
+                              if (result.value != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Registered successfully, Login!'),
+                                        backgroundColor: Color(0xFF00A651)));
 
-                              if (result == null) {
-                                setState(() {
-                                  error =
-                                      'Please supply a valid email and password';
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return ItsindireAlert(
-                                        errorTitle: 'Error signing up!',
-                                        errorMsg: error,
-                                        alertType: 'error',
-                                      );
-                                    },
-                                  );
-                                });
+                                if (!mounted) return;
+                                Navigator.pushReplacementNamed(
+                                    context, '/injira');
                               } else {
-                                if (result.runtimeType == UserModel) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text(
-                                              'Registered successfully, Login!'),
-                                          backgroundColor: Color(0xFF00A651)));
-
-                                  if (!mounted) return;
-                                  Navigator.pushReplacementNamed(
-                                      context, '/injira');
-                                } else {
-                                  print('result.error: ${result.error}');
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return ItsindireAlert(
-                                        errorTitle: 'Register failed!',
-                                        errorMsg: result.error ==
-                                                'Ijambo banga ntiryujuje ibisabwa!'
-                                            ? 'Weak password!'
-                                            : result.error ==
-                                                    'Iyi imeyili yarakoreshejwe! Injira!'
-                                                ? 'Email already in use! Login!'
-                                                : 'Unknown error occurred!',
-                                        alertType: 'error',
-                                        firstButtonTitle: 'Funga',
-                                        firstButtonFunction: () {
-                                          Navigator.pop(context);
-                                        },
-                                        secondButtonTitle: 'Injira',
-                                        secondButtonFunction: () {
-                                          Navigator.pop(context);
-                                          Navigator.pushReplacementNamed(
-                                              context, '/injira');
-                                        },
-                                        secondButtonColor: Color(0xFF00A651),
-                                      );
-                                    },
-                                  );
-                                }
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (BuildContext context) {
+                                    return ItsindireAlert(
+                                      errorTitle: 'Register failed!',
+                                      errorMsg: result.error ==
+                                              'Ijambo banga ntiryujuje ibisabwa!'
+                                          ? 'Weak password!'
+                                          : result.error ==
+                                                  'Iyi imeyili yarakoreshejwe! Injira!'
+                                              ? 'Email already in use! Login!'
+                                              : 'Unknown error occurred! Call 0794033360 for help!',
+                                      alertType: 'error',
+                                      firstButtonTitle: 'Close',
+                                      firstButtonFunction: () {
+                                        Navigator.pop(context);
+                                      },
+                                      secondButtonTitle: 'Login-Injira',
+                                      secondButtonFunction: () {
+                                        Navigator.pop(context);
+                                        Navigator.pushReplacementNamed(
+                                            context, '/injira');
+                                      },
+                                      secondButtonColor: Color(0xFF00A651),
+                                    );
+                                  },
+                                );
                               }
                             }
                           },

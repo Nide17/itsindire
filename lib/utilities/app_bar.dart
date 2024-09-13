@@ -2,12 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 import 'package:itsindire/firebase_services/auth.dart';
 import 'package:itsindire/firebase_services/payment_db.dart';
 import 'package:itsindire/firebase_services/profiledb.dart';
 import 'package:itsindire/models/payment.dart';
 import 'package:itsindire/models/profile.dart';
+import 'package:provider/provider.dart';
 
 class AppBarItsindire extends StatefulWidget {
   const AppBarItsindire({super.key});
@@ -17,7 +17,6 @@ class AppBarItsindire extends StatefulWidget {
 }
 
 class _AppBarItsindireState extends State<AppBarItsindire> {
-
   final CollectionReference paymentsCollection =
       FirebaseFirestore.instance.collection('payments');
 
@@ -36,14 +35,11 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
     super.initState();
 
     payments.listen((event) {
-
       for (var change in event.docChanges) {
-
         dynamic doc = change.doc.data();
 
         if (change.type == DocumentChangeType.modified &&
             doc['userId'] == FirebaseAuth.instance.currentUser!.uid) {
-              
           String msg = doc['isApproved'] == true
               ? 'Ifatabuguzi ryawe ryemejwe. Ubu watangira kwiga!'
               : 'Ifatabuguzi ryawe ryahinduwe. Murakoze!';
@@ -138,6 +134,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                     onPressed: () {
                       showDialog(
                         context: context,
+                        barrierDismissible: false,
                         builder: (BuildContext context) {
                           return AlertDialog(
                             shape: RoundedRectangleBorder(
@@ -165,15 +162,16 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                               child: Text.rich(
                                 textAlign: TextAlign.center,
                                 TextSpan(
-                                    text:
-                                        capitalizeWords(user.displayName ?? profile.username ?? ''),
+                                    text: capitalizeWords(user.displayName ??
+                                        profile.username ??
+                                        ''),
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold),
                                     children: [
                                       TextSpan(
                                           text: '\n${user.email}',
                                           style: const TextStyle(
-                                              fontWeight: FontWeight.w400,
+                                              fontWeight: FontWeight.w600,
                                               fontSize: 12.0)),
                                     ]),
                               ),
@@ -236,7 +234,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                                                   .size
                                                   .height *
                                               0.004,
-                                          fontWeight: FontWeight.w500,
+                                          fontWeight: FontWeight.w600,
                                           fontSize: MediaQuery.of(context)
                                                   .size
                                                   .width *
@@ -255,7 +253,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                                                   .size
                                                   .height *
                                               0.0032,
-                                          fontWeight: FontWeight.w500,
+                                          fontWeight: FontWeight.w600,
                                           fontSize: MediaQuery.of(context)
                                                   .size
                                                   .width *
@@ -277,7 +275,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                                             'Murakoze kwishyura, ifatabuguzi ryawe riri kwigwaho...',
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                              fontWeight: FontWeight.w500,
+                                              fontWeight: FontWeight.w600,
                                               fontSize: MediaQuery.of(context)
                                                       .size
                                                       .width *
@@ -298,9 +296,10 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           SnackBar(
-                                            content: Text(result != null
-                                                ? result
-                                                : 'Ntibikunze, ongera ugerageze!',
+                                            content: Text(
+                                              result != null
+                                                  ? result
+                                                  : 'Ntibikunze, ongera ugerageze!',
                                             ),
                                             duration:
                                                 const Duration(seconds: 10),
@@ -321,7 +320,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                                       label: Text(
                                         'Sohoka',
                                         style: TextStyle(
-                                          fontWeight: FontWeight.w500,
+                                          fontWeight: FontWeight.w600,
                                           fontSize: MediaQuery.of(context)
                                                   .size
                                                   .width *

@@ -56,9 +56,15 @@ class _DirectionButtonPqState extends State<DirectionButtonPq> {
             ? const Color(0xFF00CCE5).withOpacity(0.4)
             : const Color(0xFF00CCE5),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+            borderRadius: BorderRadius.circular(32.0),
+            side: BorderSide(
+              color: const Color.fromARGB(255, 0, 0, 0),
+              style: BorderStyle.solid,
+              width: MediaQuery.of(context).size.width * 0.005,
+            )),
+        padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.05,
+            vertical: MediaQuery.of(context).size.height * 0.01),
       ),
       child: SingleChildScrollView(
         child: Row(

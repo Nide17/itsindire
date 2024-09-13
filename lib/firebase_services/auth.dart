@@ -117,32 +117,24 @@ class AuthState with ChangeNotifier {
     }
   }
 
-Future<Object?> userLogin(String email, String password) async {
+Future userLogin(String email, String password) async {
     try {
       // Search for the user profile by email
       QuerySnapshot querySnapshot =
           await profilesCollection.where('email', isEqualTo: email).get();
-
-      DocumentSnapshot? profileSnapshot;
       
-      if (querySnapshot.docs.isNotEmpty) {
-        profileSnapshot = querySnapshot.docs.first;
-      } else {
-        print('User not found in profiles collection');
+      if (querySnapshot.docs.isEmpty) {
+        return AuthResult(
+          error: 'Konti ntibashije kuboneka. Iyandikishe!',
+        );
       }
 
-      if (profileSnapshot != null && profileSnapshot.exists) {
-        String? sessionIdentity = profileSnapshot.get('sessionID');
-
-        if (sessionIdentity != null && sessionIdentity.isNotEmpty) {
-          print('User already logged in: $sessionIdentity');
-          return AuthResult(
-            error:
-                'Mwemerewe gukoresha konti imwe muri telefoni imwe. Duhamagare kuri 0794033360 tugufashe!',
-          );
-        }
-      } else {
-        print('User not found in profiles collection');
+      String? sessionIdentity = querySnapshot.docs.first.get('sessionID');
+      if (sessionIdentity.isNotEmpty) {
+        return AuthResult(
+          error:
+              'Mwemerewe gukoresha konti imwe muri telefoni imwe. Duhamagare kuri 0794033360 tugufashe!',
+        );
       }
 
       UserCredential result = await _authInstance.signInWithEmailAndPassword(
@@ -151,7 +143,7 @@ Future<Object?> userLogin(String email, String password) async {
       );
 
       if (result.user == null || result.user!.uid.isEmpty) {
-        return AuthResult(error: 'Kwinjira ntibikunda.');
+        return AuthResult(error: 'Kwinjira ntibikunda. Duhamagare kuri 0794033360 tugufashe!');
       }
 
       // Update sessionID in profiles collection
@@ -161,7 +153,7 @@ Future<Object?> userLogin(String email, String password) async {
         'sessionID': sessionId,
       }, SetOptions(merge: true));
 
-      return _userFromFirebaseUser(result.user!);
+      return AuthResult(value: _userFromFirebaseUser(result.user!));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         return AuthResult(error: 'Konti ntibashije kuboneka. Iyandikishe!');
@@ -204,9 +196,11 @@ Future<Object?> userLogin(String email, String password) async {
           '',
         );
 
-        return _userFromFirebaseUser(user);
+        return AuthResult(
+          value: 'User registered successfully. Please log in.',
+        );
       } else {
-        return null;
+        return AuthResult(error: 'User registration failed.');
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

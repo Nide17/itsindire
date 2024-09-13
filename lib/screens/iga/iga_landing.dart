@@ -1,19 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:itsindire/firebase_services/isomo_db.dart';
-import 'package:itsindire/firebase_services/pop_question_db.dart';
-import 'package:provider/provider.dart';
 import 'package:itsindire/firebase_services/ingingo_db.dart';
+import 'package:itsindire/firebase_services/isomo_db.dart';
 import 'package:itsindire/firebase_services/isomo_progress.dart';
+import 'package:itsindire/firebase_services/pop_question_db.dart';
 import 'package:itsindire/main.dart';
 import 'package:itsindire/models/course_progress.dart';
 import 'package:itsindire/models/isomo.dart';
 import 'package:itsindire/screens/ibiciro/reba_ibiciro_button.dart';
-import 'package:itsindire/utilities/app_bar.dart';
 import 'package:itsindire/screens/iga/iga_data.dart';
+import 'package:itsindire/utilities/app_bar.dart';
 import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:itsindire/utilities/no_internet.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 
 class IgaLanding extends StatefulWidget {
   const IgaLanding({super.key});
@@ -137,9 +138,10 @@ class _IgaLandingState extends State<IgaLanding> {
                                       onTap: () {
                                         Navigator.push(
                                             context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    item['screen']));
+                                            PageTransition(
+                                                type: PageTransitionType
+                                                    .rightToLeft,
+                                                child: item['screen']));
                                       },
                                       child: Row(
                                         children: <Widget>[
@@ -218,7 +220,7 @@ Future<void> checkInternet(BuildContext context, ConnectionStatus conn) async {
             'Nta internet mufite!.',
             style: TextStyle(
               fontSize: 16.0,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
             ),
           ),
           backgroundColor: Color.fromARGB(255, 255, 8, 0),
@@ -229,7 +231,7 @@ Future<void> checkInternet(BuildContext context, ConnectionStatus conn) async {
     everDisconnected = true;
   }
 
-  if (conn.isOnline == true && everDisconnected == true) {
+  if (conn.isOnline && everDisconnected) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -238,7 +240,7 @@ Future<void> checkInternet(BuildContext context, ConnectionStatus conn) async {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: MediaQuery.of(context).size.width * 0.045,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
             ),
           ),
           backgroundColor: const Color.fromARGB(255, 0, 255, 85),

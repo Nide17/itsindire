@@ -28,14 +28,11 @@ class _IsuzumaCustomRadioButtonState extends State<IsuzumaCustomRadioButton> {
         widget.option!.id,
       );
 
-      String btnText = (widget.option!.isCorrect == true &&
-              widget.option!.isChoosen! == true)
+      String btnText = (widget.option!.isCorrect && widget.option!.isChoosen!)
           ? 'Wabikoze!'
-          : (widget.option!.isCorrect == true &&
-                  widget.option!.isChoosen! == false)
+          : (widget.option!.isCorrect && widget.option!.isChoosen! == false)
               ? 'Igisubizo nyacyo'
-              : (widget.option!.isCorrect == false &&
-                      widget.option!.isChoosen! == true)
+              : (widget.option!.isCorrect == false && widget.option!.isChoosen!)
                   ? 'Wasubije ikitaricyo!'
                   : '';
 
@@ -56,7 +53,7 @@ class _IsuzumaCustomRadioButtonState extends State<IsuzumaCustomRadioButton> {
               decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: widget.isReviewing == true
+                    color: widget.isReviewing
                         ? getDisplayColor(
                             widget.option!.isCorrect, widget.isReviewing)
                         : Colors.grey.withOpacity(0.4),
@@ -64,13 +61,12 @@ class _IsuzumaCustomRadioButtonState extends State<IsuzumaCustomRadioButton> {
                     blurRadius: 1,
                   ),
                 ],
-                color: widget.isReviewing == true
-                    ? getReviewChoosenColor()
-                    : Colors.white,
+                color:
+                    widget.isReviewing ? getReviewChoosenColor() : Colors.white,
                 borderRadius: BorderRadius.circular(
                     MediaQuery.of(context).size.width * 0.02),
                 border: Border.all(
-                  color: widget.isReviewing == true
+                  color: widget.isReviewing
                       ? getDisplayColor(
                           widget.option!.isCorrect, widget.isReviewing)
                       : const Color(0xFFFFBD59),
@@ -98,7 +94,7 @@ class _IsuzumaCustomRadioButtonState extends State<IsuzumaCustomRadioButton> {
                     // THE CHECKMARK OR CROSS
                     child: isThisBtnSelected
                         ? Icon(
-                            widget.option!.isCorrect == true ||
+                            widget.option!.isCorrect ||
                                     widget.isReviewing == false
                                 ? Icons.check_circle
                                 : Icons.cancel,
@@ -108,7 +104,7 @@ class _IsuzumaCustomRadioButtonState extends State<IsuzumaCustomRadioButton> {
                           )
                         : !isThisBtnSelected && widget.isReviewing
                             ? Icon(
-                                widget.option!.isCorrect == true
+                                widget.option!.isCorrect
                                     ? Icons.check_circle
                                     : widget.option!.isCorrect == false &&
                                             widget.option!.isChoosen == true
@@ -136,8 +132,8 @@ class _IsuzumaCustomRadioButtonState extends State<IsuzumaCustomRadioButton> {
             ),
 
             // THE DESCRIPTION SUBTITLE IF SELECTED
-            widget.isReviewing == true &&
-                    (widget.option!.isCorrect == true ||
+            widget.isReviewing &&
+                    (widget.option!.isCorrect ||
                         (widget.option!.isCorrect == false &&
                             widget.option!.isChoosen == true))
                 ? Container(
@@ -159,8 +155,7 @@ class _IsuzumaCustomRadioButtonState extends State<IsuzumaCustomRadioButton> {
                                       0.014,
                                   fontWeight: FontWeight.bold)),
                           Text(
-                            widget.option!.isCorrect == true &&
-                                    widget.option != null
+                            widget.option!.isCorrect && widget.option != null
                                 ? widget.option!.explanation ?? ''
                                 : '',
                             textAlign: TextAlign.left,
@@ -186,7 +181,7 @@ class _IsuzumaCustomRadioButtonState extends State<IsuzumaCustomRadioButton> {
       return Colors.purple;
     } else {
       if (isThisCorrect != null) {
-        if (isThisCorrect == true) {
+        if (isThisCorrect) {
           return const Color.fromARGB(255, 139, 228, 144);
         } else if (isThisCorrect == false && widget.option!.isChoosen == true) {
           return const Color.fromARGB(255, 253, 140, 140);
@@ -201,10 +196,9 @@ class _IsuzumaCustomRadioButtonState extends State<IsuzumaCustomRadioButton> {
 
   // CALCULATE REVIEWCHOOSEN COLOR
   Color getReviewChoosenColor() {
-    if (widget.option!.isCorrect == true && widget.option!.isChoosen == true) {
+    if (widget.option!.isCorrect && widget.option!.isChoosen == true) {
       return Colors.green;
-    } else if (widget.option!.isCorrect == false &&
-        widget.option!.isChoosen == true) {
+    } else if (widget.option!.isCorrect == false && widget.option!.isChoosen == true) {
       return Colors.red;
     } else {
       return Colors.white;

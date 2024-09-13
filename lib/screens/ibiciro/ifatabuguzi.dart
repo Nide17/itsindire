@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:itsindire/models/ifatabuguzi.dart';
 import 'package:itsindire/models/profile.dart';
 import 'package:itsindire/screens/auth/iyandikishe.dart';
 import 'package:itsindire/screens/ibiciro/processing_ishyura.dart';
+import 'package:provider/provider.dart';
 
 class Ifatabuguzi extends StatelessWidget {
   final int index;
@@ -94,7 +94,7 @@ class Ifatabuguzi extends StatelessWidget {
                                 TextSpan(
                                   children: [
                                     TextSpan(
-                                      text: isUrStudent == true
+                                      text: isUrStudent
                                           ? 'Period: ${ifatabuguzi.igihe.toUpperCase()} \n\nPrice: ${ifatabuguzi.igiciro} RWF     '
                                           : 'Igihe: ${ifatabuguzi.igihe.toUpperCase()} \n\nIgiciro: ${ifatabuguzi.igiciro} RWF     ',
                                       style: TextStyle(
@@ -110,7 +110,7 @@ class Ifatabuguzi extends StatelessWidget {
                                           ? '${ifatabuguzi.igiciro * 2} RWF'
                                           : '',
                                       style: TextStyle(
-                                        fontWeight: FontWeight.w400,
+                                        fontWeight: FontWeight.w600,
                                         fontSize:
                                             MediaQuery.of(context).size.width *
                                                 0.032,
@@ -191,7 +191,7 @@ class Ifatabuguzi extends StatelessWidget {
                                                 horizontal: 8.0,
                                                 vertical: 0.05),
                                             child: Text(
-                                              isUrStudent == true
+                                              isUrStudent
                                                   ? 'PAY NOW'
                                                   : 'ISHYURA',
                                               textAlign: TextAlign.center,
@@ -239,7 +239,7 @@ class Ifatabuguzi extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.center,
                     child: Text(
-                      isUrStudent == true ? 'INCLUDES:' : 'HARIMO:',
+                      isUrStudent ? 'INCLUDES:' : 'HARIMO:',
                       style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: MediaQuery.of(context).size.width * 0.042,
@@ -280,7 +280,7 @@ class Ifatabuguzi extends StatelessWidget {
                                             '${entry.key + 1}. ${entry.value}',
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
-                                              fontWeight: FontWeight.w400,
+                                              fontWeight: FontWeight.w600,
                                               fontSize: MediaQuery.of(context)
                                                       .size
                                                       .width *
@@ -301,7 +301,7 @@ class Ifatabuguzi extends StatelessWidget {
                             ifatabuguzi.ubusobanuro,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.w600,
                               fontSize:
                                   MediaQuery.of(context).size.width * 0.04,
                               color: const Color.fromARGB(255, 255, 255, 255),

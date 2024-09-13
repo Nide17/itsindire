@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:itsindire/firebase_services/isomo_progress.dart';
 import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
 import 'package:provider/provider.dart';
 import 'package:itsindire/models/course_progress.dart';
@@ -43,9 +44,9 @@ class IsuzumeDetails extends StatefulWidget {
 class _IsuzumeDetailsState extends State<IsuzumeDetails> {
   @override
   Widget build(BuildContext context) {
-
     final QuizScoreProvider scoreProviderModel =
         Provider.of<QuizScoreProvider>(context);
+    final quizPopQuestions = Provider.of<List<PopQuestionModel>?>(context);
     final List<ScoreQuestion> scorePopQns =
         scoreProviderModel.quizScore.questions;
     final scorePopQnsLength = scoreProviderModel.quizScore.questions.length;
@@ -236,6 +237,7 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
             onPressed: () {
               showDialog(
                   context: context,
+                  barrierDismissible: false, 
                   builder: (BuildContext context) {
                     return ItsindireAlert(
                       errorTitle: 'IBIJYANYE NIRI SOMO',
@@ -243,11 +245,22 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                           'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "${widget.courseProgress!.totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : widget.courseProgress!.totalIngingos * 3}" gusa!',
                       firstButtonTitle: 'Inyuma',
                       firstButtonFunction: () {
-                        Navigator.popAndPushNamed(context, '/iga-landing');
+                        Navigator.pop(context);
                       },
                       firstButtonColor: const Color(0xFFE60000),
                       secondButtonTitle: 'Tangira',
                       secondButtonFunction: () {
+                        Navigator.pop(context);
+                        // Update the user progress in the database
+                        if (widget.courseProgress != null &&  quizPopQuestions != null) {
+                          CourseProgressService().updateUserCourseProgress(
+                              widget.courseProgress!.userId,
+                              widget.courseProgress!.courseId,
+                              0,
+                              widget.courseProgress!.totalIngingos,
+                              quizPopQuestions.length);
+                        }
+
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(

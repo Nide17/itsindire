@@ -30,8 +30,6 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
   @override
   Widget build(BuildContext context) {
     final usr = FirebaseAuth.instance.currentUser;
-    print(
-        "Next isuzuma received from overview in attempt: ${widget.nextIsuzuma?.id}");
 
     return MultiProvider(
       providers: [
@@ -109,32 +107,22 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
           }
 
           // RETURN THE WIDGETS
-          return WillPopScope(
-            onWillPop: () async {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return ItsindireAlert(
-                    errorTitle: 'Ugiye gusohoka udasoje?',
-                    errorMsg:
-                        'Ushaka gusohoka udasoje kwisuzuma? Ibyo wahisemo birasibama.',
-                    firstButtonTitle: 'OYA',
-                    firstButtonFunction: () {
-                      Navigator.of(context).pop();
-                    },
-                    firstButtonColor: const Color(0xFF00A651),
-                    secondButtonTitle: 'YEGO',
-                    secondButtonFunction: () {
-                      Navigator.of(context).pop();
-                      Navigator.pop(context);
-                    },
-                    secondButtonColor: const Color(0xFFE60000),
-                  );
+          return PopScope(
+            canPop: false,
+            onPopInvoked: (_) async {
+              _showTheDialog(
+                context,
+                'Ugiye gusohoka udasoje?',
+                'Ushaka gusohoka udasoje kwisuzuma? Ibyo wahisemo birasibama.',
+                'OYA',
+                const Color(0xFF00A651),
+                'YEGO',
+                () {
+                  Navigator.of(context).pop();
+                  Navigator.pop(context);
                 },
+                const Color(0xFFE60000),
               );
-
-              // RETURN FALSE
-              return false;
             },
             child: Scaffold(
               backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -174,79 +162,59 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
                         onPressed: () {
                           // IF THERE ARE UNANSWERED QUESTIONS
                           if (unansweredQns.isNotEmpty) {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return ItsindireAlert(
-                                  errorTitle: 'Hari ibidasubije!',
-                                  errorMsg:
-                                      'Hari ibibazo utasubije. Ushaka gusoza?',
-                                  firstButtonTitle: 'OYA',
-                                  firstButtonFunction: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  firstButtonColor: const Color(0xFF00A651),
-                                  secondButtonTitle: 'SOZA',
-                                  secondButtonFunction: () {
-                                    for (var qn in scorePrModel.questions) {
-                                      if (!qn.isAnswered) {
-                                        qn.isAnswered = true;
-                                      }
-                                    }
+                            _showTheDialog(
+                              context,
+                              'Hari ibidasubije!',
+                              'Hari ibibazo utasubije. Ushaka gusoza?',
+                              'OYA',
+                              const Color(0xFF00A651),
+                              'SOZA',
+                              () {
+                                for (var qn in scorePrModel.questions) {
+                                  if (!qn.isAnswered) {
+                                    qn.isAnswered = true;
+                                  }
+                                }
 
-                                    // SAVE THE SCORE
-                                    IsuzumaScoreService()
-                                        .createOrUpdateIsuzumaScore(
-                                            scorePrModel);
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            IsuzumaScoreReview(
-                                          isuzuma: widget.isuzuma,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  secondButtonColor: const Color(0xFFE60000),
+                                // SAVE THE SCORE
+                                IsuzumaScoreService()
+                                    .createOrUpdateIsuzumaScore(scorePrModel);
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => IsuzumaScoreReview(
+                                      isuzuma: widget.isuzuma,
+                                    ),
+                                  ),
                                 );
                               },
+                              const Color(0xFFE60000),
                             );
                           } else {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return ItsindireAlert(
-                                  errorTitle: 'Gusoza isuzuma!',
-                                  errorMsg:
-                                      'Wasubije ibibazo byose. Ese ushaka gusoza nonaha?',
-                                  firstButtonTitle: 'OYA',
-                                  firstButtonFunction: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  firstButtonColor: const Color(0xFFE60000),
-                                  secondButtonTitle: 'YEGO',
-                                  secondButtonFunction: () {
-                                    IsuzumaScoreService()
-                                        .createOrUpdateIsuzumaScore(
-                                            scorePrModel);
-                                    Navigator.of(context).pop();
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            IsuzumaScoreReview(
-                                          isuzuma: widget.isuzuma,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  secondButtonColor: const Color(0xFF00A651),
+                            _showTheDialog(
+                              context,
+                              'Gusoza isuzuma!',
+                              'Wasubije ibibazo byose. Ese ushaka gusoza nonaha?',
+                              'OYA',
+                              const Color(0xFFE60000),
+                              'YEGO',
+                              () {
+                                IsuzumaScoreService()
+                                    .createOrUpdateIsuzumaScore(scorePrModel);
+                                Navigator.of(context).pop();
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => IsuzumaScoreReview(
+                                      isuzuma: widget.isuzuma,
+                                    ),
+                                  ),
                                 );
                               },
+                              const Color(0xFF00A651),
                             );
                           }
                         },
@@ -320,5 +288,34 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
     setState(() {
       qnIndex = index;
     });
+  }
+
+  Future<void> _showTheDialog(
+      BuildContext context,
+      String errorTitle,
+      String errorMsg,
+      String? firstButtonTitle,
+      Color? firstButtonColor,
+      String? secondButtonTitle,
+      Function? secondButtonFunction,
+      Color? secondButtonColor) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return ItsindireAlert(
+          errorTitle: errorTitle,
+          errorMsg: errorMsg,
+          firstButtonTitle: firstButtonTitle,
+          firstButtonFunction: () {
+            Navigator.of(context).pop();
+          },
+          firstButtonColor: const Color(0xFF00A651),
+          secondButtonTitle: secondButtonTitle,
+          secondButtonFunction: secondButtonFunction,
+          secondButtonColor: secondButtonColor,
+        );
+      },
+    );
   }
 }

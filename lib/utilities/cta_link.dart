@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class CtaAuthLink extends StatelessWidget {
@@ -34,12 +33,7 @@ class CtaAuthLink extends StatelessWidget {
 
             // INK WELL
             InkWell(
-              onTap: () {
-                FirebaseAuth.instance.currentUser != null &&
-                        (route == 'injira' || route == 'iyandikishe')
-                    ? Navigator.pop(context)
-                    : Navigator.pushNamed(context, route);
-              },
+              onTap: () => Navigator.pushReplacementNamed(context, route),
               child: Text(
                 text2,
                 style: TextStyle(

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
-import 'package:itsindire/models/user.dart';
 import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
 import 'package:itsindire/utilities/cta_button.dart';
 import 'package:itsindire/utilities/cta_link.dart';
@@ -30,14 +29,19 @@ class _IyandikisheState extends State<Iyandikishe> {
   String email = '';
   String password = '';
 
+@override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Provider.of<AuthState>(context, listen: false).currentUser != null) {
+        Navigator.pushReplacementNamed(context, '/iga-landing');
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthState>(builder: (context, authState, _) {
-
-      if (authState.currentUser != null) {
-        Navigator.pushReplacementNamed(context, '/iga-landing');
-      }
-      
       return Scaffold(
           backgroundColor: const Color.fromARGB(255, 71, 103, 158),
           appBar: PreferredSize(
@@ -149,60 +153,46 @@ class _IyandikisheState extends State<Iyandikishe> {
                           text: 'Iyandikishe',
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              dynamic result = await authState.registerNewUser(
-                                  username, email, password, false, '', '');
+                              AuthResult result =
+                                  await authState.registerNewUser(
+                                      username, email, password, false, '', '');
 
-                              if (result == null) {
-                                setState(() {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return ItsindireAlert(
-                                        errorTitle:
-                                            'Kwiyandisha ntibyagenze neza, ongera ugerageze!',
-                                        errorMsg: result.error,
-                                        alertType: 'error',
-                                      );
-                                    },
-                                  );
-                                });
+                              if (result.value != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Kwiyandikisha byagenze neza, Injira!'),
+                                        backgroundColor: Color(0xFF00A651)));
+
+                                if (!mounted) return;
+                                Navigator.pushReplacementNamed(
+                                    context, '/injira');
                               } else {
-                                if (result.runtimeType == UserModel) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text(
-                                              'Kwiyandikisha byagenze neza, Injira!'),
-                                          backgroundColor: Color(0xFF00A651)));
-
-                                  if (!mounted) return;
-                                  Navigator.pushReplacementNamed(
-                                      context, '/injira');
-                                } else {
-                                  
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return ItsindireAlert(
-                                        errorTitle:
-                                            'Kwiyandisha ntibyagenze neza!',
-                                        errorMsg: result.error ??
-                                            'Kwiyandisha ntibyagenze neza, hamagara 0794033360 tugufashe!',
-                                        alertType: 'error',
-                                        firstButtonTitle: 'Funga',
-                                        firstButtonFunction: () {
-                                          Navigator.pop(context);
-                                        },
-                                        secondButtonTitle: 'Injira',
-                                        secondButtonFunction: () {
-                                          Navigator.pop(context);
-                                          Navigator.pushReplacementNamed(
-                                              context, '/injira');
-                                        },
-                                        secondButtonColor: Color(0xFF00A651),
-                                      );
-                                    },
-                                  );
-                                }
+                                if (!mounted) return;
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (BuildContext context) {
+                                    return ItsindireAlert(
+                                      errorTitle:
+                                          'Kwiyandisha ntibyagenze neza!',
+                                      errorMsg: result.error ??
+                                          'Kwiyandisha ntibyagenze neza, hamagara 0794033360 tugufashe!',
+                                      alertType: 'error',
+                                      firstButtonTitle: 'Funga',
+                                      firstButtonFunction: () {
+                                        Navigator.pop(context);
+                                      },
+                                      secondButtonTitle: 'Injira',
+                                      secondButtonFunction: () {
+                                        Navigator.pop(context);
+                                        Navigator.pushReplacementNamed(
+                                            context, '/injira');
+                                      },
+                                      secondButtonColor: Color(0xFF00A651),
+                                    );
+                                  },
+                                );
                               }
                             }
                           },

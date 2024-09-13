@@ -38,7 +38,9 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
         loading = false;
       });
 
-      if (pymt != null && pymt.isApproved == true) {
+      if (payment != null &&
+          payment.isApproved &&
+          payment.endAt.isAfter(DateTime.now())) {
         return true;
       } else {
         return false;
@@ -87,7 +89,7 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
                                       message:
                                           'Banza wiyandikishe, wishyure ubone aya masuzumabumenyi yose!')))
                           : payment != null &&
-                                  payment.isApproved == true &&
+                                  payment.isApproved &&
                                   payment.endAt.isAfter(DateTime.now())
                               ? Navigator.push(
                                   context,
@@ -98,6 +100,7 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
                                 )
                               : showDialog(
                                   context: context,
+                                  barrierDismissible: false,
                                   builder: (BuildContext context) {
                                     return ItsindireAlert(
                                         errorTitle: 'Ntibyagenze neza',

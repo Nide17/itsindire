@@ -153,8 +153,7 @@ Future updateUserCourseProgress(
     });
   }
 
-
-
+  // THIS FUNCTION WILL UPDATE THE USER PROGRESS ON A COURSE IN THE DATABASE
   Future updateUnansweredPopQuestions(
     String progressId,
     int count,

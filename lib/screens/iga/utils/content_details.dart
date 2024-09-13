@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:itsindire/firebase_services/isomo_progress.dart';
+import 'package:itsindire/models/pop_question.dart';
 import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
 import 'package:provider/provider.dart';
 import 'package:itsindire/firebase_services/ingingo_db.dart';
@@ -46,9 +49,9 @@ class _ContentDetailsState extends State<ContentDetails> {
 
   @override
   Widget build(BuildContext context) {
-    
     final currPageIngingos = Provider.of<List<IngingoModel>?>(context) ?? [];
     final courseProgress = Provider.of<CourseProgressModel?>(context);
+    final quizPopQuestions = Provider.of<List<PopQuestionModel>?>(context);
     final totalIngingos = courseProgress?.totalIngingos ?? 0;
     final currentIngingo = courseProgress?.currentIngingo ?? 0;
     final unansweredPopQuestions = courseProgress?.unansweredPopQuestions ?? 0;
@@ -61,160 +64,200 @@ class _ContentDetailsState extends State<ContentDetails> {
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {
               return Align(
-                  child: Padding(
-                padding:
-                    EdgeInsets.all(MediaQuery.of(context).size.width * 0.024),
-                child: Column(
-                  children: [
-                    if (index == 0 && currentIngingo == totalIngingos &&
-                        unansweredPopQuestions == 0)
-                      Text(
-                        'Wasoje kwiga isomo!',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize:
-                                MediaQuery.of(context).size.height * 0.023,
-                            color: Colors.green),
-                      ),
-                    if (index == 0 && currentIngingo == totalIngingos &&
-                        unansweredPopQuestions == 0)
-                      ElevatedButton(
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return ItsindireAlert(
-                                  errorTitle: 'IBIJYANYE NIRI SOMO',
-                                  errorMsg:
-                                      'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "${totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : totalIngingos * 3}" gusa!',
-                                  firstButtonTitle: 'Inyuma',
-                                  firstButtonFunction: () {
-                                    Navigator.popAndPushNamed(
-                                        context, '/iga-landing');
-                                  },
-                                  firstButtonColor: const Color(0xFFE60000),
-                                  secondButtonTitle: 'Tangira',
-                                  secondButtonFunction: () {
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => IgaContent(
-                                                isomo: widget.isomo,
-                                                courseProgress: courseProgress,
-                                                thisCourseTotalIngingos:
-                                                    thisCourseTotalIngingos)));
-                                  },
-                                  secondButtonColor: const Color(0xFF00A651),
-                                );
-                              });
-                        },
-                        child: const Text('Ongera utangire iri somo!'),
-                      ),
-                    if (index == 0 && currentIngingo == totalIngingos &&
-                        unansweredPopQuestions == 0)
-                      const SizedBox(height: 10.0),
-                    if (index == 0 && widget.isomo.introText != '')
-                      Text(
-                        '\n${widget.isomo.introText}\n\n',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize:
-                                MediaQuery.of(context).size.height * 0.022),
-                      ),
-                    ContentTitlenText(
-                      title: '${currPageIngingos[index].title} ',
-                      text: '${currPageIngingos[index].text}',
+                  child: Container(
+                margin: EdgeInsets.symmetric(
+                    vertical: MediaQuery.of(context).size.height * 0.008,
+                    horizontal: MediaQuery.of(context).size.width * 0.02),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(
+                      MediaQuery.of(context).size.width * 0.02),
+                  border: Border.all(
+                    color: Colors.grey.shade300,
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
                     ),
-                    if (currPageIngingos[index].insideTitle != null &&
-                        currPageIngingos[index].insideTitle != '')
-                      Text(
-                        '\n\n${currPageIngingos[index].insideTitle}',
-                        style: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.height * 0.023,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    if (currPageIngingos[index].options != null &&
-                        currPageIngingos[index].options != [])
-                      Column(
-                        children: List.generate(
-                          currPageIngingos[index].options.length,
-                          (optionIndex) {
-                            Option option = Option.fromJson(
-                                currPageIngingos[index].options[optionIndex]);
-                            return OptionContent(option: option);
-                          },
-                        ).toList(),
-                      ),
-                    if (currPageIngingos[index].nb != null &&
-                        currPageIngingos[index].nb != '')
-                      Text.rich(
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.height * 0.023),
-                        TextSpan(
-                          children: [
-                            const TextSpan(
-                                text: '\nNB: ',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            TextSpan(text: '${currPageIngingos[index].nb}'),
-                          ],
-                        ),
-                      ),
-                    if (currPageIngingos[index].imageUrl != null &&
-                        currPageIngingos[index].imageUrl != '')
-                      Column(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.fromLTRB(0.0, 4.0, 0.0,
-                                MediaQuery.of(context).size.height * 0.01),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.8),
-                                  spreadRadius: 2.0,
-                                  blurRadius: 5.0,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10.0),
-                              child: FadeInImage.memoryNetwork(
-                                placeholder: kTransparentImage,
-                                image: currPageIngingos[index].imageUrl ?? '',
-                                height:
-                                    MediaQuery.of(context).size.height * 0.2,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          if (currPageIngingos[index].imageDesc != null &&
-                              currPageIngingos[index].imageDesc != '')
-                            Text(
-                              currPageIngingos[index].imageDesc ?? '',
-                              style: TextStyle(
-                                  fontSize: MediaQuery.of(context).size.height *
-                                      0.023,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                        ],
-                      ),
-                    if (index == currPageIngingos.length - 1 &&
-                        widget.isomo.conclusion != '')
-                      Container(
-                        margin: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 14.0),
-                        child: Text(
-                          widget.isomo.conclusion,
+                  ],
+                ),
+                child: Padding(
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.024),
+                  child: Column(
+                    children: [
+                      if (index == 0 &&
+                          currentIngingo == totalIngingos &&
+                          unansweredPopQuestions == 0)
+                        Text(
+                          'Wasoje kwiga isomo!',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize:
-                                  MediaQuery.of(context).size.height * 0.023),
+                                  MediaQuery.of(context).size.height * 0.021,
+                              color: Colors.green),
                         ),
+                      if (index == 0 &&
+                          currentIngingo == totalIngingos &&
+                          unansweredPopQuestions == 0)
+                        ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return ItsindireAlert(
+                                    errorTitle: 'IBIJYANYE NIRI SOMO',
+                                    errorMsg:
+                                        'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "${totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : totalIngingos * 3}" gusa!',
+                                    firstButtonTitle: 'Inyuma',
+                                    firstButtonFunction: () {
+                                      Navigator.pop(context);
+                                    },
+                                    firstButtonColor: const Color(0xFFE60000),
+                                    secondButtonTitle: 'Tangira',
+                                    secondButtonFunction: () {
+                                      // Update the user progress in the database
+                                      if (courseProgress != null &&
+                                          quizPopQuestions != null) {
+                                        CourseProgressService()
+                                            .updateUserCourseProgress(
+                                                courseProgress.userId,
+                                                courseProgress.courseId,
+                                                0,
+                                                courseProgress.totalIngingos,
+                                                quizPopQuestions.length);
+                                      }
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => IgaContent(
+                                                  isomo: widget.isomo,
+                                                  courseProgress:
+                                                      courseProgress,
+                                                  thisCourseTotalIngingos:
+                                                      thisCourseTotalIngingos)));
+                                    },
+                                    secondButtonColor: const Color(0xFF00A651),
+                                  );
+                                });
+                          },
+                          child: const Text('Ongera utangire iri somo!'),
+                        ),
+                      if (index == 0 &&
+                          currentIngingo == totalIngingos &&
+                          unansweredPopQuestions == 0)
+                        const SizedBox(height: 10.0),
+                      if (index == 0 && widget.isomo.introText != '')
+                        Text(
+                          '\n${widget.isomo.introText}\n\n',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize:
+                                  MediaQuery.of(context).size.height * 0.02),
+                        ),
+                      ContentTitlenText(
+                        title: '${currPageIngingos[index].title} ',
+                        text: '${currPageIngingos[index].text}',
                       ),
-                  ],
+                      if (currPageIngingos[index].insideTitle != null &&
+                          currPageIngingos[index].insideTitle != '')
+                        Text(
+                          '\n\n${currPageIngingos[index].insideTitle}',
+                          style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.height * 0.021,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      if (currPageIngingos[index].options != null &&
+                          currPageIngingos[index].options != [])
+                        Column(
+                          children: List.generate(
+                            currPageIngingos[index].options.length,
+                            (optionIndex) {
+                              Option option = Option.fromJson(
+                                  currPageIngingos[index].options[optionIndex]);
+                              return OptionContent(option: option);
+                            },
+                          ).toList(),
+                        ),
+                      if (currPageIngingos[index].nb != null &&
+                          currPageIngingos[index].nb != '')
+                        Text.rich(
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.height * 0.021),
+                          TextSpan(
+                            children: [
+                              const TextSpan(
+                                  text: '\nNB: ',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              TextSpan(text: '${currPageIngingos[index].nb}'),
+                            ],
+                          ),
+                        ),
+                      if (currPageIngingos[index].imageUrl != null &&
+                          currPageIngingos[index].imageUrl != '')
+                        Column(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.fromLTRB(0.0, 4.0, 0.0,
+                                  MediaQuery.of(context).size.height * 0.01),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.8),
+                                    spreadRadius: 2.0,
+                                    blurRadius: 5.0,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10.0),
+                                child: FadeInImage.memoryNetwork(
+                                  placeholder: kTransparentImage,
+                                  image: currPageIngingos[index].imageUrl ?? '',
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.2,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            if (currPageIngingos[index].imageDesc != null &&
+                                currPageIngingos[index].imageDesc != '')
+                              Text(
+                                currPageIngingos[index].imageDesc ?? '',
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.height *
+                                            0.021,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                          ],
+                        ),
+                      if (index == currPageIngingos.length - 1 &&
+                          widget.isomo.conclusion != '')
+                        Container(
+                          margin:
+                              const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 14.0),
+                          child: Text(
+                            widget.isomo.conclusion,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.021),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ));
             },

@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:itsindire/firebase_services/isomo_db.dart';
-import 'package:itsindire/utilities/loading_widget.dart';
-import 'package:provider/provider.dart';
 import 'package:itsindire/models/course_progress.dart';
 import 'package:itsindire/models/isomo.dart';
+import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:itsindire/utilities/user_progress.dart';
+import 'package:provider/provider.dart';
 
 class AmasomoProgress extends StatefulWidget {
   final List<CourseProgressModel?>? progressesToShow;
@@ -19,7 +19,6 @@ class AmasomoProgress extends StatefulWidget {
 class _AmasomoProgressState extends State<AmasomoProgress> {
   @override
   Widget build(BuildContext context) {
-    
     if (widget.progressesToShow != null) {
       widget.progressesToShow?.sort(
           (a, b) => b!.progressPercentage.compareTo(a!.progressPercentage));
@@ -42,14 +41,27 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
         ),
       ],
       child: Consumer<List<IsomoModel?>?>(builder: (context, allAmasomos, _) {
-        if (allAmasomos == null ||
-            allAmasomos.isEmpty ||
-            widget.progressesToShow == null ||
-            widget.progressesToShow!.isEmpty) {
+        // Show loader when either allAmasomos or progressesToShow are loading
+        if (allAmasomos == null || widget.progressesToShow == null) {
           return Center(
-            child: const LoadingWidget()
+            child: const LoadingWidget(),
           );
         }
+
+        // Show empty message if there's no data
+        if (allAmasomos.isEmpty || widget.progressesToShow!.isEmpty) {
+          return Center(
+            child: Text(
+              'Nta masomo yabonetse!',
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width * 0.05,
+                fontWeight: FontWeight.w900,
+                color: Colors.red,
+              ),
+            ),
+          );
+        }
+
         return Column(
           children: widget.progressesToShow?.map((progress) {
                 final IsomoModel? isomo = allAmasomos.firstWhere(

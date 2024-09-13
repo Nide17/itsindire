@@ -33,7 +33,7 @@ class _NoInternetState extends State<NoInternet> {
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 24.0,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                   color: Color.fromARGB(255, 255, 255, 255)),
             ),
           ),

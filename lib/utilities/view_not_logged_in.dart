@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:itsindire/utilities/route_action_button.dart';
 
 class ViewNotLoggedIn extends StatelessWidget {
   const ViewNotLoggedIn({super.key});
@@ -32,71 +33,8 @@ class ViewNotLoggedIn extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // 6.1. INJIRA
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/injira');
-                },
-                style: ElevatedButton.styleFrom(
-                  fixedSize: Size(
-                    MediaQuery.of(context).size.width * 0.4,
-                    MediaQuery.of(context).size.height * 0.07,
-                  ),
-                  backgroundColor: const Color(0xFF00CCE5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32.0),
-                    side: const BorderSide(
-                      color: Color.fromARGB(255, 255, 255, 255),
-                      width: 3.0,
-                    ),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 12.0),
-                      elevation: 8.0,
-                      shadowColor: const Color.fromARGB(255, 0, 0, 0),
-                ),
-                child: Text(
-                  'Injira',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.of(context).size.width * 0.045,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-
-              // 6.2. IYANDIKISHE
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/iyandikishe');
-                },
-                style: ElevatedButton.styleFrom(
-                  fixedSize: Size(
-                    MediaQuery.of(context).size.width * 0.4,
-                    MediaQuery.of(context).size.height * 0.07,
-                  ),
-                  backgroundColor: const Color(0xFF00CCE5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32.0),
-                    side: const BorderSide(
-                      color: Color.fromARGB(255, 255, 255, 255),
-                      width: 3.0,
-                    ),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 12.0),
-                  elevation: 8.0,
-                  shadowColor: const Color.fromARGB(255, 0, 0, 0),
-                ),
-                child: Text(
-                  'Iyandikishe',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.of(context).size.width * 0.045,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+              RouteActionButton(btnText: 'Injira', route: '/injira'),
+              RouteActionButton(btnText: 'Iyandikishe', route: '/iyandikishe'),
             ],
           ),
         )

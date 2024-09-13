@@ -1,41 +1,39 @@
 import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:itsindire/firebase_services/profiledb.dart';
-import 'package:itsindire/models/profile.dart';
-import 'firebase_options.dart';
-import 'firebase_services/isuzuma_score_db.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:itsindire/firebase_services/auth.dart';
 import 'package:itsindire/firebase_services/ibibazo_bibaza_db.dart';
 import 'package:itsindire/firebase_services/ifatabuguzi_db.dart';
+import 'package:itsindire/firebase_services/isomo_db.dart';
+import 'package:itsindire/firebase_services/isomo_progress.dart';
 import 'package:itsindire/firebase_services/isuzuma_db.dart';
 import 'package:itsindire/firebase_services/payment_db.dart';
-import 'package:itsindire/firebase_services/isomo_progress.dart';
-import 'package:itsindire/firebase_services/isomo_db.dart';
-
+import 'package:itsindire/firebase_services/profiledb.dart';
+import 'package:itsindire/models/course_progress.dart';
 import 'package:itsindire/models/ibibazo_bibaza.dart';
 import 'package:itsindire/models/ifatabuguzi.dart';
+import 'package:itsindire/models/isomo.dart';
 import 'package:itsindire/models/isuzuma.dart';
 import 'package:itsindire/models/isuzuma_score.dart';
 import 'package:itsindire/models/payment.dart';
-import 'package:itsindire/models/course_progress.dart';
-import 'package:itsindire/models/isomo.dart';
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-
+import 'package:itsindire/models/profile.dart';
 import 'package:itsindire/screens/auth/injira.dart';
 import 'package:itsindire/screens/auth/iyandikishe.dart';
 import 'package:itsindire/screens/auth/ur_student.dart';
 import 'package:itsindire/screens/auth/wibagiwe.dart';
 import 'package:itsindire/screens/ibiciro/ibiciro.dart';
 import 'package:itsindire/screens/iga/iga_landing.dart';
-
 import 'package:itsindire/utilities/loading_lightning.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:provider/provider.dart';
+
+import 'firebase_options.dart';
+import 'firebase_services/isuzuma_score_db.dart';
 
 Future main() async {
   await dotenv.load(fileName: ".env");
@@ -78,7 +76,6 @@ class ItsindireApp extends StatefulWidget {
 }
 
 class _ItsindireAppState extends State<ItsindireApp> {
-  
   List<ConnectivityResult> _connectionStatusList = [ConnectivityResult.none];
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
@@ -208,13 +205,12 @@ class _ItsindireAppState extends State<ItsindireApp> {
         ),
       ],
       child: Consumer<AuthState>(builder: (context, authState, _) {
-        
-          // print('\n\n Firebase ${FirebaseAuth.instance.currentUser} \n\n');
-          // print('\n\n Auth state ${authState} \n\n');
-          
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(primarySwatch: Colors.blue),
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            textTheme: GoogleFonts.openSansTextTheme(),
+          ),
           home: const LoadingLightning(
             duration: 4,
           ),

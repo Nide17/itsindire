@@ -153,6 +153,7 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
                                   // SHOW ALERT DIALOG
                                   showDialog(
                                       context: context,
+                                      barrierDismissible: false, 
                                       builder: (BuildContext context) {
                                         return ItsindireAlert(
                                             errorTitle: 'Error',

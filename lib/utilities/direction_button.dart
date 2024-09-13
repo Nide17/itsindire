@@ -80,12 +80,12 @@ class _DirectionButtonState extends State<DirectionButton> {
             if (widget.direction == 'inyuma') {
               widget.changeSkipNumber(-5);
             } else if (widget.direction == 'komeza') {
-              
               // UPDATE THE CURRENT INGINGO
               if (widget.skip >= 0 &&
                   widget.skip <= courseProgress!.totalIngingos &&
                   pageIngingos.length + widget.skip >
-                      courseProgress.currentIngingo && popQuestions!.isEmpty) {
+                      courseProgress.currentIngingo &&
+                  popQuestions!.isEmpty) {
                 CourseProgressService().updateUserCourseProgress(
                   courseProgress.userId,
                   widget.isomo.id,
@@ -122,10 +122,15 @@ class _DirectionButtonState extends State<DirectionButton> {
             ),
             backgroundColor: const Color(0xFF00CCE5),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+                borderRadius: BorderRadius.circular(32.0),
+                side: BorderSide(
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                  style: BorderStyle.solid,
+                  width: MediaQuery.of(context).size.width * 0.005,
+                )),
+            padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.05,
+                vertical: MediaQuery.of(context).size.height * 0.01),
           ),
           child: SingleChildScrollView(
             child: Row(
@@ -147,7 +152,7 @@ class _DirectionButtonState extends State<DirectionButton> {
                 Text(
                   widget.buttonText,
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w900,
                       fontSize: MediaQuery.of(context).size.width * 0.035,
                       color: Colors.black),
                 ),

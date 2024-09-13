@@ -37,6 +37,7 @@ class _IsuzumaViewsState extends State<IsuzumaViews> {
   void handleTimerExpired() {
     showDialog(
       context: context,
+      barrierDismissible: false, 
       builder: (BuildContext context) {
         return ItsindireAlert(
           errorTitle: 'Iminota yarangiye!',

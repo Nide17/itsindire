@@ -43,7 +43,6 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
       ],
       child: Consumer<QuizScoreProvider>(
         builder: (context, scoreProviderModel, child) {
-          
           return Consumer<List<PopQuestionModel>?>(
             builder: (context, popQuestions, _) {
               if (popQuestions == null) {
@@ -107,7 +106,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
 
               // RETURN THE WIDGETS
               return PopScope(
-                canPop: false, // prevent back
+                canPop: false,
                 onPopInvoked: (_) async {
                   _showExitDialog(
                       context,
@@ -224,8 +223,9 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
   Future<void> _showExitDialog(BuildContext context, bool isAllAnswered,
       bool _isCurrentCorrect, String marks) async {
     if (!isAllAnswered || _isCurrentCorrect == false) {
-      return showDialog(
+      showDialog(
         context: context,
+        barrierDismissible: false, 
         builder: (context) {
           return ItsindireAlert(
             errorTitle: 'Subiza byose',
@@ -240,11 +240,12 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
               Navigator.of(context).pop();
               showDialog(
                   context: context,
+                  barrierDismissible: false,
                   builder: (context) {
                     return ItsindireAlert(
                       errorTitle: 'Ntusoje byose!',
                       errorMsg: 'Wabonye ${marks}',
-                      firstButtonTitle: 'Inyuma',
+                      firstButtonTitle: 'Funga',
                       firstButtonFunction: () {
                         Navigator.of(context).pop();
                         Navigator.pop(context);
@@ -262,6 +263,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
       // IF ALL QUESTIONS ARE ANSWERED, SHOW THE SCORE
       return showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (context) {
             return ItsindireAlert(
               errorTitle: 'Wasoje kwisuzuma!',

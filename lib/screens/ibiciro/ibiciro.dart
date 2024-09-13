@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:itsindire/main.dart';
 import 'package:itsindire/models/ifatabuguzi.dart';
 import 'package:itsindire/models/profile.dart';
 import 'package:itsindire/screens/ibiciro/ifatabuguzi.dart';
 import 'package:itsindire/screens/iga/utils/gradient_title.dart';
-import 'package:itsindire/utilities/description.dart';
 import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/utilities/description.dart';
 import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:itsindire/utilities/no_internet.dart';
+import 'package:provider/provider.dart';
 
 class Ibiciro extends StatefulWidget {
   final String? message;
@@ -40,7 +40,7 @@ class _IbiciroState extends State<Ibiciro> {
                   : 'Nta internet mufite!.',
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width * 0.04,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
             backgroundColor: const Color.fromARGB(255, 255, 8, 0),
@@ -62,7 +62,7 @@ class _IbiciroState extends State<Ibiciro> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.width * 0.04,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
             backgroundColor: const Color.fromARGB(255, 0, 255, 85),

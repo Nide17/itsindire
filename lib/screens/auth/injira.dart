@@ -1,16 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
-import 'package:provider/provider.dart';
+import 'package:itsindire/firebase_services/auth.dart';
 import 'package:itsindire/main.dart';
-import 'package:itsindire/models/user.dart';
+import 'package:itsindire/screens/iga/utils/gradient_title.dart';
+import 'package:itsindire/utilities/app_bar.dart';
 import 'package:itsindire/utilities/cta_button.dart';
 import 'package:itsindire/utilities/cta_link.dart';
 import 'package:itsindire/utilities/default_input.dart';
 import 'package:itsindire/utilities/description.dart';
-import 'package:itsindire/screens/iga/utils/gradient_title.dart';
-import 'package:itsindire/utilities/app_bar.dart';
-import 'package:itsindire/firebase_services/auth.dart';
 import 'package:itsindire/utilities/loading_widget.dart';
+import 'package:provider/provider.dart';
 
 class Injira extends StatefulWidget {
   final String? message;
@@ -22,7 +21,6 @@ class Injira extends StatefulWidget {
 }
 
 class _InjiraState extends State<Injira> {
-  
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String email = '';
@@ -34,14 +32,6 @@ class _InjiraState extends State<Injira> {
     super.initState();
     if (widget.connectionStatus != null) {
       widget.connectionStatus!.setOnline();
-    }
-
-    if (FirebaseAuth.instance.currentUser != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, '/iga-landing');
-        }
-      });
     }
   }
 
@@ -61,7 +51,7 @@ class _InjiraState extends State<Injira> {
         : StreamBuilder<User?>(
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
-              if (snapshot.data?.uid != null) {
+              if (snapshot.hasData) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (mounted) {
                     Navigator.pushReplacementNamed(context, '/iga-landing');
@@ -143,7 +133,7 @@ class _InjiraState extends State<Injira> {
                               title: 'INJIRA',
                               icon: 'assets/images/injira.svg'),
                           const Description(
-                              text: 'Injira kugirango ubashe gukomeza!'),
+                              text: 'Banza winjire ubone gukomeza!'),
                           Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -186,32 +176,26 @@ class _InjiraState extends State<Injira> {
                                         _formKey.currentState!.save();
                                         setState(() => loading = true);
 
-                                        dynamic result = await authState
+                                        AuthResult result = await authState
                                             .userLogin(email, password);
 
                                         setState(() => loading = false);
 
-                                        if (!mounted) {
-                                          return;
-                                        }
-
-                                        if (result.runtimeType ==
-                                                AuthResult &&
-                                            result.error != null) {
+                                        if (!mounted) return;
+                                        if (result.error != null) {
                                           _showSnackbar(
-                                              result.error, Colors.red);
-                                        } else if (result.runtimeType ==
-                                            UserModel) {
-                                          print(result.toString());
+                                              result.error ??
+                                                  'Kwinjira ntibikunze. Mwongere mugerageze!',
+                                              Colors.red);
+                                        } else if (result.value != null) {
                                           authState.setCurrentUser(FirebaseAuth
                                               .instance.currentUser);
                                           _showSnackbar(
                                               'Kwinjira byagenze neza!',
                                               Colors.green);
-                                        }
-                                        else {
+                                        } else {
                                           _showSnackbar(
-                                              'Kwinjira ntibyagenze neza!',
+                                              'Kwinjira ntibyagenze neza! Duhamagare kuri 0794033360 tugufashe!',
                                               Colors.red);
                                         }
                                       }
