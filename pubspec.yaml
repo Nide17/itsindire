@@ -85,6 +85,13 @@ flutter:
     - assets/images/imirongo.png
     - assets/images/ibimurika.png
     - assets/images/isuzuma.png
+    - assets/images/phone.svg
+    - assets/images/whatsapp.svg
+    - assets/images/email.svg
+    - assets/images/instagram.svg
+    - assets/images/twitter.svg
+    - assets/images/linkedin.svg
+    - assets/images/facebook.svg
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
