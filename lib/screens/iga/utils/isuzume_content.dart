@@ -1,18 +1,18 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/models/course_progress.dart';
 import 'package:tegura/models/isomo.dart';
 import 'package:tegura/models/pop_question.dart';
 import 'package:tegura/models/user.dart';
+import 'package:tegura/screens/iga/utils/tegura_alert.dart';
 import 'package:tegura/screens/iga/utils/isuzume_details.dart';
 import 'package:tegura/providers/quiz_score_provider.dart';
 import 'package:tegura/firebase_services/pop_question_db.dart';
-import 'package:tegura/utilities/appbar.dart';
+import 'package:tegura/utilities/app_bar.dart';
 import 'package:tegura/utilities/direction_button_isuzume.dart';
+import 'package:tegura/utilities/loading_widget.dart';
 
 class IsuzumeContent extends StatefulWidget {
-  // INSTANCE VARIABLES
   final IsomoModel isomo;
   final CourseProgressModel? courseProgress;
   const IsuzumeContent({super.key, required this.isomo, this.courseProgress});
@@ -22,40 +22,23 @@ class IsuzumeContent extends StatefulWidget {
 }
 
 class _IsuzumeContentState extends State<IsuzumeContent> {
-  // STATE VARIABLES
   int qnIndex = 0;
   bool isCurrentCorrect = false;
   int selectedOption = -1;
 
-  // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
-    // GET THE USER
     final usr = Provider.of<UserModel?>(context);
 
-    // RETURN THE CONTENT
     return MultiProvider(
       providers: [
-        // CHANGE NOTIFIER PROVIDER FOR QUIZ SCORE
         ChangeNotifierProvider(
           create: (context) => QuizScoreProvider(),
         ),
-        // STREAM PROVIDER FOR POP QUESTIONS
         StreamProvider<List<PopQuestionModel>?>.value(
-          // WHAT TO GIVE TO THE CHILDREN WIDGETS
-          value: PopQuestionService().getPopQuestionsByIsomoID(
-              widget.isomo.id), // GET THE POP QUESTIONS
+          value: PopQuestionService().getPopQuestionsByIsomoID(widget.isomo.id),
           initialData: null,
-
-          // CATCH ERRORS
           catchError: (context, error) {
-            // PRINT THE ERROR
-            if (kDebugMode) {
-              print("Error iga content pq: $error");
-              print(
-                  "The err: ${PopQuestionService().getPopQuestionsByIsomoID(widget.isomo.id)}");
-            }
-            // RETURN NULL
             return [];
           },
         ),
@@ -65,12 +48,9 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
           return Consumer<List<PopQuestionModel>?>(
             builder: (context, popQuestions, _) {
               if (popQuestions == null) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const LoadingWidget();
               }
 
-              // SET Total Marks, Marks, User ID, Isomo ID
               scoreProviderModel.quizScore.setUserID(usr!.uid);
               scoreProviderModel.quizScore.setIsomoID(widget.isomo.id);
 
@@ -97,18 +77,10 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
               void forward() {
                 if (qnIndex >=
                     scoreProviderModel.quizScore.questions.length - 1) {
-                  // ALERT DIALOG FOR LAST QUESTION
-                  AlertDialog(
-                    title: const Text('Last Question'),
-                    content: const Text('This is the last question'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text('OK'),
-                      ),
-                    ],
+                  const TeguraAlert(
+                    errorTitle: 'Ikibazo cyanyuma!',
+                    errorMsg: 'Ibibazo byose byasubije!',
+                    alertType: 'warning',
                   );
                 } else {
                   setState(() {
@@ -142,43 +114,25 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
               // RETURN THE WIDGETS
               return WillPopScope(
                 onWillPop: () async {
-                  // IF ALL QUESTIONS ARE NOT ANSWERED, ALERT THE USER TO CONFIRM
                   if (!scoreProviderModel.quizScore.isAllAnswered() ||
                       isCurrentCorrect == false) {
-                    // SHOW THE ALERT DIALOG
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return AlertDialog(
-                          title: const Text(''),
-                          content: Text(
-                              'Ushaka gusohoka udasubije ibibazo byose?',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width * 0.05,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black)),
-                          backgroundColor:
-                              const Color.fromARGB(255, 201, 222, 255),
-                          elevation: 10.0,
-                          shadowColor: const Color(0xFFFFF59D),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('OYA'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                // REMOVE THE CURRENT SCREEN FROM THE STACK
-                                Navigator.pop(context);
-                              },
-                              child: const Text('YEGO'),
-                            ),
-                          ],
+                        return TeguraAlert(
+                          errorTitle: 'Subiza byose',
+                          errorMsg: 'Ushaka gusohoka udasubije ibibazo byose?',
+                          firstButtonTitle: 'OYA',
+                          firstButtonFunction: () {
+                            Navigator.of(context).pop();
+                          },
+                          firstButtonColor: const Color(0xFF00A651),
+                          secondButtonTitle: 'YEGO',
+                          secondButtonFunction: () {
+                            Navigator.of(context).pop();
+                            Navigator.pop(context);
+                          },
+                          secondButtonColor: const Color(0xFFE60000),
                         );
                       },
                     );
@@ -188,13 +142,10 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                 },
                 child: Scaffold(
                   backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-
-                  // APP BAR
                   appBar: const PreferredSize(
                     preferredSize: Size.fromHeight(58.0),
                     child: AppBarTegura(),
                   ),
-                  // PAGE BODY
                   body: IsuzumeDetails(
                     isomo: widget.isomo,
                     userID: usr.uid,
@@ -205,7 +156,6 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                     setSelectedOption: setSelectedOption,
                     showQn: showQn,
                   ),
-
                   bottomNavigationBar: popQuestions.isEmpty ||
                           scoreProviderModel.quizScore
                                   .getIsAtleastOneAnswered() ==
@@ -221,7 +171,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                             color: Color.fromARGB(255, 255, 255, 255),
                             boxShadow: [
                               BoxShadow(
-                                color: Color.fromARGB(255, 72, 255, 0),
+                                color: Color(0xFF00A651),
                                 offset: Offset(0, -1),
                                 blurRadius: 1,
                               ),
@@ -236,43 +186,26 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                                   if (!scoreProviderModel.quizScore
                                           .isAllAnswered() ||
                                       isCurrentCorrect == false) {
-                                    // SHOW THE ALERT DIALOG
                                     showDialog(
                                       context: context,
                                       builder: (context) {
-                                        return AlertDialog(
-                                          title: const Text(''),
-                                          content: Text(
-                                              'Ushaka gusohoka udasubije neza ibibazo byose?',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.05,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black)),
-                                          backgroundColor: const Color.fromARGB(
-                                              255, 201, 222, 255),
-                                          elevation: 10.0,
-                                          shadowColor: const Color(0xFFFFF59D),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text('OYA'),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                                // REMOVE THE CURRENT SCREEN FROM THE STACK
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Text('YEGO'),
-                                            ),
-                                          ],
+                                        return TeguraAlert(
+                                          errorTitle: 'Subiza byose',
+                                          errorMsg:
+                                              'Ushaka gusohoka udasubije ibibazo byose?',
+                                          firstButtonTitle: 'OYA',
+                                          firstButtonFunction: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          firstButtonColor:
+                                              const Color(0xFF00A651),
+                                          secondButtonTitle: 'YEGO',
+                                          secondButtonFunction: () {
+                                            Navigator.of(context).pop();
+                                            Navigator.pop(context);
+                                          },
+                                          secondButtonColor:
+                                              const Color(0xFFE60000),
                                         );
                                       },
                                     );
@@ -282,31 +215,18 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                                   showDialog(
                                       context: context,
                                       builder: (context) {
-                                        return AlertDialog(
-                                          title: const Text(''),
-                                          content: Text('Wasoje kwisuzuma!',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.05,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black)),
-                                          backgroundColor: const Color.fromARGB(
-                                              255, 201, 222, 255),
-                                          elevation: 10.0,
-                                          shadowColor: const Color(0xFFFFF59D),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Text('OK'),
-                                            ),
-                                          ],
+                                        return TeguraAlert(
+                                          errorTitle: 'Wasoje kwisuzuma!',
+                                          errorMsg:
+                                              'Wabonye ${popQuestions.length}/${popQuestions.length}',
+                                          firstButtonTitle: 'Inyuma',
+                                          firstButtonFunction: () {
+                                            Navigator.of(context).pop();
+                                            Navigator.pop(context);
+                                          },
+                                          firstButtonColor:
+                                              const Color(0xFF00A651),
+                                          alertType: 'success',
                                         );
                                       });
                                 },
@@ -325,7 +245,6 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                                               0.03),
                                 ),
                               ),
-                              // 2. INYUMA BUTTON
                               Row(
                                 children: [
                                   DirectionButtonIsuzume(
@@ -377,7 +296,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
   }
 
 // SET THE SELECTED OPTION AND THE CORRECTNESS OF THE ANSWER
-  void setSelectedOption(Map<String, dynamic>? option) {
+  void setSelectedOption(OptionPopQn? option) {
     if (option == null) {
       setState(() {
         selectedOption = -1;
@@ -386,8 +305,8 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
       return;
     }
     setState(() {
-      selectedOption = option['id'];
-      isCurrentCorrect = option['isCorrect'];
+      selectedOption = option.id;
+      isCurrentCorrect = option.isCorrect;
     });
   }
 }

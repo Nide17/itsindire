@@ -8,7 +8,6 @@ class ProfileService {
 
   final String? uid;
 
-  // CONSTRUCTOR
   ProfileService({this.uid});
 
   // THIS FUNCTION WILL UPDATE THE USER DATA IN THE DATABASE WHEN THE USER SIGNS UP AND WHEN THE USER UPDATES HIS/HER PROFILE
@@ -40,28 +39,6 @@ class ProfileService {
       'roleId': roleId,
     });
   }
-
-  // // GET A LIST OF PROFILES FROM A SNAPSHOT USING THE PROFILE MODEL
-  // // FUNCTION CALLED EVERY TIME THE PROFILES DATA CHANGES
-  // List<ProfileModel> _profilesListFromSnapshot(QuerySnapshot querySnapshot) {
-  //   // RETURN A LIST OF USERS FROM THE SNAPSHOT
-  //   return querySnapshot.docs.map((doc) {
-  //     return ProfileModel(
-  //       // USER DATA - FIELDS
-  //       uid: doc.id,
-  //       username: doc['username'] ?? '',
-  //       email: doc['email'] ?? '',
-  //       phone: doc['phone'] ?? '',
-  //       photo: doc['photo'] ?? '',
-  //       gender: doc['gender'] ?? '',
-  //       dob: doc['dob'] ?? '',
-  //       urStudent: doc['urStudent'] ?? false,
-  //       regNumber: doc['regNumber'] ?? '',
-  //       campus: doc['campus'] ?? '',
-  //       roleId: doc['roleId'] ?? 1,
-  //     );
-  //   }).toList();
-  // }
 
   // GET A SINGLE PROFILE FROM A SNAPSHOT USING THE PROFILE MODEL - _profileFromSnapshot
   // FUNCTION CALLED EVERY TIME THE PROFILE DATA CHANGES
@@ -138,15 +115,12 @@ class ProfileService {
 
     return profilesCollection.doc(uid).snapshots().map(_profileFromSnapshot);
   }
-
-  // APP BAR PROFILE DATA
+  
   Future<dynamic> getAppBarProfileData(String? uid) async {
-
     if (uid == null) {
       return null;
-    }
-    else {
-          // GET THE USER PROFILE DATA
+    } else {
+      // GET THE USER PROFILE DATA
       final profileData = await profilesCollection.doc(uid).get();
 
       // RETURN THE USER PROFILE DATA AS _profileFromSnapshot

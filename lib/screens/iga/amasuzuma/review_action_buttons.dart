@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ReviewActionButtons extends StatefulWidget {
-  // INSTANCE VARIABLES
   final String icon;
   final String text;
   final int bgColor;
@@ -42,16 +41,19 @@ class _ReviewActionButtonsState extends State<ReviewActionButtons> {
       ),
       child: ElevatedButton(
         onPressed: () {
-          widget.screen != null
-              ? Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => widget.screen,
-                  ),
-                )
-              : widget.action == 'question1'
-                  ? widget.showQn(1)
-                  : Navigator.pop(context);
+          if (widget.action == 'question1') {
+            widget.showQn(1);
+          } else if (widget.screen != null) {
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => widget.screen,
+              ),
+            );
+          } else {
+            Navigator.pop(context);
+          }
         },
         style: ElevatedButton.styleFrom(
           fixedSize: Size(
@@ -69,7 +71,6 @@ class _ReviewActionButtonsState extends State<ReviewActionButtons> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // ICON
               widget.text != 'Kora irindi suzuma'
                   ? Visibility(
                       visible: true,

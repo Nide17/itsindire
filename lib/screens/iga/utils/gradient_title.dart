@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class GradientTitle extends StatelessWidget {
-// INSTANCE VARIABLES
   final String title;
   final String icon;
   final double? marginTop;
   final String? parentWidget;
 
-// CONSTRUCTOR
   const GradientTitle(
       {super.key,
       required this.title,
@@ -22,13 +20,21 @@ class GradientTitle extends StatelessWidget {
     return Center(
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
-        margin: EdgeInsets.only(left: 0, top: marginTop ?? 24),
+        margin: EdgeInsets.only(
+            left: 0,
+            top: marginTop ?? 24,
+            bottom: MediaQuery.of(context).size.height * 0.01),
         padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width * 0.0001,
-            vertical: MediaQuery.of(context).size.height * 0.016),
-        // STYLING
+            vertical: MediaQuery.of(context).size.height * 0.012),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(100),
+          border: Border.all(
+            width: MediaQuery.of(context).size.width * 0.006,
+            color: parentWidget == 'isuzume'
+                ? const Color(0xFF5B8BDF)
+                : const Color(0xFF9D14DD),
+          ),
           gradient: parentWidget == 'isuzume'
               ? null
               : const LinearGradient(
@@ -44,10 +50,10 @@ class GradientTitle extends StatelessWidget {
               ? null
               : const [
                   BoxShadow(
-                    color: Color.fromARGB(255, 70, 227, 255),
+                    color: Color.fromARGB(255, 7, 25, 40),
                     offset: Offset(0, 3),
                     blurRadius: 8,
-                    spreadRadius: -7,
+                    spreadRadius: 1,
                   ),
                 ],
         ),
@@ -59,7 +65,7 @@ class GradientTitle extends StatelessWidget {
             // HORIZONTAL SPACE
             if (icon != '')
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.03,
+                width: MediaQuery.of(context).size.width * 0.02,
               ),
 
             // SVG ICON
@@ -71,7 +77,7 @@ class GradientTitle extends StatelessWidget {
             // HORIZONTAL SPACE
             if (icon != '')
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.03,
+                width: MediaQuery.of(context).size.width * 0.02,
               ),
 
             // TEXT WIDGET
@@ -81,7 +87,7 @@ class GradientTitle extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: parentWidget == 'isuzume'
-                      ? MediaQuery.of(context).size.width * 0.035
+                      ? MediaQuery.of(context).size.width * 0.04
                       : MediaQuery.of(context).size.width * 0.045,
                   color:
                       parentWidget == 'isuzume' ? Colors.black : Colors.white,

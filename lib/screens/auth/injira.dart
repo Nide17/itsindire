@@ -3,20 +3,20 @@ import "package:flutter/material.dart";
 import 'package:tegura/firebase_services/profiledb.dart';
 import 'package:tegura/main.dart';
 import 'package:tegura/models/profile.dart';
+import 'package:tegura/screens/iga/utils/tegura_alert.dart';
 import 'package:tegura/utilities/cta_button.dart';
 import 'package:tegura/utilities/cta_link.dart';
 import 'package:tegura/utilities/default_input.dart';
 import 'package:tegura/utilities/description.dart';
 import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/utilities/appbar.dart';
-import 'package:tegura/utilities/spinner.dart';
+import 'package:tegura/utilities/app_bar.dart';
 import 'package:tegura/firebase_services/auth.dart';
+import 'package:tegura/utilities/loading_widget.dart';
 
 class Injira extends StatefulWidget {
   final String? message;
   final ConnectionStatus? connectionStatus;
-  const Injira({Key? key, this.message, this.connectionStatus})
-      : super(key: key);
+  const Injira({super.key, this.message, this.connectionStatus});
 
   @override
   State<Injira> createState() => _InjiraState();
@@ -24,7 +24,6 @@ class Injira extends StatefulWidget {
 
 // STATE FOR THE SIGN IN PAGE - STATEFUL
 class _InjiraState extends State<Injira> {
-  // AUTH SERVICE INSTANCE - TO ACCESS THE AUTH METHODS
   final AuthService _authInstance = AuthService();
 
 // DECLARE FORM KEY TO VALIDATE THE FORM
@@ -35,7 +34,6 @@ class _InjiraState extends State<Injira> {
   String password = '';
   String error = '';
   bool loading = false;
-
   dynamic profile;
 
   Future<void> _loadProfileData() async {
@@ -48,27 +46,29 @@ class _InjiraState extends State<Injira> {
     }
   }
 
-  // BUILD METHOD TO BUILD THE UI OF THE APP
+  // INITIALLY IF ALREADY LOGGED IN, GO TO THE HOME PAGE
   @override
-  Widget build(BuildContext context) {
-
-    // IF THE USER IS LOGGED IN, POP THE CURRENT PAGE
+  void initState() {
+    super.initState();
     if (_authInstance.currentUser() != null) {
       Navigator.pop(context);
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    // IF THE USER IS LOGGED IN, POP THE CURRENT PAGE
+    if (_authInstance.currentUser() != null) {
+      Navigator.popUntil(context, (route) => route.isFirst);
+    }
     return loading
-        ? const Spinner()
+        ? const LoadingWidget()
         : Scaffold(
             backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-
-            // APP BAR
             appBar: const PreferredSize(
               preferredSize: Size.fromHeight(58.0),
               child: AppBarTegura(),
             ),
-
-            // PAGE BODY
             body: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
@@ -123,7 +123,7 @@ class _InjiraState extends State<Injira> {
                           ),
                         )
                       : Container(),
-                  // 1. GRADIENT TITLE
+
                   const GradientTitle(
                       title: 'INJIRA', icon: 'assets/images/injira.svg'),
 
@@ -153,96 +153,79 @@ class _InjiraState extends State<Injira> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // EMAIL
                           DefaultInput(
                             placeholder: 'Imeyili',
                             validation: 'Injiza imeyili yawe!',
-
-                            // ON CHANGED
                             onChanged: (value) {
                               setState(() {
                                 email = value;
                               });
                             },
-
-                            obscureText: false,
                           ),
 
-                          // IJAMBOBANGA
                           DefaultInput(
                             placeholder: 'Ijambobanga',
                             validation: 'Injiza ijambobanga!',
-
-                            // ON CHANGED
                             onChanged: (value) {
                               setState(() {
                                 password = value;
                               });
                             },
-                            obscureText: true,
                           ),
-
-                          // CTA BUTTON
                           CtaButton(
                             text: 'Injira',
                             onPressed: () async {
-                              //VALIDATING THE FORM FIELDS
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
-
-                                // SET THE LOADING STATE TO TRUE
                                 setState(() => loading = true);
-
-                                // LOGIN THE USER
                                 dynamic loginRes = await _authInstance
                                     .loginWithEmailAndPassword(email, password);
-
-                                // CHECK IF LOGIN SUCCESSFUL
                                 if (loginRes == null) {
                                   setState(() {
-                                    error = 'Please supply valid credentials!';
+                                    error = 'Injiza ibisabwa byanyabyo!';
                                     loading = false;
-
-                                    // SHOW ALERT DIALOG
                                     showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: const Text('Error'),
-                                            content: Text(error),
-                                            actions: [
-                                              TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: const Text('OK'))
-                                            ],
+                                          return TeguraAlert(
+                                              errorTitle:
+                                                  'Kwinjira ntibyakunze.',
+                                              errorMsg: error,
+                                              alertType: 'error',
                                           );
                                         });
                                   });
                                 } else {
-                                  // LOAD PROFILE DATA
                                   await _loadProfileData();
 
-                                  // SET THE LOADING STATE TO FALSE
                                   setState(() => loading = false);
-
-                                  // NAVIGATE TO THE PREVIOUS PAGE
                                   if (!mounted) return;
-
-                                  Navigator.pop(context);
-
-                                  // SHOW SNACKBAR TO SHOW SUCCESSFUL LOGIN
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(
-                                    content: Text('Kwinjira byagenze neza!'),
-                                    backgroundColor: Colors.green,
-                                  ));
+                                  if (ModalRoute.of(context)!.settings.name ==
+                                          '/injira' ||
+                                      ModalRoute.of(context)!.settings.name ==
+                                          '/iyandikishe' ||
+                                      ModalRoute.of(context)!.settings.name ==
+                                          '/wibagiwe') {
+                                    Navigator.pushNamed(
+                                        context, '/iga-landing');
+                                  } else {
+                                    Navigator.pop(context);
+                                  }
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                              Text('Kwinjira byagenze neza!'),
+                                          backgroundColor: Color(0xFF00A651)));
                                 }
                               } else {
                                 print('\nSigned in!!\n');
                               }
                             },
+                          ),
+
+                          // SIZED BOX
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
                           ),
 
                           // CTA LINK
@@ -271,26 +254,6 @@ class _InjiraState extends State<Injira> {
                       ),
                     ),
                   ),
-
-                  // // ANONYMOUS SIGN IN BUTTON
-                  // Container(
-                  //   padding: const EdgeInsets.all(40.0),
-
-                  //   // RAISED BUTTON
-                  //   child: ElevatedButton(
-                  //     onPressed: () async {
-                  //       // SIGN IN ANONYMOUSLY USING THE AUTH SERVICE INSTANCE - AUTH CLASS
-                  //       dynamic result = await _authInstance
-                  //           .signInAnon(); // DYNAMIC TYPE - CAN BE USER OR NULL
-
-                  //       if (result == null) {
-                  //       } else {
-                  //         print(result.uid);
-                  //       }
-                  //     },
-                  //     child: const Text('Sign In Anonymously'),
-                  //   ),
-                  // ),
                 ],
               ),
             ));

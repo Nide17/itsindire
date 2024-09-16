@@ -7,17 +7,15 @@ import 'package:tegura/models/payment.dart';
 import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/ibiciro/ifatabuguzi.dart';
 import 'package:tegura/screens/ibiciro/subscription.dart';
-import 'package:tegura/utilities/appbar.dart';
+import 'package:tegura/screens/iga/utils/tegura_alert.dart';
+import 'package:tegura/utilities/app_bar.dart';
 import 'package:tegura/utilities/default_input.dart';
 import 'package:tegura/utilities/spinner.dart';
 
 class ProcessingIshyura extends StatefulWidget {
-  // INSTANCE VARIABLES
   final IfatabuguziModel ifatabuguzi;
 
-  // CONSTRUCTOR
-  const ProcessingIshyura({Key? key, required this.ifatabuguzi})
-      : super(key: key);
+  const ProcessingIshyura({super.key, required this.ifatabuguzi});
 
   @override
   State<ProcessingIshyura> createState() => _ProcessingIshyuraState();
@@ -35,7 +33,7 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
   Future<void> _loadPaymentData() async {
     if (FirebaseAuth.instance.currentUser != null) {
       PaymentModel pymt = await PaymentService()
-          .getUserLatestPaymentData(FirebaseAuth.instance.currentUser!.uid);
+          .getUserLatestPytData(FirebaseAuth.instance.currentUser!.uid);
       setState(() {
         payment = pymt;
       });
@@ -46,24 +44,20 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
   Widget build(BuildContext context) {
     final usr = Provider.of<UserModel?>(context);
     final String message = widget.ifatabuguzi.type != 'ur'
-        ? 'Andika nimero ugiye gukoresha wishyura yawe hasi aho, ubundi wishyure ${widget.ifatabuguzi.igiciro} RWF kuri MoMo: 0780579067'
-        : 'Provide your payment number below, then pay ${widget.ifatabuguzi.igiciro} RWF on MoMo: 0780579067';
+        ? 'Andika nimero ugiye gukoresha wishyura yawe hasi aho, ubundi wishyure ${widget.ifatabuguzi.igiciro} RWF kuri MoMo: 0794033360'
+        : 'Provide your payment number below, then pay ${widget.ifatabuguzi.igiciro} RWF on MoMo: 0794033360';
     // final String message = widget.ifatabuguzi.type != 'ur'
-    //     ? 'Ishyura ${widget.ifatabuguzi.igiciro} RWF kuri MoMo: 0780579067 \n Cyangwa ukande ino mibare kuri telefone yawe ukoreshe numero yawe ya MTN maze wishyure: \n*182*8*1*36921*${widget.ifatabuguzi.igiciro}#'
-    //     : 'Provide your number below or Pay ${widget.ifatabuguzi.igiciro} RWF on MoMo: 0780579067 \n or dial the following on your phone using your MTN momo phone number: \n*182*8*1*36921*${widget.ifatabuguzi.igiciro}#';
+    //     ? 'Ishyura ${widget.ifatabuguzi.igiciro} RWF kuri MoMo: 0794033360 \n Cyangwa ukande ino mibare kuri telefone yawe ukoreshe numero yawe ya MTN maze wishyure: \n*182*8*1*36921*${widget.ifatabuguzi.igiciro}#'
+    //     : 'Provide your number below or Pay ${widget.ifatabuguzi.igiciro} RWF on MoMo: 0794033360 \n or dial the following on your phone using your MTN momo phone number: \n*182*8*1*36921*${widget.ifatabuguzi.igiciro}#';
 
     return loading
         ? const Spinner()
         : Scaffold(
             backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-
-            // APP BAR
             appBar: const PreferredSize(
               preferredSize: Size.fromHeight(58.0),
               child: AppBarTegura(),
             ),
-
-            // PAGE BODY
             body: ListView(
               // YELLOW MOMO PAYING CONTAINER
               children: [
@@ -116,29 +110,27 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // IJAMBOBANGA
                         DefaultInput(
-                          placeholder: 'Telefone yawe',
-                          validation: 'Injiza numero ya telefone yawe!',
-
-                          // ON CHANGED
+                          placeholder: widget.ifatabuguzi.type == 'ur'
+                              ? 'Your MTN Number'
+                              : 'Nimero yawe ya MTN',
+                          validation: widget.ifatabuguzi.type == 'ur'
+                              ? 'Please provide your MTN number'
+                              : 'Injiza numero ya MTN telefone yawe!',
                           onChanged: (value) {
                             setState(() {
                               phone = value;
                             });
                           },
                         ),
-
-                        // CONFIRM PAYMENT
                         GestureDetector(
-                          // NAVIGATE TO THE CHILD PAGE
                           onTap: () async {
-                            // CREATE A NEW PAYMENT OBJECT
                             PaymentModel payment = PaymentModel(
                                 createdAt: DateTime.now(),
                                 endAt: widget.ifatabuguzi.getEndDate(),
                                 userId: usr != null ? usr.uid : '',
                                 ifatabuguziID: widget.ifatabuguzi.id,
+                                igiciro: '${widget.ifatabuguzi.igiciro} RWF',
                                 isApproved: false,
                                 phone: phone);
 
@@ -163,17 +155,10 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
                                   showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text('Error'),
-                                          content: Text(error),
-                                          actions: [
-                                            TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: const Text('OK'))
-                                          ],
-                                        );
+                                        return TeguraAlert(
+                                            errorTitle: 'Error',
+                                            errorMsg: error,
+                                            alertType: 'error');
                                       });
                                 });
                               } else {

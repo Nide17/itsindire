@@ -7,16 +7,16 @@ class CourseProgressModel {
   int currentIngingo = 0;
   int totalIngingos = 0;
 
-  // CONSTRUCTOR
-  CourseProgressModel(
-      {required this.id,
-      required this.userId,
-      required this.courseId,
-      required this.currentIngingo,
-      required this.totalIngingos});
+  CourseProgressModel({
+    required this.id,
+    required this.userId,
+    required this.courseId,
+    required this.currentIngingo,
+    required this.totalIngingos,
+  });
 
 // GET THE PROGRESS PERCENTAGE
-get progressPercentage => currentIngingo / totalIngingos;
+  get progressPercentage => currentIngingo / totalIngingos;
 
   // TO STRING
   @override

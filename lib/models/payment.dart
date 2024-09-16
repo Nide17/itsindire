@@ -4,6 +4,7 @@ class PaymentModel {
   DateTime endAt;
   String? userId;
   String? ifatabuguziID;
+  String? igiciro;
   bool? isApproved;
   String? phone;
 
@@ -13,6 +14,7 @@ class PaymentModel {
     required this.endAt,
     this.userId,
     this.ifatabuguziID,
+    this.igiciro,
     this.isApproved,
     this.phone,
   });
@@ -35,7 +37,7 @@ class PaymentModel {
     DateTime end = endAt;
 
     // FORMAT THE END DATE
-    String formatedEnd = '${end.year}-${end.month}-${end.day}';
+    String formatedEnd = '${end.day}-${end.month}-${end.year}';
 
     // RETURN THE FORMATED END DATE
     return formatedEnd;
@@ -49,6 +51,7 @@ class PaymentModel {
       endAt: json['endAt'].toDate(),
       userId: json['userId'],
       ifatabuguziID: json['ifatabuguziID'],
+      igiciro: json['igiciro'],
       isApproved: json['isApproved'],
       phone: json['phone'],
     );
@@ -62,6 +65,7 @@ class PaymentModel {
       'endAt': endAt,
       'userId': userId,
       'ifatabuguziID': ifatabuguziID,
+      'igiciro': igiciro,
       'isApproved': isApproved,
       'phone': phone,
     };
@@ -70,6 +74,6 @@ class PaymentModel {
   // TO STRING
   @override
   String toString() {
-    return 'PaymentModel(id: $id, createdAt: $createdAt, endAt: $endAt, userId: $userId, ifatabuguziID: $ifatabuguziID, isApproved: $isApproved, phone: $phone)';
+    return 'PaymentModel(id: $id, createdAt: $createdAt, endAt: $endAt, userId: $userId, ifatabuguziID: $ifatabuguziID, igiciro: $igiciro, isApproved: $isApproved, phone: $phone)';
   }
 }

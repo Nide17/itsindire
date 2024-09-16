@@ -2,6 +2,7 @@ class OptionPopQn {
   int id = 0;
   bool isCorrect = false;
   String? title = '';
+  String? text = '';
   String? imageUrl = '';
   String? description = '';
 
@@ -9,6 +10,7 @@ class OptionPopQn {
     required this.id,
     required this.isCorrect,
     this.title,
+    this.text,
     this.imageUrl,
     this.description,
   });
@@ -17,6 +19,7 @@ class OptionPopQn {
     id = json['id'];
     isCorrect = json['isCorrect'];
     title = json['title'];
+    text = json['text'];
     imageUrl = json['imageUrl'];
     description = json['description'];
   }
@@ -26,6 +29,7 @@ class OptionPopQn {
       'id': id,
       'isCorrect': isCorrect,
       'title': title,
+      'text': text,
       'imageUrl': imageUrl,
       'description': description,
     };
@@ -33,7 +37,7 @@ class OptionPopQn {
 
   @override
   String toString() {
-    return 'OptionPopQn(id: $id, isCorrect: $isCorrect, title: $title, imageUrl: $imageUrl, description: $description)';
+    return 'OptionPopQn(id: $id, isCorrect: $isCorrect, title: $title, text: $text, imageUrl: $imageUrl, description: $description)';
   }
 
   OptionPopQn toObject(Map<String, dynamic> map) {
@@ -41,6 +45,7 @@ class OptionPopQn {
       id: map['id'],
       isCorrect: map['isCorrect'],
       title: map['title'],
+      text: map['text'],
       imageUrl: map['imageUrl'],
       description: map['description'],
     );
@@ -54,9 +59,8 @@ class PopQuestionModel {
   int isomoID = 0;
   String? title = '';
   String? imageUrl = '';
-  dynamic options = '';
+  List<OptionPopQn> options = [];
 
-  // CONSTRUCTOR
   PopQuestionModel({
     required this.id,
     required this.ingingoID,
@@ -73,17 +77,9 @@ class PopQuestionModel {
     isomoID = json['isomoID'];
     title = json['title'];
     imageUrl = json['imageUrl'];
-    options = json['options'];
-  }
-
-  int getCorrectOptionId() {
-    int correctOptionId = -1;
-    for (var i = 0; i < options.length; i++) {
-      if (options[i]['isCorrect'] == true) {
-        correctOptionId = options[i]['id'];
-      }
-    }
-    return correctOptionId;
+    options = (json['options'] as List<dynamic>)
+        .map((optionJson) => OptionPopQn.fromJson(optionJson))
+        .toList();
   }
 
   // TO JSON
@@ -101,7 +97,7 @@ class PopQuestionModel {
   // TO STRING
   @override
   String toString() {
-    return 'PopQuestionModel(id: $id, ingingoID: $ingingoID, isomoID: $isomoID, title: $title, imageUrl: $imageUrl, options: $options)';
+    return 'PopQuestion(id: $id, ingingoID: $ingingoID, isomoID: $isomoID, title: $title, imageUrl: $imageUrl, options: $options)';
   }
 
   // TO OBJECT
@@ -114,5 +110,16 @@ class PopQuestionModel {
       imageUrl: map['imageUrl'],
       options: map['options'],
     );
+  }
+
+  int getCorrectOptionId() {
+    int correctOptionId = -1;
+    for (var i = 0; i < options.length; i++) {
+      if (options[i].isCorrect) {
+        correctOptionId = options[i].id;
+        break;
+      }
+    }
+    return correctOptionId;
   }
 }

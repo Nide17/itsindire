@@ -6,12 +6,10 @@ import 'package:tegura/screens/auth/iyandikishe.dart';
 import 'package:tegura/screens/ibiciro/processing_ishyura.dart';
 
 class Subscription extends StatelessWidget {
-  // INSTANCE VARIABLES
   final String title;
   final IfatabuguziModel ifatabuguzi;
   final String curWidget;
 
-  // CONSTRUCTOR
   const Subscription(
       {super.key,
       required this.title,
@@ -197,7 +195,6 @@ class Subscription extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                      // VERTICAL SPACE
                                       SizedBox(
                                         height:
                                             MediaQuery.of(context).size.height *

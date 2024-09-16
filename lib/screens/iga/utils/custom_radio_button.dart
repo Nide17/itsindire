@@ -8,7 +8,7 @@ class CustomRadioButton extends StatefulWidget {
   final bool isThisCorrect;
   final List<ScoreQuestion>? scoreQuestions;
   final QuizScoreProvider? scoreProviderModel;
-  final Map<String, dynamic>? option;
+  final OptionPopQn? option;
   final PopQuestionModel? currentQuestion;
   final int? choosenOption;
   final bool? isAnswered;
@@ -43,7 +43,7 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
         ? widget.isThisCorrect
         : // CASE OF POP QUESTIONS
         (widget.isAnswered == true &&
-                widget.option!['id'] == widget.choosenOption &&
+                widget.option!.id == widget.choosenOption &&
                 widget.isAnswerCorrect == true)
             ? true
             : null;
@@ -52,7 +52,7 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
         ? widget.isSelected
         : // CASE OF POP QUESTIONS
         (widget.isAnswered == true &&
-                widget.option!['id'] == widget.choosenOption)
+                widget.option!.id == widget.choosenOption)
             ? true
             : false;
 
@@ -66,8 +66,8 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
           for (var element in widget.scoreProviderModel!.quizScore.questions) {
             if (element.popQuestion.id == widget.currentQuestion!.id) {
               element.isAnswered = true;
-              element.setChoosenOption(widget.option!['id']);
-              element.setIsAnswerCorrect(widget.option!['id'] ==
+              element.setChoosenOption(widget.option!.id);
+              element.setIsAnswerCorrect(widget.option!.id ==
                   widget.currentQuestion!.getCorrectOptionId());
             }
           }
@@ -121,8 +121,9 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
                           isThisCorrect == true
                               ? Icons.check_circle
                               : Icons.cancel,
-                          color:
-                              isThisCorrect == true ? Colors.green : Colors.red,
+                          color: isThisCorrect == true
+                              ? const Color(0xFF00A651)
+                              : Colors.red,
                           size: MediaQuery.of(context).size.height * 0.018,
                         )
                       : Container(),
@@ -130,7 +131,7 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
                 SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                 Expanded(
                   child: Text(
-                    widget.option != null ? widget.option!['text'] : '',
+                    widget.option == null ? '' : widget.option!.text ?? '',
                     style: TextStyle(
                       fontSize: MediaQuery.of(context).size.height * 0.017,
                       fontWeight: FontWeight.bold,
@@ -149,7 +150,7 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
                         ? Text('Wabikoze! ',
                             textAlign: TextAlign.left,
                             style: TextStyle(
-                                color: Colors.green,
+                                color: const Color(0xFF00A651),
                                 fontSize:
                                     MediaQuery.of(context).size.height * 0.014,
                                 fontWeight: FontWeight.bold))
@@ -166,16 +167,20 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
                           ),
                     SizedBox(
                         height: MediaQuery.of(context).size.height * 0.025),
-                    Text(
-                      isThisCorrect == true &&
-                              widget.option != null &&
-                              widget.option!['description'] != null
-                          ? widget.option!['description']
-                          : '',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.height * 0.014,
-                        color: Colors.black.withOpacity(0.9),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.height * 0.01),
+                      child: Text(
+                        isThisCorrect == true &&
+                                widget.option != null &&
+                                widget.option!.description != null
+                            ? widget.option!.description ?? ''
+                            : '',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.height * 0.014,
+                          color: Colors.black.withOpacity(0.9),
+                        ),
                       ),
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.04),
@@ -190,7 +195,7 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
   Color getDisplayColor(bool? isThisCorrect) {
     if (isThisCorrect != null) {
       if (isThisCorrect == true) {
-        return Colors.green;
+        return const Color(0xFF00A651);
       } else if (isThisCorrect == false) {
         return Colors.red;
       } else {

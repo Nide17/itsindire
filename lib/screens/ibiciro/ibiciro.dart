@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/firebase_services/ifatabuguzi_db.dart';
@@ -9,27 +8,25 @@ import 'package:tegura/screens/ibiciro/ifatabuguzi.dart';
 import 'package:tegura/screens/ibiciro/subscription.dart';
 import 'package:tegura/screens/iga/utils/gradient_title.dart';
 import 'package:tegura/utilities/description.dart';
-import 'package:tegura/utilities/appbar.dart';
+import 'package:tegura/utilities/app_bar.dart';
+import 'package:tegura/utilities/loading_widget.dart';
 import 'package:tegura/utilities/no_internet.dart';
 
 class Ibiciro extends StatefulWidget {
   final String? message;
-  const Ibiciro({Key? key, this.message}) : super(key: key);
+  const Ibiciro({super.key, this.message});
 
   @override
   State<Ibiciro> createState() => _IbiciroState();
 }
 
 class _IbiciroState extends State<Ibiciro> {
-  // BUILD METHOD TO BUILD THE UI OF THE APP
-
   @override
   Widget build(BuildContext context) {
     final conn = Provider.of<ConnectionStatus>(context);
-    print("conn in ibiciro ${conn.isOnline}");
     bool everDisconnected = false;
+    List<IfatabuguziModel?> subscriptionsToUse = [];
 
-    // WHEN CONNECTION IS LOST, NOTIFY USER. IF IT COMES BACK AFTER BEING LOST NOTIFY USER TOO
     if (conn.isOnline == false) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -50,7 +47,6 @@ class _IbiciroState extends State<Ibiciro> {
       everDisconnected = true;
     }
 
-    // WHEN CONNECTION IS BACK, NOTIFY USER
     if (conn.isOnline == true && everDisconnected == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -72,20 +68,11 @@ class _IbiciroState extends State<Ibiciro> {
 
     return MultiProvider(
       providers: [
-        // GET THE AMASOMO
         StreamProvider<List<IfatabuguziModel?>?>.value(
-          // WHAT TO GIVE TO THE CHILDREN WIDGETS
           value: IfatabuguziService().amafatabuguzi,
           initialData: null,
 
-          // CATCH ERRORS
           catchError: (context, error) {
-            // PRINT THE ERROR
-            if (kDebugMode) {
-              print("Error in ibiciro: $error");
-              print("The err: ${IfatabuguziService().amafatabuguzi}");
-            }
-            // RETURN NULL
             return [];
           },
         ),
@@ -93,40 +80,30 @@ class _IbiciroState extends State<Ibiciro> {
       child: Consumer<ProfileModel?>(builder: (context, profile, _) {
         return Consumer<List<IfatabuguziModel?>?>(
             builder: (context, amafatabuguzi, child) {
-          if (amafatabuguzi == null) {
-            // Handle the case when amafatabuguzi is null
-            return const CircularProgressIndicator(); // Or any other placeholder widget
-          } else {
-            List<IfatabuguziModel?> subscriptionsToUse = [];
-
-            // GET THE SUBSCRIPTIONS TO USE IN THE IBICIRO ACC. TO PROFILE urStudent?
+          if (amafatabuguzi != null) {
             if (profile != null && profile.urStudent == true) {
-              // GET THE SUBSCRIPTIONS
-              subscriptionsToUse = amafatabuguzi
+             subscriptionsToUse = amafatabuguzi
                   .where((element) => element!.type == 'ur')
                   .toList();
             } else {
-              // GET THE SUBSCRIPTIONS
               subscriptionsToUse = amafatabuguzi
                   .where((element) => element!.type == 'standard')
                   .toList();
             }
+          }
 
+          if (amafatabuguzi == null) {
+            return const LoadingWidget();
+          } else {
             return Scaffold(
                 backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-
-                // APP BAR
                 appBar: const PreferredSize(
                   preferredSize: Size.fromHeight(58.0),
                   child: AppBarTegura(),
                 ),
                 body:
-                    // IF THERE IS NO INTERNET - SHOW "No internet" and BUTTON UNDER IT TO REFRESH BOTH CENTERED HOR. AND VERT.
                     conn.isOnline == false
-                        ? const NoInternet()
-                        :
-
-                        // PAGE BODY IF THERE IS INTERNET
+                        ? const NoInternet() :
                         ListView(
                             children: [
                               widget.message != null
@@ -183,17 +160,13 @@ class _IbiciroState extends State<Ibiciro> {
                                       ),
                                     )
                                   : Container(),
-                              // GRADIENT TITLE
                               const GradientTitle(
                                   title: 'IBICIRO BYO KWIGA',
                                   icon: 'assets/images/ibiciro.svg'),
-
-                              // DESCRIPTION
-                              const Description(
-                                  text:
-                                      'Ishyura amafaranga ahwanye n\'ifatabuguzi wifuza, uhite utangira kwiga.'),
-
-                              // IBICIRO DETAILS - ibiciroData.map in Column
+                              Description(
+                                  text: profile?.urStudent == true
+                                      ? 'Please pay for the package you want to use, then start learning.'
+                                      : 'Ishyura amafaranga ahwanye n\'ifatabuguzi wifuza, uhite utangira kwiga.'),
                               Column(
                                 children: subscriptionsToUse
                                     .asMap()
