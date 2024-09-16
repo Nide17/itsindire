@@ -129,6 +129,23 @@ class _InjiraState extends State<Injira> {
                                   error = 'Please supply valid credentials!';
                                   loading = false;
                                   print('\nError signing in!\n');
+
+                                  // SHOW ALERT DIALOG
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('Error'),
+                                          content: Text(error),
+                                          actions: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text('OK'))
+                                          ],
+                                        );
+                                      });
                                 });
                               }
                               else {

@@ -28,7 +28,7 @@ class IsomoService {
       // RETURN A LIST OF AMASOMO FROM THE SNAPSHOT
       return IsomoModel(
         // AMASOMO DATA - FIELDS
-        id: id,
+        id: id is int ? id : id is String ? int.parse(id) : 0,
         title: title,
         description: description,
         introText: introText,

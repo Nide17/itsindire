@@ -20,7 +20,6 @@ class ViewLoggedIn extends StatelessWidget {
 
     // LIST OF PROGRESSES THAT ARE NOT FINISHED BY THE USER AND ALSO THE ONES THAT ARE NOT STARTED
     List<CourseProgressModel?>? notFinishedProgresses;
-    List<CourseProgressModel?>? finishedProgresses;
 
     // GET THE PROGRESSES THAT ARE NOT FINISHED BY THE USER AND ADD THEM TO THE LIST
     if (progresses != null) {
@@ -47,16 +46,22 @@ class ViewLoggedIn extends StatelessWidget {
       }
     }
 
-    // GET THE PROGRESSES THAT ARE FINISHED BY THE USER AND ADD THEM TO THE LIST
-    if (progresses != null) {
-      finishedProgresses = progresses
-          .where(
-              (progress) => progress?.currentIngingo == progress?.totalIngingos)
-          .toList();
+    // SORT BY THE PROGRESS PERCENTAGE IN DESCENDING ORDER (THE ONES WITH THE HIGHEST PERCENTAGE FIRST)
+    if (progressesToShow != null) {
+      progressesToShow?.sort((a, b) => b!.progressPercentage
+          .compareTo(a!.progressPercentage)); // SORT IN DESCENDING ORDER
     }
 
-    print('NOT FINISHED PROGRESSES: $notFinishedProgresses');
-    print('FINISHED PROGRESSES: $finishedProgresses');
+    // SORT BY ISOMOID IN ASCENDING ORDER (THE ONES WITH THE LOWEST ISOMOID FIRST)
+    if (progressesToShow != null) {
+      progressesToShow?.sort((a, b) => a!.courseId.compareTo(b!.courseId));
+    }
+
+    // NEXT, SORT BY THE NUMBER OF INGINGOS IN DESCENDING ORDER (THE ONES WITH THE HIGHEST NUMBER OF INGINGOS FIRST)
+    if (progressesToShow != null) {
+      progressesToShow?.sort((a, b) => b!.totalIngingos
+          .compareTo(a!.totalIngingos)); // SORT IN DESCENDING ORDER
+    }
 
     // RETURN THE WIDGETS
     return Column(
@@ -93,7 +98,9 @@ class ViewLoggedIn extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 0.02, vertical: 4.0),
                           child: Text(
-                            isomo!.title,
+                            // IF TITLE NOT NULL
+                            isomo?.title ?? '',
+
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               fontWeight: FontWeight.w900,
@@ -120,7 +127,7 @@ class ViewLoggedIn extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: Text(
-                            isomo.description,
+                            isomo?.description ?? '',
                             textAlign: TextAlign.left,
                             style: TextStyle(
                               fontSize:
@@ -135,7 +142,13 @@ class ViewLoggedIn extends StatelessWidget {
                           height: MediaQuery.of(context).size.height * 0.01,
                         ),
                         UserProgress(
-                          isomo: isomo,
+                          isomo: isomo ??
+                              IsomoModel(
+                                  conclusion: '',
+                                  id: 0,
+                                  description: '',
+                                  introText: '',
+                                  title: ''),
                           userId: userId,
                           totalIngingos: progress!.totalIngingos,
                         ),

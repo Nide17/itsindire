@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tegura/models/course_progress.dart';
 import 'package:tegura/models/isomo.dart';
 import 'package:tegura/screens/iga/utils/iga_content.dart';
+import 'package:tegura/screens/iga/utils/isuzume_content.dart';
 import 'package:tegura/services/isomo_progress.dart';
 
 class UserProgress extends StatelessWidget {
@@ -42,9 +43,10 @@ class UserProgress extends StatelessWidget {
 
     // GET THE PERCENTAGE
     final double percent = (courseProgress != null &&
-            courseProgress.totalIngingos != 0 && courseProgress.totalIngingos >= curCourseIngingo)
+            courseProgress.totalIngingos != 0 &&
+            courseProgress.totalIngingos >= curCourseIngingo)
         ? (curCourseIngingo / courseProgress.totalIngingos) // GET THE PROGRESS
-        : 0.0; // GET THE PROGRESS
+        : 1.0; // GET THE PROGRESS
 
     return // PROGRESS BAR WITH CTA BUTTON
         Row(
@@ -77,6 +79,7 @@ class UserProgress extends StatelessWidget {
           onTap: () {
             // IF THE USER HAS NOT STARTED THE COURSE, CREATE A NEW PROGRESS
             if (courseProgress?.totalIngingos != totalIngingos) {
+
               // CREATE OR UPDATE USER PROGRESS
               CourseProgressService().updateUserCourseProgress(
                 userId,
@@ -86,16 +89,19 @@ class UserProgress extends StatelessWidget {
               );
             }
 
-            print('USER ID: $userId');
-            print('ISOMO ID: ${isomo.id}');
-            print('TOTAL INGINGOS: $totalIngingos');
-            print('CURRENT INGINGO: $curCourseIngingo');
-
             // NAVIGATE TO IGA CONTENT
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => IgaContent(isomo: isomo)));
+                    builder: (context) => percent != 1.0
+                        ? IgaContent(
+                            isomo: isomo,
+                            courseProgress: courseProgress,
+                          )
+                        : IsuzumeContent(
+                            isomo: isomo,
+                            courseProgress: courseProgress,
+                          )));
           },
           child: Container(
             width: MediaQuery.of(context).size.width * 0.3,

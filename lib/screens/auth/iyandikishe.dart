@@ -29,6 +29,12 @@ class _IyandikisheState extends State<Iyandikishe> {
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
+
+    // IF THE USER IS LOGGED IN, POP THE CURRENT PAGE
+    if (_authInstance.currentUser() != null) {
+      Navigator.pop(context);
+    }
+
     return Scaffold(
         backgroundColor: const Color(0xFF5B8BDF),
 
@@ -115,22 +121,43 @@ class _IyandikisheState extends State<Iyandikishe> {
                       onPressed: () async {
                         // VALIDATE FORM
                         if (_formKey.currentState!.validate()) {
-                          
                           // REGISTER USER
-                          dynamic resSignUp = await _authInstance
-                              .registerWithEmailAndPassword(username, email, password);
+                          dynamic resSignUp =
+                              await _authInstance.registerWithEmailAndPassword(
+                                  username, email, password);
 
                           // CHECK IF USER IS REGISTERED
                           if (resSignUp == null) {
-                            setState(
-                                () => error = 'Please supply a valid email');
+                            setState(() {
+                              error =
+                                  'Please supply a valid email and password';
+
+                              // SHOW ERROR DIALOG
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('Error'),
+                                    content: Text(error),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            });
                           } else {
                             // LOGOUT USER
                             await _authInstance.logOut();
 
                             // REDIRECT TO LOGIN PAGE AFTER SUCCESSFUL REGISTRATION
-                            if(!mounted) return;
-                            
+                            if (!mounted) return;
+
                             Navigator.pushReplacementNamed(context, '/injira');
                           }
                         }

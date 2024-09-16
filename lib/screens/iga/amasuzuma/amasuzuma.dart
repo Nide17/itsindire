@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/models/user.dart';
@@ -40,7 +39,7 @@ class _AmasuzumabumenyiState extends State<Amasuzumabumenyi> {
         // PAGE BODY
         body: ListView(children: <Widget>[
           // 1. GRADIENT TITLE
-          GradientTitle(
+          const GradientTitle(
               title: 'AMASUZUMABUMENYI YOSE',
               icon: 'assets/images/amasuzumabumenyi.svg'),
 

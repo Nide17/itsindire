@@ -4,9 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:tegura/models/course_progress.dart';
 import 'package:tegura/models/ingingo.dart';
 import 'package:tegura/models/isomo.dart';
+import 'package:tegura/models/pop_question.dart';
+import 'package:tegura/screens/iga/utils/pop_quiz.dart';
 import 'package:tegura/services/isomo_progress.dart';
 
-class DirectionButton extends StatelessWidget {
+class DirectionButton extends StatefulWidget {
   // INSTANCE VARIABLES
   final String buttonText;
   final String direction;
@@ -26,6 +28,11 @@ class DirectionButton extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<DirectionButton> createState() => _DirectionButtonState();
+}
+
+class _DirectionButtonState extends State<DirectionButton> {
+  @override
   Widget build(BuildContext context) {
     // GET THE INGINGOS
     final ingingos = Provider.of<List<IngingoModel>?>(context) ?? [];
@@ -37,45 +44,63 @@ class DirectionButton extends StatelessWidget {
     final courseProgress = Provider.of<CourseProgressModel?>(context);
 
     // GET THE TOTAL NUMBER OF INGINGOS IN THE COURSE
-    final totalIngs = courseProgress != null ? courseProgress.totalIngingos : 0;
+    final totalIngsInProgr =
+        courseProgress != null ? courseProgress.totalIngingos : 0;
 
-    // GET THE CURRENT PROGRESS
-    final currProgress =
-        courseProgress != null ? courseProgress.currentIngingo : 0;
+    // GET THE POP QUESTIONS
+    final popQuestions = Provider.of<List<PopQuestionModel>?>(context);
 
-    // RETURN THE WIDGETS
+    // LIST OF INGINGOS STATE IDS
+    List<int> currentIngingosIds = ingingos.map((e) => e.id).toList();
+
+    // CHECK IF THE FIRST POP QUESTION ID IS IN THE LIST OF INGINGOS IDS
+    bool isPopQuestionInIngingos = currentIngingosIds.contains(
+        popQuestions != null && popQuestions.isNotEmpty
+            ? popQuestions[0].ingingoID
+            : 0);
+
     return ElevatedButton(
       onPressed: () {
-        if (direction == 'inyuma') {
+        if (widget.direction == 'inyuma') {
           // DECREASE SKIP STATE
-          changeSkip(-5);
-        } else if (direction == 'komeza') {
-          // INCREASE SKIP STATE
-          changeSkip(5);
+          widget.changeSkip(-5);
+        } else if (widget.direction == 'komeza') {
+          // IF THIS PAGE HAS POP QUESTIONS, THEN SHOW THEM FIRST BEFORE PROCEEDING TO THE NEXT PAGE
+          if (popQuestions != null &&
+              popQuestions.isNotEmpty &&
+              isPopQuestionInIngingos) {
+            // PUSH THE POP QUESTIONS TO THE SCREEN
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PopQuiz(
+                  popQuestions: popQuestions,
+                  isomo: widget.isomo,
+                  courseChangeSkip: widget.changeSkip,
+                ),
+              ),
+            );
+          } else {
+            // INCREASE SKIP STATE
+            widget.changeSkip(5);
+          }
 
           // UPDATE THE CURRENT INGINGO
-          if (skip >= 0 && skip < totalIngs) {
+          if (widget.skip >= 0 &&
+              widget.skip < totalIngsInProgr &&
+              pageIngingos + widget.skip > courseProgress!.currentIngingo) {
             // UPDATE THE CURRENT INGINGO
             CourseProgressService().updateUserCourseProgress(
-              courseProgress!.userId,
-              isomo.id,
+              courseProgress.userId,
+              widget.isomo.id,
               courseProgress.totalIngingos < courseProgress.currentIngingo
                   ? courseProgress.currentIngingo
                   : courseProgress.totalIngingos,
-              skip + pageIngingos,
+              widget.skip + pageIngingos,
             );
-
-            print('courseProgress: $courseProgress');
-            print('pageIngingos: $pageIngingos');
-            print('totalIngs: $totalIngs');
-            print('skip: $skip');
-            print(
-                'last ingingos: ${ingingos.isNotEmpty ? ingingos.last.id : "No ingingos"}');
-            print('current progress: $currProgress');
-            print('Next progress: ${skip + pageIngingos}');
           }
           // REMOVE THE CURRENT PAGE FROM THE STACK IF NO MORE NEXT PAGES
-          if (pageIngingos + skip >= totalIngs) {
+          if (pageIngingos + widget.skip >= totalIngsInProgr) {
             Navigator.pop(context);
           }
         }
@@ -98,11 +123,11 @@ class DirectionButton extends StatelessWidget {
           children: [
             // ICON
             Visibility(
-              visible: direction == 'inyuma' ? true : false,
+              visible: widget.direction == 'inyuma' ? true : false,
               child: Opacity(
-                opacity: opacity,
+                opacity: widget.opacity,
                 child: SvgPicture.asset(
-                  direction == 'inyuma'
+                  widget.direction == 'inyuma'
                       ? 'assets/images/backward.svg'
                       : 'assets/images/forward.svg',
                   width: MediaQuery.of(context).size.width * 0.05,
@@ -110,23 +135,26 @@ class DirectionButton extends StatelessWidget {
               ),
             ),
             Text(
-              direction == 'komeza' && pageIngingos + skip >= totalIngs
+              widget.direction == 'komeza' &&
+                      pageIngingos + widget.skip >= totalIngsInProgr
                   ? 'Soza'
-                  : buttonText,
+                  : widget.buttonText,
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: MediaQuery.of(context).size.width * 0.035,
-                  color:
-                      direction == 'komeza' && pageIngingos + skip >= totalIngs
-                          ? Colors.white
-                          : Colors.black),
+                  color: widget.direction == 'komeza' &&
+                          pageIngingos + widget.skip >= totalIngsInProgr
+                      ? Colors.white
+                      : Colors.black),
             ), // ICON
             Visibility(
-              visible: direction == 'inyuma' ? false : true,
+              visible: widget.direction == 'inyuma' ? false : true,
               child: Opacity(
-                opacity: pageIngingos + skip >= totalIngs ? 0.0 : opacity,
+                opacity: pageIngingos + widget.skip >= totalIngsInProgr
+                    ? 0.0
+                    : widget.opacity,
                 child: SvgPicture.asset(
-                  direction == 'inyuma'
+                  widget.direction == 'inyuma'
                       ? 'assets/images/backward.svg'
                       : 'assets/images/forward.svg',
                   width: MediaQuery.of(context).size.width * 0.05,

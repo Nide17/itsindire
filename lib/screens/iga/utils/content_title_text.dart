@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ContentTitlenText extends StatelessWidget {
+class ContentTitlenText extends StatefulWidget {
   // INSTANCE VARIABLES
   final String? title;
   final String? text;
@@ -9,9 +9,17 @@ class ContentTitlenText extends StatelessWidget {
   const ContentTitlenText({super.key, this.text, this.title});
 
   @override
+  State<ContentTitlenText> createState() => _ContentTitlenTextState();
+}
+
+class _ContentTitlenTextState extends State<ContentTitlenText> {
+  
+  // BUILD METHOD TO BUILD THE UI OF THE APP
+  @override
   Widget build(BuildContext context) {
+
     // SPLIT THE TEXT INTO PARTS AND CREATE A LIST OF TEXT SPANS TO BE RETURNED
-    final parts = text?.split('*');
+    final parts = widget.text?.split('*');
     final spans = <TextSpan>[];
 
     // CREATE TEXTSPANS WITH DIFFERENT STYLES FOR EACH PART OF THE TEXT
@@ -30,7 +38,7 @@ class ContentTitlenText extends StatelessWidget {
       textAlign: TextAlign.left,
       style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.027),
       TextSpan(
-          text: title,
+          text: widget.title,
           style: const TextStyle(fontWeight: FontWeight.bold),
           children: spans),
     );

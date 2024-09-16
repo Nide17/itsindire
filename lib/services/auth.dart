@@ -125,5 +125,7 @@ class AuthService {
     }
   }
 
+  currentUser() {}
+
   // SIGN IN WITH GOOGLE METHOD
 }

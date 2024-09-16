@@ -18,13 +18,13 @@ class AppBarTegura extends StatelessWidget {
     // GET PROVIDER USER PROFILE
     final profile = Provider.of<ProfileModel?>(context);
 
-    // PRINT THE USER ID
-    if (kDebugMode) {
-      print("AppBar UID: ${usr?.uid} --- AppBar Email: ${usr?.email}");
+    // // PRINT THE USER ID
+    // if (kDebugMode) {
+    //   print("AppBar UID: ${usr?.uid} --- AppBar Email: ${usr?.email}");
 
-      // PRINT THE USER PROFILE
-      print(profile?.username);
-    }
+    //   // PRINT THE USER PROFILE
+    //   print(profile?.username);
+    // }
 
     return AppBar(
       backgroundColor: const Color(0xFF5B8BDF),
