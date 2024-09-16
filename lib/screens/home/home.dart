@@ -136,7 +136,10 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pushNamed(context, '/iga-landing');
               },
               style: ElevatedButton.styleFrom(
-                fixedSize: const Size(124, 32),
+                fixedSize: Size(
+                  MediaQuery.of(context).size.width * 0.4,
+                  MediaQuery.of(context).size.height * 0.06,
+                ),
                 backgroundColor: const Color(0XFF00A651),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(32.0),
@@ -191,7 +194,10 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pushNamed(context, '/ibiciro');
               },
               style: ElevatedButton.styleFrom(
-                fixedSize: const Size(124, 32),
+                fixedSize: Size(
+                  MediaQuery.of(context).size.width * 0.4,
+                  MediaQuery.of(context).size.height * 0.06,
+                ),
                 backgroundColor: const Color(0XFF00A651),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(32.0),

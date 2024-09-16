@@ -66,7 +66,7 @@ class _IgaContentState extends State<IgaContent> {
           catchError: (context, error) {
             // PRINT THE ERROR
             if (kDebugMode) {
-              print("Error in logged in for ingingos: $error");
+              print("Error in for ingingos: $error");
               print(
                   "The err: ${IngingoService().getIngingosByIsomoIdPaginated(widget.isomo.id, limit, _skip)}");
             }
@@ -85,7 +85,7 @@ class _IgaContentState extends State<IgaContent> {
           catchError: (context, error) {
             // PRINT THE ERROR
             if (kDebugMode) {
-              print("Error in logged in: $error");
+              print("Error iga content: $error");
               print(
                   "The err: ${CourseProgressService().getProgress(usr?.uid, widget.isomo.id)}");
             }
@@ -104,7 +104,7 @@ class _IgaContentState extends State<IgaContent> {
           catchError: (context, error) {
             // PRINT THE ERROR
             if (kDebugMode) {
-              print("Error in logged in for ingingos: $error");
+              print("Error iga content: $error");
               print(
                   "The err: ${IngingoService().getTotalIsomoIngingos(widget.isomo.id)}");
             }

@@ -54,7 +54,7 @@ class DirectionButton extends StatelessWidget {
           changeSkip(5);
 
           // UPDATE THE CURRENT INGINGO
-          if (skip >= currProgress && skip < totalIngs) {
+          if (skip >= 0 && skip < totalIngs) {
             // UPDATE THE CURRENT INGINGO
             CourseProgressService().updateUserCourseProgress(
               courseProgress!.userId,

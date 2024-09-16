@@ -33,7 +33,7 @@ class _HagatiState extends State<Hagati> {
                 title: 'Nta somo ryabonetse',
                 description: 'Nta somo ryabonetse',
                 introText: 'Nta somo ryabonetse',
-                id: '0',
+                id: 0,
                 conclusion: 'Nta somo ryabonetse',
               ),
           userId: usr!.uid,

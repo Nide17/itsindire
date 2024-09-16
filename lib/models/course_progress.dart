@@ -3,7 +3,7 @@ class CourseProgressModel {
   // TITLE AND DESCRIPTION
   String id = '';
   String userId = '';
-  String courseId = '';
+  int courseId = 0;
   int currentIngingo = 0;
   int totalIngingos = 0;
 

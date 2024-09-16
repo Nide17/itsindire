@@ -1,6 +1,7 @@
 class Option {
   int id = 0;
   String? title;
+  String? leftImageUrl;
   String? text;
   String? imageUrl;
   String? imageTitle;
@@ -13,11 +14,13 @@ class Option {
     this.imageUrl,
     this.imageTitle,
     this.imageDesc,
+    required leftImageUrl,
   });
 
   Option.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
+    leftImageUrl = json['leftImageUrl'];
     text = json['text'];
     imageUrl = json['imageUrl'];
     imageTitle = json['imageTitle'];
@@ -28,6 +31,7 @@ class Option {
     return {
       'id': id,
       'title': title,
+      'leftImageUrl': leftImageUrl,
       'text': text,
       'imageUrl': imageUrl,
       'imageTitle': imageTitle,
@@ -37,13 +41,14 @@ class Option {
 
   @override
   String toString() {
-    return '$text';
+    return 'Option(id: $id, title: $title, leftImageUrl: $leftImageUrl, text: $text, imageUrl: $imageUrl, imageTitle: $imageTitle, imageDesc: $imageDesc)';
   }
 
   Option toObject(Map<String, dynamic> map) {
     return Option(
       id: map['id'],
       title: map['title'],
+      leftImageUrl: map['leftImageUrl'],
       text: map['text'],
       imageUrl: map['imageUrl'],
       imageTitle: map['imageTitle'],
@@ -147,4 +152,3 @@ class IngingoSum {
     return map['sum'];
   }
 }
-

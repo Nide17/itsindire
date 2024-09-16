@@ -24,7 +24,7 @@ class CircleProgress extends StatelessWidget {
       radius: MediaQuery.of(context).size.width * 0.05,
       lineWidth: MediaQuery.of(context).size.width * 0.01,
       animation: true,
-      percent: 0.2,
+      percent: percent,
       center: Text(
         '${(percent * 100).toStringAsFixed(0)}%',
         style: TextStyle(

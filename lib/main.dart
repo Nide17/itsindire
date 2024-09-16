@@ -47,7 +47,7 @@ class TeguraApp extends StatelessWidget {
           catchError: (context, error) {
             // PRINT THE ERROR
             if (kDebugMode) {
-              print("Error in main2: $error");
+              print("Error in main2 user: $error");
               print(
                   "The err: ${ProfileService().getCurrentProfile(FirebaseAuth.instance.currentUser?.uid)}");
             }
@@ -84,7 +84,7 @@ class TeguraApp extends StatelessWidget {
           catchError: (context, error) {
             // PRINT THE ERROR
             if (kDebugMode) {
-              print("Error in main2: $error");
+              print("Error in main2 isomo: $error");
               print(
                   "The err: ${IsomoService().getAllAmasomo(FirebaseAuth.instance.currentUser?.uid)}");
             }

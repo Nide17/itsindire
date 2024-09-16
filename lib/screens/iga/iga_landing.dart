@@ -34,7 +34,7 @@ class _IgaLandingState extends State<IgaLanding> {
           catchError: (context, error) {
             // PRINT THE ERROR
             if (kDebugMode) {
-              print("Error in main2: $error");
+              print("Error in iga landing: $error");
               print(
                   "The err: ${IsomoService().getAllAmasomo(FirebaseAuth.instance.currentUser?.uid)}");
             }
