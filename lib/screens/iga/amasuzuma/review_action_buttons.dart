@@ -29,7 +29,7 @@ class _ReviewActionButtonsState extends State<ReviewActionButtons> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 8.0),
+      margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 4.0),
       decoration: const BoxDecoration(
         boxShadow: [
           BoxShadow(

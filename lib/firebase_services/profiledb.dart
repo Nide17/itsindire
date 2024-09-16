@@ -15,7 +15,6 @@ class ProfileService {
   Future updateUserProfile(
       String uid,
       String username,
-      String names,
       String email,
       String phone,
       String photo,
@@ -30,7 +29,6 @@ class ProfileService {
       // USER DATA - FIELDS
       'uid': uid,
       'username': username,
-      'names': names,
       'email': email,
       'phone': phone,
       'photo': photo,
@@ -52,7 +50,6 @@ class ProfileService {
   //       // USER DATA - FIELDS
   //       uid: doc.id,
   //       username: doc['username'] ?? '',
-  //       names: doc['names'] ?? '',
   //       email: doc['email'] ?? '',
   //       phone: doc['phone'] ?? '',
   //       photo: doc['photo'] ?? '',
@@ -78,9 +75,6 @@ class ProfileService {
 
     // Check if the 'username' field exists before accessing it
     final username = data.containsKey('username') ? data['username'] : '';
-
-    // Check if the 'names' field exists before accessing it
-    final names = data.containsKey('names') ? data['names'] : '';
 
     // Check if the 'email' field exists before accessing it
     final email = data.containsKey('email') ? data['email'] : '';
@@ -113,7 +107,6 @@ class ProfileService {
     return ProfileModel(
       uid: data['uid'] ?? documentSnapshot.id,
       username: username,
-      names: names,
       email: email,
       phone: phone,
       photo: photo,
@@ -147,11 +140,17 @@ class ProfileService {
   }
 
   // APP BAR PROFILE DATA
-  Future<dynamic> getAppBarProfileData(String uid) async {
-    // GET THE USER PROFILE DATA
-    final profileData = await profilesCollection.doc(uid).get();
+  Future<dynamic> getAppBarProfileData(String? uid) async {
 
-    // RETURN THE USER PROFILE DATA AS _profileFromSnapshot
-    return _profileFromSnapshot(profileData);
+    if (uid == null) {
+      return null;
+    }
+    else {
+          // GET THE USER PROFILE DATA
+      final profileData = await profilesCollection.doc(uid).get();
+
+      // RETURN THE USER PROFILE DATA AS _profileFromSnapshot
+      return _profileFromSnapshot(profileData);
+    }
   }
 }

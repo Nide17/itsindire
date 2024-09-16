@@ -22,16 +22,13 @@ class GradientTitle extends StatelessWidget {
     return Center(
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
-        // height: MediaQuery.of(context).size.height * 0.08,
         margin: EdgeInsets.only(left: 0, top: marginTop ?? 24),
-        padding: const EdgeInsets.fromLTRB(
-            0, 4.0, 0, 4.0), // top, right, bottom, left
-
+        padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.0001,
+            vertical: MediaQuery.of(context).size.height * 0.016),
         // STYLING
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(100),
-
-          // THE GRADIENT
           gradient: parentWidget == 'isuzume'
               ? null
               : const LinearGradient(
@@ -43,6 +40,16 @@ class GradientTitle extends StatelessWidget {
                     Color(0xFF9D14DD),
                   ],
                 ),
+          boxShadow: parentWidget == 'isuzume'
+              ? null
+              : const [
+                  BoxShadow(
+                    color: Color.fromARGB(255, 70, 227, 255),
+                    offset: Offset(0, 3),
+                    blurRadius: 8,
+                    spreadRadius: -7,
+                  ),
+                ],
         ),
 
         // CONTENT

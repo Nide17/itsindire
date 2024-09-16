@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:tegura/firebase_services/profiledb.dart';
+import 'package:tegura/main.dart';
 import 'package:tegura/models/profile.dart';
 import 'package:tegura/utilities/cta_button.dart';
 import 'package:tegura/utilities/cta_link.dart';
@@ -12,7 +13,10 @@ import 'package:tegura/utilities/spinner.dart';
 import 'package:tegura/firebase_services/auth.dart';
 
 class Injira extends StatefulWidget {
-  const Injira({Key? key}) : super(key: key);
+  final String? message;
+  final ConnectionStatus? connectionStatus;
+  const Injira({Key? key, this.message, this.connectionStatus})
+      : super(key: key);
 
   @override
   State<Injira> createState() => _InjiraState();
@@ -47,17 +51,21 @@ class _InjiraState extends State<Injira> {
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
+
+    // IF THE USER IS LOGGED IN, POP THE CURRENT PAGE
+    if (_authInstance.currentUser() != null) {
+      Navigator.pop(context);
+    }
+
     return loading
         ? const Spinner()
         : Scaffold(
-            backgroundColor: const Color(0xFF5B8BDF),
+            backgroundColor: const Color.fromARGB(255, 71, 103, 158),
 
             // APP BAR
-            appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(58.0),
-              child: AppBarTegura(
-                profile: profile,
-              ),
+            appBar: const PreferredSize(
+              preferredSize: Size.fromHeight(58.0),
+              child: AppBarTegura(),
             ),
 
             // PAGE BODY
@@ -72,13 +80,56 @@ class _InjiraState extends State<Injira> {
               ),
               child: ListView(
                 children: [
+                  widget.message != null
+                      ? Container(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          margin: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.05,
+                            vertical: MediaQuery.of(context).size.height * 0.03,
+                          ),
+                          padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width * 0.04,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFDE59),
+                            border: Border.all(
+                              width: 2.0,
+                              color: const Color.fromARGB(255, 255, 204, 0),
+                            ),
+                            borderRadius: BorderRadius.circular(24.0),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color.fromARGB(255, 59, 57, 77),
+                                offset: Offset(0, 3),
+                                blurRadius: 8,
+                                spreadRadius: -7,
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                widget.message!,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.04,
+                                  fontWeight: FontWeight.w900,
+                                  color: const Color.fromARGB(255, 0, 0, 0),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container(),
                   // 1. GRADIENT TITLE
                   const GradientTitle(
                       title: 'INJIRA', icon: 'assets/images/injira.svg'),
 
                   // 2. DESCRIPTION
                   const Description(
-                      text: 'Injira kugirango ubashe kubona amasomo yose!'),
+                      text: 'Injira kugirango ubashe kubona byose!'),
 
                   // CENTERED IMAGE
                   Row(
@@ -92,6 +143,7 @@ class _InjiraState extends State<Injira> {
                         ),
                       ]),
 
+                  // FORM
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: MediaQuery.of(context).size.width * 0.05,
@@ -179,6 +231,13 @@ class _InjiraState extends State<Injira> {
                                   if (!mounted) return;
 
                                   Navigator.pop(context);
+
+                                  // SHOW SNACKBAR TO SHOW SUCCESSFUL LOGIN
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                    content: Text('Kwinjira byagenze neza!'),
+                                    backgroundColor: Colors.green,
+                                  ));
                                 }
                               } else {
                                 print('\nSigned in!!\n');
@@ -187,9 +246,9 @@ class _InjiraState extends State<Injira> {
                           ),
 
                           // CTA LINK
-                          const CtaLink(
+                          const CtaAuthLink(
                             text1: 'Wibagiwe ijambobanga? ',
-                            text2: 'hindura',
+                            text2: 'Risabe',
                             color1: Color.fromARGB(255, 255, 255, 255),
                             color2: Color.fromARGB(255, 0, 27, 116),
                             route: '/wibagiwe',
@@ -201,7 +260,7 @@ class _InjiraState extends State<Injira> {
                           ),
 
                           // CTA LINK
-                          const CtaLink(
+                          const CtaAuthLink(
                             text1: 'Niba utariyandikisha, ',
                             color1: Color.fromARGB(255, 0, 27, 116),
                             color2: Color.fromARGB(255, 255, 255, 255),
@@ -213,25 +272,25 @@ class _InjiraState extends State<Injira> {
                     ),
                   ),
 
-                  // ANONYMOUS SIGN IN BUTTON
-                  Container(
-                    padding: const EdgeInsets.all(40.0),
+                  // // ANONYMOUS SIGN IN BUTTON
+                  // Container(
+                  //   padding: const EdgeInsets.all(40.0),
 
-                    // RAISED BUTTON
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        // SIGN IN ANONYMOUSLY USING THE AUTH SERVICE INSTANCE - AUTH CLASS
-                        dynamic result = await _authInstance
-                            .signInAnon(); // DYNAMIC TYPE - CAN BE USER OR NULL
+                  //   // RAISED BUTTON
+                  //   child: ElevatedButton(
+                  //     onPressed: () async {
+                  //       // SIGN IN ANONYMOUSLY USING THE AUTH SERVICE INSTANCE - AUTH CLASS
+                  //       dynamic result = await _authInstance
+                  //           .signInAnon(); // DYNAMIC TYPE - CAN BE USER OR NULL
 
-                        if (result == null) {
-                        } else {
-                          print(result.uid);
-                        }
-                      },
-                      child: const Text('Sign In Anonymously'),
-                    ),
-                  ),
+                  //       if (result == null) {
+                  //       } else {
+                  //         print(result.uid);
+                  //       }
+                  //     },
+                  //     child: const Text('Sign In Anonymously'),
+                  //   ),
+                  // ),
                 ],
               ),
             ));

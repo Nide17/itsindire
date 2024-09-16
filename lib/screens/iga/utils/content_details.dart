@@ -148,7 +148,7 @@ class _ContentDetailsState extends State<ContentDetails> {
                                 // GO BACK TO THE COURSE PAGE
                                 Navigator.pop(context);
                               },
-                              child: const Text('Ongera uritangire!'),
+                              child: const Text('Ongera utangire iri somo!'),
                             ),
 
                           if (index == 0 && currProgress == totalIngs)

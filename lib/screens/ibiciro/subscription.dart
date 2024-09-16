@@ -5,14 +5,14 @@ import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/auth/iyandikishe.dart';
 import 'package:tegura/screens/ibiciro/processing_ishyura.dart';
 
-class Ifatabuguzi extends StatelessWidget {
+class Subscription extends StatelessWidget {
   // INSTANCE VARIABLES
   final String title;
   final IfatabuguziModel ifatabuguzi;
   final String curWidget;
 
   // CONSTRUCTOR
-  const Ifatabuguzi(
+  const Subscription(
       {super.key,
       required this.title,
       required this.ifatabuguzi,
@@ -30,8 +30,7 @@ class Ifatabuguzi extends StatelessWidget {
         ),
         // TEXT WIDGET TO DISPLAY THE TEXT
         Padding(
-          padding: const EdgeInsets.fromLTRB(24.0, 12.0, 24.0,
-              12.0), // Add 16.0 pixels of padding to all sides
+          padding: const EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 12.0),
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(
@@ -65,7 +64,7 @@ class Ifatabuguzi extends StatelessWidget {
                           softWrap: true,
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
-                            fontSize: MediaQuery.of(context).size.width * 0.038,
+                            fontSize: MediaQuery.of(context).size.width * 0.04,
                             color: curWidget == '_IbiciroState'
                                 ? Colors.white
                                 : const Color.fromARGB(255, 14, 13, 13),
@@ -77,11 +76,13 @@ class Ifatabuguzi extends StatelessWidget {
                       // BOTTOM BORDER OF THE ABOVE SECTION
                       Container(
                         decoration: BoxDecoration(
-                          color: curWidget == '_IbiciroState'
-                              ? const Color.fromARGB(255, 25, 22, 199)
-                              : const Color.fromARGB(255, 187, 189, 99),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
+                            color: curWidget == '_IbiciroState'
+                                ? const Color.fromARGB(255, 25, 22, 199)
+                                : const Color.fromARGB(255, 187, 189, 99),
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(8.0),
+                              topRight: Radius.circular(8.0),
+                            )),
                         child: Wrap(
                           children: [
                             Padding(
@@ -91,8 +92,40 @@ class Ifatabuguzi extends StatelessWidget {
                                 horizontal:
                                     MediaQuery.of(context).size.width * 0.08,
                               ),
-                              child: Text(
-                                'Igihe: ${ifatabuguzi.igihe.toUpperCase()} \n\nIgiciro: ${ifatabuguzi.igiciro} RWF',
+                              child: Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text:
+                                          'Time: ${ifatabuguzi.igihe.toUpperCase()} \n\nPrice: ${ifatabuguzi.igiciro} RWF     ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.032,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: curWidget == '_IbiciroState'
+                                          ? '${ifatabuguzi.igiciro * 2} RWF'
+                                          : '',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.032,
+                                        color: curWidget == '_IbiciroState'
+                                            ? const Color(0xFFFAD201)
+                                            : const Color.fromARGB(
+                                                255, 14, 13, 13),
+                                        decoration: TextDecoration.lineThrough,
+                                        decorationColor: Colors.red,
+                                        decorationThickness: 4.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                 textAlign: TextAlign.left,
                                 softWrap: true,
                                 style: TextStyle(
@@ -140,7 +173,7 @@ class Ifatabuguzi extends StatelessWidget {
                                                       ifatabuguzi: ifatabuguzi)
                                                   : const Iyandikishe(
                                                       message:
-                                                          "Banza wiyandikishe, ubone kwishyura wige!",
+                                                          "Register first, then pay and start learning!",
                                                     );
                                             }));
                                           },
@@ -149,7 +182,7 @@ class Ifatabuguzi extends StatelessWidget {
                                                 horizontal: 8.0,
                                                 vertical: 0.05),
                                             child: Text(
-                                              'ISHYURA',
+                                              'PAY NOW',
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w700,
@@ -184,8 +217,9 @@ class Ifatabuguzi extends StatelessWidget {
 
                 // HARIMO RECTANGLE
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.05,
                   width: MediaQuery.of(context).size.width * 1.0,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 4.0, vertical: 8.0),
                   decoration: BoxDecoration(
                     // THE GRADIENT
                     gradient: const LinearGradient(
@@ -204,7 +238,7 @@ class Ifatabuguzi extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.center,
                     child: Text(
-                      'HARIMO:',
+                      'INCLUDES:',
                       style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: MediaQuery.of(context).size.width * 0.042,
@@ -233,7 +267,7 @@ class Ifatabuguzi extends StatelessWidget {
                   ),
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                        vertical: MediaQuery.of(context).size.height * 0.02,
+                      vertical: MediaQuery.of(context).size.height * 0.02,
                       horizontal: MediaQuery.of(context).size.width * 0.08,
                     ),
                     child: ListView(
@@ -271,7 +305,7 @@ class Ifatabuguzi extends StatelessWidget {
                           ifatabuguzi.ubusobanuro,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.w600,
                             fontSize: MediaQuery.of(context).size.width * 0.038,
                             color: const Color.fromARGB(255, 255, 255, 255),
                           ),

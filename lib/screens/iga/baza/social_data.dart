@@ -2,12 +2,12 @@ List<Map<String, dynamic>> socialData = [
   {
     'title': 'Hamagara mwarimu',
     'icon': 'assets/images/phone.svg',
-    'details': '0780 044 110'
+    'details': '0780 579 067'
   },
   {
     'title': 'WhatsApp',
     'icon': 'assets/images/whatsapp.svg',
-    'details': '0780 044 110'
+    'details': '0780 579 067'
   },
   {
     'title': 'Email',

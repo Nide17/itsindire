@@ -4,6 +4,8 @@ class PaymentModel {
   DateTime endAt;
   String? userId;
   String? ifatabuguziID;
+  bool? isApproved;
+  String? phone;
 
   PaymentModel({
     this.id,
@@ -11,6 +13,8 @@ class PaymentModel {
     required this.endAt,
     this.userId,
     this.ifatabuguziID,
+    this.isApproved,
+    this.phone,
   });
 
   // GET REMAINING DAYS
@@ -22,7 +26,7 @@ class PaymentModel {
     int diff = endAt.difference(now).inDays;
 
     // RETURN THE DIFFERENCE
-    return diff;
+    return diff + 1;
   }
 
   // GET FORMATED END DATE - 2021-09-30
@@ -37,7 +41,6 @@ class PaymentModel {
     return formatedEnd;
   }
 
-
   // FROM JSON
   factory PaymentModel.fromJson(Map<String, dynamic> json) {
     return PaymentModel(
@@ -46,6 +49,8 @@ class PaymentModel {
       endAt: json['endAt'].toDate(),
       userId: json['userId'],
       ifatabuguziID: json['ifatabuguziID'],
+      isApproved: json['isApproved'],
+      phone: json['phone'],
     );
   }
 
@@ -57,12 +62,14 @@ class PaymentModel {
       'endAt': endAt,
       'userId': userId,
       'ifatabuguziID': ifatabuguziID,
+      'isApproved': isApproved,
+      'phone': phone,
     };
   }
 
   // TO STRING
   @override
   String toString() {
-    return 'PaymentModel(id: $id, createdAt: $createdAt, endAt: $endAt, userId: $userId, ifatabuguziID: $ifatabuguziID)';
+    return 'PaymentModel(id: $id, createdAt: $createdAt, endAt: $endAt, userId: $userId, ifatabuguziID: $ifatabuguziID, isApproved: $isApproved, phone: $phone)';
   }
 }

@@ -1,7 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tegura/models/user.dart';
 import 'package:tegura/utilities/description.dart';
 import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
 import 'package:tegura/screens/iga/baza/contact_form.dart';
@@ -20,16 +17,15 @@ class _BazaState extends State<Baza> {
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-        backgroundColor: const Color(0xFF5B8BDF),
+        backgroundColor: const Color.fromARGB(255, 71, 103, 158),
 
         // APP BAR
         appBar: const PreferredSize(
           preferredSize: Size.fromHeight(58.0),
           child: AppBarTegura(),
         ),
-        
+
         // PAGE BODY
         body: ListView(children: <Widget>[
           // 1. GRADIENT TITLE

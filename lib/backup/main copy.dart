@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 // ENTRY POINT
 void main() {
-  runApp(TeguraApp());
+  runApp(const TeguraApp());
 }
 
 // MAIN APP WIDGET - STATELESS SINCE IT DOESN'T CHANGE
 class TeguraApp extends StatelessWidget {
+  const TeguraApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(

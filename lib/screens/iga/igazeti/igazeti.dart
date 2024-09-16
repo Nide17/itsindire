@@ -1,7 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
 import 'package:tegura/screens/iga/utils/gradient_title.dart';
 import 'package:tegura/screens/iga/igazeti/igazeti_book.dart';
@@ -22,16 +19,15 @@ class _IgazetiState extends State<Igazeti> {
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-        backgroundColor: const Color(0xFF5B8BDF),
+        backgroundColor: const Color.fromARGB(255, 71, 103, 158),
 
         // APP BAR
         appBar: const PreferredSize(
           preferredSize: Size.fromHeight(58.0),
           child: AppBarTegura(),
         ),
-        
+
         // PAGE BODY
         body: ListView(children: <Widget>[
           // 1. GRADIENT TITLE
@@ -45,10 +41,10 @@ class _IgazetiState extends State<Igazeti> {
           ),
 
           // CARDS ROW FOR IGAZETI, AND IBYAPA - FLEX 50%
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
+            children: [
               IgaCard(
                 title: 'IGAZETI',
                 icon: 'assets/images/igazeti_book.png',
@@ -67,10 +63,10 @@ class _IgazetiState extends State<Igazeti> {
             height: MediaQuery.of(context).size.height * 0.04,
           ),
           // CARDS ROW FOR IMIRONGO, AND IBIMURIKA - FLEX 50%
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
+            children: [
               IgaCard(
                 title: 'IMIRONGO YO MUMUHANDA',
                 icon: 'assets/images/imirongo.png',

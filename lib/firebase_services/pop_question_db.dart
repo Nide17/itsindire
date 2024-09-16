@@ -28,6 +28,7 @@ class PopQuestionService {
       final ingingoID = data.containsKey('ingingoID') ? data['ingingoID'] : '';
       final isomoID = data.containsKey('isomoID') ? data['isomoID'] : '';
       final title = data.containsKey('title') ? data['title'] : '';
+      final imageUrl = data.containsKey('imageUrl') ? data['imageUrl'] : '';
       final options = data.containsKey('options') ? data['options'] : '';
 
       // RETURN A LIST OF POP QUESTIONS FROM THE SNAPSHOT
@@ -37,6 +38,7 @@ class PopQuestionService {
         ingingoID: ingingoID,
         isomoID: isomoID,
         title: title,
+        imageUrl: imageUrl,
         options: options,
       );
     }).toList();
@@ -53,6 +55,7 @@ class PopQuestionService {
     final ingingoID = data.containsKey('ingingoID') ? data['ingingoID'] : '';
     final isomoID = data.containsKey('isomoID') ? data['isomoID'] : '';
     final title = data.containsKey('title') ? data['title'] : '';
+    final imageUrl = data.containsKey('imageUrl') ? data['imageUrl'] : '';
     final options = data.containsKey('options') ? data['options'] : '';
 
     // RETURN A LIST OF POP QUESTIONS FROM THE SNAPSHOT
@@ -62,6 +65,7 @@ class PopQuestionService {
       ingingoID: ingingoID,
       isomoID: isomoID,
       title: title,
+      imageUrl: imageUrl,
       options: options,
     );
   }
@@ -134,6 +138,7 @@ class PopQuestionService {
       'ingingoID': popQn.ingingoID,
       'isomoID': popQn.isomoID,
       'title': popQn.title,
+      'imageUrl': popQn.imageUrl,
       'options': popQn.options,
     });
   }
@@ -147,6 +152,7 @@ class PopQuestionService {
       'ingingoID': popQn.ingingoID,
       'isomoID': popQn.isomoID,
       'title': popQn.title,
+      'imageUrl': popQn.imageUrl,
       'options': popQn.options,
     });
   }

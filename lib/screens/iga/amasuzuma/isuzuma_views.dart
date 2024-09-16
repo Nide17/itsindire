@@ -84,7 +84,7 @@ class _IsuzumaViewsState extends State<IsuzumaViews> {
 
       // RETURN THE CONTENT
       return Container(
-        padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 4.0),
+        padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
         decoration: const BoxDecoration(
           color: Color(0xFFD9D9D9),
         ),
@@ -98,8 +98,8 @@ class _IsuzumaViewsState extends State<IsuzumaViews> {
             height: MediaQuery.of(context).size.height * 0.02,
           ),
           IsuzumaTimer(
-            // duration: 1200, // Duration in seconds
-            duration: 12, // Duration in seconds
+            duration: 1200, // Duration in seconds - 20 minutes
+            // duration: 12, // Duration in seconds
             onTimerExpired: handleTimerExpired,
           ),
           SizedBox(
@@ -109,47 +109,49 @@ class _IsuzumaViewsState extends State<IsuzumaViews> {
               child: Column(
             children: [
               // IKIBAZO NUMBER BUTTONS
-              Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.008,
-                    ),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFD9D9D9),
-                      border: Border(
-                        top: BorderSide(
-                          color: Color(0xFF00A651),
-                          width: 2.0,
-                        ),
-                        bottom: BorderSide(
-                          color: Color(0xFF00A651),
-                          width: 4.0,
-                        ),
-                        left: BorderSide(
-                          color: Color(0xFF00A651),
-                          width: 2.0,
-                        ),
-                        right: BorderSide(
-                          color: Color(0xFF00A651),
-                          width: 2.0,
-                        ),
+              Container(
+                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02,),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFD9D9D9),
+                    border: Border(
+                      top: BorderSide(
+                        color: Color(0xFF00A651),
+                        width: 2.0,
+                      ),
+                      bottom: BorderSide(
+                        color: Color(0xFF00A651),
+                        width: 2.50,
+                      ),
+                      left: BorderSide(
+                        color: Color(0xFF00A651),
+                        width: 2.0,
+                      ),
+                      right: BorderSide(
+                        color: Color(0xFF00A651),
+                        width: 2.0,
                       ),
                     ),
-                    child: Wrap(
-                        spacing: 10.0,
-                        direction: Axis.horizontal,
-                        children: List.generate(
-                          scoreQnsLength,
-                          (index) => IsuzumaIkibazoButton(
-                              // MAKE THE FIRST QUESTION ACTIVE BY DEFAULT ON PAGE LOAD
-                              isActive:
-                                  (index + 1) == widget.qnIndex ? true : false,
-                              showQn: widget.showQn,
-                              qnIndex: (index + 1),
-                              isReviewing: false),
-                        ))),
-              ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color.fromARGB(255, 15, 68, 41),
+                        offset: Offset(0, 1),
+                        blurRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: Wrap(
+                      spacing: MediaQuery.of(context).size.width * 0.024,
+                      direction: Axis.horizontal,
+                      children: List.generate(
+                        scoreQnsLength,
+                        (index) => IsuzumaIkibazoButton(
+                            // MAKE THE FIRST QUESTION ACTIVE BY DEFAULT ON PAGE LOAD
+                            isActive:
+                                (index + 1) == widget.qnIndex ? true : false,
+                            showQn: widget.showQn,
+                            qnIndex: (index + 1),
+                            isReviewing: false),
+                      ))),
 
               // SHOW THE QUESTION AND OPTIONS
               Expanded(
@@ -164,28 +166,51 @@ class _IsuzumaViewsState extends State<IsuzumaViews> {
                         Text(
                           currentQn.title!,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 17.0,
+                          style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width * 0.032,
                             fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 0, 0, 0),
+                            color: const Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
 
                         // DISPLAY NETWORK IMAGE IF ANY
-                        currentQn.image == null
+                        currentQn.imageUrl == null
                             ? const SizedBox.shrink()
                             : SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.13,
-                                child: Image.network(
-                                  currentQn.image!,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.1,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.001,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.16,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4.0),
+                                  margin: const EdgeInsets.only(top: 10.0),
+                                  decoration: const BoxDecoration(
+                                    color: Color.fromARGB(255, 255, 255, 255),
+                                    border: Border.fromBorderSide(
+                                      BorderSide(
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                        width: 1,
+                                        style: BorderStyle.solid,
+                                      ),
+                                    ),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10.0)),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                        offset: Offset(0, 1),
+                                        blurRadius: 1,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Image.network(
+                                    currentQn.imageUrl!,
+                                    width:
+                                        MediaQuery.of(context).size.width * 1,
+                                  ),
                                 ),
                               ),
 
-                        const SizedBox(height: 10.0),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02),
                         Column(
                           children: currentQn.options.map<Widget>((option) {
                             return IsuzumaCustomRadioButton(

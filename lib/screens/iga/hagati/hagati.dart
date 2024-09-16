@@ -33,8 +33,7 @@ class _HagatiState extends State<Hagati> {
           // GET THE AMASOMO
           StreamProvider<List<IsomoModel?>?>.value(
             // WHAT TO GIVE TO THE CHILDREN WIDGETS
-            value: IsomoService()
-                .getAllAmasomo(usr?.uid),
+            value: IsomoService().getAllAmasomo(usr?.uid),
             initialData: null,
 
             // CATCH ERRORS
@@ -42,18 +41,16 @@ class _HagatiState extends State<Hagati> {
               // PRINT THE ERROR
               if (kDebugMode) {
                 print("Error in main2 isomo: $error");
-                print(
-                    "The err: ${IsomoService().getAllAmasomo(usr?.uid)}");
+                print("The err: ${IsomoService().getAllAmasomo(usr?.uid)}");
               }
               // RETURN NULL
-              return null;
+              return [];
             },
           ),
 
           StreamProvider<List<CourseProgressModel?>?>.value(
             // WHAT TO GIVE TO THE CHILDREN WIDGETS
-            value: CourseProgressService()
-                .getUserProgresses(usr?.uid),
+            value: CourseProgressService().getUserProgresses(usr?.uid),
             initialData: null,
 
             // CATCH ERRORS
@@ -65,7 +62,7 @@ class _HagatiState extends State<Hagati> {
                     "The err: ${CourseProgressService().getUserProgresses(usr?.uid)}");
               }
               // RETURN NULL
-              return null;
+              return [];
             },
           ),
         ],
@@ -103,12 +100,13 @@ class _HagatiState extends State<Hagati> {
 
             // OVERALL PROGRESS - RATIO OF FINISHED PROGRESSES TO ALL PROGRESSES
             final overallProgress = usr != null && amasomo != null
-                ? (amasomo.length - notFinishedProgresses.length) / amasomo.length
+                ? (amasomo.length - notFinishedProgresses.length) /
+                    amasomo.length
                 : 0.0;
 
             // LIST OF INGINGOS CONSUMER
             return Scaffold(
-                backgroundColor: const Color(0xFF5B8BDF),
+                backgroundColor: const Color.fromARGB(255, 71, 103, 158),
 
                 // APP BAR
                 appBar: const PreferredSize(

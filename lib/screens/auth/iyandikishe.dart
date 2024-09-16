@@ -31,13 +31,14 @@ class _IyandikisheState extends State<Iyandikishe> {
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
+    
     // IF THE USER IS LOGGED IN, POP THE CURRENT PAGE
     if (_authInstance.currentUser() != null) {
       Navigator.pop(context);
     }
 
     return Scaffold(
-        backgroundColor: const Color(0xFF5B8BDF),
+        backgroundColor: const Color.fromARGB(255, 71, 103, 158),
 
         // APP BAR
         appBar: const PreferredSize(
@@ -85,7 +86,8 @@ class _IyandikisheState extends State<Iyandikishe> {
                       ),
                       child: Column(
                         children: [
-                          Text(widget.message!,
+                          Text(
+                            widget.message!,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize:
@@ -176,7 +178,7 @@ class _IyandikisheState extends State<Iyandikishe> {
                             // REGISTER USER
                             dynamic resSignUp = await _authInstance
                                 .registerWithEmailAndPassword(
-                                    username, email, password);
+                                    username, email, password, false, '', '');
 
                             // CHECK IF USER IS REGISTERED
                             if (resSignUp == null) {
@@ -209,7 +211,6 @@ class _IyandikisheState extends State<Iyandikishe> {
 
                               // REDIRECT TO LOGIN PAGE AFTER SUCCESSFUL REGISTRATION
                               if (!mounted) return;
-
                               Navigator.pushReplacementNamed(
                                   context, '/injira');
                             }
@@ -218,7 +219,7 @@ class _IyandikisheState extends State<Iyandikishe> {
                       ),
 
                       // CTA LINK
-                      const CtaLink(
+                      const CtaAuthLink(
                         text1: 'Niba wariyandikishije, ',
                         text2: 'injira',
                         color1: Color.fromARGB(255, 255, 255, 255),

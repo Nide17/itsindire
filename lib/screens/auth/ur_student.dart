@@ -16,20 +16,32 @@ class UrStudent extends StatefulWidget {
 // STATE FOR THE SIGN IN PAGE - STATEFUL
 class _UrStudentState extends State<UrStudent> {
   // AUTH SERVICE INSTANCE
-  final AuthService _auth = AuthService();
+  final AuthService _authInstance = AuthService();
   final _formKey = GlobalKey<FormState>();
-  String _selectedItem = '';
+
+  String username = '';
+  String email = '';
+  String password = '';
+  String error = '';
+  String regNbr = '';
   final List<String> _items = ['CST', 'CBE', 'CMHS', 'CE', 'CAVM'];
+  String _selectedCampus = '';
 
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
+    
+    // IF THE USER IS LOGGED IN, POP THE CURRENT PAGE
+    if (_authInstance.currentUser() != null) {
+      Navigator.pop(context);
+    }
+    
     return Scaffold(
-        backgroundColor: const Color(0xFF5B8BDF),
+        backgroundColor: const Color.fromARGB(255, 71, 103, 158),
 
         // APP BAR
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(58.0),
+        appBar: const PreferredSize(
+          preferredSize: Size.fromHeight(58.0),
           child: AppBarTegura(),
         ),
 
@@ -113,10 +125,11 @@ class _UrStudentState extends State<UrStudent> {
                         ),
                         onChanged: (String? value) {
                           setState(() {
-                            _selectedItem = value!;
+                            _selectedCampus = value!;
                           });
                         },
-                        value: _selectedItem.isNotEmpty ? _selectedItem : null,
+                        value:
+                            _selectedCampus.isNotEmpty ? _selectedCampus : null,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Choose your campus';
@@ -131,27 +144,45 @@ class _UrStudentState extends State<UrStudent> {
                         height: MediaQuery.of(context).size.height * 0.02,
                       ),
                       // NOMERO ZA TELEPHONE
-                      const DefaultInput(
+                      DefaultInput(
                         placeholder: 'Registration number',
                         validation: 'Please enter your registration number!',
+
+                        // ON CHANGED
+                        onChanged: (val) {
+                          setState(() => regNbr = val);
+                        },
                       ),
 
-                      // NOMERO ZA TELEPHONE
-                      const DefaultInput(
+                      // AMAZINA
+                      DefaultInput(
                         placeholder: 'Names',
                         validation: 'Please enter your names!',
+                        onChanged: (val) {
+                          setState(() => username = val);
+                        },
+                      ),
+
+                      // EMAIL
+                      DefaultInput(
+                        placeholder: 'Imeyili',
+                        validation: 'Injiza imeyili yawe!',
+
+                        // ON CHANGED
+                        onChanged: (val) {
+                          setState(() => email = val);
+                        },
                       ),
 
                       // IJAMBOBANGA
-                      const DefaultInput(
-                        placeholder: 'Phone number',
-                        validation: 'Please enter your phone number!',
-                      ),
-
-                      // IJAMBOBANGA
-                      const DefaultInput(
+                      DefaultInput(
                         placeholder: 'Password',
                         validation: 'Please enter your password!',
+                        onChanged: (val) {
+                          setState(() => password = val);
+                        },
+                        // OBSCURE TEXT
+                        obscureText: true,
                       ),
 
                       // CTA BUTTON
@@ -160,10 +191,48 @@ class _UrStudentState extends State<UrStudent> {
 
                         // ON PRESSED
                         onPressed: () async {
+                          // VALIDATE FORM
                           if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            print('\nUR Student\n');
-                            // TODO: Send the form data or perform sign-in
+                            // REGISTER USER
+                            dynamic resSignUp = await _authInstance
+                                .registerWithEmailAndPassword(username, email,
+                                    password, true, regNbr, _selectedCampus);
+
+                            // CHECK IF USER IS REGISTERED
+                            if (resSignUp == null) {
+                              setState(() {
+                                error =
+                                    'Please supply a valid email and password';
+
+                                // SHOW ERROR DIALOG
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Error'),
+                                      content: Text(error),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              });
+                            } else {
+                              // LOGOUT USER
+                              await _authInstance.logOut();
+
+                              // REDIRECT TO LOGIN PAGE AFTER SUCCESSFUL REGISTRATION
+                              if (!mounted) return;
+
+                              Navigator.pushReplacementNamed(
+                                  context, '/injira');
+                            }
                           }
                         },
                       ),
@@ -201,28 +270,6 @@ class _UrStudentState extends State<UrStudent> {
                       ),
                     ],
                   ),
-                ),
-              ),
-
-              // ANONYMOUS SIGN IN BUTTON
-              Container(
-                padding: const EdgeInsets.all(40.0),
-
-                // RAISED BUTTON
-                child: ElevatedButton(
-                  onPressed: () async {
-                    // SIGN IN
-                    dynamic result = await _auth
-                        .signInAnon(); // DYNAMIC TYPE - CAN USER OR NULL
-
-                    if (result == null) {
-                      print('Error signing in');
-                    } else {
-                      print('Signed in');
-                      print(result.uid);
-                    }
-                  },
-                  child: const Text('Sign In Anonymously'),
                 ),
               ),
             ],

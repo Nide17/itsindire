@@ -40,7 +40,7 @@ class _AmasuzumabumenyiState extends State<Amasuzumabumenyi> {
               print("The err: ${IsuzumaService().amasuzumabumenyi}");
             }
             // RETURN NULL
-            return null;
+            return [];
           },
         ),
 
@@ -62,21 +62,54 @@ class _AmasuzumabumenyiState extends State<Amasuzumabumenyi> {
                   "The err: ${IsuzumaScoreService().getScoresByTakerID(usr!.uid)}");
             }
             // RETURN NULL
-            return null;
+            return [];
           },
         ),
       ],
       child: Consumer<List<IsuzumaModel>?>(
           builder: (context, amasuzumabumenyi, _) {
-
         return Consumer<List<IsuzumaScoreModel>?>(
             builder: (context, amaUserScores, _) {
+          // CREATE A LIST OF AMASUZUMA WITHOUT SCORES
+          List<Map<IsuzumaModel, IsuzumaScoreModel?>>
+              amasuzumabumenyiWithAndWithoutScores = [];
 
-          if (amaUserScores == null) {
-            return const Center(child: CircularProgressIndicator());
+          // IF THERE ARE AMASUZUMA WITHOUT SCORES AND AMASUZUMA WITH SCORES
+          if (amasuzumabumenyi != null && amaUserScores != null) {
+            // LOOP THROUGH THE AMASUZUMA WITHOUT SCORES
+            for (var i = 0; i < amasuzumabumenyi.length; i++) {
+              // CREATE A VARIABLE TO CHECK IF THE AMASUZUMA HAS A SCORE
+              bool hasScore = false;
+
+              // LOOP THROUGH THE AMASUZUMA WITH SCORES
+              for (var j = 0; j < amaUserScores.length; j++) {
+                // IF THE AMASUZUMA HAS A SCORE
+                if (amasuzumabumenyi[i].id == amaUserScores[j].isuzumaID) {
+                  // ADD THE AMASUZUMA WITH SCORE TO THE LIST FRONT
+                  amasuzumabumenyiWithAndWithoutScores.insert(0, {
+                    amasuzumabumenyi[i]: amaUserScores[j],
+                  });
+
+                  // SET THE VARIABLE TO TRUE
+                  hasScore = true;
+
+                  // BREAK THE LOOP
+                  break;
+                }
+              }
+
+              // IF THE AMASUZUMA DOESN'T HAVE A SCORE
+              if (!hasScore) {
+                // ADD THE AMASUZUMA WITHOUT SCORE TO THE LIST
+                amasuzumabumenyiWithAndWithoutScores.add({
+                  amasuzumabumenyi[i]: null,
+                });
+              }
+            }
           }
+
           return Scaffold(
-              backgroundColor: const Color(0xFF5B8BDF),
+              backgroundColor: const Color.fromARGB(255, 71, 103, 158),
 
               // APP BAR
               appBar: const PreferredSize(
@@ -125,12 +158,17 @@ class _AmasuzumabumenyiState extends State<Amasuzumabumenyi> {
                   ],
                 ),
 
-                // 3. FOR EACH AMASUZUMABUMENYI, CREATE A CARD
-                for (var i = 0; i < amasuzumabumenyi!.length; i++)
-                  AmasuzumaCard(
-                    isuzuma: amasuzumabumenyi[i],
-                    amaUserScores: amaUserScores,
-                  ),
+                // 3. AMASUZUMABUMENYI CARDS
+                if (amasuzumabumenyiWithAndWithoutScores.isNotEmpty)
+                  for (var i = 0;
+                      i < amasuzumabumenyiWithAndWithoutScores.length;
+                      i++)
+                    AmasuzumaCard(
+                      isuzuma:
+                          amasuzumabumenyiWithAndWithoutScores[i].keys.first,
+                      userScore:
+                          amasuzumabumenyiWithAndWithoutScores[i].values.first,
+                    )
               ]),
 
               // BOTTOM NAVIGATION BAR

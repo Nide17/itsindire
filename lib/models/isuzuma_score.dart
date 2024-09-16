@@ -142,7 +142,7 @@ class ScoreQuestionI {
   String ingingoID;
   String isomoID;
   String? title;
-  String? image;
+  String? imageUrl;
   List<ScoreOptionI> options;
   bool isAnswered;
 
@@ -151,7 +151,7 @@ class ScoreQuestionI {
     required this.ingingoID,
     required this.isomoID,
     this.title,
-    this.image,
+    this.imageUrl,
     required this.options,
     this.isAnswered = false,
   });
@@ -198,7 +198,7 @@ class ScoreQuestionI {
   // TO STRING
   @override
   String toString() {
-    return 'ScoreQuestionI(id: $id, ingingoID: $ingingoID, isomoID: $isomoID, title: $title, image: $image, options: $options, isAnswered: $isAnswered)';
+    return 'ScoreQuestionI(id: $id, ingingoID: $ingingoID, isomoID: $isomoID, title: $title, imageUrl: $imageUrl, options: $options, isAnswered: $isAnswered)';
   }
 
   // FROM JSON
@@ -208,7 +208,7 @@ class ScoreQuestionI {
       ingingoID: json['ingingoID'],
       isomoID: json['isomoID'],
       title: json['title'],
-      image: json['image'],
+      imageUrl: json['imageUrl'],
       options: (json['options'] as List)
           .map((optionJson) => ScoreOptionI.fromJson(optionJson))
           .toList(),
@@ -223,7 +223,7 @@ class ScoreQuestionI {
       'ingingoID': ingingoID,
       'isomoID': isomoID,
       'title': title,
-      'image': image,
+      'imageUrl': imageUrl,
       'options': options.map((option) => option.toJson()).toList(),
       'isAnswered': isAnswered,
     };
@@ -236,7 +236,7 @@ class ScoreQuestionI {
       ingingoID: map['ingingoID'],
       isomoID: map['isomoID'],
       title: map['title'],
-      image: map['image'],
+      imageUrl: map['imageUrl'],
       options: map['options'],
       isAnswered: map['isAnswered'],
     );
@@ -247,7 +247,7 @@ class ScoreOptionI {
   int id;
   String? text;
   String? explanation;
-  String? image;
+  String? imageUrl;
   bool isCorrect;
   bool? isChoosen;
 
@@ -255,7 +255,7 @@ class ScoreOptionI {
     required this.id,
     this.text,
     this.explanation,
-    this.image,
+    this.imageUrl,
     required this.isCorrect,
     this.isChoosen,
   });
@@ -266,7 +266,7 @@ class ScoreOptionI {
       id: json['id'],
       text: json['text'],
       explanation: json['explanation'],
-      image: json['image'],
+      imageUrl: json['imageUrl'],
       isCorrect: json['isCorrect'],
       isChoosen: json['isChoosen'],
     );
@@ -278,7 +278,7 @@ class ScoreOptionI {
       'id': id,
       'text': text,
       'explanation': explanation,
-      'image': image,
+      'imageUrl': imageUrl,
       'isCorrect': isCorrect,
       'isChoosen': isChoosen,
     };
@@ -287,7 +287,7 @@ class ScoreOptionI {
   // TO STRING
   @override
   String toString() {
-    return 'Option(id: $id, text: $text, explanation: $explanation, image: $image, isCorrect: $isCorrect, isChoosen: $isChoosen)';
+    return 'Option(id: $id, text: $text, explanation: $explanation, imageUrl: $imageUrl, isCorrect: $isCorrect, isChoosen: $isChoosen)';
   }
 
   // TO OBJECT
@@ -296,7 +296,7 @@ class ScoreOptionI {
       id: map['id'],
       text: map['text'],
       explanation: map['explanation'],
-      image: map['image'],
+      imageUrl: map['imageUrl'],
       isCorrect: map['isCorrect'],
       isChoosen: map['isChoosen'],
     );

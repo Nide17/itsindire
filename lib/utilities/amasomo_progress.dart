@@ -25,7 +25,6 @@ class AmasomoProgress extends StatefulWidget {
 class _AmasomoProgressState extends State<AmasomoProgress> {
   @override
   Widget build(BuildContext context) {
-
     // LIST OF PROGRESSES THAT ARE NOT FINISHED BY THE USER AND ALSO THE ONES THAT ARE NOT STARTED
     List<CourseProgressModel?>? notFinishedProgresses;
 
@@ -41,7 +40,8 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
     if (widget.amasomo != null) {
       for (var isomo in widget.amasomo!) {
         if (widget.progresses != null) {
-          if (!widget.progresses!.any((progress) => progress?.courseId == isomo!.id)) {
+          if (!widget.progresses!
+              .any((progress) => progress?.courseId == isomo!.id)) {
             notFinishedProgresses?.add(CourseProgressModel(
               courseId: isomo!.id,
               currentIngingo: 0,
@@ -62,7 +62,8 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
 
     // SORT BY ISOMOID IN ASCENDING ORDER (THE ONES WITH THE LOWEST ISOMOID FIRST)
     if (widget.progressesToShow != null) {
-      widget.progressesToShow?.sort((a, b) => a!.courseId.compareTo(b!.courseId));
+      widget.progressesToShow
+          ?.sort((a, b) => a!.courseId.compareTo(b!.courseId));
     }
 
     // NEXT, SORT BY THE NUMBER OF INGINGOS IN DESCENDING ORDER (THE ONES WITH THE HIGHEST NUMBER OF INGINGOS FIRST)
@@ -75,8 +76,8 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
     return Column(
       children: widget.progressesToShow?.map((progress) {
             // GET THE ISOMO WITH PROGRESS NOT FINISHED
-            final isomo =
-                widget.amasomo?.firstWhere((isomo) => isomo!.id == progress!.courseId,
+            final isomo = widget.amasomo
+                ?.firstWhere((isomo) => isomo!.id == progress!.courseId,
                     orElse: () => IsomoModel(
                           title: '',
                           description: '',
@@ -91,8 +92,12 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
                 Container(
                   width: MediaQuery.of(context).size.width * 0.8,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2C64C6),
+                    color: const Color.fromARGB(255, 10, 78, 197),
                     borderRadius: BorderRadius.circular(16.0),
+                    border: Border.all(
+                      width: 2.0,
+                      color: const Color(0xFFFFBD59),
+                    ),
                   ),
                   child: Padding(
                     padding: EdgeInsets.symmetric(
@@ -165,7 +170,7 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.015,
+                  height: MediaQuery.of(context).size.height * 0.032,
                 ),
               ],
             );

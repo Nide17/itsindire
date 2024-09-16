@@ -10,14 +10,12 @@ class Description extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      SizedBox(
-        height: MediaQuery.of(context).size.height * 0.01,
-      ),
-
       // TEXT WIDGET TO DISPLAY THE TEXT
       Padding(
-        padding: const EdgeInsets.fromLTRB(
-            16.0, 12.0, 16.0, 12.0), // Add 16.0 pixels of padding to all sides
+        padding: EdgeInsets.symmetric(
+          vertical: MediaQuery.of(context).size.height * 0.05,
+          horizontal: MediaQuery.of(context).size.width * 0.05,
+        ),
         child: Text(
           text,
           textAlign: TextAlign.justify,

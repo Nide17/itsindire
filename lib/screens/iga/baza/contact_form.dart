@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tegura/utilities/default_input.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 
 class ContactForm extends StatefulWidget {
   const ContactForm({super.key});
@@ -12,37 +14,76 @@ class _ContactFormState extends State<ContactForm> {
   final _formKey = GlobalKey<FormState>();
 
   String? _name;
-  String? _phoneNumber;
+  String? email;
   String? _message;
 
   @override
   Widget build(BuildContext context) {
+    Future<bool> sendEmail() async {
+      final smtpServer = gmail('quizblog.rw@gmail.com', 'ixvepscvgpgxyftz');
+
+      final message = Message()
+        ..from = Address('$email', '$_name')
+        ..recipients.add('quizblog.rw@gmail.com')
+        ..subject = 'Message from $_name[$email]'
+        ..text = _message;
+
+      try {
+        final sendReport = await send(message, smtpServer);
+        print('Message sent: $sendReport');
+        return true;
+      } catch (e) {
+        print('Error sending email: $e');
+        rethrow;
+      }
+    }
+
     return Padding(
-      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+      padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.05,
+          vertical: MediaQuery.of(context).size.height * 0.048),
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const DefaultInput(
+            DefaultInput(
               placeholder: 'Izina',
               validation: 'Izina ryawe rirakenewe!',
+              // ON CHANGED
+              onChanged: (value) {
+                setState(() {
+                  _name = value;
+                });
+              },
             ),
 
-            const DefaultInput(
-              placeholder: 'Numero za telefone',
-              validation: 'Numero za telefone zirakenewe!',
+            DefaultInput(
+              placeholder: 'Imeyili',
+              validation: 'Imeyili yawe irakenewe!',
+              // ON CHANGED
+              onChanged: (value) {
+                setState(() {
+                  email = value;
+                });
+              },
             ),
 
-            const DefaultInput(
+            DefaultInput(
               placeholder: 'Ubutumwa',
               validation: 'Ubutumwa bwawe burakenewe!',
               maxLines: 5,
+              // ON CHANGED
+              onChanged: (value) {
+                setState(() {
+                  _message = value;
+                });
+              },
             ),
-            
+
             // 3. VERTICAL SPACE
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
+              height: MediaQuery.of(context).size.height * 0.008,
             ),
 
             // 4. BUTTON
@@ -64,7 +105,36 @@ class _ContactFormState extends State<ContactForm> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    //TODO: Send the form data
+                    bool isSent = false;
+                    sendEmail().then((value) {
+                      isSent = value;
+
+                      if (isSent == true) {
+                        // CLEAR THE FORM
+                        _formKey.currentState!.reset();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Ubutumwa bwawe bwagiye!',
+                              textAlign: TextAlign.center,
+                            ),
+                            duration: Duration(seconds: 10),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Ubutumwa bwawe ntibwagiye!',
+                              textAlign: TextAlign.center,
+                            ),
+                            duration: Duration(seconds: 10),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    });
                   }
                 },
                 child: const Text(

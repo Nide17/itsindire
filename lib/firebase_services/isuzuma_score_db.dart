@@ -129,10 +129,14 @@ class IsuzumaScoreService {
 
   // GET SCORES BY TAKER ID
   Stream<List<IsuzumaScoreModel>> getScoresByTakerID(String takerID) {
-    return isuzumaScoresCollection
-        .where('takerID', isEqualTo: takerID)
-        .snapshots()
-        .map(_amasuzumaScoreFromSnapshot);
+    if (takerID.isNotEmpty) {
+      return isuzumaScoresCollection
+          .where('takerID', isEqualTo: takerID)
+          .snapshots()
+          .map(_amasuzumaScoreFromSnapshot);
+    } else {
+      return isuzumaScoresCollection.snapshots().map(_amasuzumaScoreFromSnapshot);
+    }
   }
 
   // GET SCORE BY ITS ID

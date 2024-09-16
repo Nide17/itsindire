@@ -19,23 +19,27 @@ class _HomePageState extends State<HomePage> {
     final profile = Provider.of<ProfileModel?>(context);
     final usr = Provider.of<UserModel?>(context);
 
-    // TEXT TO DISPLAY ON THE SCREEN AS WELCOME
-    String? mwiriwe = (usr != null && profile != null && profile.username != '')
-        ? 'Mwiriwe neza, ${profile.username}!'
-        : 'Mwiriwe neza!';
+    // TEXT TO DISPLAY ON THE SCREEN AS WELCOME - TIME SENSITIVE
+    String msg = DateTime.now().hour < 12 ? 'Mwaramutse' : 'Mwiriwe';
+    String? displayMsg =
+        (usr != null && profile != null && profile.username != '')
+            ? '$msg, ${capitalizeWords(profile.username!.split(' ')[0])}!'
+            : '$msg!';
 
     return Scaffold(
-      backgroundColor: const Color(0xFF5B8BDF),
-      
+      backgroundColor: const Color.fromARGB(255, 71, 103, 158),
+
       // APP BAR
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(58.0),
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(58.0),
         child: AppBarTegura(),
       ),
 
       // PAGE BODY
       body: ListView(
         // CHILDREN OF THE COLUMN WIDGET
+        padding: EdgeInsets.symmetric(
+            vertical: MediaQuery.of(context).size.height * 0.01),
         children: [
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.02,
@@ -43,7 +47,71 @@ class _HomePageState extends State<HomePage> {
 
           // TEXT WIDGET TO DISPLAY THE TEXT
           Text(
-            mwiriwe,
+            displayMsg,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width * 0.05,
+              color: const Color.fromARGB(255, 255, 255, 255),
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.01,
+          ),
+
+          // TEXT WIDGET TO DISPLAY THE TEXT
+          Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.height * 0.02,
+              horizontal: MediaQuery.of(context).size.width * 0.04,
+            ),
+            child: Text(
+              "Iga amategeko y'umuhanda utavunitse kandi udahenzwe!",
+              textAlign: TextAlign.justify,
+              style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width * 0.05,
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                  fontWeight: FontWeight.w700),
+            ),
+          ),
+
+          // BOTTOM BORDER OF THE ABOVE SECTION
+          Container(
+            color: const Color.fromARGB(255, 0, 0, 0),
+            height: MediaQuery.of(context).size.height * 0.008,
+          ),
+
+          // TEXT WIDGET TO DISPLAY THE TEXT
+          Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.height * 0.03,
+              horizontal: MediaQuery.of(context).size.width * 0.04,
+            ),
+            child: Text(
+              "Amasomo ateguwe muburyo bufasha umunyeshuri gusobanukirwa neza amategeko y'umuhanda ndetse agategurwa kuzakora ikizamini cya provisoire agatsinda ntankomyi!",
+              textAlign: TextAlign.justify,
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width * 0.042,
+                color: const Color.fromARGB(255, 0, 0, 0),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+
+          // BOTTOM BORDER OF THE ABOVE SECTION
+          Container(
+            color: const Color.fromARGB(255, 0, 0, 0),
+            height: MediaQuery.of(context).size.height * 0.008,
+          ),
+
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.048,
+          ),
+
+          // TEXT WIDGET TO DISPLAY THE TEXT
+          Text(
+            "Kanda aha utangire kwiga",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: MediaQuery.of(context).size.width * 0.05,
@@ -52,81 +120,16 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.01,
-          ),
-
-          // TEXT WIDGET TO DISPLAY THE TEXT
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0,
-                8.0), // Add 16.0 pixels of padding to all sides
-            child: Text(
-              "Iga amategeko y'umuhanda utavunitse kandi udahenzwe!",
-              textAlign: TextAlign.justify,
-              style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width * 0.05,
-                color: const Color.fromARGB(255, 0, 0, 0),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-
-          // BOTTOM BORDER OF THE ABOVE SECTION
-          Container(
-            color: const Color.fromARGB(255, 0, 0, 0),
-            height: 8.0,
-          ),
-
-          // TEXT WIDGET TO DISPLAY THE TEXT
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
-            child: Text(
-              "Amasomo ateguwe muburyo bufasha umunyeshuri gusobanukirwa neza amategeko y'umuhanda ndetse agategurwa kuzakora ikizamini cya provisoire agatsinda ntankomyi!",
-              textAlign: TextAlign.justify,
-              style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width * 0.05,
-                color: const Color.fromARGB(255, 0, 0, 0),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.01,
-          ),
-
-          // BOTTOM BORDER OF THE ABOVE SECTION
-          Container(
-            color: const Color.fromARGB(255, 0, 0, 0),
-            height: MediaQuery.of(context).size.height * 0.016,
-          ),
-
-          // TEXT WIDGET TO DISPLAY THE TEXT
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0,
-                8.0), // Add 16.0 pixels of padding to all sides
-            child: Text(
-              "Kanda aha utangire kwiga",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width * 0.05,
-                color: const Color.fromARGB(255, 255, 255, 255),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.01,
-          ),
-
           // DOWN ARROW ICON SVG
-          SvgPicture.asset(
-            'assets/images/down_arrow.svg',
-            height: MediaQuery.of(context).size.height * 0.04,
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.01,
+          Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.height * 0.016,
+              horizontal: MediaQuery.of(context).size.width * 0.04,
+            ),
+            child: SvgPicture.asset(
+              'assets/images/down_arrow.svg',
+              height: MediaQuery.of(context).size.height * 0.04,
+            ),
           ),
 
           // IGA ROUNDED GREEN BUTTON WITH YELLOW TEXT
@@ -140,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                   MediaQuery.of(context).size.width * 0.4,
                   MediaQuery.of(context).size.height * 0.06,
                 ),
-                backgroundColor: const Color(0XFF00A651),
+                backgroundColor: Colors.green,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(32.0),
                 ),
@@ -152,14 +155,14 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: MediaQuery.of(context).size.width * 0.05,
-                  color: const Color(0xFFFFBD59),
+                  color: Colors.yellow,
                 ),
               ),
             ),
           ),
 
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.02,
+            height: MediaQuery.of(context).size.height * 0.032,
           ),
 
           // TEXT WIDGET TO DISPLAY THE TEXT
@@ -172,19 +175,16 @@ class _HomePageState extends State<HomePage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.01,
-          ),
-
           // DOWN ARROW ICON SVG
-          SvgPicture.asset(
-            'assets/images/down_arrow.svg',
-            height: MediaQuery.of(context).size.height * 0.04,
-          ),
-
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.01,
+          Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.height * 0.016,
+              horizontal: MediaQuery.of(context).size.width * 0.04,
+            ),
+            child: SvgPicture.asset(
+              'assets/images/down_arrow.svg',
+              height: MediaQuery.of(context).size.height * 0.04,
+            ),
           ),
 
           // IBICIRO ROUNDED GREEN BUTTON WITH YELLOW TEXT
@@ -198,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                   MediaQuery.of(context).size.width * 0.4,
                   MediaQuery.of(context).size.height * 0.06,
                 ),
-                backgroundColor: const Color(0XFF00A651),
+                backgroundColor: Colors.green,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(32.0),
                 ),
@@ -210,7 +210,7 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: MediaQuery.of(context).size.width * 0.05,
-                  color: const Color(0xFFFFBD59),
+                  color: Colors.yellow,
                 ),
               ),
             ),
@@ -218,5 +218,21 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  String capitalizeWords(String input) {
+    List<String> words = input.split(' ');
+    List<String> capitalizedWords = [];
+
+    for (String word in words) {
+      if (word.isNotEmpty) {
+        capitalizedWords
+            .add('${word[0].toUpperCase()}${word.substring(1).toLowerCase()}');
+      } else {
+        capitalizedWords.add(word);
+      }
+    }
+
+    return capitalizedWords.join(' ');
   }
 }

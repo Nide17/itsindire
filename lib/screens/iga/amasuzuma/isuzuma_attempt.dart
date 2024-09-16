@@ -50,7 +50,8 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
                   .map((e) => ScoreOptionI(
                         id: e.id,
                         text: e.text,
-                        image: e.image,
+                        imageUrl: e.imageUrl,
+                        explanation: e.explanation,
                         isCorrect: e.isCorrect,
                         isChoosen: false,
                       ))
@@ -62,7 +63,7 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
                 isomoID: qn.isomoID,
                 ingingoID: qn.ingingoID,
                 title: qn.title,
-                image: qn.image,
+                imageUrl: qn.imageUrl,
                 options: scoreOptions,
                 isAnswered: false,
               );
@@ -129,168 +130,210 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
           }
 
           // RETURN THE WIDGETS
-          return Scaffold(
-            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-
-            // APP BAR
-            appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(58.0),
-              child: AppBarTegura(),
-            ),
-
-            // PAGE BODY
-            body: IsuzumaViews(
-              userID: usr!.uid,
-              qnIndex: qnIndex,
-              showQn: showQn,
-              isuzuma: widget.isuzuma,
-              scorePrModel: scorePrModel,
-              scoreID: scoreID,
-            ),
-
-            bottomNavigationBar: Container(
-              margin: EdgeInsets.zero,
-              padding: EdgeInsets.zero,
-              height: MediaQuery.of(context).size.height * 0.1,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 216, 215, 215),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color.fromARGB(255, 83, 65, 240)
-                              .withOpacity((qnsLength != qnIndex) ? 0.7 : 1),
-                          offset: const Offset(0, 3),
-                          blurRadius: 8,
-                          spreadRadius: -8,
-                        ),
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // FIND UNANSWERED QUESTIONS
-                        List<ScoreQuestionI> unansweredQns = scorePrModel
-                            .questions
-                            .where((element) => !element.isAnswered)
-                            .toList();
-
-                        // IF THERE ARE UNANSWERED QUESTIONS
-                        if (unansweredQns.isNotEmpty) {
-                          // ALERT DIALOG FOR UNANSWERED QUESTIONS
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text('Unanswered Questions'),
-                                content: const Text(
-                                    'You have unanswered questions. Do you want to submit?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      // SET THE UNANSWERED QUESTIONS TO ANSWERED IN THE OBJECT TO SAVE (scorePrModel)
-                                      for (var qn in scorePrModel.questions) {
-                                        if (!qn.isAnswered) {
-                                          qn.isAnswered = true;
-                                        }
-                                      }
-
-                                      // SAVE THE SCORE
-                                      IsuzumaScoreService()
-                                          .createOrUpdateIsuzumaScore(
-                                              scorePrModel);
-                                      // GO TO THE SCORE PAGE
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              IsuzumaScoreReview(
-                                                  scoreId: scoreID,
-                                                  isuzuma: widget.isuzuma),
-                                        ),
-                                      );
-                                    },
-                                    child: const Text('Submit'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        } else {
-                          // SAVE THE SCORE IF ON LAST QUESTION AND ANSWERED
-                          if (qnIndex == qnsLength && currentQn.isAnswered) {
-                            // SAVE THE SCORE
-                            IsuzumaScoreService()
-                                .createOrUpdateIsuzumaScore(scorePrModel);
-                            // GO TO THE SCORE PAGE
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => IsuzumaScoreReview(
-                                    scoreId: scoreID, isuzuma: widget.isuzuma),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white
-                            .withOpacity((qnsLength != qnIndex) ? 0.7 : 1),
-                        backgroundColor: const Color(0xFF1B56CB)
-                            .withOpacity((qnsLength != qnIndex) ? 0.6 : 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+          return WillPopScope(
+            // ON WILL POP
+            onWillPop: () async {
+              // SHOW DIALOG
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Ugiye gusohoka udasoje?'),
+                    content: const Text(
+                        'Ushaka gusohoka udasoje kwisuzuma? Ibyo wahisemo birasibama.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('OYA'),
                       ),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(
-                            'assets/images/tick.svg',
-                            width: 14,
-                            colorFilter: ColorFilter.mode(
-                              Colors.white.withOpacity(
-                                  (qnsLength != qnIndex) ? 0.5 : 1),
-                              BlendMode.srcATop,
-                            ),
-                          ),
-                          const Text(
-                            ' Soza isuzuma',
-                            style: TextStyle(fontSize: 14),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          // REMOVE THE CURRENT SCREEN FROM THE STACK
+                          Navigator.pop(context);
+                        },
+                        child: const Text('YEGO'),
+                      ),
+                    ],
+                  );
+                },
+              );
+
+              // RETURN FALSE
+              return false;
+            },
+
+            child: Scaffold(
+              backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+
+              // APP BAR
+              appBar: const PreferredSize(
+                preferredSize: Size.fromHeight(58.0),
+                child: AppBarTegura(),
+              ),
+
+              // PAGE BODY
+              body: IsuzumaViews(
+                userID: usr!.uid,
+                qnIndex: qnIndex,
+                showQn: showQn,
+                isuzuma: widget.isuzuma,
+                scorePrModel: scorePrModel,
+                scoreID: scoreID,
+              ),
+
+              bottomNavigationBar: Container(
+                margin: EdgeInsets.zero,
+                padding: EdgeInsets.zero,
+                height: MediaQuery.of(context).size.height * 0.1,
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 216, 215, 215),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color.fromARGB(255, 83, 65, 240)
+                                .withOpacity((qnsLength != qnIndex) ? 0.7 : 1),
+                            offset: const Offset(0, 3),
+                            blurRadius: 8,
+                            spreadRadius: -8,
                           ),
                         ],
                       ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // FIND UNANSWERED QUESTIONS
+                          List<ScoreQuestionI> unansweredQns = scorePrModel
+                              .questions
+                              .where((element) => !element.isAnswered)
+                              .toList();
+
+                          // IF THERE ARE UNANSWERED QUESTIONS
+                          if (unansweredQns.isNotEmpty) {
+                            // ALERT DIALOG FOR UNANSWERED QUESTIONS
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Unanswered Questions'),
+                                  content: const Text(
+                                      'You have unanswered questions. Do you want to submit?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        // SET THE UNANSWERED QUESTIONS TO ANSWERED IN THE OBJECT TO SAVE (scorePrModel)
+                                        for (var qn in scorePrModel.questions) {
+                                          if (!qn.isAnswered) {
+                                            qn.isAnswered = true;
+                                          }
+                                        }
+
+                                        // SAVE THE SCORE
+                                        IsuzumaScoreService()
+                                            .createOrUpdateIsuzumaScore(
+                                                scorePrModel);
+                                        // GO TO THE SCORE PAGE
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                IsuzumaScoreReview(
+                                                    scoreId: scoreID,
+                                                    isuzuma: widget.isuzuma),
+                                          ),
+                                        );
+                                      },
+                                      child: const Text('Submit'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          } else {
+                            // SAVE THE SCORE IF ON LAST QUESTION AND ANSWERED
+                            if (qnIndex == qnsLength && currentQn.isAnswered) {
+                              // SAVE THE SCORE
+                              IsuzumaScoreService()
+                                  .createOrUpdateIsuzumaScore(scorePrModel);
+
+                              // REMOVE THE CURRENT SCREEN FROM THE STACK
+                              Navigator.pop(context);
+
+                              // GO TO THE SCORE PAGE
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => IsuzumaScoreReview(
+                                      scoreId: scoreID,
+                                      isuzuma: widget.isuzuma),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white
+                              .withOpacity((qnsLength != qnIndex) ? 0.7 : 1),
+                          backgroundColor: const Color(0xFF1B56CB)
+                              .withOpacity((qnsLength != qnIndex) ? 0.6 : 1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/tick.svg',
+                              width: 14,
+                              colorFilter: ColorFilter.mode(
+                                Colors.white.withOpacity(
+                                    (qnsLength != qnIndex) ? 0.5 : 1),
+                                BlendMode.srcATop,
+                              ),
+                            ),
+                            const Text(
+                              ' Soza isuzuma',
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                  Row(
-                    children: [
-                      IsuzumaDirectionButton(
-                        direction: 'inyuma',
-                        backward: backward,
-                        qnsLength: qnsLength,
-                        currQnID: qnIndex,
-                      ),
+                    Row(
+                      children: [
+                        IsuzumaDirectionButton(
+                          direction: 'inyuma',
+                          backward: backward,
+                          qnsLength: qnsLength,
+                          currQnID: qnIndex,
+                        ),
 
-                      SizedBox(width: MediaQuery.of(context).size.width * 0.04),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.04),
 
-                      // 3. KOMEZA BUTTON
-                      IsuzumaDirectionButton(
-                        direction: 'komeza',
-                        forward: forward,
-                        qnsLength: qnsLength,
-                        currQnID: qnIndex,
-                      ),
-                    ],
-                  ),
-                ],
+                        // 3. KOMEZA BUTTON
+                        IsuzumaDirectionButton(
+                          direction: 'komeza',
+                          forward: forward,
+                          qnsLength: qnsLength,
+                          currQnID: qnIndex,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -303,7 +346,5 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
     setState(() {
       qnIndex = index;
     });
-
-    print("Question index: $qnIndex");
   }
 }

@@ -47,9 +47,9 @@ class DefaultInput extends StatelessWidget {
   }
 
   // VALIDATION - EMPTY
-  static String? _validateEmpty(String? value) {
+  String? _validateEmpty(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Uzuza hano!';
+      return validation;
     }
     return null;
   }
@@ -65,6 +65,8 @@ class DefaultInput extends StatelessWidget {
 
           // ON CHANGED
           onChanged: onChanged,
+
+          textAlignVertical: TextAlignVertical.center,
 
           // STYLING
           decoration: InputDecoration(
@@ -84,7 +86,7 @@ class DefaultInput extends StatelessWidget {
 
             // HEIGHT
             contentPadding: const EdgeInsets.symmetric(
-              vertical: 4.0,
+              vertical: 16.0,
               horizontal: 24.0,
             ),
           ),
@@ -102,7 +104,7 @@ class DefaultInput extends StatelessWidget {
 
         // VERTICAL SPACE
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.02,
+          height: MediaQuery.of(context).size.height * 0.024,
         )
       ],
     );

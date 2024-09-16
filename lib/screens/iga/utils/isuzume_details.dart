@@ -41,7 +41,6 @@ class IsuzumeDetails extends StatefulWidget {
 class _IsuzumeDetailsState extends State<IsuzumeDetails> {
   @override
   Widget build(BuildContext context) {
-
     // GET THE SCORE PROVIDER MODEL OBJECT
     final QuizScoreProvider scoreProviderModel =
         Provider.of<QuizScoreProvider>(context);
@@ -52,7 +51,7 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
 
     // GET THE POP QUESTIONS LENGTH
     final scorePopQnsLength = scoreProviderModel.quizScore.questions.length;
-
+    
     // RETURN THE CONTENT
     return Consumer<QuizScoreProvider>(
         builder: (context, scoreProviderModel, child) {
@@ -71,7 +70,36 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
             height: MediaQuery.of(context).size.height * 0.02,
           ),
           Expanded(
-              child: Column(
+              child: scorePopQnsLength == 0
+                  ? const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: Text('Nta bibibazo byabonetse!'),
+                        ),
+                        // const SizedBox(height: 16.0),
+                        // ElevatedButton(
+                        //   onPressed: () {
+                        //     CourseProgressService().updateUserCourseProgress(
+                        //       widget.courseProgress != null
+                        //           ? widget.courseProgress!.userId
+                        //           : widget.userID,
+                        //       widget.courseProgress != null
+                        //           ? widget.courseProgress!.courseId
+                        //           : 0,
+                        //       widget.courseProgress != null
+                        //           ? widget.courseProgress!.totalIngingos
+                        //           : 1,
+                        //       0,
+                        //     );
+                        //     // GO BACK TO THE COURSE PAGE
+                        //     Navigator.pop(context);
+                        //   },
+                        //   child: const Text('Ongera utangire iri somo!'),
+                        // ),
+                      ],
+                    )
+                  : Column(
                       children: [
                         // IKIBAZO NUMBER BUTTONS
                         Align(
@@ -133,8 +161,9 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                 children: [
                                   Text(
                                     scorePopQns[widget.qnIndex]
-                                        .popQuestion
-                                        .title,
+                                            .popQuestion
+                                            .title ??
+                                        '',
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
                                       fontSize: 17.0,
@@ -142,6 +171,61 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                       color: Color.fromARGB(255, 0, 0, 0),
                                     ),
                                   ),
+
+                                  // DISPLAY NETWORK IMAGE IF ANY
+                                  scorePopQns[widget.qnIndex]
+                                                  .popQuestion
+                                                  .imageUrl ==
+                                              null ||
+                                          scorePopQns[widget.qnIndex]
+                                                  .popQuestion
+                                                  .imageUrl ==
+                                              ''
+                                      ? const SizedBox.shrink()
+                                      : SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.16,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(4.0),
+                                            margin: const EdgeInsets.only(
+                                                top: 10.0),
+                                            decoration: const BoxDecoration(
+                                              color: Color.fromARGB(
+                                                  255, 255, 255, 255),
+                                              border: Border.fromBorderSide(
+                                                BorderSide(
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                  width: 1,
+                                                  style: BorderStyle.solid,
+                                                ),
+                                              ),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10.0)),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                  offset: Offset(0, 1),
+                                                  blurRadius: 1,
+                                                ),
+                                              ],
+                                            ),
+                                            child: Image.network(
+                                              scorePopQns[widget.qnIndex]
+                                                  .popQuestion
+                                                  .imageUrl!,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  1,
+                                            ),
+                                          ),
+                                        ),
+
+                                  // SHOW THE DESCRIPTION IF THE QUESTION IS ANSWERED
                                   const SizedBox(height: 10.0),
                                   Column(
                                     children: scoreProviderModel
@@ -157,8 +241,14 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                             .quizScore
                                             .questions[widget.qnIndex]
                                             .choosenOption,
-                                            isAnswered: scoreProviderModel.quizScore.questions[widget.qnIndex].isAnswered,
-                                            isAnswerCorrect: scoreProviderModel.quizScore.questions[widget.qnIndex].isAnswerCorrect,
+                                        isAnswered: scoreProviderModel
+                                            .quizScore
+                                            .questions[widget.qnIndex]
+                                            .isAnswered,
+                                        isAnswerCorrect: scoreProviderModel
+                                            .quizScore
+                                            .questions[widget.qnIndex]
+                                            .isAnswerCorrect,
                                         isThisCorrect: widget.isCurrentCorrect,
                                         scoreProviderModel: scoreProviderModel,
                                         isSelected: option['id'] ==
@@ -178,7 +268,7 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                                       .popQuestion
                                                       .id,
                                                   true);
-                                          },
+                                        },
                                       );
                                     }).toList(),
                                   ),
@@ -201,7 +291,7 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                       // GO BACK TO THE COURSE PAGE
                                       Navigator.pop(context);
                                     },
-                                    child: const Text('Ongera uritangire!'),
+                                    child: const Text('Ongera utangire iri somo!'),
                                   ),
                                 ],
                               ),

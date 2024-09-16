@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ import 'package:tegura/firebase_services/profiledb.dart';
 import 'package:tegura/firebase_services/isomodb.dart';
 import 'firebase_options.dart';
 import 'package:tegura/models/user.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 // ENTRY POINT OF THE APP - MAIN FUNCTION
 void main() async {
@@ -26,18 +28,82 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const TeguraApp());
+  runApp(ChangeNotifierProvider<ConnectionStatus>(
+      create: (_) => ConnectionStatus(), child: const TeguraApp()));
+}
+
+// TO NOTIFY ALL WIDGETS OF THE INTERNET CONNECTION STATUS
+class ConnectionStatus extends ChangeNotifier {
+  bool _isOnline = false;
+
+  bool get isOnline => _isOnline;
+
+  set isOnline(bool value) {
+    if (_isOnline != value) {
+      _isOnline = value;
+      notifyListeners();
+    }
+  }
 }
 
 // MAIN APP WIDGET - STATELESS SINCE IT DOESN'T CHANGE
-class TeguraApp extends StatelessWidget {
-  const TeguraApp({super.key}); // CONSTRUCTOR
+class TeguraApp extends StatefulWidget {
+  const TeguraApp({Key? key}) : super(key: key);
+  @override
+  State<TeguraApp> createState() => _TeguraAppState();
+}
 
+class _TeguraAppState extends State<TeguraApp> {
+  // CHECK INTERNET CONNECTION
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+
+  late ConnectionStatus _connectionStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    _connectionStatus = ConnectionStatus();
+
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen((event) {
+      _checkConnectivity();
+    });
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> _checkConnectivity() async {
+    bool isOnline = false;
+    try {
+      final ConnectivityResult connectivityResult =
+          await _connectivity.checkConnectivity();
+
+      if (connectivityResult == ConnectivityResult.mobile ||
+          connectivityResult == ConnectivityResult.wifi) {
+        isOnline = true;
+      }
+    } catch (e) {
+      isOnline = false;
+    }
+
+    _connectionStatus.isOnline = isOnline;
+  }
+
+  // BUILD METHOD
   @override
   Widget build(BuildContext context) {
     // RETURN THE APP
     return MultiProvider(
       providers: [
+        // PROVIDE INTERNET CONNECTION STATUS
+        ChangeNotifierProvider<ConnectionStatus>(
+          create: (context) => _connectionStatus,
+        ),
         // PROVIDE FIREBASE FIRESTORE INSTANCE - DB REFERENCE TO PROFILES COLLECTION
         StreamProvider<ProfileModel?>.value(
           // WHAT TO GIVE TO THE CHILDREN WIDGETS
@@ -94,7 +160,7 @@ class TeguraApp extends StatelessWidget {
                   "The err: ${IsomoService().getAllAmasomo(FirebaseAuth.instance.currentUser?.uid)}");
             }
             // RETURN NULL
-            return null;
+            return [];
           },
         ),
 
@@ -113,7 +179,7 @@ class TeguraApp extends StatelessWidget {
                   "The err: ${CourseProgressService().getUserProgresses(FirebaseAuth.instance.currentUser?.uid)}");
             }
             // RETURN NULL
-            return null;
+            return [];
           },
         ),
       ],
@@ -131,7 +197,6 @@ class TeguraApp extends StatelessWidget {
         routes: {
           '/iga-landing': (context) => const IgaLanding(),
           '/ibiciro': (context) => const Ibiciro(),
-          // '/injira': (context) => AuthService().usr == null ? const Auth() : const Auth(),
           '/injira': (context) => const Injira(),
           '/iyandikishe': (context) => const Iyandikishe(),
           '/ur-student': (context) => const UrStudent(),
