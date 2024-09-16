@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class DirectionButtonIsuzume extends StatefulWidget {
-  // INSTANCE VARIABLES
   final String buttonText;
   final String direction;
   final double opacity;
@@ -13,7 +12,7 @@ class DirectionButtonIsuzume extends StatefulWidget {
   final bool isDisabled;
 
   const DirectionButtonIsuzume({
-    Key? key,
+    super.key,
     required this.buttonText,
     required this.direction,
     required this.opacity,
@@ -22,7 +21,7 @@ class DirectionButtonIsuzume extends StatefulWidget {
     required this.lastQn,
     required this.currQnID,
     required this.isDisabled,
-  }) : super(key: key);
+  });
 
   @override
   State<DirectionButtonIsuzume> createState() => _DirectionButtonIsuzumeState();
@@ -31,11 +30,9 @@ class DirectionButtonIsuzume extends StatefulWidget {
 class _DirectionButtonIsuzumeState extends State<DirectionButtonIsuzume> {
   @override
   Widget build(BuildContext context) {
-
     // RETURN THE WIDGETS
     return ElevatedButton(
       onPressed: () {
-
         if (widget.direction == 'inyuma' && widget.isDisabled == false) {
           // DECREASE SKIP STATE
           widget.backward!();
@@ -95,7 +92,8 @@ class _DirectionButtonIsuzumeState extends State<DirectionButtonIsuzume> {
             Visibility(
               visible: widget.direction == 'inyuma' ? false : true,
               child: Opacity(
-                opacity: widget.currQnID == widget.lastQn ? 1.0 : widget.opacity,
+                opacity:
+                    widget.currQnID == widget.lastQn ? 1.0 : widget.opacity,
                 child: SvgPicture.asset(
                   widget.direction == 'inyuma'
                       ? 'assets/images/backward.svg'

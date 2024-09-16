@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
 class CtaButton extends StatelessWidget {
-// INSTANCE VARIABLES
   final String text;
   final Function()? onPressed;
 
-  // CONSTRUCTOR
   const CtaButton({
     super.key,
     required this.text,
@@ -21,21 +19,31 @@ class CtaButton extends StatelessWidget {
           width: double.infinity,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2C64C6),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24.0),
-                )),
+              backgroundColor: const Color(0xFF2C64C6),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24.0),
+              ),
+              elevation: MediaQuery.of(context).size.width * 0.015,
+              shadowColor: const Color.fromARGB(255, 0, 0, 0),
+              padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.1,
+                  vertical: MediaQuery.of(context).size.height * 0.016),
+              side: const BorderSide(
+                color: Color.fromARGB(255, 255, 255, 255),
+                width: 3.0,
+              ),
+            ),
             onPressed: onPressed,
             child: Text(
               text,
               textAlign: TextAlign.right,
-              style: const TextStyle(
-                color: Color.fromARGB(255, 255, 255, 255),
+              style: TextStyle(
+                color: const Color.fromARGB(255, 255, 255, 255),
+                fontSize: MediaQuery.of(context).size.width * 0.036,
               ),
             ),
           ),
         ),
-        // VERTICAL SPACE
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.035,
         )

@@ -5,10 +5,10 @@ class IsuzumaTimer extends StatefulWidget {
   final VoidCallback onTimerExpired;
 
   const IsuzumaTimer({
-    Key? key,
+    super.key,
     required this.duration,
     required this.onTimerExpired,
-  }) : super(key: key);
+  });
 
   @override
   IsuzumaTimerState createState() => IsuzumaTimerState();
@@ -57,19 +57,26 @@ class IsuzumaTimerState extends State<IsuzumaTimer>
             : Colors.green;
 
         return Container(
-          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.016),
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.012),
           decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 255, 237, 134),
-            borderRadius: BorderRadius.circular(10),
+            color: const Color(0xFFFFBD59),
+            borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.02),
             border: Border.all(
-              color: Colors.green,
-              width: 1.5,
+              color: const Color(0xFF5B8BDF),
+              width: MediaQuery.of(context).size.width * 0.005,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.blue.withOpacity(0.8),
+                offset: const Offset(0, 3),
+                blurRadius: 1,
+              ),
+            ],
           ),
           child: Text(
             '$minutes:${remainingSeconds.toString().padLeft(2, '0')}',
             style: TextStyle(
-              fontSize: MediaQuery.of(context).size.width * 0.05,
+              fontSize: MediaQuery.of(context).size.width * 0.04,
               fontWeight: FontWeight.bold,
               color: textColor,
             ),

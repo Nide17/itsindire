@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Faq extends StatelessWidget {
-  // INSTANCE VARIABLES
   final String question;
   final String answer;
   final String qIcon;
   final String aIcon;
 
-  // CONSTRUCTOR
   const Faq(
       {super.key,
       required this.question,
@@ -66,8 +64,7 @@ class Faq extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.symmetric(
                     vertical: MediaQuery.of(context).size.height * 0.024,
-                    horizontal: MediaQuery.of(context).size.width * 0.032 
-                ),
+                    horizontal: MediaQuery.of(context).size.width * 0.032),
                 child: Text(question,
                     style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.04,
@@ -124,10 +121,10 @@ class Faq extends StatelessWidget {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(answer,
+                child: Text(formatAnswer(answer),
                     style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width * 0.04,
-                      color: const Color.fromARGB(255, 255, 255, 255),
+                      color: const Color.fromARGB(255, 0, 0, 0),
                       fontWeight: FontWeight.bold,
                     )),
               ),
@@ -137,4 +134,16 @@ class Faq extends StatelessWidget {
       ],
     );
   }
+}
+
+String formatAnswer(String answer) {
+  // GET THE answer
+  String ans = answer;
+
+  // IF IT HAS IN LISTS: [1. , 2. , 3. , 4. , 5. , 6. , 7. , 8. , 9. , 10.] USING REGEX, MOVE TO THE NEXT LINE THEN PUT NUMBER AND DOT
+  ans = ans.replaceAllMapped(
+      RegExp(r'(\d+\.)'), (match) => '\n${match.group(0)}');
+
+  // RETURN THE FORMATED answer
+  return ans;
 }

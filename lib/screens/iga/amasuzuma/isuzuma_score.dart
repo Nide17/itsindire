@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tegura/providers/quiz_score_provider.dart';
 
 class IsuzumaScore extends StatefulWidget {
-  // INSTANCE VARIABLES
   final QuizScoreProvider scoreProviderModel;
 
   const IsuzumaScore({super.key, required this.scoreProviderModel});
@@ -14,7 +13,6 @@ class IsuzumaScore extends StatefulWidget {
 class _IsuzumaScoreState extends State<IsuzumaScore> {
   @override
   Widget build(BuildContext context) {
-
     // MARKS COUNTING
     int marks = 0;
 

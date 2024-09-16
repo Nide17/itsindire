@@ -7,18 +7,18 @@ import 'package:tegura/screens/iga/amasuzuma/isuzuma_custom_radio_button.dart';
 import 'package:tegura/screens/iga/amasuzuma/isuzuma_ikibazo_button.dart';
 import 'package:tegura/screens/iga/amasuzuma/isuzuma_score_review.dart';
 import 'package:tegura/screens/iga/amasuzuma/isuzuma_timer.dart';
+import 'package:tegura/screens/iga/amasuzuma/qn_img_url.dart';
+import 'package:tegura/screens/iga/utils/tegura_alert.dart';
 import 'package:tegura/screens/iga/utils/gradient_title.dart';
 
 typedef ShowQnCallback = void Function(int index);
 
 class IsuzumaViews extends StatefulWidget {
-  // INSTANCE VARIABLES
   final String userID;
   final int qnIndex;
   final ShowQnCallback showQn;
   final IsuzumaModel isuzuma;
   final IsuzumaScoreModel? scorePrModel;
-  final String? scoreID;
 
   const IsuzumaViews({
     super.key,
@@ -27,7 +27,6 @@ class IsuzumaViews extends StatefulWidget {
     required this.showQn,
     required this.isuzuma,
     this.scorePrModel,
-    this.scoreID,
   });
 
   @override
@@ -36,39 +35,33 @@ class IsuzumaViews extends StatefulWidget {
 
 class _IsuzumaViewsState extends State<IsuzumaViews> {
   void handleTimerExpired() {
-    // ALERT THE USER
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Iminota yarangiye!'),
-          content: const Text(
-              'Igihe cyashize, wareba uko wakoze cyangwa ugasubiramo!'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // FIND UNANSWERED QUESTIONS
-                for (var qn in widget.scorePrModel!.questions) {
-                  if (!qn.isAnswered) {
-                    qn.isAnswered = true;
-                  }
-                }
+        return TeguraAlert(
+          errorTitle: 'Iminota yarangiye!',
+          errorMsg: 'Igihe cyashize, reba uko wakoze cyangwa usubiremo!',
+          firstButtonTitle: 'Funga',
+          firstButtonFunction: () {
+            for (var qn in widget.scorePrModel!.questions) {
+              if (!qn.isAnswered) {
+                qn.isAnswered = true;
+              }
+            }
 
-                // SAVE THE SCORE
-                IsuzumaScoreService()
-                    .createOrUpdateIsuzumaScore(widget.scorePrModel!);
+            // SAVE THE SCORE
+            IsuzumaScoreService()
+                .createOrUpdateIsuzumaScore(widget.scorePrModel!);
 
-                // GO TO THE REVIEW PAGE
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => IsuzumaScoreReview(
-                          scoreId: widget.scoreID!, isuzuma: widget.isuzuma),
-                    ));
-              },
-              child: const Text('Ok'),
-            ),
-          ],
+            // GO TO THE REVIEW PAGE
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      IsuzumaScoreReview(isuzuma: widget.isuzuma),
+                ));
+          },
+          alertType: 'error',
         );
       },
     );
@@ -76,158 +69,117 @@ class _IsuzumaViewsState extends State<IsuzumaViews> {
 
   @override
   Widget build(BuildContext context) {
-    // RETURN THE SCORE PROVIDER CONSUMER
     return Consumer<IsuzumaScoreModel>(builder: (context, scorePrModel, child) {
       List<ScoreQuestionI> scoreQns = scorePrModel.questions;
       int scoreQnsLength = scoreQns.length;
       ScoreQuestionI currentQn = scoreQns[widget.qnIndex - 1];
 
-      // RETURN THE CONTENT
       return Container(
         padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
         decoration: const BoxDecoration(
           color: Color(0xFFD9D9D9),
         ),
-        child: Column(children: [
-          GradientTitle(
-              title: scorePrModel.isuzumaTitle ?? '',
-              icon: 'assets/images/amasuzumabumenyi.svg',
-              marginTop: 8.0,
-              parentWidget: 'isuzume'),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.02,
-          ),
-          IsuzumaTimer(
-            duration: 1200, // Duration in seconds - 20 minutes
-            // duration: 12, // Duration in seconds
-            onTimerExpired: handleTimerExpired,
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.02,
-          ),
-          Expanded(
-              child: Column(
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // IKIBAZO NUMBER BUTTONS
-              Container(
-                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02,),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFD9D9D9),
-                    border: Border(
-                      top: BorderSide(
-                        color: Color(0xFF00A651),
-                        width: 2.0,
-                      ),
-                      bottom: BorderSide(
-                        color: Color(0xFF00A651),
-                        width: 2.50,
-                      ),
-                      left: BorderSide(
-                        color: Color(0xFF00A651),
-                        width: 2.0,
-                      ),
-                      right: BorderSide(
-                        color: Color(0xFF00A651),
-                        width: 2.0,
-                      ),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color.fromARGB(255, 15, 68, 41),
-                        offset: Offset(0, 1),
-                        blurRadius: 1,
-                      ),
-                    ],
-                  ),
-                  child: Wrap(
-                      spacing: MediaQuery.of(context).size.width * 0.024,
-                      direction: Axis.horizontal,
-                      children: List.generate(
-                        scoreQnsLength,
-                        (index) => IsuzumaIkibazoButton(
-                            // MAKE THE FIRST QUESTION ACTIVE BY DEFAULT ON PAGE LOAD
-                            isActive:
-                                (index + 1) == widget.qnIndex ? true : false,
-                            showQn: widget.showQn,
-                            qnIndex: (index + 1),
-                            isReviewing: false),
-                      ))),
-
-              // SHOW THE QUESTION AND OPTIONS
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.04,
-                    vertical: MediaQuery.of(context).size.height * 0.03,
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Text(
-                          currentQn.title!,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.032,
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                          ),
-                        ),
-
-                        // DISPLAY NETWORK IMAGE IF ANY
-                        currentQn.imageUrl == null
-                            ? const SizedBox.shrink()
-                            : SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.16,
-                                child: Container(
-                                  padding: const EdgeInsets.all(4.0),
-                                  margin: const EdgeInsets.only(top: 10.0),
-                                  decoration: const BoxDecoration(
-                                    color: Color.fromARGB(255, 255, 255, 255),
-                                    border: Border.fromBorderSide(
-                                      BorderSide(
-                                        color: Color.fromARGB(255, 0, 0, 0),
-                                        width: 1,
-                                        style: BorderStyle.solid,
-                                      ),
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10.0)),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Color.fromARGB(255, 0, 0, 0),
-                                        offset: Offset(0, 1),
-                                        blurRadius: 1,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Image.network(
-                                    currentQn.imageUrl!,
-                                    width:
-                                        MediaQuery.of(context).size.width * 1,
-                                  ),
-                                ),
-                              ),
-
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.02),
-                        Column(
-                          children: currentQn.options.map<Widget>((option) {
-                            return IsuzumaCustomRadioButton(
-                                // VARIABLES PROPERTIES
-                                option: option,
-                                curQnIndex: widget.qnIndex,
-                                isReviewing: false);
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              GradientTitle(
+                  title: scorePrModel.isuzumaTitle ?? '',
+                  icon: 'assets/images/amasuzumabumenyi.svg',
+                  marginTop: MediaQuery.of(context).size.height * 0.02,
+                  parentWidget: 'isuzume'),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+              IsuzumaTimer(
+                duration: 1200, // Duration in seconds - 20 minutes
+                // duration: 12, // Duration in seconds
+                onTimerExpired: handleTimerExpired,
               ),
-            ],
-          )),
-        ]),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+              Expanded(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                      padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width * 0.01,
+                      ),
+                      child: Wrap(
+                          spacing: MediaQuery.of(context).size.width * 0.014,
+                          direction: Axis.horizontal,
+                          children: List.generate(
+                            scoreQnsLength,
+                            (index) => IsuzumaIkibazoButton(
+                                isActive: (index + 1) == widget.qnIndex
+                                    ? true
+                                    : false,
+                                showQn: widget.showQn,
+                                qnIndex: (index + 1),
+                                isReviewing: false),
+                          ))),
+
+                  // horizontal line
+                  Container(
+                    margin: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.04,
+                      vertical: MediaQuery.of(context).size.height * 0.00,
+                    ),
+                    child: const Divider(
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      thickness: 2,
+                    ),
+                  ),
+
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.04,
+                        vertical: MediaQuery.of(context).size.height * 0.000,
+                      ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              currentQn.title!,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.035,
+                                fontWeight: FontWeight.bold,
+                                color: const Color.fromARGB(255, 0, 0, 0),
+                              ),
+                            ),
+
+                            // DISPLAY NETWORK IMAGE IF ANY
+                            currentQn.imageUrl == null
+                                ? const SizedBox.shrink()
+                                : QuestionImgUrl(
+                                    currentQn: currentQn,
+                                  ),
+
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.01),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: currentQn.options.map<Widget>((option) {
+                                return IsuzumaCustomRadioButton(
+                                    option: option,
+                                    curQnIndex: widget.qnIndex,
+                                    isReviewing: false);
+                              }).toList(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )),
+            ]),
       );
     });
   }

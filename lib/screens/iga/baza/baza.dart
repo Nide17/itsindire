@@ -4,31 +4,25 @@ import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
 import 'package:tegura/screens/iga/baza/contact_form.dart';
 import 'package:tegura/screens/iga/baza/social.dart';
 import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/utilities/appbar.dart';
+import 'package:tegura/utilities/app_bar.dart';
 
 class Baza extends StatefulWidget {
-  const Baza({Key? key}) : super(key: key);
+  const Baza({super.key});
 
   @override
   State<Baza> createState() => _BazaState();
 }
 
 class _BazaState extends State<Baza> {
-  // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-
-        // APP BAR
         appBar: const PreferredSize(
           preferredSize: Size.fromHeight(58.0),
           child: AppBarTegura(),
         ),
-
-        // PAGE BODY
         body: ListView(children: <Widget>[
-          // 1. GRADIENT TITLE
           const GradientTitle(
               title: 'BAZA MWARIMU', icon: 'assets/images/ibibazo_bibaza.svg'),
 
@@ -45,7 +39,6 @@ class _BazaState extends State<Baza> {
             height: MediaQuery.of(context).size.height * 0.01,
           ),
 
-          // VERTICAL SPACE
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.05,
           ),
@@ -53,8 +46,6 @@ class _BazaState extends State<Baza> {
           // SOCIAL MEDIA
           const Social(),
         ]),
-
-        // BOTTOM NAVIGATION BAR
         bottomNavigationBar: const RebaIbiciro());
   }
 }

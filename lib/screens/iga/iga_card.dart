@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
 class IgaCard extends StatelessWidget {
-  // INSTANCE VARIABLES
   final String title;
   final String icon;
   final Widget screen;
 
-  // CONSTRUCTOR
   const IgaCard(
       {super.key,
       required this.title,
@@ -38,8 +36,7 @@ class IgaCard extends StatelessWidget {
           children: [
             // TITLE
             Padding(
-              padding:
-                  const EdgeInsets.all(2.0),
+              padding: const EdgeInsets.all(2.0),
               child: Text(
                 title.toUpperCase(),
                 textAlign: TextAlign.center,

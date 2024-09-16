@@ -60,7 +60,7 @@ class Option {
 // MODEL TO REPRESENT THE INGINGO
 class IngingoModel {
   int id = 0;
-  String isomoId = '';
+  int isomoID = 0;
   String? title = '';
   String? text = '';
   String? imageUrl = '';
@@ -70,10 +70,9 @@ class IngingoModel {
   String? nb = '';
   String? insideTitle = '';
 
-  // CONSTRUCTOR
   IngingoModel({
     required this.id,
-    required this.isomoId,
+    required this.isomoID,
     this.title,
     this.text,
     this.imageUrl,
@@ -87,7 +86,7 @@ class IngingoModel {
   // FROM JSON
   IngingoModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    isomoId = json['isomoId'];
+    isomoID = json['isomoID'];
     title = json['title'];
     text = json['text'];
     imageUrl = json['imageUrl'];
@@ -102,7 +101,7 @@ class IngingoModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'isomoId': isomoId,
+      'isomoID': isomoID,
       'title': title,
       'text': text,
       'imageUrl': imageUrl,
@@ -117,14 +116,14 @@ class IngingoModel {
   // TO STRING
   @override
   String toString() {
-    return 'IngingoModel(id: $id, isomoId: $isomoId, title: $title, text: $text, imageUrl: $imageUrl, imageTitle: $imageTitle, imageDesc: $imageDesc, options: $options, nb: $nb, insideTitle: $insideTitle)';
+    return 'IngingoModel(id: $id, isomoID: $isomoID, title: $title, text: $text, imageUrl: $imageUrl, imageTitle: $imageTitle, imageDesc: $imageDesc, options: $options, nb: $nb, insideTitle: $insideTitle)';
   }
 
   // TO OBJECT
   IngingoModel toObject(Map<String, dynamic> map) {
     return IngingoModel(
       id: map['id'],
-      isomoId: map['isomoId'],
+      isomoID: map['isomoID'],
       title: map['title'],
       text: map['text'],
       imageUrl: map['imageUrl'],
@@ -134,21 +133,5 @@ class IngingoModel {
       nb: map['nb'],
       insideTitle: map['insideTitle'],
     );
-  }
-}
-
-// REPRESENTS THE SUM OF THE INGINGOS
-class IngingoSum {
-  int sum = 0;
-
-  IngingoSum({required this.sum});
-
-  @override
-  String toString() {
-    return '$sum';
-  }
-
-  int toObject(Map<String, dynamic> map) {
-    return map['sum'];
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/models/profile.dart';
 import 'package:tegura/models/user.dart';
-import 'package:tegura/utilities/appbar.dart';
+import 'package:tegura/utilities/app_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,11 +15,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    // GET PROVIDER USER PROFILE
     final profile = Provider.of<ProfileModel?>(context);
     final usr = Provider.of<UserModel?>(context);
 
-    // TEXT TO DISPLAY ON THE SCREEN AS WELCOME - TIME SENSITIVE
     String msg = DateTime.now().hour < 12 ? 'Mwaramutse' : 'Mwiriwe';
     String? displayMsg =
         (usr != null && profile != null && profile.username != '')
@@ -28,24 +26,17 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-
-      // APP BAR
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(58.0),
         child: AppBarTegura(),
       ),
-
-      // PAGE BODY
       body: ListView(
-        // CHILDREN OF THE COLUMN WIDGET
         padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height * 0.01),
         children: [
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.02,
           ),
-
-          // TEXT WIDGET TO DISPLAY THE TEXT
           Text(
             displayMsg,
             textAlign: TextAlign.center,
@@ -55,12 +46,9 @@ class _HomePageState extends State<HomePage> {
               fontWeight: FontWeight.w900,
             ),
           ),
-
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.01,
           ),
-
-          // TEXT WIDGET TO DISPLAY THE TEXT
           Padding(
             padding: EdgeInsets.symmetric(
               vertical: MediaQuery.of(context).size.height * 0.02,
@@ -75,14 +63,10 @@ class _HomePageState extends State<HomePage> {
                   fontWeight: FontWeight.w700),
             ),
           ),
-
-          // BOTTOM BORDER OF THE ABOVE SECTION
           Container(
             color: const Color.fromARGB(255, 0, 0, 0),
             height: MediaQuery.of(context).size.height * 0.008,
           ),
-
-          // TEXT WIDGET TO DISPLAY THE TEXT
           Padding(
             padding: EdgeInsets.symmetric(
               vertical: MediaQuery.of(context).size.height * 0.03,
@@ -98,18 +82,13 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-
-          // BOTTOM BORDER OF THE ABOVE SECTION
           Container(
             color: const Color.fromARGB(255, 0, 0, 0),
             height: MediaQuery.of(context).size.height * 0.008,
           ),
-
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.048,
           ),
-
-          // TEXT WIDGET TO DISPLAY THE TEXT
           Text(
             "Kanda aha utangire kwiga",
             textAlign: TextAlign.center,
@@ -119,8 +98,6 @@ class _HomePageState extends State<HomePage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-
-          // DOWN ARROW ICON SVG
           Padding(
             padding: EdgeInsets.symmetric(
               vertical: MediaQuery.of(context).size.height * 0.016,
@@ -131,8 +108,6 @@ class _HomePageState extends State<HomePage> {
               height: MediaQuery.of(context).size.height * 0.04,
             ),
           ),
-
-          // IGA ROUNDED GREEN BUTTON WITH YELLOW TEXT
           Center(
             child: ElevatedButton(
               onPressed: () {
@@ -143,7 +118,7 @@ class _HomePageState extends State<HomePage> {
                   MediaQuery.of(context).size.width * 0.4,
                   MediaQuery.of(context).size.height * 0.06,
                 ),
-                backgroundColor: Colors.green,
+                backgroundColor: const Color(0xFF00A651),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(32.0),
                 ),
@@ -155,17 +130,14 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: MediaQuery.of(context).size.width * 0.05,
-                  color: Colors.yellow,
+                  color: const Color(0xFFFFBD59),
                 ),
               ),
             ),
           ),
-
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.032,
           ),
-
-          // TEXT WIDGET TO DISPLAY THE TEXT
           Text(
             "Kanda aha ubone ibiciro byo kwiga",
             textAlign: TextAlign.center,
@@ -175,7 +147,6 @@ class _HomePageState extends State<HomePage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          // DOWN ARROW ICON SVG
           Padding(
             padding: EdgeInsets.symmetric(
               vertical: MediaQuery.of(context).size.height * 0.016,
@@ -186,8 +157,6 @@ class _HomePageState extends State<HomePage> {
               height: MediaQuery.of(context).size.height * 0.04,
             ),
           ),
-
-          // IBICIRO ROUNDED GREEN BUTTON WITH YELLOW TEXT
           Center(
             child: ElevatedButton(
               onPressed: () {
@@ -198,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                   MediaQuery.of(context).size.width * 0.4,
                   MediaQuery.of(context).size.height * 0.06,
                 ),
-                backgroundColor: Colors.green,
+                backgroundColor: const Color(0xFF00A651),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(32.0),
                 ),
@@ -210,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: MediaQuery.of(context).size.width * 0.05,
-                  color: Colors.yellow,
+                  color: const Color(0xFFFFBD59),
                 ),
               ),
             ),
@@ -232,7 +201,6 @@ class _HomePageState extends State<HomePage> {
         capitalizedWords.add(word);
       }
     }
-
     return capitalizedWords.join(' ');
   }
 }

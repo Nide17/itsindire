@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tegura/models/ingingo.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class OptionContent extends StatelessWidget {
-  // INSTANCE VARIABLES
   final Option? option;
 
-  // CONSTRUCTOR
   const OptionContent({super.key, this.option});
 
   @override
@@ -51,8 +50,9 @@ class OptionContent extends StatelessWidget {
                           right: MediaQuery.of(context).size.width * 0.025),
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.13,
-                        child: Image.network(
-                          option!.leftImageUrl!,
+                        child: FadeInImage.memoryNetwork(
+                          placeholder: kTransparentImage,
+                          image: option!.leftImageUrl!,
                           height: MediaQuery.of(context).size.height * 0.1,
                           width: MediaQuery.of(context).size.width * 0.001,
                         ),
@@ -111,10 +111,11 @@ class OptionContent extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(
                     10.0), // Set the desired border radius
-                child: Image.network(
-                  option!.imageUrl!,
-                  fit: BoxFit.cover,
+                child: FadeInImage.memoryNetwork(
+                  placeholder: kTransparentImage,
+                  image: option!.imageUrl!,
                   height: MediaQuery.of(context).size.height * 0.2,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),

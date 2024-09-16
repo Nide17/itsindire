@@ -1,38 +1,37 @@
 List<Map<String, dynamic>> socialData = [
   {
-    'title': 'Hamagara mwarimu',
     'icon': 'assets/images/phone.svg',
-    'details': '0780 579 067'
+    'title': '0794 033 360',
+    'url': 'tel:0794033360',
   },
   {
-    'title': 'WhatsApp',
     'icon': 'assets/images/whatsapp.svg',
-    'details': '0780 579 067'
+    'title': '0794 033 360',
+    'url': 'https://wa.me/+250794033360',
   },
   {
-    'title': 'Email',
     'icon': 'assets/images/email.svg',
-    'details': 'tegurarw@gmail.com'
+    'title': 'tegura.rw@gmail.com',
+    'url': 'mailto:tegura.rw@gmail.com',
   },
   {
-    'title': 'Twitter',
     'icon': 'assets/images/twitter.svg',
-    'details': 'tegura.rw'
+    'title': 'QuizblogRw',
+    'url': 'https://twitter.com/QuizblogRw',
   },
   {
-    'title': 'Instagram',
     'icon': 'assets/images/instagram.svg',
-    'details': 'tegura.rw'
+    'title': 'quizblogrw',
+    'url': 'https://www.instagram.com/quizblogrw',
   },
   {
-    'title': 'LinkedIn',
     'icon': 'assets/images/linkedin.svg',
-    'details': 'tegura.rw'
+    'title': 'quiz-blog',
+    'url': 'https://www.linkedin.com/company/quiz-blog',
   },
   {
-    'title': 'Facebook',
     'icon': 'assets/images/facebook.svg',
-    'details': 'tegura.rw'
+    'title': 'QuizblogRw',
+    'url': 'https://www.facebook.com/QuizblogRw',
   },
 ];
-
