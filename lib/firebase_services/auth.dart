@@ -130,7 +130,7 @@ Future userLogin(String email, String password) async {
       }
 
       String? sessionIdentity = querySnapshot.docs.first.get('sessionID');
-      if (sessionIdentity.isNotEmpty) {
+      if (sessionIdentity != '') {
         return AuthResult(
           error:
               'Mwemerewe gukoresha konti imwe muri telefoni imwe. Duhamagare kuri 0794033360 tugufashe!',
