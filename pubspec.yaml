@@ -102,3 +102,6 @@ flutter:
     - assets/images/ibiciro.svg
     - assets/images/forward.svg
     - assets/images/backward.svg
+    - assets/images/tick.svg
+    - assets/images/play.svg
+    - assets/images/test.svg

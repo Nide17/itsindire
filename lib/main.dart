@@ -11,12 +11,12 @@ import 'package:tegura/screens/auth/ur_student.dart';
 import 'package:tegura/screens/auth/wibagiwe.dart';
 import 'package:tegura/screens/ibiciro/ibiciro.dart';
 import 'package:tegura/screens/iga/iga_landing.dart';
-import 'package:tegura/services/isomo_progress.dart';
+import 'package:tegura/firebase_services/isomo_progress.dart';
 import 'package:tegura/utilities/loading.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:tegura/services/auth.dart';
-import 'package:tegura/services/profiledb.dart';
-import 'package:tegura/services/isomodb.dart';
+import 'package:tegura/firebase_services/auth.dart';
+import 'package:tegura/firebase_services/profiledb.dart';
+import 'package:tegura/firebase_services/isomodb.dart';
 import 'firebase_options.dart';
 import 'package:tegura/models/user.dart';
 

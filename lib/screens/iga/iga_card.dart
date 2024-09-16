@@ -37,12 +37,12 @@ class IgaCard extends StatelessWidget {
               padding:
                   const EdgeInsets.all(2.0),
               child: Text(
-                title,
+                title.toUpperCase(),
                 textAlign: TextAlign.center,
                 softWrap: true,
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
-                  fontSize: MediaQuery.of(context).size.width * 0.038,
+                  fontSize: MediaQuery.of(context).size.width * 0.035,
                   color: const Color.fromARGB(255, 255, 255, 255),
                 ),
               ),

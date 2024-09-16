@@ -5,7 +5,7 @@ import 'package:tegura/models/course_progress.dart';
 import 'package:tegura/models/isomo.dart';
 import 'package:tegura/screens/iga/utils/iga_content.dart';
 import 'package:tegura/screens/iga/utils/isuzume_content.dart';
-import 'package:tegura/services/isomo_progress.dart';
+import 'package:tegura/firebase_services/isomo_progress.dart';
 
 class UserProgress extends StatelessWidget {
   // INSTANCE VARIABLES

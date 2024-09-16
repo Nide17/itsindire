@@ -23,12 +23,17 @@ class IsomoService {
       final description =
           data.containsKey('description') ? data['description'] : '';
       final introText = data.containsKey('introText') ? data['introText'] : '';
-      final conclusion = data.containsKey('conclusion') ? data['conclusion'] : '';
+      final conclusion =
+          data.containsKey('conclusion') ? data['conclusion'] : '';
 
       // RETURN A LIST OF AMASOMO FROM THE SNAPSHOT
       return IsomoModel(
         // AMASOMO DATA - FIELDS
-        id: id is int ? id : id is String ? int.parse(id) : 0,
+        id: id is int
+            ? id
+            : id is String
+                ? int.parse(id)
+                : 0,
         title: title,
         description: description,
         introText: introText,
@@ -46,4 +51,27 @@ class IsomoService {
     return amasomoCollection.snapshots().map(_amasomoFromSnapshot);
   }
 
+  // GET AMASOMO TITLES BY IDS
+  Future<List<String>> getAmasomoTitlesByIds(List<String> ids) async {
+    // CREATE A LIST OF AMASOMO TITLES
+    List<String> amasomoTitles = [];
+
+    // LOOP THROUGH THE LIST OF IDS
+    for (var id in ids) {
+      // GET THE AMASOMO DOCUMENT FROM FIRESTORE
+      final amasomoDocument = await amasomoCollection.doc(id).get();
+
+      // GET THE DATA FROM THE DOCUMENT SNAPSHOT
+      final data = amasomoDocument.data() as Map<String, dynamic>;
+
+      // CHECK IF THE FIELDS EXISTS BEFORE ASSIGNING IT TO THE VARIABLE
+      final title = data.containsKey('title') ? data['title'] : '';
+
+      // ADD THE TITLE TO THE LIST OF AMASOMO TITLES
+      amasomoTitles.add(title);
+    }
+
+    // RETURN THE LIST OF AMASOMO TITLES
+    return amasomoTitles;
+  }
 }

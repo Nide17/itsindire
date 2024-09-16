@@ -6,7 +6,7 @@ import 'package:tegura/models/ingingo.dart';
 import 'package:tegura/models/isomo.dart';
 import 'package:tegura/models/pop_question.dart';
 import 'package:tegura/screens/iga/utils/pop_quiz.dart';
-import 'package:tegura/services/isomo_progress.dart';
+import 'package:tegura/firebase_services/isomo_progress.dart';
 
 class DirectionButton extends StatefulWidget {
   // INSTANCE VARIABLES

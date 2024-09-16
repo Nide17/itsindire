@@ -1,13 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tegura/models/isuzuma.dart';
+import 'package:tegura/models/isuzuma_score.dart';
 import 'package:tegura/models/user.dart';
+import 'package:tegura/screens/iga/amasuzuma/amasuzuma_card.dart';
+import 'package:tegura/firebase_services/isuzuma_db.dart';
+import 'package:tegura/firebase_services/isuzuma_score_db.dart';
 import 'package:tegura/utilities/description.dart';
 import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
-import 'package:tegura/screens/iga/amasuzuma/amanota.dart';
 import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/screens/iga/igazeti/igazeti_book.dart';
-import 'package:tegura/screens/iga/iga_card.dart';
-import 'package:tegura/screens/iga/igazeti/igazeti_imirongo.dart';
 import 'package:tegura/utilities/appbar.dart';
 
 class Amasuzumabumenyi extends StatefulWidget {
@@ -22,101 +24,118 @@ class _AmasuzumabumenyiState extends State<Amasuzumabumenyi> {
   @override
   Widget build(BuildContext context) {
     final usr = Provider.of<UserModel?>(context);
-    // const usr = null;
-    // if (kDebugMode) {
-    //   print(usr?.uid);
-    // }
 
-    return Scaffold(
-        backgroundColor: const Color(0xFF5B8BDF),
+    return MultiProvider(
+      providers: [
+        StreamProvider<List<IsuzumaModel>?>.value(
+          // WHAT TO GIVE TO THE CHILDREN WIDGETS
+          value: IsuzumaService().amasuzumabumenyi,
+          initialData: null,
 
-        // APP BAR
-        appBar: PreferredSize(
-          preferredSize: MediaQuery.of(context).size * 0.07,
-          child: const AppBarTegura(),
+          // CATCH ERRORS
+          catchError: (context, error) {
+            // PRINT THE ERROR
+            if (kDebugMode) {
+              print("Error amasuzumabumenyi all: $error");
+              print("The err: ${IsuzumaService().amasuzumabumenyi}");
+            }
+            // RETURN NULL
+            return null;
+          },
         ),
 
-        // PAGE BODY
-        body: ListView(children: <Widget>[
-          // 1. GRADIENT TITLE
-          const GradientTitle(
-              title: 'AMASUZUMABUMENYI YOSE',
-              icon: 'assets/images/amasuzumabumenyi.svg'),
+        // SCORES BY USER
+        StreamProvider<List<IsuzumaScoreModel>?>.value(
+          // WHAT TO GIVE TO THE CHILDREN WIDGETS
+          value: IsuzumaScoreService().getScoresByTakerID(usr!.uid),
+          initialData: null,
 
-          // 2. DESCRIPTION
-          const Description(
-              text:
-                  'Aya ni amasuzumabumenyi ateguye muburyo bugufasha kwimenyereza gukora ikizamini cya provisoire muburyo bw\'ikoranabuhanga ndetse akubiyemo ibibazo bikunze kubazwa na polisi y\'urwanda.'),
+          // CATCH ERRORS
+          catchError: (context, error) {
+            // PRINT THE ERROR
+            if (kDebugMode) {
+              print("Error amasuzumabumenyi: $error");
+              print(
+                  "The err: ${IsuzumaScoreService().getScoresByTakerID(usr.uid)}");
+            }
+            // RETURN NULL
+            return null;
+          },
+        ),
+      ],
+      child: Consumer<List<IsuzumaModel>?>(
+          builder: (context, amasuzumabumenyi, _) {
+        // print("The amasuzumabumenyi: $amasuzumabumenyi");
 
-          // 2. AMANOTA TITLE
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Placeholder(
-                fallbackHeight: 0,
-                fallbackWidth: 0,
+        return Consumer<List<IsuzumaScoreModel>?>(
+            builder: (context, amaUserScores, _) {
+          // print("The Isuzuma scores: $amaUserScores");
+
+          if (amaUserScores == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return Scaffold(
+              backgroundColor: const Color(0xFF5B8BDF),
+
+              // APP BAR
+              appBar: PreferredSize(
+                preferredSize: MediaQuery.of(context).size * 0.07,
+                child: const AppBarTegura(),
               ),
-              Padding(
-                padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.02,
-                  left: MediaQuery.of(context).size.width * 0.15,
+
+              // PAGE BODY
+              body: ListView(children: <Widget>[
+                // 1. GRADIENT TITLE
+                const GradientTitle(
+                    title: 'AMASUZUMABUMENYI YOSE',
+                    icon: 'assets/images/amasuzumabumenyi.svg'),
+
+                // 2. DESCRIPTION
+                const Description(
+                    text:
+                        'Aya ni amasuzumabumenyi ateguye muburyo bugufasha kwimenyereza gukora ikizamini cya provisoire muburyo bw\'ikoranabuhanga ndetse akubiyemo ibibazo bikunze kubazwa na polisi y\'urwanda.'),
+
+                // 2. AMANOTA TITLE
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Placeholder(
+                      fallbackHeight: 0,
+                      fallbackWidth: 0,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.02,
+                        left: MediaQuery.of(context).size.width * 0.15,
+                      ),
+                      child: Text(
+                        "AMANOTA",
+                        textAlign: TextAlign.end,
+                        softWrap: true,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: MediaQuery.of(context).size.width * 0.04,
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-                child: Text(
-                  "AMANOTA",
-                  textAlign: TextAlign.end,
-                  softWrap: true,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: MediaQuery.of(context).size.width * 0.04,
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    decoration: TextDecoration.underline,
+
+                // 3. FOR EACH AMASUZUMABUMENYI, CREATE A CARD
+                for (var i = 0; i < amasuzumabumenyi!.length; i++)
+                  AmasuzumaCard(
+                    isuzuma: amasuzumabumenyi[i],
+                    amaUserScores: amaUserScores,
                   ),
-                ),
-              )
-            ],
-          ),
+              ]),
 
-          // CARDS ROW FOR IGAZETI, AND IBYAPA - FLEX 50%
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              IgaCard(
-                title: 'ISUZUMABUMENYI RYA 1',
-                icon: 'assets/images/isuzuma.png',
-                screen: IgazetiBook(),
-              ),
-              Amanota(
-                score: 12,
-                maxScore: 20,
-              ),
-            ],
-          ),
-
-          // 3. VERTICAL SPACE
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.04,
-          ),
-          // CARDS ROW FOR IMIRONGO, AND IBIMURIKA - FLEX 50%
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              IgaCard(
-                title: 'ISUZUMABUMENYI RYA 2',
-                icon: 'assets/images/isuzuma.png',
-                screen: IgazetiImirongo(),
-              ),
-              Amanota(
-                score: 0,
-                maxScore: 20,
-              ),
-            ],
-          )
-        ]),
-
-        // BOTTOM NAVIGATION BAR
-        bottomNavigationBar: const RebaIbiciro());
+              // BOTTOM NAVIGATION BAR
+              bottomNavigationBar: const RebaIbiciro());
+        });
+      }),
+    );
   }
 }

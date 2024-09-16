@@ -115,13 +115,7 @@ class CourseProgressService {
     int totalIngingos,
     int currentIngingo,
   ) async {
-    // print('ISOMO PROGRESS');
-    // print('id:${courseId}_$uid');
-    // print('userId: $uid');
-    // print('courseId: $courseId');
-    // print('totalIngingos: $totalIngingos');
-    // print('currentIngingo: $currentIngingo');
-
+    
     // RETURN THE USER DATA - IF THE DOC DOESN'T EXIST,
     //IT WILL BE CREATED BY FIRESTORE
     return await progressCollection.doc('${courseId}_$uid').set({

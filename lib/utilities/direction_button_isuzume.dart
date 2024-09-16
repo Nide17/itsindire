@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:tegura/models/pop_question.dart';
-import 'package:tegura/screens/iga/utils/quiz_score_provider.dart';
 
 class DirectionButtonIsuzume extends StatefulWidget {
   // INSTANCE VARIABLES
@@ -10,10 +8,9 @@ class DirectionButtonIsuzume extends StatefulWidget {
   final double opacity;
   final Function? forward;
   final Function? backward;
-  final List<PopQuestionModel> popQuestions;
+  final int lastQn;
   final int currQnID;
   final bool isDisabled;
-  final QuizScoreProvider scoreObject;
 
   const DirectionButtonIsuzume({
     Key? key,
@@ -22,10 +19,9 @@ class DirectionButtonIsuzume extends StatefulWidget {
     required this.opacity,
     this.forward,
     this.backward,
-    required this.popQuestions,
+    required this.lastQn,
     required this.currQnID,
     required this.isDisabled,
-    required this.scoreObject,
   }) : super(key: key);
 
   @override
@@ -35,7 +31,6 @@ class DirectionButtonIsuzume extends StatefulWidget {
 class _DirectionButtonIsuzumeState extends State<DirectionButtonIsuzume> {
   @override
   Widget build(BuildContext context) {
-    final int lastQn = (widget.popQuestions.length) - 1;
 
     // RETURN THE WIDGETS
     return ElevatedButton(
@@ -56,7 +51,7 @@ class _DirectionButtonIsuzumeState extends State<DirectionButtonIsuzume> {
           // print(widget.currQnID);
 
           // REMOVE THE CURRENT PAGE FROM THE STACK IF NO MORE NEXT PAGES
-          if (widget.currQnID == lastQn) {
+          if (widget.currQnID == widget.lastQn) {
             Navigator.pop(context);
           }
         }
@@ -102,7 +97,7 @@ class _DirectionButtonIsuzumeState extends State<DirectionButtonIsuzume> {
             Visibility(
               visible: widget.direction == 'inyuma' ? false : true,
               child: Opacity(
-                opacity: widget.currQnID == lastQn ? 1.0 : widget.opacity,
+                opacity: widget.currQnID == widget.lastQn ? 1.0 : widget.opacity,
                 child: SvgPicture.asset(
                   widget.direction == 'inyuma'
                       ? 'assets/images/backward.svg'

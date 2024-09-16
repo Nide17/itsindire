@@ -4,7 +4,7 @@ import 'package:tegura/utilities/default_input.dart';
 import 'package:tegura/utilities/description.dart';
 import 'package:tegura/screens/iga/utils/gradient_title.dart';
 import 'package:tegura/utilities/appbar.dart';
-import "package:tegura/services/auth.dart";
+import 'package:tegura/firebase_services/auth.dart';
 
 class UrStudent extends StatefulWidget {
   const UrStudent({Key? key}) : super(key: key);

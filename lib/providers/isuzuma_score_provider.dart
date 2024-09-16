@@ -7,28 +7,6 @@ class QuizScoreProvider extends ChangeNotifier {
     userID: '',
     isomoID: 0,
   );
-
-  // CALCULATE THE MARKS FOR UNIQUE QUESTIONS - FIRESTORE STREAMS
-  int calculateMarks() {
-    int totalMarks = 0;
-
-    for (ScoreQuestion question in quizScore.questions) {
-      // checking that the value isn't 'null' before using it as a condition
-      if (question.isAnswerCorrect != null) {
-        if (question.isAnswerCorrect!) {
-          totalMarks++;
-        }
-      }
-    }
-
-    print('Total Marks: $totalMarks');
-    return totalMarks;
-  }
-
-  // SET THE TOTAL MARKS FOR UNIQUE QUESTIONS - FIRESTORE STREAMS
-  int calculateTotalMarks() {
-    return quizScore.questions.length;
-  }
 }
 
 // SCORE QUESTION OBJECT: POP QUESTION, isAnswered, ISRIGHT
