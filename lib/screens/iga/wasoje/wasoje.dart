@@ -36,7 +36,7 @@ class _WasojeState extends State<Wasoje> {
         body: ListView(children: <Widget>[
           // 1. GRADIENT TITLE
           GradientTitle(
-              title: 'Amasomo wasoje kwiga',
+              title: 'AMASOMO WASOJE KWIGA',
               icon: 'assets/images/course_list.svg'),
 
           // 2. VERTICAL SPACE

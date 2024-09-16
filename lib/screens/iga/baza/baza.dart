@@ -39,7 +39,7 @@ class BazaState extends State<Baza> {
         body: ListView(children: <Widget>[
           // 1. GRADIENT TITLE
           GradientTitle(
-              title: 'Baza mwarimu', icon: 'assets/images/ibibazo_bibaza.svg'),
+              title: 'BAZA MWARIMU', icon: 'assets/images/ibibazo_bibaza.svg'),
 
           // 2. DESCRIPTION
           const Description(
