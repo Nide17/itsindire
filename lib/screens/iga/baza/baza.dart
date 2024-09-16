@@ -22,9 +22,9 @@ class BazaState extends State<Baza> {
   Widget build(BuildContext context) {
     final usr = Provider.of<UserModel?>(context);
     // const usr = null;
-    if (kDebugMode) {
-      print(usr?.uid);
-    }
+    // if (kDebugMode) {
+    //   print(usr?.uid);
+    // }
 
     return Scaffold(
         backgroundColor: const Color(0xFF5B8BDF),

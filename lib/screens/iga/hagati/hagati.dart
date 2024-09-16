@@ -19,8 +19,8 @@ class _HagatiState extends State<Hagati> {
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
-    // final usr = Provider.of<UserModel?>(context);
-    const usr = null;
+    final usr = Provider.of<UserModel?>(context);
+    // const usr = null;
     // print(usr?.uid);
 
     return Scaffold(
@@ -65,7 +65,7 @@ class _HagatiState extends State<Hagati> {
                     title: 'IBYAPA BYO MUMUHANDA',
                     description:
                         'Ibimenyetso byo mumuhanda ni imirongo cyangwa inyuguti bishushanyije mumuhanda...',
-                    progress: 2.8),
+                    progress: 0.28),
                 ViewLoggedIn(
                     title: 'IMPANUKA',
                     description:

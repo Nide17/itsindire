@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class CtaButton extends StatelessWidget {
 // INSTANCE VARIABLES
   final String text;
-  final GlobalKey<FormState> formKey;
+  final Function()? onPressed;
 
   // CONSTRUCTOR
   const CtaButton({
     super.key,
     required this.text,
-    required this.formKey,
+    required this.onPressed,
   });
 
   @override
@@ -25,12 +25,7 @@ class CtaButton extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24.0),
                 )),
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                formKey.currentState!.save();
-                //TODO: Send the form data
-              }
-            },
+            onPressed: onPressed,
             child: Text(
               text,
               textAlign: TextAlign.right,

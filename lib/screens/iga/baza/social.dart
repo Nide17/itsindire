@@ -16,6 +16,7 @@ class Social extends StatelessWidget {
       children: [
         // SOCIAL MEDIA LIST
         for (var i = 0; i < socialData.length; i++)
+        
           // EACH SOCIAL MEDIA
           Padding(
             padding: const EdgeInsets.all(6.0),

@@ -1,12 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:tegura/models/profile.dart';
+import 'package:tegura/models/user.dart';
 import 'package:tegura/screens/utilities/my_appbar.dart';
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
   Widget build(BuildContext context) {
+    // GET PROVIDER USER PROFILE
+    final profile = Provider.of<ProfileModel?>(context);
+    final usr = Provider.of<UserModel?>(context);
+
+    // TEXT TO DISPLAY ON THE SCREEN AS WELCOME
+    String? mwiriwe = (usr != null && profile != null && profile.username != '')
+        ? 'Mwiriwe neza, ${profile.username}!'
+        : 'Mwiriwe neza!';
+
     return Scaffold(
       backgroundColor: const Color(0xFF5B8BDF),
 
@@ -18,7 +35,6 @@ class Home extends StatelessWidget {
 
       // PAGE BODY
       body: ListView(
-        
         // CHILDREN OF THE COLUMN WIDGET
         children: [
           SizedBox(
@@ -27,15 +43,15 @@ class Home extends StatelessWidget {
 
           // TEXT WIDGET TO DISPLAY THE TEXT
           Text(
-            "Mwiriwe neza!",
+            mwiriwe,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: MediaQuery.of(context).size.width * 0.06,
+              fontSize: MediaQuery.of(context).size.width * 0.05,
               color: const Color.fromARGB(255, 255, 255, 255),
               fontWeight: FontWeight.bold,
             ),
           ),
-          
+
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.01,
           ),
@@ -63,8 +79,7 @@ class Home extends StatelessWidget {
 
           // TEXT WIDGET TO DISPLAY THE TEXT
           Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0,
-                8.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
             child: Text(
               "Amasomo ateguwe muburyo bufasha umunyeshuri gusobanukirwa neza amategeko y'umuhanda ndetse agategurwa kuzakora ikizamini cya provisoire agatsinda ntankomyi!",
               textAlign: TextAlign.justify,
@@ -129,7 +144,6 @@ class Home extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               ),
-
               child: Text(
                 'IGA',
                 style: TextStyle(
@@ -171,8 +185,8 @@ class Home extends StatelessWidget {
           ),
 
           // IBICIRO ROUNDED GREEN BUTTON WITH YELLOW TEXT
-            Center(
-              child: ElevatedButton(
+          Center(
+            child: ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/ibiciro');
               },
@@ -185,7 +199,6 @@ class Home extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               ),
-              
               child: Text(
                 'IBICIRO',
                 style: TextStyle(
@@ -194,8 +207,8 @@ class Home extends StatelessWidget {
                   color: const Color(0xFFFFBD59),
                 ),
               ),
-                      ),
             ),
+          ),
         ],
       ),
     );
