@@ -31,7 +31,8 @@ class IngingoService {
       final imageDesc = data.containsKey('imageDesc') ? data['imageDesc'] : '';
       final options = data.containsKey('options') ? data['options'] : '';
       final nb = data.containsKey('nb') ? data['nb'] : '';
-      final insideTitle = data.containsKey('insideTitle') ? data['insideTitle'] : '';
+      final insideTitle =
+          data.containsKey('insideTitle') ? data['insideTitle'] : '';
 
       // RETURN A LIST OF ingingos FROM THE SNAPSHOT
       return IngingoModel(
@@ -66,7 +67,8 @@ class IngingoService {
     final imageDesc = data.containsKey('imageDesc') ? data['imageDesc'] : '';
     final options = data.containsKey('options') ? data['options'] : '';
     final nb = data.containsKey('nb') ? data['nb'] : '';
-    final insideTitle = data.containsKey('insideTitle') ? data['insideTitle'] : '';
+    final insideTitle =
+        data.containsKey('insideTitle') ? data['insideTitle'] : '';
 
     // RETURN A LIST OF ingingos FROM THE SNAPSHOT
     return IngingoModel(
@@ -98,13 +100,15 @@ class IngingoService {
   }
 
 // GET TOTAL ingingos FOR A GIVEN isomoId
-  Stream<int> getTotalIsomoIngingos(String isomoId) {
+  Stream<IngingoSum> getTotalIsomoIngingos(String isomoId) {
     // Retrieve the stream of documents from Firestore
     final documentsStream =
         ingingoCollection.where('isomoID', isEqualTo: isomoId).snapshots();
 
     // Map the stream to the length of the documents and return it
-    return documentsStream.map((event) => event.docs.length);
+    return documentsStream.map((event) => event.docs.isNotEmpty
+        ? IngingoSum(sum: event.docs.length)
+        : IngingoSum(sum: 0));
   }
 
 // GET A LIST OF ingingos FOR A GIVEN isomoId, ORDERED BY ITS DOCUMENT ID
@@ -126,7 +130,7 @@ class IngingoService {
         // Order the documents by the document ID
         .orderBy('id', descending: false)
         .limit(limit);
-        
+
     // If there is a lastIDinsideDoc, start the query after it
     query = query.startAfter([lastIDinsideDoc]);
 

@@ -1,11 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:tegura/models/course_progress.dart';
 import 'package:tegura/models/ingingo.dart';
 import 'package:tegura/models/isomo.dart';
 import 'package:tegura/models/user.dart';
-import 'package:tegura/screens/iga/content_details.dart';
+import 'package:tegura/screens/iga/utils/circle_progress.dart';
+import 'package:tegura/screens/iga/utils/content_details.dart';
+import 'package:tegura/services/isomo_progress.dart';
 import 'package:tegura/utilities/appbar.dart';
 import 'package:tegura/utilities/direction_button.dart';
 import 'package:tegura/services/ingingodb.dart';
@@ -51,7 +53,7 @@ class _IgaContentState extends State<IgaContent> {
 
     return MultiProvider(
       providers: [
-        // STREAM PROVIDER FOR TOTAL INGINGOS FOR A PARTICULAR COURSE OR ISOMO
+        // STREAM PROVIDER FOR THE INGINGOS
         StreamProvider<List<IngingoModel>?>.value(
           // WHAT TO GIVE TO THE CHILDREN WIDGETS
           value: _skip >= 0
@@ -72,6 +74,44 @@ class _IgaContentState extends State<IgaContent> {
             return null;
           },
         ),
+
+        // DB REFERENCE TO COURSE PROGRESS COLLECTION
+        StreamProvider<CourseProgressModel?>.value(
+          // WHAT TO GIVE TO THE CHILDREN WIDGETS
+          value: CourseProgressService().getProgress(usr?.uid, widget.isomo.id),
+          initialData: null,
+
+          // CATCH ERRORS
+          catchError: (context, error) {
+            // PRINT THE ERROR
+            if (kDebugMode) {
+              print("Error in logged in: $error");
+              print(
+                  "The err: ${CourseProgressService().getProgress(usr?.uid, widget.isomo.id)}");
+            }
+            // RETURN NULL
+            return null;
+          },
+        ),
+
+        // STREAM PROVIDER FOR TOTAL INGINGOS FOR A PARTICULAR COURSE OR ISOMO
+        StreamProvider<IngingoSum?>.value(
+          // WHAT TO GIVE TO THE CHILDREN WIDGETS
+          value: IngingoService().getTotalIsomoIngingos(widget.isomo.id),
+          initialData: null,
+
+          // CATCH ERRORS
+          catchError: (context, error) {
+            // PRINT THE ERROR
+            if (kDebugMode) {
+              print("Error in logged in for ingingos: $error");
+              print(
+                  "The err: ${IngingoService().getTotalIsomoIngingos(widget.isomo.id)}");
+            }
+            // RETURN NULL
+            return null;
+          },
+        ),
       ],
       child: Scaffold(
           backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -83,56 +123,46 @@ class _IgaContentState extends State<IgaContent> {
           ),
 
           // PAGE BODY
-          body: ContentDetails(
-            isomo: widget.isomo
-          ),
+          body: ContentDetails(isomo: widget.isomo),
           bottomNavigationBar: Container(
             margin: EdgeInsets.zero,
             padding: EdgeInsets.zero,
             height: MediaQuery.of(context).size.height * 0.1,
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(255, 255, 255, 255),
+              boxShadow: [
+                BoxShadow(
+                  color: Color.fromARGB(255, 72, 255, 0),
+                  offset: Offset(0, -1),
+                  blurRadius: 1,
+                ),
+              ],
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 // 2. INYUMA BUTTON
                 DirectionButton(
-                  buttonText: 'inyuma',
-                  direction: 'inyuma',
-                  opacity: 1,
-                  skip: _skip,
-                  limit: limit,
-                  // SET STATE TO CHANGE THE SKIP BY SUBTRACTING 2 ON EACH BACKWARD BUTTON PRESS
-                  changeSkip: changeSkip,
-                  isomo: widget.isomo
-                ),
+                    buttonText: 'inyuma',
+                    direction: 'inyuma',
+                    opacity: 1,
+                    skip: _skip,
+                    // SET STATE TO CHANGE THE SKIP BY SUBTRACTING 2 ON EACH BACKWARD BUTTON PRESS
+                    changeSkip: changeSkip,
+                    isomo: widget.isomo),
 
-                CircularPercentIndicator(
-                  radius: MediaQuery.of(context).size.width * 0.05,
-                  lineWidth: MediaQuery.of(context).size.width * 0.01,
-                  animation: true,
-                  percent: 0.2,
-                  center: Text(
-                    '${(0.5 * 100).toStringAsFixed(0)}%',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: MediaQuery.of(context).size.width * 0.03,
-                    ),
-                  ),
-                  circularStrokeCap: CircularStrokeCap.butt,
-                  progressColor: const Color(0xFF9D14DD),
-                  backgroundColor: const Color(0xFFBCCCBF),
-                ),
+                // 1. PERCENTAGE INDICATOR
+                const CircleProgress(),
 
                 // 3. KOMEZA BUTTON
                 DirectionButton(
-                  buttonText: 'komeza',
-                  direction: 'komeza',
-                  opacity: 1,
-                  skip: _skip,
-                  limit: limit,
-                  // SET STATE TO CHANGE THE SKIP BY ADDING 2 ON EACH FORWARD BUTTON PRESS
-                  changeSkip: changeSkip,
-                  isomo: widget.isomo
-                ),
+                    buttonText: 'komeza',
+                    direction: 'komeza',
+                    opacity: 1,
+                    skip: _skip,
+                    // SET STATE TO CHANGE THE SKIP BY ADDING 2 ON EACH FORWARD BUTTON PRESS
+                    changeSkip: changeSkip,
+                    isomo: widget.isomo),
               ],
             ),
           ) // 2. INYUMA BUTTON

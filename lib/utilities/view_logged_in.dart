@@ -2,27 +2,28 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/models/course_progress.dart';
+import 'package:tegura/models/ingingo.dart';
 import 'package:tegura/models/isomo.dart';
+import 'package:tegura/services/isomodb.dart';
 import 'package:tegura/utilities/user_progress.dart';
-import 'package:tegura/services/course_progress.dart';
+import 'package:tegura/services/isomo_progress.dart';
 import 'package:tegura/services/ingingodb.dart';
 
 class ViewLoggedIn extends StatelessWidget {
   // INSTANCE VARIABLES
-  final double progress;
   final String userId;
   final IsomoModel isomo;
 
   // CONSTRUCTOR
   const ViewLoggedIn(
       {super.key,
-      required this.progress,
       required this.isomo,
       required this.userId});
 
   @override
   Widget build(BuildContext context) {
 
+    // RETURN THE WIDGETS
     return MultiProvider(
       providers: [
         // DB REFERENCE TO COURSE PROGRESS COLLECTION
@@ -45,7 +46,7 @@ class ViewLoggedIn extends StatelessWidget {
         ),
 
         // STREAM PROVIDER FOR TOTAL INGINGOS FOR A PARTICULAR COURSE OR ISOMO
-        StreamProvider<int?>.value(
+        StreamProvider<IngingoSum?>.value(
           // WHAT TO GIVE TO THE CHILDREN WIDGETS
           value: IngingoService().getTotalIsomoIngingos(isomo.id),
           initialData: null,
@@ -55,7 +56,8 @@ class ViewLoggedIn extends StatelessWidget {
             // PRINT THE ERROR
             if (kDebugMode) {
               print("Error in logged in for ingingos: $error");
-              print("The err: ${IngingoService().getTotalIsomoIngingos(isomo.id)}");
+              print(
+                  "The err: ${IngingoService().getTotalIsomoIngingos(isomo.id)}");
             }
             // RETURN NULL
             return null;
@@ -122,9 +124,9 @@ class ViewLoggedIn extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.01,
                   ),
                   UserProgress(
-                      isomo: isomo,
-                      userId: userId,
-                      ),
+                    isomo: isomo,
+                    userId: userId,
+                  ),
                 ],
               ),
             ),
