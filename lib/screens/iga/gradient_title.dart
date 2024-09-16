@@ -37,6 +37,7 @@ class GradientTitle extends StatelessWidget {
 
         // CONTENT
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             // HORIZONTAL SPACE
             SizedBox(
@@ -46,12 +47,12 @@ class GradientTitle extends StatelessWidget {
             // SVG ICON
             SvgPicture.asset(
               icon,
-              height: MediaQuery.of(context).size.height * 0.05,
+              height: MediaQuery.of(context).size.height * 0.04,
             ),
 
             // HORIZONTAL SPACE
             SizedBox(
-              width: MediaQuery.of(context).size.width * 0.03,
+              width: MediaQuery.of(context).size.width * 0.05,
             ),
 
             // TEXT WIDGET
@@ -59,7 +60,7 @@ class GradientTitle extends StatelessWidget {
                 style: TextStyle(
                   fontSize: MediaQuery.of(context).size.width * 0.052,
                   color: const Color.fromARGB(255, 255, 255, 255),
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w400,
                 )),
           ],
         ),

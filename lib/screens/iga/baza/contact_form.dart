@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tegura/screens/utilities/default_input.dart';
 
 class ContactForm extends StatefulWidget {
   const ContactForm({super.key});
@@ -23,120 +24,22 @@ class _ContactFormState extends State<ContactForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextFormField(
-              decoration: const InputDecoration(
-                hintText: 'Izina',
-                hintStyle: TextStyle(
-                  color: Color(0xFF7FC8DF),
-                ),
-
-                // BACKGROUND COLOR
-                filled: true,
-                fillColor: Color.fromARGB(255, 255, 255, 255),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20.0),
-                  ),
-                ),
-
-                // HEIGHT
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: 0.0,
-                  horizontal: 16.0,
-                ),
-              ),
-
-              // VALIDATION
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Izina ryawe rirakenewe!';
-                }
-                return null;
-              },
-              onSaved: (value) {
-                _name = value;
-              },
+            DefaultInput(
+              placeholder: 'Izina',
+              validation: 'Izina ryawe rirakenewe!',
             ),
 
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
+            DefaultInput(
+              placeholder: 'Numero za telefone',
+              validation: 'Numero za telefone zirakenewe!',
             ),
 
-            TextFormField(
-              decoration: const InputDecoration(
-                hintText: 'Numero za telefone',
-                hintStyle: TextStyle(
-                  color: Color(0xFF7FC8DF),
-                ),
-
-                // BACKGROUND COLOR
-                filled: true,
-                fillColor: Color.fromARGB(255, 255, 255, 255),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20.0),
-                  ),
-                ),
-
-                // HEIGHT
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: 0.0,
-                  horizontal: 24.0,
-                ),
-              ),
-
-              // VALIDATION
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Numero za telefone zirakenewe!';
-                }
-                return null;
-              },
-              onSaved: (value) {
-                _phoneNumber = value;
-              },
-            ),
-
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
-            ),
-
-            TextFormField(
+            DefaultInput(
+              placeholder: 'Ubutumwa',
+              validation: 'Ubutumwa bwawe burakenewe!',
               maxLines: 5,
-              decoration: const InputDecoration(
-                hintText: 'Ikibazo/Igitekerezo',
-                hintStyle: TextStyle(
-                  color: Color(0xFF7FC8DF),
-                ),
-
-                // BACKGROUND COLOR
-                filled: true,
-                fillColor: Color.fromARGB(255, 255, 255, 255),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20.0),
-                  ),
-                ),
-
-                // HEIGHT
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: 16.0,
-                  horizontal: 24.0,
-                ),
-              ),
-
-              // VALIDATION
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Andika hano!';
-                }
-                return null;
-              },
-              onSaved: (value) {
-                _message = value;
-              },
             ),
-
+            
             // 3. VERTICAL SPACE
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.02,

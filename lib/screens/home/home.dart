@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:tegura/screens/my_appbar.dart';
+import 'package:tegura/screens/utilities/my_appbar.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
