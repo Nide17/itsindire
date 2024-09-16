@@ -1,17 +1,17 @@
 import "package:flutter/material.dart";
-import "package:tegura/screens/utilities/cta_button.dart";
-import "package:tegura/screens/utilities/cta_link.dart";
-import "package:tegura/screens/utilities/default_input.dart";
-import 'package:tegura/screens/utilities/description.dart';
+import 'package:tegura/utilities/cta_button.dart';
+import 'package:tegura/utilities/cta_link.dart';
+import 'package:tegura/utilities/default_input.dart';
+import 'package:tegura/utilities/description.dart';
 import "package:tegura/screens/iga/gradient_title.dart";
-import 'package:tegura/screens/utilities/my_appbar.dart';
+import 'package:tegura/utilities/appbar.dart';
 import "package:tegura/services/auth.dart";
 
 class Iyandikishe extends StatefulWidget {
   const Iyandikishe({Key? key}) : super(key: key);
 
   @override
-  _IyandikisheState createState() => _IyandikisheState();
+  State<Iyandikishe> createState() => _IyandikisheState();
 }
 
 // STATE FOR THE SIGN IN PAGE - STATEFUL
@@ -42,7 +42,7 @@ class _IyandikisheState extends State<Iyandikishe> {
         body: ListView(
           children: [
             // 1. GRADIENT TITLE
-            GradientTitle(
+            const GradientTitle(
                 title: 'IYANDIKISHE', icon: 'assets/images/iyandikishe.svg'),
 
             // 2. DESCRIPTION
@@ -127,7 +127,7 @@ class _IyandikisheState extends State<Iyandikishe> {
                           } else {
                             // LOGOUT USER
                             await _authInstance.logOut();
-                            
+
                             // REDIRECT TO LOGIN PAGE AFTER SUCCESSFUL REGISTRATION
                             if(!mounted) return;
                             

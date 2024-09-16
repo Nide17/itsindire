@@ -2,23 +2,23 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/models/user.dart';
-import 'package:tegura/screens/utilities/description.dart';
+import 'package:tegura/utilities/description.dart';
 import 'package:tegura/screens/ibiciro/reba_ibiciro_button.dart';
 import 'package:tegura/screens/iga/amasuzuma/amanota.dart';
 import 'package:tegura/screens/iga/gradient_title.dart';
 import 'package:tegura/screens/iga/igazeti/igazeti_book.dart';
 import 'package:tegura/screens/iga/iga_card.dart';
 import 'package:tegura/screens/iga/igazeti/igazeti_imirongo.dart';
-import 'package:tegura/screens/utilities/my_appbar.dart';
+import 'package:tegura/utilities/appbar.dart';
 
 class Amasuzumabumenyi extends StatefulWidget {
   const Amasuzumabumenyi({Key? key}) : super(key: key);
 
   @override
-  AmasuzumabumenyiState createState() => AmasuzumabumenyiState();
+  State<Amasuzumabumenyi> createState() => _AmasuzumabumenyiState();
 }
 
-class AmasuzumabumenyiState extends State<Amasuzumabumenyi> {
+class _AmasuzumabumenyiState extends State<Amasuzumabumenyi> {
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {

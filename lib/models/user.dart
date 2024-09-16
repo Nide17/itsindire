@@ -5,4 +5,10 @@ class UserModel {
 
   // CONSTRUCTOR
   UserModel(this.email, {required this.uid});
+
+  // TO STRING
+  @override
+  String toString() {
+    return "UserModel {id: $uid, email: $email}";
+  }
 }

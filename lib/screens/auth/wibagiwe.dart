@@ -1,17 +1,17 @@
 import "package:flutter/material.dart";
-import "package:tegura/screens/utilities/cta_button.dart";
-import 'package:tegura/screens/utilities/cta_link.dart';
-import "package:tegura/screens/utilities/default_input.dart";
-import 'package:tegura/screens/utilities/description.dart';
+import 'package:tegura/utilities/cta_button.dart';
+import 'package:tegura/utilities/cta_link.dart';
+import 'package:tegura/utilities/default_input.dart';
+import 'package:tegura/utilities/description.dart';
 import "package:tegura/screens/iga/gradient_title.dart";
-import 'package:tegura/screens/utilities/my_appbar.dart';
+import 'package:tegura/utilities/appbar.dart';
 import "package:tegura/services/auth.dart";
 
 class Wibagiwe extends StatefulWidget {
   const Wibagiwe({Key? key}) : super(key: key);
 
   @override
-  _WibagiweState createState() => _WibagiweState();
+  State<Wibagiwe> createState() => _WibagiweState();
 }
 
 // STATE FOR THE SIGN IN PAGE - STATEFUL
