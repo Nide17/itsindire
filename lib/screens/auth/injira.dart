@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
+import 'package:tegura/firebase_services/profiledb.dart';
+import 'package:tegura/models/profile.dart';
 import 'package:tegura/utilities/cta_button.dart';
 import 'package:tegura/utilities/cta_link.dart';
 import 'package:tegura/utilities/default_input.dart';
@@ -29,6 +32,18 @@ class _InjiraState extends State<Injira> {
   String error = '';
   bool loading = false;
 
+  dynamic profile;
+
+  Future<void> _loadProfileData() async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      ProfileModel prfl = await ProfileService()
+          .getAppBarProfileData(FirebaseAuth.instance.currentUser!.uid);
+      setState(() {
+        profile = prfl;
+      });
+    }
+  }
+
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
@@ -38,184 +53,187 @@ class _InjiraState extends State<Injira> {
             backgroundColor: const Color(0xFF5B8BDF),
 
             // APP BAR
-            appBar: const PreferredSize(
-              preferredSize: Size.fromHeight(58.0),
-              child: AppBarTegura(),
+            appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(58.0),
+              child: AppBarTegura(
+                profile: profile,
+              ),
             ),
 
             // PAGE BODY
-            body: ListView(
-              children: [
-                // 1. GRADIENT TITLE
-                const GradientTitle(
-                    title: 'INJIRA', icon: 'assets/images/injira.svg'),
+            body: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xff14e4ff), Color(0xFF5B8BDF)],
+                  stops: [0.01, 0.6],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                ),
+              ),
+              child: ListView(
+                children: [
+                  // 1. GRADIENT TITLE
+                  const GradientTitle(
+                      title: 'INJIRA', icon: 'assets/images/injira.svg'),
 
-                // 2. DESCRIPTION
-                const Description(
-                    text: 'Injira kugirango ubashe kubona amasomo yose!'),
+                  // 2. DESCRIPTION
+                  const Description(
+                      text: 'Injira kugirango ubashe kubona amasomo yose!'),
 
-                // CENTERED IMAGE
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/house_keys.png',
-                        height: MediaQuery.of(context).size.height * 0.2,
-                        width: MediaQuery.of(context).size.width * 0.2,
-                      ),
-                    ]),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.05,
-                      vertical: 0.0),
-                  child: Form(
-                    key: _formKey, // FORM KEY TO VALIDATE THE FORM
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  // CENTERED IMAGE
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // EMAIL
-                        DefaultInput(
-                          placeholder: 'Imeyili',
-                          validation: 'Injiza imeyili yawe!',
-
-                          // ON CHANGED
-                          onChanged: (value) {
-                            setState(() {
-                              email = value;
-                            });
-                          },
-
-                          obscureText: false,
+                        Image.asset(
+                          'assets/images/house_keys.png',
+                          height: MediaQuery.of(context).size.height * 0.2,
+                          width: MediaQuery.of(context).size.width * 0.2,
                         ),
+                      ]),
 
-                        // IJAMBOBANGA
-                        DefaultInput(
-                          placeholder: 'Ijambobanga',
-                          validation: 'Injiza ijambobanga!',
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.05,
+                        vertical: 0.0),
+                    child: Form(
+                      key: _formKey, // FORM KEY TO VALIDATE THE FORM
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // EMAIL
+                          DefaultInput(
+                            placeholder: 'Imeyili',
+                            validation: 'Injiza imeyili yawe!',
 
-                          // ON CHANGED
-                          onChanged: (value) {
-                            setState(() {
-                              password = value;
-                            });
-                          },
-                          obscureText: true,
-                        ),
+                            // ON CHANGED
+                            onChanged: (value) {
+                              setState(() {
+                                email = value;
+                              });
+                            },
 
-                        // CTA BUTTON
-                        CtaButton(
-                          text: 'Injira',
-                          onPressed: () async {
-                            //VALIDATING THE FORM FIELDS
-                            if (_formKey.currentState!.validate()) {
-                              _formKey.currentState!.save();
+                            obscureText: false,
+                          ),
 
-                              // SET THE LOADING STATE TO TRUE
-                              setState(() => loading = true);
+                          // IJAMBOBANGA
+                          DefaultInput(
+                            placeholder: 'Ijambobanga',
+                            validation: 'Injiza ijambobanga!',
 
-                              // LOGIN THE USER
-                              dynamic loginRes = await _authInstance
-                                  .loginWithEmailAndPassword(email, password);
+                            // ON CHANGED
+                            onChanged: (value) {
+                              setState(() {
+                                password = value;
+                              });
+                            },
+                            obscureText: true,
+                          ),
 
-                              print('\nLogin result:');
-                              print(loginRes.toString());
+                          // CTA BUTTON
+                          CtaButton(
+                            text: 'Injira',
+                            onPressed: () async {
+                              //VALIDATING THE FORM FIELDS
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
 
-                              // CHECK IF LOGIN SUCCESSFUL
-                              if (loginRes == null) {
-                                print('\nError signing in!\n');
-                                setState(() {
-                                  error = 'Please supply valid credentials!';
-                                  loading = false;
-                                  print('\nError signing in!\n');
+                                // SET THE LOADING STATE TO TRUE
+                                setState(() => loading = true);
 
-                                  // SHOW ALERT DIALOG
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text('Error'),
-                                          content: Text(error),
-                                          actions: [
-                                            TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: const Text('OK'))
-                                          ],
-                                        );
-                                      });
-                                });
-                              }
-                              else {
+                                // LOGIN THE USER
+                                dynamic loginRes = await _authInstance
+                                    .loginWithEmailAndPassword(email, password);
+
+                                // CHECK IF LOGIN SUCCESSFUL
+                                if (loginRes == null) {
+                                  setState(() {
+                                    error = 'Please supply valid credentials!';
+                                    loading = false;
+
+                                    // SHOW ALERT DIALOG
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text('Error'),
+                                            content: Text(error),
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text('OK'))
+                                            ],
+                                          );
+                                        });
+                                  });
+                                } else {
+                                  // LOAD PROFILE DATA
+                                  await _loadProfileData();
+
+                                  // SET THE LOADING STATE TO FALSE
+                                  setState(() => loading = false);
+
+                                  // NAVIGATE TO THE PREVIOUS PAGE
+                                  if (!mounted) return;
+
+                                  Navigator.pop(context);
+                                }
+                              } else {
                                 print('\nSigned in!!\n');
-
-                                // SET THE LOADING STATE TO FALSE
-                                setState(() => loading = false);
-
-                                // NAVIGATE TO THE PREVIOUS PAGE
-                                if(!mounted) return;
-
-                                Navigator.pop(context);
-
                               }
+                            },
+                          ),
 
-                            } else {
-                              print('\nSigned in!!\n');
-                            }
-                          },
-                        ),
+                          // CTA LINK
+                          const CtaLink(
+                            text1: 'Wibagiwe ijambobanga? ',
+                            text2: 'hindura',
+                            color1: Color.fromARGB(255, 255, 255, 255),
+                            color2: Color.fromARGB(255, 0, 27, 116),
+                            route: '/wibagiwe',
+                          ),
 
-                        // CTA LINK
-                        const CtaLink(
-                          text1: 'Wibagiwe ijambobanga? ',
-                          text2: 'hindura',
-                          color1: Color.fromARGB(255, 255, 255, 255),
-                          color2: Color.fromARGB(255, 0, 27, 116),
-                          route: '/wibagiwe',
-                        ),
+                          // SIZED BOX
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
 
-                        // SIZED BOX
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.08,
-                        ),
-
-                        // CTA LINK
-                        const CtaLink(
-                          text1: 'Niba utariyandikisha, ',
-                          color1: Color.fromARGB(255, 0, 27, 116),
-                          color2: Color.fromARGB(255, 255, 255, 255),
-                          text2: 'iyandikishe',
-                          route: '/iyandikishe',
-                        ),
-                      ],
+                          // CTA LINK
+                          const CtaLink(
+                            text1: 'Niba utariyandikisha, ',
+                            color1: Color.fromARGB(255, 0, 27, 116),
+                            color2: Color.fromARGB(255, 255, 255, 255),
+                            text2: 'iyandikishe',
+                            route: '/iyandikishe',
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
 
-                // ANONYMOUS SIGN IN BUTTON
-                Container(
-                  padding: const EdgeInsets.all(40.0),
+                  // ANONYMOUS SIGN IN BUTTON
+                  Container(
+                    padding: const EdgeInsets.all(40.0),
 
-                  // RAISED BUTTON
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      // SIGN IN ANONYMOUSLY USING THE AUTH SERVICE INSTANCE - AUTH CLASS
-                      dynamic result = await _authInstance
-                          .signInAnon(); // DYNAMIC TYPE - CAN BE USER OR NULL
+                    // RAISED BUTTON
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        // SIGN IN ANONYMOUSLY USING THE AUTH SERVICE INSTANCE - AUTH CLASS
+                        dynamic result = await _authInstance
+                            .signInAnon(); // DYNAMIC TYPE - CAN BE USER OR NULL
 
-                      if (result == null) {
-                        print('\nError signing in!\n');
-                      } else {
-                        print('\nUser signed in successfully\n');
-                        print(result.uid);
-                      }
-                    },
-                    child: const Text('Sign In Anonymously'),
+                        if (result == null) {
+                        } else {
+                          print(result.uid);
+                        }
+                      },
+                      child: const Text('Sign In Anonymously'),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ));
   }
 }

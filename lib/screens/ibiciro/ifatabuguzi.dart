@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tegura/models/ifatabuguzi.dart';
+import 'package:tegura/models/user.dart';
+import 'package:tegura/screens/auth/iyandikishe.dart';
+import 'package:tegura/screens/ibiciro/processing_ishyura.dart';
 
 class Ifatabuguzi extends StatelessWidget {
   // INSTANCE VARIABLES
-  final int umubare;
-  final String igihe;
-  final String igiciro;
-  final String detailsList;
-  final String detailsText;
+  final String title;
+  final IfatabuguziModel ifatabuguzi;
+  final String curWidget;
 
   // CONSTRUCTOR
   const Ifatabuguzi(
       {super.key,
-      required this.umubare,
-      required this.igihe,
-      required this.igiciro,
-      required this.detailsList,
-      required this.detailsText});
+      required this.title,
+      required this.ifatabuguzi,
+      required this.curWidget});
 
   @override
   Widget build(BuildContext context) {
+    // USER
+    final usr = Provider.of<UserModel?>(context);
+
     return Column(
       children: [
         SizedBox(
@@ -32,7 +36,9 @@ class Ifatabuguzi extends StatelessWidget {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 51, 91, 112),
+                  color: curWidget == '_IbiciroState'
+                      ? const Color.fromARGB(255, 62, 103, 126)
+                      : const Color.fromARGB(255, 43, 120, 236),
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Column(
@@ -41,15 +47,20 @@ class Ifatabuguzi extends StatelessWidget {
                   children: [
                     // TITLE
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(2.0, 4.0, 2.0, 12.0),
+                      padding: EdgeInsets.symmetric(
+                        vertical: MediaQuery.of(context).size.height * 0.016,
+                        horizontal: MediaQuery.of(context).size.width * 0.04,
+                      ),
                       child: Text(
-                        'IFATABUGUZI RYA $umubare',
+                        title,
                         textAlign: TextAlign.left,
                         softWrap: true,
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: MediaQuery.of(context).size.width * 0.038,
-                          color: const Color.fromARGB(255, 255, 255, 255),
+                          color: curWidget == '_IbiciroState'
+                              ? Colors.white
+                              : const Color.fromARGB(255, 14, 13, 13),
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -58,15 +69,22 @@ class Ifatabuguzi extends StatelessWidget {
                     // BOTTOM BORDER OF THE ABOVE SECTION
                     Container(
                       decoration: BoxDecoration(
-                        color: const Color(0xFF0500E5),
+                        color: curWidget == '_IbiciroState'
+                            ? const Color.fromARGB(255, 25, 22, 199)
+                            : const Color.fromARGB(255, 187, 189, 99),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       child: Wrap(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(12.0),
+                            padding: EdgeInsets.symmetric(
+                              vertical:
+                                  MediaQuery.of(context).size.height * 0.01,
+                              horizontal:
+                                  MediaQuery.of(context).size.width * 0.05,
+                            ),
                             child: Text(
-                              'Igihe: $igihe \n\nIgiciro: $igiciro',
+                              'Igihe: ${ifatabuguzi.igihe.toUpperCase()} \n\nIgiciro: ${ifatabuguzi.igiciro} RWF',
                               textAlign: TextAlign.left,
                               softWrap: true,
                               style: TextStyle(
@@ -79,50 +97,74 @@ class Ifatabuguzi extends StatelessWidget {
                           ),
 
                           // ISHYURA BUTTON
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF00CCE5),
-                                  border: Border.all(
-                                    color: const Color(0xFF00CCE5),
-                                    width: 4.0,
-                                  ),
-                                  borderRadius: BorderRadius.circular(30.0),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Color.fromRGBO(0, 0, 0, 0.25),
-                                      offset: Offset(0, 7),
-                                      blurRadius: 4,
-                                    )
-                                  ],
-                                ),
-                                alignment: Alignment.center,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0, vertical: 0.05),
-                                  child: Text(
-                                    'ISHYURA',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.035,
-                                      color: const Color.fromARGB(
-                                          255, 255, 255, 255),
+                          curWidget == '_IbiciroState'
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF00CCE5),
+                                        border: Border.all(
+                                          color: const Color(0xFF00CCE5),
+                                          width: 4.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color:
+                                                Color.fromRGBO(0, 0, 0, 0.25),
+                                            offset: Offset(0, 7),
+                                            blurRadius: 4,
+                                          )
+                                        ],
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: GestureDetector(
+                                        // NAVIGATE TO THE CHILD PAGE
+                                        onTap: () {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                                  builder: (context) {
+                                            return usr != null
+                                                ? ProcessingIshyura(
+                                                    ifatabuguzi: ifatabuguzi)
+                                                : const Iyandikishe(
+                                                    message:
+                                                        "Banza wiyandikishe, ubone kwishyura wige!",
+                                                  );
+                                          }));
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0, vertical: 0.05),
+                                          child: Text(
+                                            'ISHYURA',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.035,
+                                              color: const Color.fromARGB(
+                                                  255, 255, 255, 255),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              ),
-                              // VERTICAL SPACE
-                              SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.07,
-                              ),
-                            ],
-                          ),
+                                    // VERTICAL SPACE
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.07,
+                                    ),
+                                  ],
+                                )
+                              : Row(
+                                  children: const [],
+                                )
                         ],
                       ),
                     ),
@@ -149,14 +191,16 @@ class Ifatabuguzi extends StatelessWidget {
                     width: 4.0,
                   ),
                 ),
-                child: Text(
-                  'HARIMO:',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: MediaQuery.of(context).size.width * 0.042,
-                      color: const Color.fromARGB(255, 0, 0, 0),
-                      textBaseline: TextBaseline.alphabetic),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'HARIMO:',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: MediaQuery.of(context).size.width * 0.042,
+                        color: const Color.fromARGB(255, 0, 0, 0),
+                        textBaseline: TextBaseline.alphabetic),
+                  ),
                 ),
               ),
 
@@ -165,7 +209,9 @@ class Ifatabuguzi extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.17,
                 width: MediaQuery.of(context).size.width * 1.0,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF00CCE5),
+                  color: curWidget == '_IbiciroState'
+                      ? const Color(0xFF00CCE5)
+                      : const Color(0xFF00A651),
                   borderRadius: BorderRadius.circular(8.0),
                   boxShadow: const [
                     BoxShadow(
@@ -180,21 +226,38 @@ class Ifatabuguzi extends StatelessWidget {
                       horizontal: 16.0, vertical: 12.0),
                   child: ListView(
                     children: [
-                      Text(
-                        detailsList,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: MediaQuery.of(context).size.width * 0.038,
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                        ),
-                      ),
+                      // ORDERED LIST OF IBIRIMO
+                      ifatabuguzi.ibirimo.isNotEmpty
+                          ? Column(
+                              children: ifatabuguzi.ibirimo
+                                  .asMap()
+                                  .entries
+                                  .map((entry) => Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          '${entry.key + 1}. ${entry.value}',
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.038,
+                                            color: const Color.fromARGB(
+                                                255, 255, 255, 255),
+                                          ),
+                                        ),
+                                      ))
+                                  .toList(),
+                            )
+                          : const Text(''),
+
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.02,
                       ),
                       Text(
-                        detailsText,
-                        textAlign: TextAlign.left,
+                        ifatabuguzi.ubusobanuro,
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: MediaQuery.of(context).size.width * 0.038,

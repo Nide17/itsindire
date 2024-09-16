@@ -8,7 +8,9 @@ import 'package:tegura/utilities/appbar.dart';
 import 'package:tegura/firebase_services/auth.dart';
 
 class Iyandikishe extends StatefulWidget {
-  const Iyandikishe({Key? key}) : super(key: key);
+  // INSTANCE VARIABLES
+  final String? message;
+  const Iyandikishe({Key? key, this.message}) : super(key: key);
 
   @override
   State<Iyandikishe> createState() => _IyandikisheState();
@@ -29,7 +31,6 @@ class _IyandikisheState extends State<Iyandikishe> {
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
-
     // IF THE USER IS LOGGED IN, POP THE CURRENT PAGE
     if (_authInstance.currentUser() != null) {
       Navigator.pop(context);
@@ -45,183 +46,231 @@ class _IyandikisheState extends State<Iyandikishe> {
         ),
 
         // PAGE BODY
-        body: ListView(
-          children: [
-            // 1. GRADIENT TITLE
-            const GradientTitle(
-                title: 'IYANDIKISHE', icon: 'assets/images/iyandikishe.svg'),
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xff14e4ff), Color(0xFF5B8BDF)],
+              stops: [0.01, 0.6],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
+          ),
+          child: ListView(
+            children: [
+              widget.message != null
+                  ? Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      margin: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.05,
+                        vertical: MediaQuery.of(context).size.height * 0.03,
+                      ),
+                      padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width * 0.04,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFDE59),
+                        border: Border.all(
+                          width: 2.0,
+                          color: const Color.fromARGB(255, 255, 204, 0),
+                        ),
+                        borderRadius: BorderRadius.circular(24.0),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color.fromARGB(255, 59, 57, 77),
+                            offset: Offset(0, 3),
+                            blurRadius: 8,
+                            spreadRadius: -7,
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Text(widget.message!,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.04,
+                              fontWeight: FontWeight.w900,
+                              color: const Color.fromARGB(255, 0, 0, 0),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(),
 
-            // 2. DESCRIPTION
-            const Description(
-                text:
-                    'Iyandikishe ubundi, wige, umenye ndetse utsindire provisoire!'),
+              // 1. GRADIENT TITLE
+              const GradientTitle(
+                  title: 'IYANDIKISHE', icon: 'assets/images/iyandikishe.svg'),
 
-            // CENTERED IMAGE
-            Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/house_keys.png',
-                    height: MediaQuery.of(context).size.height * 0.2,
-                    width: MediaQuery.of(context).size.width * 0.2,
-                  ),
-                ]),
+              // 2. DESCRIPTION
+              const Description(
+                  text:
+                      'Iyandikishe ubundi, wige, umenye ndetse utsindire provisoire!'),
 
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.05,
-                  vertical: 0.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              // CENTERED IMAGE
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // NOMERO ZA TELEPHONE
-                    DefaultInput(
-                      placeholder: 'Izina',
-                      validation: 'Injiza izina ryawe!',
-
-                      // ON CHANGED
-                      onChanged: (val) {
-                        setState(() => username = val);
-                      },
+                    Image.asset(
+                      'assets/images/house_keys.png',
+                      height: MediaQuery.of(context).size.height * 0.2,
+                      width: MediaQuery.of(context).size.width * 0.2,
                     ),
+                  ]),
 
-                    // EMAIL
-                    DefaultInput(
-                      placeholder: 'Imeyili',
-                      validation: 'Injiza imeyili yawe!',
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.05,
+                    vertical: 0.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // NOMERO ZA TELEPHONE
+                      DefaultInput(
+                        placeholder: 'Izina',
+                        validation: 'Injiza izina ryawe!',
 
-                      // ON CHANGED
-                      onChanged: (val) {
-                        setState(() => email = val);
-                      },
-                    ),
+                        // ON CHANGED
+                        onChanged: (val) {
+                          setState(() => username = val);
+                        },
+                      ),
 
-                    // IJAMBOBANGA
-                    DefaultInput(
-                      placeholder: 'Ijambobanga',
-                      validation: 'Injiza ijambobanga!',
+                      // EMAIL
+                      DefaultInput(
+                        placeholder: 'Imeyili',
+                        validation: 'Injiza imeyili yawe!',
 
-                      // ON CHANGED
-                      onChanged: (val) {
-                        setState(() => password = val);
-                      },
+                        // ON CHANGED
+                        onChanged: (val) {
+                          setState(() => email = val);
+                        },
+                      ),
 
-                      // OBSCURE TEXT
-                      obscureText: true,
-                    ),
+                      // IJAMBOBANGA
+                      DefaultInput(
+                        placeholder: 'Ijambobanga',
+                        validation: 'Injiza ijambobanga!',
 
-                    // CTA BUTTON
-                    CtaButton(
-                      text: 'Iyandikishe',
+                        // ON CHANGED
+                        onChanged: (val) {
+                          setState(() => password = val);
+                        },
 
-                      // ON PRESSED
-                      onPressed: () async {
-                        // VALIDATE FORM
-                        if (_formKey.currentState!.validate()) {
-                          // REGISTER USER
-                          dynamic resSignUp =
-                              await _authInstance.registerWithEmailAndPassword(
-                                  username, email, password);
+                        // OBSCURE TEXT
+                        obscureText: true,
+                      ),
 
-                          // CHECK IF USER IS REGISTERED
-                          if (resSignUp == null) {
-                            setState(() {
-                              error =
-                                  'Please supply a valid email and password';
+                      // CTA BUTTON
+                      CtaButton(
+                        text: 'Iyandikishe',
 
-                              // SHOW ERROR DIALOG
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text('Error'),
-                                    content: Text(error),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('OK'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            });
-                          } else {
-                            // LOGOUT USER
-                            await _authInstance.logOut();
+                        // ON PRESSED
+                        onPressed: () async {
+                          // VALIDATE FORM
+                          if (_formKey.currentState!.validate()) {
+                            // REGISTER USER
+                            dynamic resSignUp = await _authInstance
+                                .registerWithEmailAndPassword(
+                                    username, email, password);
 
-                            // REDIRECT TO LOGIN PAGE AFTER SUCCESSFUL REGISTRATION
-                            if (!mounted) return;
+                            // CHECK IF USER IS REGISTERED
+                            if (resSignUp == null) {
+                              setState(() {
+                                error =
+                                    'Please supply a valid email and password';
 
-                            Navigator.pushReplacementNamed(context, '/injira');
-                          }
-                        }
-                      },
-                    ),
+                                // SHOW ERROR DIALOG
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Error'),
+                                      content: Text(error),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              });
+                            } else {
+                              // LOGOUT USER
+                              await _authInstance.logOut();
 
-                    // CTA LINK
-                    const CtaLink(
-                      text1: 'Niba wariyandikishije, ',
-                      text2: 'injira',
-                      color1: Color.fromARGB(255, 255, 255, 255),
-                      color2: Color.fromARGB(255, 0, 27, 116),
-                      route: '/injira',
-                    ),
+                              // REDIRECT TO LOGIN PAGE AFTER SUCCESSFUL REGISTRATION
+                              if (!mounted) return;
 
-                    // VERTICAL SPACE
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.08,
-                    ),
-
-                    // UR STUDENT BUTTON
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          // width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2C64C6),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24.0),
-                                )),
-                            onPressed: () {
                               Navigator.pushReplacementNamed(
-                                  context, '/ur-student');
-                            },
-                            child: const Text(
-                              'Register as UR student',
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 255, 255, 255),
+                                  context, '/injira');
+                            }
+                          }
+                        },
+                      ),
+
+                      // CTA LINK
+                      const CtaLink(
+                        text1: 'Niba wariyandikishije, ',
+                        text2: 'injira',
+                        color1: Color.fromARGB(255, 255, 255, 255),
+                        color2: Color.fromARGB(255, 0, 27, 116),
+                        route: '/injira',
+                      ),
+
+                      // UR STUDENT BUTTON
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            // width: double.infinity,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF2C64C6),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24.0),
+                                  )),
+                              onPressed: () {
+                                Navigator.pushReplacementNamed(
+                                    context, '/ur-student');
+                              },
+                              child: const Text(
+                                'Register as UR student',
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                ),
                               ),
                             ),
                           ),
-                        ),
 
-                        // HORIZONTAL SPACE
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.02,
-                        ),
+                          // HORIZONTAL SPACE
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.02,
+                          ),
 
-                        // PNG IMAGE ASSET
-                        Image.asset(
-                          'assets/images/50off.png',
-                          height: MediaQuery.of(context).size.height * 0.1,
-                          width: MediaQuery.of(context).size.width * 0.1,
-                        ),
-                      ],
-                    ),
-                  ],
+                          // PNG IMAGE ASSET
+                          Image.asset(
+                            'assets/images/50off.png',
+                            height: MediaQuery.of(context).size.height * 0.1,
+                            width: MediaQuery.of(context).size.width * 0.1,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ));
   }
 }

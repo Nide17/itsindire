@@ -176,9 +176,9 @@ class _IgaContentState extends State<IgaContent> {
                   // PRINT ID FOR EACH OF POP QUESTIONS
                   if (kDebugMode) {
                     if (popQuestions != null) {
-                      popQuestions.forEach((pq) {
+                      for (var pq in popQuestions) {
                         print("Pop question id: ${pq.id}");
-                      });
+                      }
                     }
                   }
                   // RETURN THE WIDGETS
@@ -186,9 +186,9 @@ class _IgaContentState extends State<IgaContent> {
                     backgroundColor: const Color.fromARGB(255, 255, 255, 255),
 
                     // APP BAR
-                    appBar: PreferredSize(
-                      preferredSize: MediaQuery.of(context).size * 0.07,
-                      child: const AppBarTegura(),
+                    appBar: const PreferredSize(
+                      preferredSize: Size.fromHeight(58.0),
+                      child: AppBarTegura(),
                     ),
 
                     // PAGE BODY

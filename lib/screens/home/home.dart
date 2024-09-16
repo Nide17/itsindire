@@ -26,10 +26,10 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFF5B8BDF),
-
+      
       // APP BAR
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(58.0),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(58.0),
         child: AppBarTegura(),
       ),
 

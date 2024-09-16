@@ -64,11 +64,6 @@ class IsuzumaService {
 // #############################################################################
   // GET ALL AMASUZUMA
   Stream<List<IsuzumaModel>> get amasuzumabumenyi {
-    // // PRINT THE DATA _amasuzumaFromSnapshot TO THE CONSOLE
-    // isuzumaCollection.snapshots().listen((event) {
-    //   print(_amasuzumaFromSnapshot(event));
-    // });
-
     return isuzumaCollection.snapshots().map(_amasuzumaFromSnapshot);
   }
 

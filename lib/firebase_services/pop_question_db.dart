@@ -96,7 +96,7 @@ class PopQuestionService {
 // GET A LIST OF pop questions FOR A LIST OF ingingoID, ORDERED BY ITS DOCUMENT ID
   Stream<List<PopQuestionModel>> getPopQuestionsByIngingoIDs(
       int isomoID, List<int> ingingoIDs) {
-    print('getPopQuestionsByIngingoIDs: $isomoID, $ingingoIDs');
+        
     // IF THE LIST IS EMPTY, RETURN AN EMPTY STREAM
     if (ingingoIDs.isEmpty) {
       return const Stream.empty();

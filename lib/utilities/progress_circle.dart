@@ -19,7 +19,6 @@ class ProgressCircle extends StatelessWidget {
   // BUILD METHOD TO BUILD THE UI OF THE APP
   @override
   Widget build(BuildContext context) {
-    // print("User:$usr");
 
     return Center(
       child: Column(

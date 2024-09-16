@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:tegura/models/user.dart';
 import 'package:tegura/firebase_services/profiledb.dart';
 
@@ -20,9 +21,16 @@ class AuthService {
   // AUTH CHANGE USER STREAM - LISTENS TO AUTH CHANGES
   Stream<UserModel?> get getUser {
     // GET PROFILE MODEL STREAM
-    return _authInstance
-        .authStateChanges()
-        .map((User? usr) => _userFromFirebaseUser(usr!));
+    return _authInstance.authStateChanges().map((User? usr) {
+      // IF USER IS NOT NULL
+      if (usr != null) {
+        // RETURN THE USER
+        return _userFromFirebaseUser(usr);
+      } else {
+        // RETURN NULL
+        return null;
+      }
+    });
   }
 
   // SIGN IN ANONYMOUSLY METHOD
@@ -36,10 +44,16 @@ class AuthService {
       User? user = result.user;
 
       // RETURN THE USER
-      return _userFromFirebaseUser(user!);
+      if (user != null) {
+        return _userFromFirebaseUser(user);
+      } else {
+        return null;
+      }
     } catch (e) {
       // PRINT THE ERROR
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
 
       // RETURN NULL
       return null;
@@ -56,9 +70,15 @@ class AuthService {
       User? usr = resLogin.user;
 
       // RETURN USER
-      return _userFromFirebaseUser(usr!);
+      if (usr != null) {
+        return _userFromFirebaseUser(usr);
+      } else {
+        return null;
+      }
     } catch (e) {
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
 
       // RETURN NULL
       return null;
@@ -97,14 +117,17 @@ class AuthService {
         );
       }
 
-      // SHOULD NOT DO ANYTHING
-      print('registerWithEmailAndPassword success');
-
       // RETURN THE USER
-      return _userFromFirebaseUser(user!);
+      if (user != null) {
+        return _userFromFirebaseUser(user);
+      } else {
+        return null;
+      }
     } catch (e) {
       // PRINT THE ERROR
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
     }
   }
 
@@ -112,13 +135,17 @@ class AuthService {
   Future logOut() async {
     // ASYNC METHOD TO RETURN A FUTURE
     try {
-      print('logOut');
+      if (kDebugMode) {
+        print('logOut');
+      }
 
       // SIGN OUT REQUEST
       return await _authInstance.signOut();
     } catch (e) {
       // PRINT THE ERROR
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
 
       // RETURN NULL
       return null;
@@ -126,6 +153,4 @@ class AuthService {
   }
 
   currentUser() {}
-
-  // SIGN IN WITH GOOGLE METHOD
 }

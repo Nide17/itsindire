@@ -97,10 +97,11 @@ class _IsuzumaScoreReviewState extends State<IsuzumaScoreReview> {
           ];
           // RETURN THE CONTENT
           return Scaffold(
+            
             // APP BAR
-            appBar: PreferredSize(
-              preferredSize: MediaQuery.of(context).size * 0.07,
-              child: const AppBarTegura(),
+            appBar: const PreferredSize(
+              preferredSize: Size.fromHeight(58.0),
+              child: AppBarTegura(),
             ),
 
             body: Container(
