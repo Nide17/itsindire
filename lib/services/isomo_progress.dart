@@ -71,14 +71,18 @@ class CourseProgressService {
 // #############################################################################
 // FUNCTIONS FOR INTERACTING WITH THE DATABASE
 // #############################################################################
-  // // GET progresses STREAM
-  // Stream<List<CourseProgressModel?>>? getAllProgresses(String? uid) {
-  //   // CHECK IF CURRENT USER UID IS NULL, IF IT IS, RETURN NULL
-  //   if (uid == null) return null;
 
-  //   // GET ALL progresses FROM FIRESTORE AS A STREAM OF DOCUMENT SNAPSHOT
-  //   return progressCollection.snapshots().map(_progressesFromSnapshot);
-  // }
+  // GET A LIST OF PROGRESSES OF USER ON finished and unfinished progress ON A COURSE STREAM
+  Stream<List<CourseProgressModel?>>? getUserProgresses(String? uid) {
+    // CHECK IF CURRENT USER UID IS NULL, IF IT IS, RETURN NULL
+    if (uid == null || uid == '') return null;
+
+// IF FINISHED, RETURN WHERE totalIngingos EQUAL TO currentIngingo
+    return progressCollection
+        .where('userId', isEqualTo: uid)
+        .snapshots()
+        .map(_progressesFromSnapshot);
+  }
 
   // GET ONE USER progress ON A COURSE STREAM
   Stream<CourseProgressModel?>? getProgress(String? uid, int? courseId) {
@@ -111,8 +115,6 @@ class CourseProgressService {
   ) async {
     // RETURN THE USER DATA - IF THE DOC DOESN'T EXIST,
     //IT WILL BE CREATED BY FIRESTORE
-
-    print('TOTAL INGINGOS: $totalIngingos');
     return await progressCollection.doc('${courseId}_$uid').set({
       // USER PROGRESS DATA
       'id': '${courseId}_$uid',

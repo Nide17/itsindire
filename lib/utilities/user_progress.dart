@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:tegura/models/course_progress.dart';
-import 'package:tegura/models/ingingo.dart';
 import 'package:tegura/models/isomo.dart';
 import 'package:tegura/screens/iga/utils/iga_content.dart';
 import 'package:tegura/services/isomo_progress.dart';
@@ -11,22 +10,31 @@ class UserProgress extends StatelessWidget {
   // INSTANCE VARIABLES
   final IsomoModel isomo;
   final String userId;
+  final int totalIngingos;
 
   // CONSTRUCTOR
   const UserProgress({
     super.key,
     required this.isomo,
     required this.userId,
+    required this.totalIngingos,
   });
 
   @override
   Widget build(BuildContext context) {
-    // PROVIDERS
-    final courseProgress = Provider.of<CourseProgressModel?>(context);
-    final ingingoSum = Provider.of<IngingoSum?>(context);
-    final totalIngingos = ingingoSum != null && ingingoSum.toString().isNotEmpty
-        ? int.tryParse(ingingoSum.toString()) ?? 0
-        : 0;
+    // PROVIDERS VARIABLES
+    final progresses = Provider.of<List<CourseProgressModel?>?>(context);
+
+    // GET THE PROGRESS
+    final courseProgress =
+        progresses?.firstWhere((progress) => progress!.courseId == isomo.id,
+            orElse: () => CourseProgressModel(
+                  courseId: isomo.id,
+                  currentIngingo: 0,
+                  totalIngingos: 1,
+                  id: '',
+                  userId: '',
+                ));
 
     // GET THE CURRENT INGINGO IF THE USER HAS STARTED THE COURSE OR 1
     final int curCourseIngingo =
@@ -34,7 +42,7 @@ class UserProgress extends StatelessWidget {
 
     // GET THE PERCENTAGE
     final double percent = (courseProgress != null &&
-            courseProgress.totalIngingos != 0)
+            courseProgress.totalIngingos != 0 && courseProgress.totalIngingos >= curCourseIngingo)
         ? (curCourseIngingo / courseProgress.totalIngingos) // GET THE PROGRESS
         : 0.0; // GET THE PROGRESS
 
@@ -67,10 +75,6 @@ class UserProgress extends StatelessWidget {
         GestureDetector(
           // NAVIGATE TO IGA
           onTap: () {
-            // GET THE PROGRESS
-            final courseProgress =
-                Provider.of<CourseProgressModel?>(context, listen: false);
-
             // IF THE USER HAS NOT STARTED THE COURSE, CREATE A NEW PROGRESS
             if (courseProgress?.totalIngingos != totalIngingos) {
               // CREATE OR UPDATE USER PROGRESS
@@ -81,6 +85,11 @@ class UserProgress extends StatelessWidget {
                 curCourseIngingo,
               );
             }
+
+            print('USER ID: $userId');
+            print('ISOMO ID: ${isomo.id}');
+            print('TOTAL INGINGOS: $totalIngingos');
+            print('CURRENT INGINGO: $curCourseIngingo');
 
             // NAVIGATE TO IGA CONTENT
             Navigator.push(
