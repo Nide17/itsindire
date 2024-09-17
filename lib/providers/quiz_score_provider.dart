@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/models/pop_question.dart';
+import 'package:itsindire/models/pop_question.dart';
 
 class QuizScoreProvider extends ChangeNotifier {
   final QuizScore quizScore = QuizScore(
@@ -58,6 +58,16 @@ class QuizScore {
       }
     }
     return true;
+  }
+
+  int getCorrectlyAnsweredQuestionsCount() {
+    int count = 0;
+    for (var i = 0; i < questions.length; i++) {
+      if (questions[i].isAnswerCorrect == true) {
+        count++;
+      }
+    }
+    return count;
   }
 
   // TO STRING

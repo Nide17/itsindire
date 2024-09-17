@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tegura/models/isuzuma.dart';
+import 'package:itsindire/models/isuzuma.dart';
 
 class IsuzumaService {
   final CollectionReference isuzumaCollection =
@@ -9,7 +9,6 @@ class IsuzumaService {
 
   // GET AMASUZUMA FROM A SNAPSHOT USING THE Isuzuma MODEL - _amasuzumaFromSnapshot
   List<IsuzumaModel> _amasuzumaFromSnapshot(QuerySnapshot querySnapshot) {
-
     return querySnapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
 

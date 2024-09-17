@@ -18,11 +18,10 @@ class Description extends StatelessWidget {
           style: TextStyle(
             fontSize: MediaQuery.of(context).size.width * 0.05,
             color: const Color.fromARGB(255, 255, 255, 255),
-            fontWeight: FontWeight.w400,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
-
       Container(
         color: const Color(0xFF000000),
         height: MediaQuery.of(context).size.height * 0.01,

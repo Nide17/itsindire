@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/providers/quiz_score_provider.dart';
+import 'package:itsindire/providers/quiz_score_provider.dart';
 
 class IsuzumaScore extends StatefulWidget {
   final QuizScoreProvider scoreProviderModel;

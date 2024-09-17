@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/providers/quiz_score_provider.dart';
+import 'package:itsindire/providers/quiz_score_provider.dart';
 
 typedef ShowQnCallback = void Function(int index);
 
@@ -25,13 +25,13 @@ class _IkibazoButtonState extends State<IkibazoButton> {
   Widget build(BuildContext context) {
     return Consumer<QuizScoreProvider>(
         builder: (context, scoreProviderModel, child) {
-
       return Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.02),
+          borderRadius:
+              BorderRadius.circular(MediaQuery.of(context).size.width * 0.02),
         ),
         width: MediaQuery.of(context).size.width * 0.08,
-                margin: EdgeInsets.symmetric(
+        margin: EdgeInsets.symmetric(
           vertical: MediaQuery.of(context).size.height * 0.00,
           horizontal: MediaQuery.of(context).size.width * 0.00,
         ),

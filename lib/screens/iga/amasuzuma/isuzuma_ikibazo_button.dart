@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/models/isuzuma_score.dart';
+import 'package:itsindire/models/isuzuma_score.dart';
 
 typedef ShowQnCallback = void Function(int index);
 

@@ -7,14 +7,14 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1080577461306:android:b335d3ced0dbadd8b8f903",
+        "mobilesdk_app_id": "1:1080577461306:android:a78f8392a18533cab8f903",
         "android_client_info": {
-          "package_name": "com.quizblog.tegura"
+          "package_name": "rw.quizblog.itsindire"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1080577461306-pen13reur370mg1aslc3d5gdusufbjdi.apps.googleusercontent.com",
+          "client_id": "1080577461306-qadjblbep1dh3nnrn5q9sj6605dc0rkm.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -29,6 +29,13 @@
             {
               "client_id": "1080577461306-pen13reur370mg1aslc3d5gdusufbjdi.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1080577461306-ng1nidkiuq62jub56othtrdigj13tfnu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tegura"
+              }
             }
           ]
         }

@@ -20,26 +20,39 @@ class PaymentModel {
   });
 
   // GET REMAINING DAYS
-  int getRemainingDays() {
-    // GET THE CURRENT DATE
+int getRemainingDays() {
     DateTime now = DateTime.now();
+    Duration diff = endAt.difference(now);
+    int daysDifference = diff.inDays;
 
-    // GET THE DIFFERENCE
-    int diff = endAt.difference(now).inDays;
+    // Check if there is any remaining time in the day beyond the full days difference
+    if (diff.inHours % 24 > 0 ||
+        diff.inMinutes % 1440 > 0 ||
+        diff.inSeconds % 86400 > 0) {
+      if (diff.isNegative) {
+        daysDifference -=
+            1; // Passed time within a day should be considered as a full day passed
+      } else {
+        daysDifference +=
+            1; // Remaining time within a day should be considered as a full day remaining
+      }
+    }
 
-    // RETURN THE DIFFERENCE
-    return diff + 1;
+    print('\nEndAt: $endAt\nNow: $now\nDays Difference: $daysDifference\n');
+    return daysDifference;
   }
 
   // GET FORMATED END DATE - 2021-09-30
   String getFormatedEndDate() {
-    // GET THE END DATE
     DateTime end = endAt;
-
-    // FORMAT THE END DATE
     String formatedEnd = '${end.day}-${end.month}-${end.year}';
+    return formatedEnd;
+  }
 
-    // RETURN THE FORMATED END DATE
+  String getFormatedEndDateTime() {
+    DateTime end = endAt;
+    String formatedEnd =
+        '${end.day}-${end.month}-${end.year} ${end.hour}:${end.minute}';
     return formatedEnd;
   }
 

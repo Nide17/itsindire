@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tegura/models/ifatabuguzi.dart';
+import 'package:itsindire/models/ifatabuguzi.dart';
 
 class IfatabuguziService {
-  
   final CollectionReference ifatabuguziCollection =
       FirebaseFirestore.instance.collection('amafatabuguzi');
 

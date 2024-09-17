@@ -1,15 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:itsindire/firebase_services/isomo_db.dart';
+import 'package:itsindire/firebase_services/isuzuma_score_db.dart';
+import 'package:itsindire/models/isuzuma.dart';
+import 'package:itsindire/models/isuzuma_score.dart';
+import 'package:itsindire/screens/iga/amasuzuma/isuzuma_attempt.dart';
+import 'package:itsindire/screens/iga/amasuzuma/isuzuma_score_review.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/utilities/loading_widget.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/firebase_services/isomo_db.dart';
-import 'package:tegura/firebase_services/isuzuma_score_db.dart';
-import 'package:tegura/models/isuzuma.dart';
-import 'package:tegura/models/isuzuma_score.dart';
-import 'package:tegura/models/user.dart';
-import 'package:tegura/screens/iga/amasuzuma/isuzuma_attempt.dart';
-import 'package:tegura/screens/iga/amasuzuma/isuzuma_score_review.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/utilities/loading_widget.dart';
 
 class IsuzumaOverview extends StatefulWidget {
   final IsuzumaModel isuzuma;
@@ -52,7 +53,7 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
 
   @override
   Widget build(BuildContext context) {
-    final usr = Provider.of<UserModel?>(context);
+    final usr = FirebaseAuth.instance.currentUser;
 
     return MultiProvider(
       providers: [
@@ -69,9 +70,9 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
           Consumer<IsuzumaScoreModel?>(builder: (context, scoreUserIsuzuma, _) {
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-          appBar: const PreferredSize(
+          appBar: PreferredSize(
             preferredSize: Size.fromHeight(58.0),
-            child: AppBarTegura(),
+            child: AppBarItsindire(),
           ),
           body: ListView(children: <Widget>[
             Container(
@@ -120,7 +121,7 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
                               fontSize:
                                   MediaQuery.of(context).size.width * 0.045,
                               color: Colors.black,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -170,7 +171,7 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.036,
                           color: const Color.fromARGB(255, 255, 255, 255),
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
@@ -178,12 +179,12 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
 
                   // ORDERED LIST OF amasomo - HEIGHT = HEIGHT OF LIST amasomo
                   SizedBox(
-                    height: isTitlesLoading == true
+                    height: isTitlesLoading
                         ? MediaQuery.of(context).size.height * 0.048 * 5
                         : MediaQuery.of(context).size.height *
                             0.04 *
                             amasomo.length,
-                    child: isTitlesLoading == true
+                    child: isTitlesLoading
                         ? const LoadingWidget()
                         : ListView.builder(
                             itemCount: amasomo.length,
@@ -202,7 +203,7 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
                                             0.04,
                                     color: const Color.fromARGB(
                                         255, 255, 255, 255),
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                                 title: Text(
@@ -213,7 +214,7 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
                                             0.032,
                                     color: const Color.fromARGB(
                                         255, 255, 255, 255),
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               );
@@ -273,11 +274,10 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            IsuzumaAttempt(isuzuma: widget.isuzuma)),
-                  );
+                      context,
+                      PageTransition(
+                          type: PageTransitionType.leftToRight,
+                          child: IsuzumaAttempt(isuzuma: widget.isuzuma)));
                 },
                 style: ElevatedButton.styleFrom(
                   fixedSize: Size(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/models/ingingo.dart';
+import 'package:itsindire/models/ingingo.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class OptionContent extends StatelessWidget {
@@ -22,7 +22,7 @@ class OptionContent extends StatelessWidget {
       spans.add(TextSpan(
           text: parts[i],
           style: TextStyle(
-              fontSize: MediaQuery.of(context).size.height * 0.025,
+              fontSize: MediaQuery.of(context).size.height * 0.023,
               fontWeight: isBold ? FontWeight.bold : FontWeight.normal)));
     }
 
@@ -30,7 +30,7 @@ class OptionContent extends StatelessWidget {
       // IF OPTION HAS title
       if (option?.title != null && option?.title != '')
         // SIZEBOX
-        SizedBox(height: MediaQuery.of(context).size.height * 0.025),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.023),
       Column(
         children: [
           Padding(
@@ -47,7 +47,7 @@ class OptionContent extends StatelessWidget {
                     fit: FlexFit.loose,
                     child: Container(
                       margin: EdgeInsets.only(
-                          right: MediaQuery.of(context).size.width * 0.025),
+                          right: MediaQuery.of(context).size.width * 0.023),
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.13,
                         child: FadeInImage.memoryNetwork(
@@ -66,7 +66,7 @@ class OptionContent extends StatelessWidget {
                   child: Text.rich(
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.height * 0.025),
+                          fontSize: MediaQuery.of(context).size.height * 0.023),
                       TextSpan(
                         children: [
                           // OPTION TITLE
