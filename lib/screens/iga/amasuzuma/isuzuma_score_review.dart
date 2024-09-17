@@ -364,9 +364,7 @@ class _IsuzumaScoreReviewState extends State<IsuzumaScoreReview> {
   }
 
   void showQn(int index) {
-    setState(() {
-      qnIndex = index;
-    });
+    setState(() => qnIndex = index);
   }
 
   // CALLBACK FOR FORWARD BUTTON
@@ -379,9 +377,7 @@ class _IsuzumaScoreReviewState extends State<IsuzumaScoreReview> {
         alertType: 'warning',
       );
     } else {
-      setState(() {
-        qnIndex = qnIndex + 1;
-      });
+      setState(() => qnIndex = qnIndex + 1);
     }
   }
 
@@ -389,9 +385,7 @@ class _IsuzumaScoreReviewState extends State<IsuzumaScoreReview> {
   void backward() {
     if (qnIndex <= 1) {
     } else {
-      setState(() {
-        qnIndex = qnIndex - 1;
-      });
+      setState(() => qnIndex = qnIndex - 1);
     }
   }
 }

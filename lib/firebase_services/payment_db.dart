@@ -1,4 +1,3 @@
-// ignore_for_file: avoid_print
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:itsindire/models/payment.dart';
 import 'package:mailer/mailer.dart';
@@ -16,7 +15,6 @@ class PaymentService {
   PaymentModel _paymentFromSnapshot(DocumentSnapshot documentSnapshot) {
     final data = documentSnapshot.data() as Map<String, dynamic>;
 
-    final id = documentSnapshot.id;
     final createdAt = data.containsKey('createdAt')
         ? (data['createdAt'] as Timestamp).toDate()
         : DateTime.now();
@@ -32,7 +30,6 @@ class PaymentService {
     final phone = data.containsKey('phone') ? data['phone'] : '';
 
     return PaymentModel(
-      id: id,
       createdAt: createdAt,
       endAt: endAt,
       userId: userId,
@@ -82,7 +79,6 @@ class PaymentService {
 
   // CREATE PAYMENT
   Future<bool> createPayment(PaymentModel payment) async {
-    print(payment.toJson());
 
     // CHECK IF THERE IS AN ACTIVE PAYMENT FOR THE USER
     final activePayment = await paymentsCollection

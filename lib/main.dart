@@ -121,9 +121,7 @@ class _ItsindireAppState extends State<ItsindireApp> {
 
   Future<void> _updateConnectionStatusList(
       List<ConnectivityResult> result) async {
-    setState(() {
-      _connectionStatusList = result;
-    });
+    setState(() => _connectionStatusList = result);
 
     if (_connectionStatusList.contains(ConnectivityResult.none)) {
       _currentStatus.setOffline();

@@ -182,10 +182,6 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                             content: SingleChildScrollView(
                               child: ListBody(
                                 children: <Widget>[
-                                  SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.024,
-                                  ),
                                   Align(
                                     child: Text(
                                         newestPyt == null
@@ -269,7 +265,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                                           top: MediaQuery.of(context)
                                                   .size
                                                   .height *
-                                              0.016),
+                                              0.01),
                                       child: Align(
                                         child: Text(
                                             'Murakoze kwishyura, ifatabuguzi ryawe riri kwigwaho...',

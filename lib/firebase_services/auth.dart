@@ -16,7 +16,6 @@ class AuthResult<T> {
 }
 
 class AuthState with ChangeNotifier {
-
   final FirebaseAuth _authInstance = FirebaseAuth.instance;
   final ProfileService _profileService = ProfileService();
   late StreamSubscription<User?> _authSubscription;
@@ -72,7 +71,6 @@ class AuthState with ChangeNotifier {
   }
 
   void _updateProfile(User? user) async {
-
     // Cancel any previous subscription to avoid multiple listeners
     await _profileSubscription?.cancel();
 
@@ -87,17 +85,19 @@ class AuthState with ChangeNotifier {
 
   // LOG OUT METHOD
   Future logOut() async {
-
-    String? loggedOutUserName = currentProfile?.username != null && currentProfile?.username != '' ? currentProfile?.username : currentUser?.email;
+    String? loggedOutUserName =
+        currentProfile?.username != null && currentProfile?.username != ''
+            ? currentProfile?.username
+            : currentUser?.email;
 
     // Sign out
     await _authInstance.signOut();
 
     // Clear sessionID in the profile
     if (currentProfile != null) {
-      await profilesCollection.doc(currentProfile?.uid).update({
-        'sessionID': null
-      });
+      await profilesCollection
+          .doc(currentProfile?.uid)
+          .update({'sessionID': null});
     }
 
     // Clear the current user and profile
@@ -117,12 +117,12 @@ class AuthState with ChangeNotifier {
     }
   }
 
-Future userLogin(String email, String password) async {
+  Future userLogin(String email, String password) async {
     try {
       // Search for the user profile by email
       QuerySnapshot querySnapshot =
           await profilesCollection.where('email', isEqualTo: email).get();
-      
+
       if (querySnapshot.docs.isEmpty) {
         return AuthResult(
           error: 'Konti ntibashije kuboneka. Iyandikishe!',
@@ -143,7 +143,9 @@ Future userLogin(String email, String password) async {
       );
 
       if (result.user == null || result.user!.uid.isEmpty) {
-        return AuthResult(error: 'Kwinjira ntibikunda. Duhamagare kuri 0794033360 tugufashe!');
+        return AuthResult(
+            error:
+                'Kwinjira ntibikunda. Duhamagare kuri 0794033360 tugufashe!');
       }
 
       // Update sessionID in profiles collection
@@ -168,7 +170,6 @@ Future userLogin(String email, String password) async {
     }
   }
 
-
   // REGISTER WITH EMAIL AND PASSWORD METHOD
   Future registerNewUser(String username, String email, String password,
       bool? urStudent, String? regNbr, String? campus) async {
@@ -180,21 +181,21 @@ Future userLogin(String email, String password) async {
       );
 
       User? user = result.user;
+
       if (user != null) {
-        await ProfileService(uid: user.uid).updateUserProfile(
-          user.uid,
-          username,
-          email,
-          '',
-          '',
-          '',
-          '',
-          urStudent ?? false,
-          regNbr ?? '',
-          campus ?? '',
-          rolesCollection.doc('1'),
-          '',
-        );
+        await profilesCollection.doc(user.uid).set({
+          'uid': user.uid,
+          'username': username,
+          'email': email,
+          'urStudent': urStudent,
+          'regNumber': regNbr,
+          'campus': campus,
+          'roleId': rolesCollection.doc('1'),
+          'sessionID': '',
+        });
+
+        // Log out the user
+        await _authInstance.signOut();
 
         return AuthResult(
           value: 'User registered successfully. Please log in.',

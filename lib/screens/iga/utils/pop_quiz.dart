@@ -52,7 +52,6 @@ class _PopQuizState extends State<PopQuiz> {
                   '${widget.isomo.id}_${FirebaseAuth.instance.currentUser!.uid}',
                   -widget.popQuestions.length)
               .then((value) {
-            print("Value: $value");
             CourseProgressService().updateUserCourseProgress(
                 widget.courseProgress.userId,
                 widget.isomo.id,

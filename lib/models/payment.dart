@@ -1,5 +1,4 @@
 class PaymentModel {
-  String? id;
   DateTime createdAt;
   DateTime endAt;
   String? userId;
@@ -9,7 +8,6 @@ class PaymentModel {
   String? phone;
 
   PaymentModel({
-    this.id,
     required this.createdAt,
     required this.endAt,
     this.userId,
@@ -59,7 +57,6 @@ int getRemainingDays() {
   // FROM JSON
   factory PaymentModel.fromJson(Map<String, dynamic> json) {
     return PaymentModel(
-      id: json['id'],
       createdAt: json['createdAt'].toDate(),
       endAt: json['endAt'].toDate(),
       userId: json['userId'],
@@ -73,7 +70,6 @@ int getRemainingDays() {
   // TO JSON
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'createdAt': createdAt,
       'endAt': endAt,
       'userId': userId,
@@ -87,6 +83,6 @@ int getRemainingDays() {
   // TO STRING
   @override
   String toString() {
-    return 'PaymentModel(id: $id, createdAt: $createdAt, endAt: $endAt, userId: $userId, ifatabuguziID: $ifatabuguziID, igiciro: $igiciro, isApproved: $isApproved, phone: $phone)';
+    return 'PaymentModel(createdAt: $createdAt, endAt: $endAt, userId: $userId, ifatabuguziID: $ifatabuguziID, igiciro: $igiciro, isApproved: $isApproved, phone: $phone)';
   }
 }

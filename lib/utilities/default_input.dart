@@ -106,9 +106,7 @@ class _DefaultInputState extends State<DefaultInput> {
                     widget.placeholder == 'Password')
                 ? GestureDetector(
                     onTap: () {
-                      setState(() {
-                        _isObscure = !_isObscure;
-                      });
+                      setState(() => _isObscure = !_isObscure);
                     },
                     child: const Icon(
                       Icons.visibility,

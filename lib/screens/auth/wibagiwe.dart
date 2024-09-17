@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:itsindire/utilities/cta_button.dart';
 import 'package:itsindire/utilities/cta_link.dart';
@@ -20,11 +21,11 @@ class _WibagiweState extends State<Wibagiwe> {
   final _formKey = GlobalKey<FormState>();
   String email = '';
   String output = '';
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthState>(builder: (context, authState, _) {
-
       return Scaffold(
           backgroundColor: const Color.fromARGB(255, 71, 103, 158),
           appBar: PreferredSize(
@@ -52,16 +53,18 @@ class _WibagiweState extends State<Wibagiwe> {
                         'Andika imeyili wohereze niba wibagiwe ijambobanga ryawe, tugufashe kubona irindi.'),
 
                 // CENTERED IMAGE
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/padlock.png',
-                        height: MediaQuery.of(context).size.height * 0.2,
-                        width: MediaQuery.of(context).size.width * 0.2,
-                      ),
-                    ]),
+                loading == true
+                    ? const LoadingWidget()
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                            Image.asset(
+                              'assets/images/padlock.png',
+                              height: MediaQuery.of(context).size.height * 0.2,
+                              width: MediaQuery.of(context).size.width * 0.2,
+                            ),
+                          ]),
 
                 Padding(
                   padding: EdgeInsets.symmetric(
@@ -88,24 +91,25 @@ class _WibagiweState extends State<Wibagiwe> {
 
                           // ON PRESSED
                           onPressed: () async {
+                            // SET LOADING TO TRUE
+                            setState(() => loading = true);
+
                             // VALIDATE FORM
                             if (_formKey.currentState!.validate()) {
                               dynamic resetResult =
                                   await authState.resetPassword(email);
 
                               if (resetResult == null) {
-                                setState(() {
-                                  output =
-                                      'Ntibigenze neza, rebako imeyili ariyo!';
-                                });
+                                setState(() => output =
+                                    'Imeyili ntibigenze, subira ugerageze!');
                               } else {
-                                setState(() {
-                                  output =
-                                      'Reba amabwiriza kuri email yawe, ubundi winjire!';
-                                });
+                                setState(() => output =
+                                    'Kurikiza amabwiriza aje kuri imeyili yawe!');
 
                                 // GO TO SIGN IN PAGE
                                 if (context.mounted) {
+                                  // SET LOADING TO FALSE
+                                  setState(() => loading = false);
                                   Navigator.pushNamed(context, '/injira');
                                 }
                               }
@@ -120,8 +124,6 @@ class _WibagiweState extends State<Wibagiwe> {
                                   ),
                                 );
                               }
-                            } else {
-                              print('Not validated');
                             }
                           },
                         ),

@@ -124,9 +124,7 @@ class _UrStudentState extends State<UrStudent> {
                             ),
                           ),
                           onChanged: (String? value) {
-                            setState(() {
-                              _selectedCampus = value!;
-                            });
+                            setState(() => _selectedCampus = value!);
                           },
                           value: _selectedCampus.isNotEmpty
                               ? _selectedCampus

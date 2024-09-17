@@ -42,8 +42,6 @@ class _DirectionButtonState extends State<DirectionButton> {
     final courseProgress = Provider.of<CourseProgressModel?>(context);
     final int ingingoID = pageIngingos.isNotEmpty ? pageIngingos[0].id : 0;
 
-    print("courseProgress: $courseProgress");
-
     // Generate a list of ingingos IDs from ingingoID
     List<int> listIngingosID2 = [];
     for (int i = 0; i < 5; i++) {

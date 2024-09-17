@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
+import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
 import 'package:itsindire/utilities/cta_button.dart';
@@ -23,13 +24,14 @@ class _IyandikisheState extends State<Iyandikishe> {
   final _formKey = GlobalKey<FormState>();
   final CollectionReference roles =
       FirebaseFirestore.instance.collection('roles');
+  bool loading = false;
 
   // FORM FIELD VALUES STATE
   String username = '';
   String email = '';
   String password = '';
 
-@override
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -107,16 +109,18 @@ class _IyandikisheState extends State<Iyandikishe> {
                 const Description(
                     text:
                         'Iyandikishe ubundi, wige, umenye utsindire provisoire!'),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/house_keys.png',
-                        height: MediaQuery.of(context).size.height * 0.2,
-                        width: MediaQuery.of(context).size.width * 0.2,
-                      ),
-                    ]),
+                loading == true
+                    ? const LoadingWidget()
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                            Image.asset(
+                              'assets/images/house_keys.png',
+                              height: MediaQuery.of(context).size.height * 0.2,
+                              width: MediaQuery.of(context).size.width * 0.2,
+                            ),
+                          ]),
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width * 0.05,
@@ -152,6 +156,7 @@ class _IyandikisheState extends State<Iyandikishe> {
                         CtaButton(
                           text: 'Iyandikishe',
                           onPressed: () async {
+                            setState(() => loading = true);
                             if (_formKey.currentState!.validate()) {
                               AuthResult result =
                                   await authState.registerNewUser(
@@ -165,6 +170,7 @@ class _IyandikisheState extends State<Iyandikishe> {
                                         backgroundColor: Color(0xFF00A651)));
 
                                 if (!mounted) return;
+                                setState(() => loading = false);
                                 Navigator.pushReplacementNamed(
                                     context, '/injira');
                               } else {
@@ -179,10 +185,6 @@ class _IyandikisheState extends State<Iyandikishe> {
                                       errorMsg: result.error ??
                                           'Kwiyandisha ntibyagenze neza, hamagara 0794033360 tugufashe!',
                                       alertType: 'error',
-                                      firstButtonTitle: 'Funga',
-                                      firstButtonFunction: () {
-                                        Navigator.pop(context);
-                                      },
                                       secondButtonTitle: 'Injira',
                                       secondButtonFunction: () {
                                         Navigator.pop(context);
