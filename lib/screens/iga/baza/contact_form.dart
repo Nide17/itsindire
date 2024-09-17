@@ -1,9 +1,13 @@
-// ignore_for_file: avoid_print
-
 import 'package:flutter/material.dart';
-import 'package:tegura/utilities/default_input.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:itsindire/models/profile.dart';
+import 'package:itsindire/utilities/default_input.dart';
+import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
+import 'package:provider/provider.dart';
+
+import '../../../utilities/route_action_button.dart';
 
 class ContactForm extends StatefulWidget {
   const ContactForm({super.key});
@@ -14,143 +18,143 @@ class ContactForm extends StatefulWidget {
 
 class _ContactFormState extends State<ContactForm> {
   final _formKey = GlobalKey<FormState>();
+  String? _name, _email, _message;
+  bool isLoading = false;
 
-  String? _name;
-  String? email;
-  String? _message;
+  Future<void> sendEmail() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      final isSent = await EmailService.sendEmail(
+        name: _name!,
+        email: _email!,
+        message: _message!,
+      );
+
+      setState(() {
+        isLoading = false;
+      });
+
+      final snackBarMessage =
+          isSent ? 'Ubutumwa bwawe bwagiye!' : 'Ubutumwa bwawe ntibwagiye!';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            snackBarMessage,
+            textAlign: TextAlign.center,
+          ),
+          duration: const Duration(seconds: 10),
+          backgroundColor: isSent ? const Color(0xFF00A651) : Colors.red,
+        ),
+      );
+
+      if (isSent && _formKey.currentState != null) {
+        _formKey.currentState!.reset();
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Error sending email. Please try again.',
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    Future<bool> sendEmail() async {
-      final smtpServer = gmail('tegura.rw@gmail.com', 'ixvepscvgpgxyftz');
+    final profile = Provider.of<ProfileModel?>(context);
 
-      final message = Message()
-        ..from = Address('$email', '$_name')
-        ..recipients.add('tegura.rw@gmail.com')
-        ..subject = 'Message from $_name[$email]'
-        ..text = _message;
+    _name = profile?.username;
+    _email = profile?.email;
 
-      try {
-        final sendReport = await send(message, smtpServer);
-        print('Message sent: $sendReport');
-        return true;
-      } catch (e) {
-        print('Error sending email: $e');
-        rethrow;
-      }
-    }
-
-    return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.05,
-          vertical: MediaQuery.of(context).size.height * 0.048),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            DefaultInput(
-              placeholder: 'Izina',
-              validation: 'Izina ryawe rirakenewe!',
-              // ON CHANGED
-              onChanged: (value) {
-                setState(() {
-                  _name = value;
-                });
-              },
-            ),
-
-            DefaultInput(
-              placeholder: 'Imeyili',
-              validation: 'Imeyili yawe irakenewe!',
-              // ON CHANGED
-              onChanged: (value) {
-                setState(() {
-                  email = value;
-                });
-              },
-            ),
-
-            DefaultInput(
-              placeholder: 'Ubutumwa',
-              validation: 'Ubutumwa bwawe burakenewe!',
-              maxLines: 5,
-              // ON CHANGED
-              onChanged: (value) {
-                setState(() {
-                  _message = value;
-                });
-              },
-            ),
-
-            // 3. VERTICAL SPACE
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.008,
-            ),
-
-            // 4. BUTTON
-            Align(
-              alignment: Alignment.topRight,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  fixedSize: Size(
-                    MediaQuery.of(context).size.width * 0.3,
-                    MediaQuery.of(context).size.height * 0.05,
+    return isLoading
+        ? Container(
+            padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.05,
+                vertical: MediaQuery.of(context).size.height * 0.16),
+            child: const LoadingWidget())
+        : Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.05,
+                vertical: MediaQuery.of(context).size.height * 0.048),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DefaultInput(
+                    placeholder: _name ?? 'Izina',
+                    validation: _name == null
+                        ? 'Izina ryawe rirakenewe!'
+                        : null, // Skip validation if _name is not null
+                    enabled: _name == null,
+                    onChanged: (value) => setState(() => _name = value),
                   ),
-                  backgroundColor: const Color(0xFF00CCE5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24.0),
+                  DefaultInput(
+                    placeholder: _email ?? 'Imeyili',
+                    validation:
+                        _email == null ? 'Imeyili yawe irakenewe!' : null,
+                    enabled: _email == null,
+                    onChanged: (value) => setState(() => _email = value),
                   ),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                ),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    bool isSent = false;
-                    sendEmail().then((value) {
-                      isSent = value;
-
-                      if (isSent == true) {
-                        // CLEAR THE FORM
-                        _formKey.currentState!.reset();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                'Ubutumwa bwawe bwagiye!',
-                                textAlign: TextAlign.center,
-                              ),
-                              duration: Duration(seconds: 10),
-                              backgroundColor: Color(0xFF00A651)),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Ubutumwa bwawe ntibwagiye!',
-                              textAlign: TextAlign.center,
-                            ),
-                            duration: Duration(seconds: 10),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
-                    });
-                  }
-                },
-                child: Text(
-                  'Ohereza',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    fontSize: MediaQuery.of(context).size.width * 0.04,
+                  DefaultInput(
+                    placeholder: 'Ubutumwa',
+                    validation: 'Ubutumwa bwawe burakenewe!',
+                    maxLines: 5,
+                    onChanged: (value) => setState(() => _message = value),
                   ),
-                ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.008,
+                  ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: RouteActionButton(
+                      btnText: 'Ohereza',
+                      action: () => _formKey.currentState != null &&
+                              _formKey.currentState!.validate()
+                          ? sendEmail()
+                          : null,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
+  }
+}
+
+class EmailService {
+  static Future<bool> sendEmail({
+    required String name,
+    required String email,
+    required String message,
+  }) async {
+    String username = dotenv.env['GMAIL_EMAIL']!;
+    String password = dotenv.env['GMAIL_PASSWORD']!;
+    final smtpServer = gmail(username, password);
+
+    final emailMessage = Message()
+      ..from = Address(email, name)
+      ..recipients.add('itsindire.rw@gmail.com')
+      ..ccRecipients.addAll(['quizblog.rw@gmail.com'])
+      ..subject = 'Message from $name [$email]'
+      ..text = message;
+
+    try {
+      await send(emailMessage, smtpServer);
+      return true;
+    } catch (e) {
+      print('Error sending email: $e');
+      return false;
+    }
   }
 }

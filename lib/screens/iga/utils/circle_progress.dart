@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/models/course_progress.dart';
+import 'package:itsindire/models/course_progress.dart';
+
 class CircleProgress extends StatelessWidget {
   const CircleProgress({super.key});
 
@@ -22,14 +23,16 @@ class CircleProgress extends StatelessWidget {
 
     return CircularPercentIndicator(
       radius: MediaQuery.of(context).size.width * 0.05,
-      lineWidth: MediaQuery.of(context).size.width * 0.01,
+      lineWidth: MediaQuery.of(context).size.width * 0.008,
       animation: true,
       percent: percent,
       center: Text(
-        '${(percent * 100).toStringAsFixed(0)}%',
+        '${(courseProgress?.unansweredPopQuestions != 0 && percent > 0.1 ? (percent - 0.1) * 100 : percent * 100).toStringAsFixed(0)}%',
         style: TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: MediaQuery.of(context).size.width * 0.03,
+          fontWeight: FontWeight.w900,
+          fontSize: percent < 0.9
+              ? MediaQuery.of(context).size.width * 0.03
+              : MediaQuery.of(context).size.width * 0.025,
         ),
       ),
       circularStrokeCap: CircularStrokeCap.butt,

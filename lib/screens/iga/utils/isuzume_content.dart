@@ -1,16 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/models/course_progress.dart';
-import 'package:tegura/models/isomo.dart';
-import 'package:tegura/models/pop_question.dart';
-import 'package:tegura/models/user.dart';
-import 'package:tegura/screens/iga/utils/tegura_alert.dart';
-import 'package:tegura/screens/iga/utils/isuzume_details.dart';
-import 'package:tegura/providers/quiz_score_provider.dart';
-import 'package:tegura/firebase_services/pop_question_db.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/utilities/direction_button_isuzume.dart';
-import 'package:tegura/utilities/loading_widget.dart';
+import 'package:itsindire/models/course_progress.dart';
+import 'package:itsindire/models/isomo.dart';
+import 'package:itsindire/models/pop_question.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
+import 'package:itsindire/screens/iga/utils/isuzume_details.dart';
+import 'package:itsindire/providers/quiz_score_provider.dart';
+import 'package:itsindire/firebase_services/pop_question_db.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/utilities/direction_button_isuzume.dart';
+import 'package:itsindire/utilities/loading_widget.dart';
 
 class IsuzumeContent extends StatefulWidget {
   final IsomoModel isomo;
@@ -28,8 +28,6 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
 
   @override
   Widget build(BuildContext context) {
-    final usr = Provider.of<UserModel?>(context);
-
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -51,7 +49,10 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                 return const LoadingWidget();
               }
 
-              scoreProviderModel.quizScore.setUserID(usr!.uid);
+              FirebaseAuth.instance.currentUser != null
+                  ? scoreProviderModel.quizScore
+                      .setUserID(FirebaseAuth.instance.currentUser!.uid)
+                  : null;
               scoreProviderModel.quizScore.setIsomoID(widget.isomo.id);
 
               // CREATE THE QUESTIONS IN QUIZ SCORE - IF THEY DON'T EXIST
@@ -77,7 +78,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
               void forward() {
                 if (qnIndex >=
                     scoreProviderModel.quizScore.questions.length - 1) {
-                  const TeguraAlert(
+                  const ItsindireAlert(
                     errorTitle: 'Ikibazo cyanyuma!',
                     errorMsg: 'Ibibazo byose byasubije!',
                     alertType: 'warning',
@@ -85,11 +86,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                 } else {
                   setState(() {
                     qnIndex = qnIndex + 1;
-
-                    // RESET THE SELECTED OPTION
                     selectedOption = -1;
-
-                    // RESET THE CORRECTNESS OF THE ANSWER
                     isCurrentCorrect = false;
                   });
                 }
@@ -101,54 +98,31 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                 } else {
                   setState(() {
                     qnIndex = qnIndex - 1;
-
-                    // RESET THE SELECTED OPTION
                     selectedOption = -1;
-
-                    // RESET THE CORRECTNESS OF THE ANSWER
                     isCurrentCorrect = false;
                   });
                 }
               }
 
               // RETURN THE WIDGETS
-              return WillPopScope(
-                onWillPop: () async {
-                  if (!scoreProviderModel.quizScore.isAllAnswered() ||
-                      isCurrentCorrect == false) {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return TeguraAlert(
-                          errorTitle: 'Subiza byose',
-                          errorMsg: 'Ushaka gusohoka udasubije ibibazo byose?',
-                          firstButtonTitle: 'OYA',
-                          firstButtonFunction: () {
-                            Navigator.of(context).pop();
-                          },
-                          firstButtonColor: const Color(0xFF00A651),
-                          secondButtonTitle: 'YEGO',
-                          secondButtonFunction: () {
-                            Navigator.of(context).pop();
-                            Navigator.pop(context);
-                          },
-                          secondButtonColor: const Color(0xFFE60000),
-                        );
-                      },
-                    );
-                    return false;
-                  }
-                  return true;
+              return PopScope(
+                canPop: false,
+                onPopInvoked: (_) async {
+                  _showExitDialog(
+                      context,
+                      scoreProviderModel.quizScore.isAllAnswered(),
+                      isCurrentCorrect,
+                      '${scoreProviderModel.quizScore.getCorrectlyAnsweredQuestionsCount()}/${popQuestions.length}');
                 },
                 child: Scaffold(
                   backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                  appBar: const PreferredSize(
+                  appBar: PreferredSize(
                     preferredSize: Size.fromHeight(58.0),
-                    child: AppBarTegura(),
+                    child: AppBarItsindire(),
                   ),
                   body: IsuzumeDetails(
                     isomo: widget.isomo,
-                    userID: usr.uid,
+                    userID: FirebaseAuth.instance.currentUser!.uid,
                     courseProgress: widget.courseProgress,
                     qnIndex: qnIndex,
                     selectedOption: selectedOption,
@@ -181,54 +155,13 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               ElevatedButton(
-                                onPressed: () {
-                                  // IF ALL QUESTIONS ARE NOT ANSWERED, ALERT THE USER TO CONFIRM
-                                  if (!scoreProviderModel.quizScore
-                                          .isAllAnswered() ||
-                                      isCurrentCorrect == false) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return TeguraAlert(
-                                          errorTitle: 'Subiza byose',
-                                          errorMsg:
-                                              'Ushaka gusohoka udasubije ibibazo byose?',
-                                          firstButtonTitle: 'OYA',
-                                          firstButtonFunction: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          firstButtonColor:
-                                              const Color(0xFF00A651),
-                                          secondButtonTitle: 'YEGO',
-                                          secondButtonFunction: () {
-                                            Navigator.of(context).pop();
-                                            Navigator.pop(context);
-                                          },
-                                          secondButtonColor:
-                                              const Color(0xFFE60000),
-                                        );
-                                      },
-                                    );
-                                    return;
-                                  }
-
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return TeguraAlert(
-                                          errorTitle: 'Wasoje kwisuzuma!',
-                                          errorMsg:
-                                              'Wabonye ${popQuestions.length}/${popQuestions.length}',
-                                          firstButtonTitle: 'Inyuma',
-                                          firstButtonFunction: () {
-                                            Navigator.of(context).pop();
-                                            Navigator.pop(context);
-                                          },
-                                          firstButtonColor:
-                                              const Color(0xFF00A651),
-                                          alertType: 'success',
-                                        );
-                                      });
+                                onPressed: () async {
+                                  _showExitDialog(
+                                      context,
+                                      scoreProviderModel.quizScore
+                                          .isAllAnswered(),
+                                      isCurrentCorrect,
+                                      '${scoreProviderModel.quizScore.getCorrectlyAnsweredQuestionsCount()}/${popQuestions.length}');
                                 },
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,
@@ -285,6 +218,66 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
         },
       ),
     );
+  }
+
+  Future<void> _showExitDialog(BuildContext context, bool isAllAnswered,
+      bool _isCurrentCorrect, String marks) async {
+    if (!isAllAnswered || _isCurrentCorrect == false) {
+      showDialog(
+        context: context,
+        barrierDismissible: false, 
+        builder: (context) {
+          return ItsindireAlert(
+            errorTitle: 'Subiza byose',
+            errorMsg: 'Ushaka gusohoka udasubije ibibazo byose?',
+            firstButtonTitle: 'OYA',
+            firstButtonFunction: () {
+              Navigator.of(context).pop();
+            },
+            firstButtonColor: const Color(0xFF00A651),
+            secondButtonTitle: 'YEGO',
+            secondButtonFunction: () {
+              Navigator.of(context).pop();
+              showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) {
+                    return ItsindireAlert(
+                      errorTitle: 'Ntusoje byose!',
+                      errorMsg: 'Wabonye ${marks}',
+                      firstButtonTitle: 'Funga',
+                      firstButtonFunction: () {
+                        Navigator.of(context).pop();
+                        Navigator.pop(context);
+                      },
+                      firstButtonColor: const Color(0xFF00A651),
+                      alertType: 'success',
+                    );
+                  });
+            },
+            secondButtonColor: const Color(0xFFE60000),
+          );
+        },
+      );
+    } else {
+      // IF ALL QUESTIONS ARE ANSWERED, SHOW THE SCORE
+      return showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return ItsindireAlert(
+              errorTitle: 'Wasoje kwisuzuma!',
+              errorMsg: 'Wabonye ${marks}',
+              firstButtonTitle: 'Inyuma',
+              firstButtonFunction: () {
+                Navigator.of(context).pop();
+                Navigator.pop(context);
+              },
+              firstButtonColor: const Color(0xFF00A651),
+              alertType: 'success',
+            );
+          });
+    }
   }
 
   void showQn(int index) {

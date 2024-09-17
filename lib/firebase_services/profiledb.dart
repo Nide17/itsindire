@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tegura/models/profile.dart';
+import 'package:flutter/material.dart';
+import 'package:itsindire/models/profile.dart';
 
-class ProfileService {
-  // COLLECTIONS REFERENCE - FIRESTORE
+class ProfileService extends ChangeNotifier {
   final CollectionReference profilesCollection =
       FirebaseFirestore.instance.collection('profiles');
-
+  final CollectionReference roles =
+      FirebaseFirestore.instance.collection('roles');
   final String? uid;
 
   ProfileService({this.uid});
@@ -22,10 +23,10 @@ class ProfileService {
       bool urStudent,
       String regNumber,
       String campus,
-      DocumentReference roleId) async {
+      DocumentReference roleId,
+      String sessionID) async {
     // RETURN THE USER DATA - IF THE DOC DOESN'T EXIST, IT WILL BE CREATED BY FIRESTORE
     return await profilesCollection.doc(uid).set({
-      // USER DATA - FIELDS
       'uid': uid,
       'username': username,
       'email': email,
@@ -37,48 +38,31 @@ class ProfileService {
       'regNumber': regNumber,
       'campus': campus,
       'roleId': roleId,
+      'sessionID': sessionID,
     });
   }
 
-  // GET A SINGLE PROFILE FROM A SNAPSHOT USING THE PROFILE MODEL - _profileFromSnapshot
+  // SINGLE PROFILE FROM A SNAPSHOT USING THE PROFILE MODEL - _profileFromSnapshot
   // FUNCTION CALLED EVERY TIME THE PROFILE DATA CHANGES
   ProfileModel _profileFromSnapshot(DocumentSnapshot documentSnapshot) {
-    // roleId IS A REFERENCE TYPE TO ROLES COLLECTION
     final CollectionReference roles =
         FirebaseFirestore.instance.collection('roles');
 
     // Get the data from the snapshot
     final data = documentSnapshot.data() as Map<String, dynamic>;
-
-    // Check if the 'username' field exists before accessing it
     final username = data.containsKey('username') ? data['username'] : '';
-
-    // Check if the 'email' field exists before accessing it
     final email = data.containsKey('email') ? data['email'] : '';
-
-    // Check if the 'phone' field exists before accessing it
     final phone = data.containsKey('phone') ? data['phone'] : '';
-
-    // Check if the 'photo' field exists before accessing it
     final photo = data.containsKey('photo') ? data['photo'] : '';
-
-    // Check if the 'gender' field exists before accessing it
     final gender = data.containsKey('gender') ? data['gender'] : '';
-
-    // Check if the 'dob' field exists before accessing it
     final dob = data.containsKey('dob') ? data['dob'] : '';
-
-    // Check if the 'urStudent' field exists before accessing it
     final urStudent = data.containsKey('urStudent') ? data['urStudent'] : false;
-
-    // Check if the 'regNumber' field exists before accessing it
     final regNumber = data.containsKey('regNumber') ? data['regNumber'] : '';
-
-    // Check if the 'campus' field exists before accessing it
     final campus = data.containsKey('campus') ? data['campus'] : '';
-
-    // Check if the 'roleId' field exists before accessing it - DocumentReference
     final roleId = data.containsKey('roleId') ? data['roleId'] : roles.doc('1');
+    final sessionID = data.containsKey('sessionID')
+        ? data['sessionID']
+        : '';
 
     // Return the ProfileModel with the extracted data
     return ProfileModel(
@@ -93,38 +77,37 @@ class ProfileService {
       regNumber: regNumber,
       campus: campus,
       roleId: roleId,
+      sessionID: sessionID,
     );
   }
 
-  // GET A SINGLE USER PROFILE STREAM - CURRENT LOGGED IN USER PROFILE USING UID
-  Stream<ProfileModel?>? getCurrentProfile(String? uid) {
-    // CHECK IF CURRENT USER UID IS NULL, IF IT IS, RETURN NULL
-    if (uid == null) return null;
-
-    // CHECK IF CURRENT USER PROFILE EXISTS, IF IT DOESN'T EXIST, CREATE IT, IF IT EXISTS, RETURN IT
-    profilesCollection.doc(uid).get().then((doc) {
-      if (doc.exists) {
-        return profilesCollection
-            .doc(uid)
-            .snapshots()
-            .map(_profileFromSnapshot);
+  Stream<ProfileModel?> getCurrentProfileByID(String uid) {
+    return profilesCollection.doc(uid).snapshots().map((snapshot) {
+      if (snapshot.exists) {
+        return _profileFromSnapshot(snapshot);
       } else {
         return null;
       }
     });
-
-    return profilesCollection.doc(uid).snapshots().map(_profileFromSnapshot);
   }
-  
-  Future<dynamic> getAppBarProfileData(String? uid) async {
-    if (uid == null) {
-      return null;
-    } else {
-      // GET THE USER PROFILE DATA
-      final profileData = await profilesCollection.doc(uid).get();
 
-      // RETURN THE USER PROFILE DATA AS _profileFromSnapshot
-      return _profileFromSnapshot(profileData);
+  // GET A SINGLE USER PROFILE STREAM - CURRENT LOGGED IN USER PROFILE USING UID
+  Stream<ProfileModel?>? getCurrentProfile(String? uid, String? sessionID) {
+    if (uid == null ||
+        uid.isEmpty ||
+        sessionID == null ||
+        sessionID.isEmpty) {
+      return null;
     }
+
+    return profilesCollection.doc(uid).snapshots().map((documentSnapshot) {
+      if (documentSnapshot.exists) {
+        return _profileFromSnapshot(documentSnapshot);
+      } else {
+        updateUserProfile(uid, '', '', '', '', '', '', false, '', '',
+            roles.doc('1'), sessionID);
+        return null;
+      }
+    });
   }
 }

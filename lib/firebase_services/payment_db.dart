@@ -1,13 +1,13 @@
 // ignore_for_file: avoid_print
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tegura/models/payment.dart';
+import 'package:itsindire/models/payment.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class PaymentService {
   PaymentService();
-  
+
   final CollectionReference paymentsCollection =
       FirebaseFirestore.instance.collection('payments');
 
@@ -47,7 +47,6 @@ class PaymentService {
 // #############################################################################
   // GET USER LATEST PAYMENT BY USER ID
   Stream<PaymentModel?> getNewestPytByUserId(String userId) {
-    
     final documentsStream = paymentsCollection
         .where('userId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
@@ -110,10 +109,10 @@ class PaymentService {
 
       // CREATE THE MESSAGE
       final message = Message()
-        ..from = Address(username, 'Tegura')
+        ..from = Address(username, 'Itsindire')
         ..recipients.add(username)
         ..ccRecipients.addAll(['brucendati@gmail.com'])
-        ..subject = 'Tegura Payment'
+        ..subject = 'Itsindire Payment'
         ..html =
             "<h1>Payment</h1>\n<p>Payment ${payment.phone} has been made by user ID: ${payment.userId!}</p>\n<p>Payment Phone: ${payment.phone!}</p>\n<p>Payment amount: ${payment.igiciro!}</p>\n<p>Payment Created At: ${payment.createdAt}</p>\n<p>Payment End At: ${payment.endAt}</p>\n<p>Payment isApproved: ${payment.isApproved}</p>";
 
@@ -130,7 +129,7 @@ class PaymentService {
 
       return true;
     } catch (e) {
-      print(e);
+      print("\n$e");
       return false;
     }
   }

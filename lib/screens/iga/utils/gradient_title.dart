@@ -93,7 +93,7 @@ class GradientTitle extends StatelessWidget {
                       parentWidget == 'isuzume' ? Colors.black : Colors.white,
                   fontWeight: parentWidget == 'isuzume'
                       ? FontWeight.w700
-                      : FontWeight.w500,
+                      : FontWeight.w600,
                 ),
               ),
             ),

@@ -1,7 +1,7 @@
 // WIDGET FOR HOLDING TITLE WITH ICON AND TEXT
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:tegura/screens/iga/baza/social_data.dart';
+import 'package:itsindire/screens/iga/baza/social_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Social extends StatelessWidget {
@@ -69,7 +69,6 @@ class Social extends StatelessWidget {
                     ),
 
                     // TEXT WIDGET
-                    // Text((socialData[i]['title'] ?? '') + ': ' + (socialData[i]['details'] ?? ''),
                     Text('  ${socialData[i]['title']}',
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.045,

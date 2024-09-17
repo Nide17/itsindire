@@ -1,11 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:tegura/models/user.dart';
 
 class ProgressCircle extends StatelessWidget {
   final double percent;
   final String progress;
-  final UserModel? usr;
+  final User? usr;
 
   const ProgressCircle(
       {super.key,
@@ -28,11 +28,11 @@ class ProgressCircle extends StatelessWidget {
                 // 1. TEXT OUTPUT
                 if (usr != null)
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.4,
+                    width: MediaQuery.of(context).size.width * 0.36,
                     child: Text(progress,
                         style: TextStyle(
                           fontWeight: FontWeight.w900,
-                          fontSize: MediaQuery.of(context).size.width * 0.05,
+                          fontSize: MediaQuery.of(context).size.width * 0.045,
                         )),
                   )
                 else

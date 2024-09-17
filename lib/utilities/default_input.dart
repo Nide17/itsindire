@@ -4,6 +4,7 @@ class DefaultInput extends StatefulWidget {
   final String? placeholder;
   final String? validation;
   final int maxLines;
+  final bool? enabled;
   final Function(String)? onChanged;
 
   const DefaultInput({
@@ -11,6 +12,7 @@ class DefaultInput extends StatefulWidget {
     this.placeholder,
     this.validation,
     this.maxLines = 1,
+    this.enabled,
     this.onChanged,
   });
 
@@ -63,6 +65,7 @@ class DefaultInput extends StatefulWidget {
 
 class _DefaultInputState extends State<DefaultInput> {
   bool _isObscure = true;
+
   String? _validateEmpty(String? value) {
     if (value == null || value.isEmpty) {
       return widget.validation;
@@ -136,6 +139,7 @@ class _DefaultInputState extends State<DefaultInput> {
                   widget.placeholder == 'Password')
               ? _isObscure
               : false,
+              enabled: widget.enabled,
         ),
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.024,

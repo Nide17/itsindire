@@ -1,22 +1,29 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:tegura/models/isomo.dart';
-import 'package:tegura/models/pop_question.dart';
-import 'package:tegura/screens/iga/utils/circle_progress_pq.dart';
-import 'package:tegura/screens/iga/utils/custom_radio_button.dart';
-import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/utilities/direction_button_pq.dart';
+import 'package:itsindire/firebase_services/isomo_progress.dart';
+import 'package:itsindire/models/course_progress.dart';
+import 'package:itsindire/models/isomo.dart';
+import 'package:itsindire/models/pop_question.dart';
+import 'package:itsindire/screens/iga/utils/circle_progress_pq.dart';
+import 'package:itsindire/screens/iga/utils/custom_radio_button.dart';
+import 'package:itsindire/screens/iga/utils/gradient_title.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/utilities/direction_button_pq.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class PopQuiz extends StatefulWidget {
   final List<PopQuestionModel> popQuestions;
   final IsomoModel isomo;
+  final CourseProgressModel courseProgress;
+  final int currentIngingo;
   final ValueChanged<int> coursechangeSkipNumber;
 
   const PopQuiz({
     super.key,
     required this.popQuestions,
     required this.isomo,
+    required this.courseProgress,
+    required this.currentIngingo,
     required this.coursechangeSkipNumber,
   });
 
@@ -33,30 +40,38 @@ class _PopQuizState extends State<PopQuiz> {
   Widget build(BuildContext context) {
     void forward() {
       setState(() {
-        if (currQnID < widget.popQuestions.length) {
-          currQnID = currQnID + 1;
+        if (currQnID < widget.popQuestions.length - 1) {
+          currQnID++;
+        } else {
+          widget
+              .coursechangeSkipNumber(5); // Update skip value in parent widget
+
+          // Update the number of answered questions in the course progress
+          CourseProgressService()
+              .updateUnansweredPopQuestions(
+                  '${widget.isomo.id}_${FirebaseAuth.instance.currentUser!.uid}',
+                  -widget.popQuestions.length)
+              .then((value) {
+            print("Value: $value");
+            CourseProgressService().updateUserCourseProgress(
+                widget.courseProgress.userId,
+                widget.isomo.id,
+                widget.currentIngingo,
+                widget.courseProgress.totalIngingos,
+                null);
+          });
         }
         selectedOption = 0;
         isCurrentCorrect = false;
-
-        // UPDATE THE SKIP VALUE IN THE PARENT WIDGET (IGA_CONTENT) IF THE USER IS ON THE LAST QUESTION
-        if (currQnID == widget.popQuestions.length) {
-          widget.coursechangeSkipNumber(5);
-        }
       });
     }
 
-    // CALLBACK FOR BACKWARD BUTTON
     void backward() {
-      if (currQnID < 1) {
-      } else {
+      if (currQnID > 0 && selectedOption != 0) {
+        // Ensure an option is selected
         setState(() {
-          currQnID = currQnID - 1;
-
-          // RESET THE SELECTED OPTION
+          currQnID--;
           selectedOption = 0;
-
-          // RESET THE CORRECTNESS OF THE ANSWER
           isCurrentCorrect = false;
         });
       }
@@ -65,9 +80,9 @@ class _PopQuizState extends State<PopQuiz> {
     return currQnID >= 0 && currQnID < widget.popQuestions.length
         ? Scaffold(
             backgroundColor: const Color.fromARGB(255, 228, 225, 225),
-            appBar: const PreferredSize(
+            appBar: PreferredSize(
               preferredSize: Size.fromHeight(58.0),
-              child: AppBarTegura(),
+              child: AppBarItsindire(),
             ),
             body: SingleChildScrollView(
               child: Column(

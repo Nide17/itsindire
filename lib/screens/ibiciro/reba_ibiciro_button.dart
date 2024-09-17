@@ -1,5 +1,6 @@
-// WIDGET TO DISPLAY REBA IBICIRO BUTTON ON THE BOTTOM
 import 'package:flutter/material.dart';
+import 'package:itsindire/screens/ibiciro/ibiciro.dart';
+import 'package:page_transition/page_transition.dart';
 
 class RebaIbiciro extends StatelessWidget {
   const RebaIbiciro({super.key});
@@ -13,9 +14,15 @@ class RebaIbiciro extends StatelessWidget {
         width: MediaQuery.of(context).size.width * 0.8,
         height: MediaQuery.of(context).size.height * 0.07,
         child: ElevatedButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/ibiciro');
-          },
+          onPressed: () => Navigator.pushReplacement(
+            context,
+            PageTransition(
+              type: PageTransitionType.bottomToTop,
+              duration: Duration(milliseconds: 300),
+              reverseDuration: Duration(milliseconds: 300),
+              child: const Ibiciro(),
+            ),
+          ),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF00CCE5),
             shape: RoundedRectangleBorder(

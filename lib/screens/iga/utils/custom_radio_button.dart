@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tegura/models/pop_question.dart';
-import 'package:tegura/providers/quiz_score_provider.dart';
+import 'package:itsindire/models/pop_question.dart';
+import 'package:itsindire/providers/quiz_score_provider.dart';
 
 class CustomRadioButton extends StatefulWidget {
   final bool isSelected;
@@ -51,8 +51,7 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
     bool? isSelected = widget.isAnswered == null
         ? widget.isSelected
         : // CASE OF POP QUESTIONS
-        (widget.isAnswered == true &&
-                widget.option!.id == widget.choosenOption)
+        (widget.isAnswered == true && widget.option!.id == widget.choosenOption)
             ? true
             : false;
 

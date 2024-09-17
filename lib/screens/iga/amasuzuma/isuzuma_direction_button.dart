@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:tegura/screens/iga/utils/tegura_alert.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
 
 class IsuzumaDirectionButton extends StatefulWidget {
   final String direction;
@@ -53,11 +53,13 @@ class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
             if (widget.currQnID == 1) {
               showDialog(
                 context: context,
+                barrierDismissible: false, 
                 builder: (BuildContext context) {
-                  return const TeguraAlert(
-                      errorTitle: 'Ikosa!',
-                      errorMsg: 'Iki ni ikibazo cya mbere!',
-                      alertType: 'warning',);
+                  return const ItsindireAlert(
+                    errorTitle: 'Ikosa!',
+                    errorMsg: 'Iki ni ikibazo cya mbere!',
+                    alertType: 'warning',
+                  );
                 },
               );
             } else {
@@ -67,11 +69,13 @@ class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
             if (widget.currQnID == widget.qnsLength) {
               showDialog(
                 context: context,
+                barrierDismissible: false, 
                 builder: (BuildContext context) {
-                  return const TeguraAlert(
-                      errorTitle: 'Ikosa!',
-                      errorMsg: 'Iki ni ikibazo cya nyuma!',
-                      alertType: 'warning',);
+                  return const ItsindireAlert(
+                    errorTitle: 'Ikosa!',
+                    errorMsg: 'Iki ni ikibazo cya nyuma!',
+                    alertType: 'warning',
+                  );
                 },
               );
             } else {
@@ -88,9 +92,15 @@ class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
               ? const Color(0xFF1B56CB).withOpacity(0.4)
               : const Color(0xFF1B56CB),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 0.0),
+              borderRadius: BorderRadius.circular(32.0),
+              side: BorderSide(
+                color: const Color.fromARGB(255, 0, 0, 0),
+                style: BorderStyle.solid,
+                width: MediaQuery.of(context).size.width * 0.005,
+              )),
+          padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.05,
+              vertical: MediaQuery.of(context).size.height * 0.01),
         ),
         child: SingleChildScrollView(
           child: Row(

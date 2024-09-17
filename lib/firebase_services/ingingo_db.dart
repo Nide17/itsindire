@@ -1,15 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tegura/models/ingingo.dart';
+import 'package:itsindire/models/ingingo.dart';
 
 class IngingoService {
-  // COLLECTIONS REFERENCE - FIRESTORE
+  
   final CollectionReference ingingoCollection =
       FirebaseFirestore.instance.collection('ingingo');
 
   IngingoService();
 
   // GET ingingos FROM A SNAPSHOT USING THE INGINGO MODEL - _ingingosFromSnapshot
-  // FUNCTION CALLED EVERY TIME THE ingingos DATA CHANGES
   List<IngingoModel> _ingingosFromSnapshot(QuerySnapshot querySnapshot) {
     return querySnapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
@@ -43,13 +42,14 @@ class IngingoService {
   }
 
 // GET TOTAL ingingos FOR A GIVEN isomoID
-  Stream<int> getTotalIsomoIngingos(int isomoID) {
+  Stream<IsomoIngingoSum> getTotalIsomoIngingos(int isomoID) {
     final documentsStream =
         ingingoCollection.where('isomoID', isEqualTo: isomoID).snapshots();
     return documentsStream
-        .map((event) => event.docs.isNotEmpty ? event.docs.length : 0);
+        .map((event) => IsomoIngingoSum(realTotalIngingos: event.docs.length));
   }
 
+// GET ingingos FOR A GIVEN isomoID, ORDERED BY ITS DOCUMENT ID
   Stream<List<IngingoModel>> getIngingosByIsomoIdPaginated(
       int isomoID, int limit, int lastIDinsideDoc) {
     return ingingoCollection
@@ -59,5 +59,18 @@ class IngingoService {
         .limit(limit)
         .snapshots()
         .map(_ingingosFromSnapshot);
+  }
+}
+
+class IsomoIngingoSum {
+  final int realTotalIngingos;
+  IsomoIngingoSum({required this.realTotalIngingos});
+
+  // GETTER AND SETTER
+  int get totalIngingos => realTotalIngingos;
+
+  @override
+  String toString() {
+    return 'IsomoIngingoSum{realTotalIngingos: $realTotalIngingos}';
   }
 }

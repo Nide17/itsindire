@@ -27,8 +27,8 @@ class QBAppBar extends StatelessWidget {
           children: [
             // THE QUIZ-BLOG LOGO
             Container(
-              width: MediaQuery.of(context).size.width * 0.24,
-              height: MediaQuery.of(context).size.width * 0.24,
+              width: MediaQuery.of(context).size.width * 0.2,
+              height: MediaQuery.of(context).size.width * 0.2,
               margin: EdgeInsets.only(
                 bottom: MediaQuery.of(context).size.width * 0.02,
               ),
@@ -43,7 +43,7 @@ class QBAppBar extends StatelessWidget {
                     text: 'Quiz-Blog\n',
                     style: TextStyle(
                       color: const Color(0xFFFFFFFF),
-                      fontSize: MediaQuery.of(context).size.width * 0.04,
+                      fontSize: MediaQuery.of(context).size.width * 0.032,
                       fontWeight: FontWeight.bold,
                     ),
                     children: <TextSpan>[
@@ -51,9 +51,9 @@ class QBAppBar extends StatelessWidget {
                         text: 'Skills & Education',
                         style: TextStyle(
                           color: const Color(0xFFFFFFFF),
-                          fontSize: MediaQuery.of(context).size.width * 0.021,
+                          fontSize: MediaQuery.of(context).size.width * 0.018,
                           fontWeight: FontWeight.bold,
-                          height: MediaQuery.of(context).size.height * 0.0015,
+                          height: MediaQuery.of(context).size.height * 0.0012,
                         ),
                       ),
                     ],
@@ -66,7 +66,7 @@ class QBAppBar extends StatelessWidget {
               'In collaboration with',
               style: TextStyle(
                 color: const Color(0xFF000000),
-                fontSize: MediaQuery.of(context).size.width * 0.028,
+                fontSize: MediaQuery.of(context).size.width * 0.03,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -97,23 +97,28 @@ class QBAppBar extends StatelessWidget {
                               SvgPicture.asset(
                                 'assets/images/car.svg',
                                 height:
-                                    MediaQuery.of(context).size.height * 0.045,
+                                    MediaQuery.of(context).size.height * 0.04,
                                 color: const Color(0xFF157A6E),
                               ),
 
                               // SPACING BETWEEN THE TWO WIDGETS
                               SizedBox(
                                 width:
-                                    MediaQuery.of(context).size.height * 0.012,
+                                    MediaQuery.of(context).size.height * 0.008,
                               ),
-                              Text('Tegura.rw', // TEXT WIDGET
+                              Text('Itsindire.rw', // TEXT WIDGET
                                   style: TextStyle(
-                                    color: const Color(0xFFFFBD59),
+                                    color: const Color(0xFF157A6E),
                                     fontWeight: FontWeight.w900,
                                     fontSize:
                                         MediaQuery.of(context).size.width *
-                                            0.048,
+                                            0.032,
                                   )),
+                              // SPACING BETWEEN THE TWO WIDGETS
+                              SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.height * 0.008,
+                              ),
                             ],
                           ),
                         ),
@@ -121,7 +126,7 @@ class QBAppBar extends StatelessWidget {
                           'Iga, Umenye, Utsinde!',
                           style: TextStyle(
                             color: const Color(0xFF00A1DE),
-                            fontSize: MediaQuery.of(context).size.width * 0.028,
+                            fontSize: MediaQuery.of(context).size.width * 0.03,
                             fontWeight: FontWeight.bold,
                             height: MediaQuery.of(context).size.height * 0.002,
                           ),
@@ -137,13 +142,13 @@ class QBAppBar extends StatelessWidget {
                   children: [
                     SvgPicture.asset(
                       'assets/images/phone.svg',
-                      height: MediaQuery.of(context).size.height * 0.03,
+                      height: MediaQuery.of(context).size.height * 0.026,
                     ),
                     Text(
                       '\t\t+250 794 033 360',
                       style: TextStyle(
                         color: const Color(0xFF000000),
-                        fontSize: MediaQuery.of(context).size.width * 0.038,
+                        fontSize: MediaQuery.of(context).size.width * 0.03,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

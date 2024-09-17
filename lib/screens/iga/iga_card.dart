@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class IgaCard extends StatelessWidget {
   final String title;
@@ -16,9 +17,9 @@ class IgaCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => screen),
-        );
+            context,
+            PageTransition(
+                type: PageTransitionType.leftToRight, child: screen));
       },
       child: Container(
         width: MediaQuery.of(context).size.width * 0.4,
@@ -34,7 +35,6 @@ class IgaCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // TITLE
             Padding(
               padding: const EdgeInsets.all(2.0),
               child: Text(
@@ -48,14 +48,10 @@ class IgaCard extends StatelessWidget {
                 ),
               ),
             ),
-
-            // BOTTOM BORDER OF THE ABOVE SECTION
             Container(
               color: const Color(0xFFFFBD59),
               height: MediaQuery.of(context).size.height * 0.009,
             ),
-
-            // PNG ICON
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 8.0,
