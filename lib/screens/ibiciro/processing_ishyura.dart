@@ -1,16 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tegura/firebase_services/payment_db.dart';
-import 'package:tegura/models/ifatabuguzi.dart';
-import 'package:tegura/models/payment.dart';
-import 'package:tegura/models/user.dart';
-import 'package:tegura/screens/ibiciro/ifatabuguzi.dart';
-import 'package:tegura/screens/ibiciro/subscription.dart';
-import 'package:tegura/screens/iga/utils/tegura_alert.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/utilities/default_input.dart';
-import 'package:tegura/utilities/spinner.dart';
+import 'package:itsindire/firebase_services/payment_db.dart';
+import 'package:itsindire/models/ifatabuguzi.dart';
+import 'package:itsindire/models/payment.dart';
+import 'package:itsindire/screens/ibiciro/ifatabuguzi.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/utilities/default_input.dart';
+import 'package:itsindire/utilities/spinner.dart';
 
 class ProcessingIshyura extends StatefulWidget {
   final IfatabuguziModel ifatabuguzi;
@@ -32,8 +29,10 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
 
   Future<void> _loadPaymentData() async {
     if (FirebaseAuth.instance.currentUser != null) {
-      PaymentModel pymt = await PaymentService()
-          .getUserLatestPytData(FirebaseAuth.instance.currentUser!.uid);
+      PaymentModel pymt = FirebaseAuth.instance.currentUser != null
+          ? await PaymentService()
+              .getUserLatestPytData(FirebaseAuth.instance.currentUser!.uid)
+          : null;
       setState(() {
         payment = pymt;
       });
@@ -42,10 +41,10 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
 
   @override
   Widget build(BuildContext context) {
-    final usr = Provider.of<UserModel?>(context);
+    final usr = FirebaseAuth.instance.currentUser;
     final String message = widget.ifatabuguzi.type != 'ur'
-        ? 'Andika nimero ugiye gukoresha wishyura yawe hasi aho, ubundi wishyure ${widget.ifatabuguzi.igiciro} RWF kuri MoMo: 0794033360'
-        : 'Provide your payment number below, then pay ${widget.ifatabuguzi.igiciro} RWF on MoMo: 0794033360';
+        ? 'Andika nimero ugiye gukoresha wishyura yawe hasi aho, ubundi wishyure ${widget.ifatabuguzi.igiciro} RWF kuri MoMo: 0794033360 [Patrice]'
+        : 'Provide your payment number below, then pay ${widget.ifatabuguzi.igiciro} RWF on MoMo: 0794033360 [Patrice]';
     // final String message = widget.ifatabuguzi.type != 'ur'
     //     ? 'Ishyura ${widget.ifatabuguzi.igiciro} RWF kuri MoMo: 0794033360 \n Cyangwa ukande ino mibare kuri telefone yawe ukoreshe numero yawe ya MTN maze wishyure: \n*182*8*1*36921*${widget.ifatabuguzi.igiciro}#'
     //     : 'Provide your number below or Pay ${widget.ifatabuguzi.igiciro} RWF on MoMo: 0794033360 \n or dial the following on your phone using your MTN momo phone number: \n*182*8*1*36921*${widget.ifatabuguzi.igiciro}#';
@@ -54,9 +53,9 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
         ? const Spinner()
         : Scaffold(
             backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-            appBar: const PreferredSize(
+            appBar: PreferredSize(
               preferredSize: Size.fromHeight(58.0),
-              child: AppBarTegura(),
+              child: AppBarItsindire(),
             ),
             body: ListView(
               // YELLOW MOMO PAYING CONTAINER
@@ -92,7 +91,7 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
                         message,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
+                          fontSize: MediaQuery.of(context).size.width * 0.032,
                           fontWeight: FontWeight.w900,
                           color: const Color.fromARGB(255, 0, 0, 0),
                         ),
@@ -154,8 +153,9 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
                                   // SHOW ALERT DIALOG
                                   showDialog(
                                       context: context,
+                                      barrierDismissible: false, 
                                       builder: (BuildContext context) {
-                                        return TeguraAlert(
+                                        return ItsindireAlert(
                                             errorTitle: 'Error',
                                             errorMsg: error,
                                             alertType: 'error');
@@ -265,7 +265,7 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
                             : 'Urahita wemererwa gutangira kwiga!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.04,
+                          fontSize: MediaQuery.of(context).size.width * 0.032,
                           fontWeight: FontWeight.w900,
                           color: const Color.fromARGB(255, 0, 0, 0),
                         ),
@@ -275,16 +275,10 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
                 ),
 
                 // IFATABUGUZI UGIYE KUGURA
-                widget.ifatabuguzi.type == 'ur'
-                    ? Subscription(
-                        title: 'YOUR SUBSCRIPTION',
-                        ifatabuguzi: widget.ifatabuguzi,
-                        curWidget: runtimeType.toString(),
-                      )
-                    : Ifatabuguzi(
-                        title: "IFATABUGUZI UGIYE KUGURA:",
-                        ifatabuguzi: widget.ifatabuguzi,
-                        curWidget: runtimeType.toString()),
+                Ifatabuguzi(
+                    index: 0,
+                    ifatabuguzi: widget.ifatabuguzi,
+                    curWidget: runtimeType.toString()),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.03,
                 )

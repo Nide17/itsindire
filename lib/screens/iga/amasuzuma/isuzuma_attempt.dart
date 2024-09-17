@@ -1,15 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/firebase_services/isuzuma_score_db.dart';
-import 'package:tegura/models/isuzuma.dart';
-import 'package:tegura/models/isuzuma_score.dart';
-import 'package:tegura/models/user.dart';
-import 'package:tegura/screens/iga/amasuzuma/isuzuma_score_review.dart';
-import 'package:tegura/screens/iga/amasuzuma/isuzuma_views.dart';
-import 'package:tegura/screens/iga/utils/tegura_alert.dart';
-import 'package:tegura/utilities/app_bar.dart';
-import 'package:tegura/screens/iga/amasuzuma/isuzuma_direction_button.dart';
+import 'package:itsindire/firebase_services/isuzuma_score_db.dart';
+import 'package:itsindire/models/isuzuma.dart';
+import 'package:itsindire/models/isuzuma_score.dart';
+import 'package:itsindire/screens/iga/amasuzuma/isuzuma_score_review.dart';
+import 'package:itsindire/screens/iga/amasuzuma/isuzuma_views.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
+import 'package:itsindire/utilities/app_bar.dart';
+import 'package:itsindire/screens/iga/amasuzuma/isuzuma_direction_button.dart';
 
 class IsuzumaAttempt extends StatefulWidget {
   final IsuzumaModel isuzuma;
@@ -29,9 +29,7 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
 
   @override
   Widget build(BuildContext context) {
-    final usr = Provider.of<UserModel?>(context);
-    print(
-        "Next isuzuma received from overview in attempt: ${widget.nextIsuzuma?.id}");
+    final usr = FirebaseAuth.instance.currentUser;
 
     return MultiProvider(
       providers: [
@@ -109,38 +107,28 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
           }
 
           // RETURN THE WIDGETS
-          return WillPopScope(
-            onWillPop: () async {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return TeguraAlert(
-                    errorTitle: 'Ugiye gusohoka udasoje?',
-                    errorMsg:
-                        'Ushaka gusohoka udasoje kwisuzuma? Ibyo wahisemo birasibama.',
-                    firstButtonTitle: 'OYA',
-                    firstButtonFunction: () {
-                      Navigator.of(context).pop();
-                    },
-                    firstButtonColor: const Color(0xFF00A651),
-                    secondButtonTitle: 'YEGO',
-                    secondButtonFunction: () {
-                      Navigator.of(context).pop();
-                      Navigator.pop(context);
-                    },
-                    secondButtonColor: const Color(0xFFE60000),
-                  );
+          return PopScope(
+            canPop: false,
+            onPopInvoked: (_) async {
+              _showTheDialog(
+                context,
+                'Ugiye gusohoka udasoje?',
+                'Ushaka gusohoka udasoje kwisuzuma? Ibyo wahisemo birasibama.',
+                'OYA',
+                const Color(0xFF00A651),
+                'YEGO',
+                () {
+                  Navigator.of(context).pop();
+                  Navigator.pop(context);
                 },
+                const Color(0xFFE60000),
               );
-
-              // RETURN FALSE
-              return false;
             },
             child: Scaffold(
               backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-              appBar: const PreferredSize(
+              appBar: PreferredSize(
                 preferredSize: Size.fromHeight(58.0),
-                child: AppBarTegura(),
+                child: AppBarItsindire(),
               ),
               body: IsuzumaViews(
                   userID: usr!.uid,
@@ -174,79 +162,59 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
                         onPressed: () {
                           // IF THERE ARE UNANSWERED QUESTIONS
                           if (unansweredQns.isNotEmpty) {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return TeguraAlert(
-                                  errorTitle: 'Hari ibidasubije!',
-                                  errorMsg:
-                                      'Hari ibibazo utasubije. Ushaka gusoza?',
-                                  firstButtonTitle: 'OYA',
-                                  firstButtonFunction: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  firstButtonColor: const Color(0xFF00A651),
-                                  secondButtonTitle: 'SOZA',
-                                  secondButtonFunction: () {
-                                    for (var qn in scorePrModel.questions) {
-                                      if (!qn.isAnswered) {
-                                        qn.isAnswered = true;
-                                      }
-                                    }
+                            _showTheDialog(
+                              context,
+                              'Hari ibidasubije!',
+                              'Hari ibibazo utasubije. Ushaka gusoza?',
+                              'OYA',
+                              const Color(0xFF00A651),
+                              'SOZA',
+                              () {
+                                for (var qn in scorePrModel.questions) {
+                                  if (!qn.isAnswered) {
+                                    qn.isAnswered = true;
+                                  }
+                                }
 
-                                    // SAVE THE SCORE
-                                    IsuzumaScoreService()
-                                        .createOrUpdateIsuzumaScore(
-                                            scorePrModel);
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            IsuzumaScoreReview(
-                                          isuzuma: widget.isuzuma,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  secondButtonColor: const Color(0xFFE60000),
+                                // SAVE THE SCORE
+                                IsuzumaScoreService()
+                                    .createOrUpdateIsuzumaScore(scorePrModel);
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => IsuzumaScoreReview(
+                                      isuzuma: widget.isuzuma,
+                                    ),
+                                  ),
                                 );
                               },
+                              const Color(0xFFE60000),
                             );
                           } else {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return TeguraAlert(
-                                  errorTitle: 'Gusoza isuzuma!',
-                                  errorMsg:
-                                      'Wasubije ibibazo byose. Ese ushaka gusoza nonaha?',
-                                  firstButtonTitle: 'OYA',
-                                  firstButtonFunction: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  firstButtonColor: const Color(0xFFE60000),
-                                  secondButtonTitle: 'YEGO',
-                                  secondButtonFunction: () {
-                                    IsuzumaScoreService()
-                                        .createOrUpdateIsuzumaScore(
-                                            scorePrModel);
-                                    Navigator.of(context).pop();
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            IsuzumaScoreReview(
-                                          isuzuma: widget.isuzuma,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  secondButtonColor: const Color(0xFF00A651),
+                            _showTheDialog(
+                              context,
+                              'Gusoza isuzuma!',
+                              'Wasubije ibibazo byose. Ese ushaka gusoza nonaha?',
+                              'OYA',
+                              const Color(0xFFE60000),
+                              'YEGO',
+                              () {
+                                IsuzumaScoreService()
+                                    .createOrUpdateIsuzumaScore(scorePrModel);
+                                Navigator.of(context).pop();
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => IsuzumaScoreReview(
+                                      isuzuma: widget.isuzuma,
+                                    ),
+                                  ),
                                 );
                               },
+                              const Color(0xFF00A651),
                             );
                           }
                         },
@@ -320,5 +288,34 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
     setState(() {
       qnIndex = index;
     });
+  }
+
+  Future<void> _showTheDialog(
+      BuildContext context,
+      String errorTitle,
+      String errorMsg,
+      String? firstButtonTitle,
+      Color? firstButtonColor,
+      String? secondButtonTitle,
+      Function? secondButtonFunction,
+      Color? secondButtonColor) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return ItsindireAlert(
+          errorTitle: errorTitle,
+          errorMsg: errorMsg,
+          firstButtonTitle: firstButtonTitle,
+          firstButtonFunction: () {
+            Navigator.of(context).pop();
+          },
+          firstButtonColor: const Color(0xFF00A651),
+          secondButtonTitle: secondButtonTitle,
+          secondButtonFunction: secondButtonFunction,
+          secondButtonColor: secondButtonColor,
+        );
+      },
+    );
   }
 }

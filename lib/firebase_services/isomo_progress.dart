@@ -1,26 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tegura/models/course_progress.dart';
+import 'package:itsindire/models/course_progress.dart';
 
 class CourseProgressService {
-  // COLLECTIONS REFERENCE - FIRESTORE
+  
   final CollectionReference progressCollection =
       FirebaseFirestore.instance.collection('progresses');
 
   CourseProgressService();
 
-// #############################################################################
-// MODELING DATA
-// #############################################################################
   // GET progresses FROM A SNAPSHOT USING THE PROGRESS MODEL - _progressesFromSnapshot
   // FUNCTION CALLED EVERY TIME THE progresses DATA CHANGES
   List<CourseProgressModel> _progressesFromSnapshot(
       QuerySnapshot querySnapshot) {
-    // GET THE DATA FROM THE SNAPSHOT
     return querySnapshot.docs.map((doc) {
-      // GET THE DATA FROM THE SNAPSHOT
       final data = doc.data() as Map<String, dynamic>;
-
-      // CHECK IF THE FIELDS EXISTS BEFORE ASSIGNING TO THE VARIABLE
       final id = data.containsKey('id') ? data['id'] : '';
       final userId = data.containsKey('userId') ? data['userId'] : '';
       final courseId = data.containsKey('courseId') ? data['courseId'] : 0;
@@ -28,15 +21,17 @@ class CourseProgressService {
           data.containsKey('currentIngingo') ? data['currentIngingo'] : 0;
       final totalIngingos =
           data.containsKey('totalIngingos') ? data['totalIngingos'] : 0;
+      final unansweredPopQuestions = data.containsKey('unansweredPopQuestions')
+          ? data['unansweredPopQuestions']
+          : 0;
 
-      // RETURN A LIST OF progresses FROM THE SNAPSHOT
       return CourseProgressModel(
-        // PROGRESSES DATA
         id: id,
         userId: userId,
         courseId: courseId,
         currentIngingo: currentIngingo,
         totalIngingos: totalIngingos,
+        unansweredPopQuestions: unansweredPopQuestions,
       );
     }).toList();
   }
@@ -44,10 +39,7 @@ class CourseProgressService {
   // GET ONE USER progress ON A COURSE FROM A SNAPSHOT USING THE PROGRESS MODEL - _progressFromSnapshot
   // FUNCTION CALLED EVERY TIME THE progresses DATA CHANGES
   CourseProgressModel _progressFromSnapshot(DocumentSnapshot documentSnapshot) {
-    // GET THE DATA FROM THE SNAPSHOT
     final data = documentSnapshot.data() as Map<String, dynamic>;
-
-    // CHECK IF THE FIELDS EXIST BEFORE ASSIGNING TO THE VARIABLE
     final id = data.containsKey('id') ? data['id'] : '';
     final userId = data.containsKey('userId') ? data['userId'] : '';
     final courseId = data.containsKey('courseId') ? data['courseId'] : 0;
@@ -55,28 +47,25 @@ class CourseProgressService {
         data.containsKey('currentIngingo') ? data['currentIngingo'] : 0;
     final totalIngingos =
         data.containsKey('totalIngingos') ? data['totalIngingos'] : 0;
+    final unansweredPopQuestions = data.containsKey('unansweredPopQuestions')
+        ? data['unansweredPopQuestions']
+        : 0;
 
     // RETURN A LIST OF progresses FROM THE SNAPSHOT
     return CourseProgressModel(
-      // PROGRESSES DATA
       id: id,
       userId: userId,
       courseId: courseId,
       currentIngingo: currentIngingo,
       totalIngingos: totalIngingos,
+      unansweredPopQuestions: unansweredPopQuestions,
     );
   }
 
-// #############################################################################
-// FUNCTIONS FOR INTERACTING WITH THE DATABASE
-// #############################################################################
-
   // GET A LIST OF PROGRESSES OF USER ON finished and unfinished progress ON A COURSE STREAM
   Stream<List<CourseProgressModel?>>? getUserProgresses(String? uid) {
-    // CHECK IF CURRENT USER UID IS NULL, IF IT IS, RETURN NULL
+    print('getUserProgresses called');
     if (uid == null || uid == '') return null;
-
-// IF FINISHED, RETURN WHERE totalIngingos EQUAL TO currentIngingo
     return progressCollection
         .where('userId', isEqualTo: uid)
         .snapshots()
@@ -85,33 +74,74 @@ class CourseProgressService {
 
   // GET ONE USER progress ON A COURSE STREAM
   Stream<CourseProgressModel?>? getProgress(String? uid, int? courseId) {
-    // CHECK IF CURRENT USER UID IS NULL, IF IT IS, RETURN NULL
     if (uid == null || uid == '') return null;
-
-    // CHECK IF CURRENT COURSE ID IS NULL, IF IT IS, RETURN NULL
     if (courseId == null || courseId == 0) return null;
-
-    // GET ONE USER progress ON A COURSE FROM FIRESTORE AS A STREAM OF DOCUMENT SNAPSHOT
     return progressCollection
         .doc('${courseId}_$uid')
         .snapshots()
         .map((snapshot) {
       if (!snapshot.exists) {
-        return null; // Return null if the document doesn't exist
+        return null;
       } else {
         return _progressFromSnapshot(snapshot);
       }
     });
   }
 
+  // FINISHED PROGRESSES STREAM
+  Stream<List<CourseProgressModel?>>? getFinishedProgresses(String? uid) {
+    if (uid == null || uid == '') return null;
+
+    final userProgresses = getUserProgresses(uid);
+
+    return userProgresses!.map((progresses) {
+      return progresses.where((progress) {
+        return progress!.currentIngingo == progress.totalIngingos &&
+            progress.unansweredPopQuestions == 0;
+      }).toList();
+    });
+  }
+
+  Stream<List<CourseProgressModel?>>? getUnfinishedProgresses(String? uid) {
+    if (uid == null || uid == '') return null;
+
+    final userProgresses = getUserProgresses(uid);
+
+    return userProgresses!.map((progresses) {
+      return progresses.where((progress) {
+        return progress!.currentIngingo < progress.totalIngingos ||
+            progress.unansweredPopQuestions > 0;
+      }).toList();
+    });
+  }
+
   // THIS FUNCTION WILL UPDATE THE USER PROGRESS ON A COURSE IN THE DATABASE
   //WHEN THE USER START AND WHEN THE USER IS LEARNING A COURSE AND WHEN THE USER FINISHES A COURSE
-  Future updateUserCourseProgress(
+Future updateUserCourseProgress(
     String uid,
     int courseId,
     int currentIngingo,
     int totalIngingos,
+    int? unansweredPopQuestions,
   ) async {
+    print('updateUserCourseProgress called');
+
+    // Fetch the current progress document
+    DocumentSnapshot progressSnapshot =
+        await progressCollection.doc('${courseId}_$uid').get();
+
+    // Check if the document exists and get the value of 'unansweredPopQuestions'
+    int? currentUnansweredPopQuestions;
+    if (progressSnapshot.exists) {
+      // Safely get the value and cast it to int
+      currentUnansweredPopQuestions = (progressSnapshot.data()
+          as Map<String, dynamic>?)?['unansweredPopQuestions'] as int?;
+    }
+
+    // Use the passed value if it's not null, otherwise keep the existing value
+    int? updatedUnansweredPopQuestions =
+        unansweredPopQuestions ?? currentUnansweredPopQuestions;
+
     return await progressCollection.doc('${courseId}_$uid').set({
       'id': '${courseId}_$uid',
       'userId': uid,
@@ -119,6 +149,18 @@ class CourseProgressService {
       'currentIngingo':
           currentIngingo > totalIngingos ? totalIngingos : currentIngingo,
       'totalIngingos': totalIngingos,
+      'unansweredPopQuestions': updatedUnansweredPopQuestions,
+    });
+  }
+
+  // THIS FUNCTION WILL UPDATE THE USER PROGRESS ON A COURSE IN THE DATABASE
+  Future updateUnansweredPopQuestions(
+    String progressId,
+    int count,
+  ) async {
+    print('updateUnansweredPopQuestions called');
+    return await progressCollection.doc(progressId).update({
+      'unansweredPopQuestions': FieldValue.increment(count),
     });
   }
 }

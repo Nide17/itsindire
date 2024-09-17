@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/firebase_services/isuzuma_score_db.dart';
-import 'package:tegura/models/isuzuma.dart';
-import 'package:tegura/models/isuzuma_score.dart';
-import 'package:tegura/screens/iga/amasuzuma/isuzuma_custom_radio_button.dart';
-import 'package:tegura/screens/iga/amasuzuma/isuzuma_ikibazo_button.dart';
-import 'package:tegura/screens/iga/amasuzuma/isuzuma_score_review.dart';
-import 'package:tegura/screens/iga/amasuzuma/isuzuma_timer.dart';
-import 'package:tegura/screens/iga/amasuzuma/qn_img_url.dart';
-import 'package:tegura/screens/iga/utils/tegura_alert.dart';
-import 'package:tegura/screens/iga/utils/gradient_title.dart';
+import 'package:itsindire/firebase_services/isuzuma_score_db.dart';
+import 'package:itsindire/models/isuzuma.dart';
+import 'package:itsindire/models/isuzuma_score.dart';
+import 'package:itsindire/screens/iga/amasuzuma/isuzuma_custom_radio_button.dart';
+import 'package:itsindire/screens/iga/amasuzuma/isuzuma_ikibazo_button.dart';
+import 'package:itsindire/screens/iga/amasuzuma/isuzuma_score_review.dart';
+import 'package:itsindire/screens/iga/amasuzuma/isuzuma_timer.dart';
+import 'package:itsindire/screens/iga/amasuzuma/qn_img_url.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
+import 'package:itsindire/screens/iga/utils/gradient_title.dart';
 
 typedef ShowQnCallback = void Function(int index);
 
@@ -37,8 +37,9 @@ class _IsuzumaViewsState extends State<IsuzumaViews> {
   void handleTimerExpired() {
     showDialog(
       context: context,
+      barrierDismissible: false, 
       builder: (BuildContext context) {
-        return TeguraAlert(
+        return ItsindireAlert(
           errorTitle: 'Iminota yarangiye!',
           errorMsg: 'Igihe cyashize, reba uko wakoze cyangwa usubiremo!',
           firstButtonTitle: 'Funga',

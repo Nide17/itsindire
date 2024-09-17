@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/firebase_services/pop_question_db.dart';
-import 'package:tegura/models/course_progress.dart';
-import 'package:tegura/models/ingingo.dart';
-import 'package:tegura/models/isomo.dart';
-import 'package:tegura/models/pop_question.dart';
-import 'package:tegura/screens/iga/utils/pop_quiz.dart';
-import 'package:tegura/firebase_services/isomo_progress.dart';
+import 'package:itsindire/firebase_services/pop_question_db.dart';
+import 'package:itsindire/models/course_progress.dart';
+import 'package:itsindire/models/ingingo.dart';
+import 'package:itsindire/models/isomo.dart';
+import 'package:itsindire/models/pop_question.dart';
+import 'package:itsindire/screens/iga/utils/pop_quiz.dart';
+import 'package:itsindire/firebase_services/isomo_progress.dart';
 
 class DirectionButton extends StatefulWidget {
   final String buttonText;
@@ -40,15 +40,23 @@ class _DirectionButtonState extends State<DirectionButton> {
   Widget build(BuildContext context) {
     final pageIngingos = Provider.of<List<IngingoModel>?>(context) ?? [];
     final courseProgress = Provider.of<CourseProgressModel?>(context);
-    final List<int> listIngingosID = pageIngingos.map((ing) => ing.id + widget.increment).toList();
+    final int ingingoID = pageIngingos.isNotEmpty ? pageIngingos[0].id : 0;
+
+    print("courseProgress: $courseProgress");
+
+    // Generate a list of ingingos IDs from ingingoID
+    List<int> listIngingosID2 = [];
+    for (int i = 0; i < 5; i++) {
+      listIngingosID2.add(ingingoID + i);
+    }
 
     return MultiProvider(
       providers: [
         StreamProvider<List<PopQuestionModel>?>.value(
-          value:  listIngingosID.isNotEmpty
+          value: listIngingosID2.isNotEmpty
               ? PopQuestionService().getPopQuestionsByIngingoIDs(
                   widget.isomo.id,
-                  listIngingosID,
+                  listIngingosID2,
                 )
               : null,
           initialData: null,
@@ -65,23 +73,25 @@ class _DirectionButtonState extends State<DirectionButton> {
             popQuestions != null && popQuestions.isNotEmpty
                 ? popQuestions[0].ingingoID
                 : 0);
+
         return ElevatedButton(
           onPressed: () {
             widget.scrollTop();
             if (widget.direction == 'inyuma') {
               widget.changeSkipNumber(-5);
             } else if (widget.direction == 'komeza') {
-
               // UPDATE THE CURRENT INGINGO
               if (widget.skip >= 0 &&
                   widget.skip <= courseProgress!.totalIngingos &&
                   pageIngingos.length + widget.skip >
-                      courseProgress.currentIngingo) {
+                      courseProgress.currentIngingo &&
+                  popQuestions!.isEmpty) {
                 CourseProgressService().updateUserCourseProgress(
                   courseProgress.userId,
                   widget.isomo.id,
                   widget.skip + pageIngingos.length,
                   courseProgress.totalIngingos,
+                  null,
                 );
               }
 
@@ -94,6 +104,8 @@ class _DirectionButtonState extends State<DirectionButton> {
                     builder: (context) => PopQuiz(
                       popQuestions: popQuestions,
                       isomo: widget.isomo,
+                      courseProgress: courseProgress!,
+                      currentIngingo: widget.skip + pageIngingos.length,
                       coursechangeSkipNumber: widget.changeSkipNumber,
                     ),
                   ),
@@ -110,10 +122,15 @@ class _DirectionButtonState extends State<DirectionButton> {
             ),
             backgroundColor: const Color(0xFF00CCE5),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+                borderRadius: BorderRadius.circular(32.0),
+                side: BorderSide(
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                  style: BorderStyle.solid,
+                  width: MediaQuery.of(context).size.width * 0.005,
+                )),
+            padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.05,
+                vertical: MediaQuery.of(context).size.height * 0.01),
           ),
           child: SingleChildScrollView(
             child: Row(
@@ -135,7 +152,7 @@ class _DirectionButtonState extends State<DirectionButton> {
                 Text(
                   widget.buttonText,
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w900,
                       fontSize: MediaQuery.of(context).size.width * 0.035,
                       color: Colors.black),
                 ),

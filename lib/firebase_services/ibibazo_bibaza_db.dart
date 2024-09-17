@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tegura/models/ibibazo_bibaza.dart';
+import 'package:itsindire/models/ibibazo_bibaza.dart';
 
 class IbibazoBibazaService {
   // COLLECTIONS REFERENCE - FIRESTORE

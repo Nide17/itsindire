@@ -1,24 +1,26 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:itsindire/models/ifatabuguzi.dart';
+import 'package:itsindire/models/profile.dart';
+import 'package:itsindire/screens/auth/iyandikishe.dart';
+import 'package:itsindire/screens/ibiciro/processing_ishyura.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/models/ifatabuguzi.dart';
-import 'package:tegura/models/user.dart';
-import 'package:tegura/screens/auth/iyandikishe.dart';
-import 'package:tegura/screens/ibiciro/processing_ishyura.dart';
 
 class Ifatabuguzi extends StatelessWidget {
-  final String title;
+  final int index;
   final IfatabuguziModel ifatabuguzi;
   final String curWidget;
 
   const Ifatabuguzi(
       {super.key,
-      required this.title,
+      required this.index,
       required this.ifatabuguzi,
       required this.curWidget});
 
   @override
   Widget build(BuildContext context) {
-    final usr = Provider.of<UserModel?>(context);
+    final profile = Provider.of<ProfileModel?>(context);
+    final bool isUrStudent = profile?.urStudent ?? false;
 
     return Column(
       children: [
@@ -56,7 +58,9 @@ class Ifatabuguzi extends StatelessWidget {
                           horizontal: MediaQuery.of(context).size.width * 0.04,
                         ),
                         child: Text(
-                          title,
+                          isUrStudent
+                              ? 'PACK NO ${index + 1}'
+                              : 'IFATABUGUZI RYA ${index + 1}',
                           textAlign: TextAlign.left,
                           softWrap: true,
                           style: TextStyle(
@@ -86,14 +90,47 @@ class Ifatabuguzi extends StatelessWidget {
                                 horizontal:
                                     MediaQuery.of(context).size.width * 0.08,
                               ),
-                              child: Text(
-                                'Igihe: ${ifatabuguzi.igihe.toUpperCase()} \nIgiciro: ${ifatabuguzi.igiciro} RWF',
+                              child: Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: isUrStudent
+                                          ? 'Period: ${ifatabuguzi.igihe.toUpperCase()} \n\nPrice: ${ifatabuguzi.igiciro} RWF     '
+                                          : 'Igihe: ${ifatabuguzi.igihe.toUpperCase()} \n\nIgiciro: ${ifatabuguzi.igiciro} RWF     ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.032,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: curWidget == '_IbiciroState'
+                                          ? '${ifatabuguzi.igiciro * 2} RWF'
+                                          : '',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.032,
+                                        color: curWidget == '_IbiciroState'
+                                            ? const Color(0xFFFAD201)
+                                            : const Color.fromARGB(
+                                                255, 14, 13, 13),
+                                        decoration: TextDecoration.lineThrough,
+                                        decorationColor: Colors.red,
+                                        decorationThickness: 4.0,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                 textAlign: TextAlign.left,
                                 softWrap: true,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
                                   fontSize:
-                                      MediaQuery.of(context).size.width * 0.04,
+                                      MediaQuery.of(context).size.width * 0.038,
                                   color:
                                       const Color.fromARGB(255, 255, 255, 255),
                                 ),
@@ -136,12 +173,16 @@ class Ifatabuguzi extends StatelessWidget {
                                             Navigator.push(context,
                                                 MaterialPageRoute(
                                                     builder: (context) {
-                                              return usr != null
+                                              return FirebaseAuth.instance
+                                                          .currentUser !=
+                                                      null
                                                   ? ProcessingIshyura(
                                                       ifatabuguzi: ifatabuguzi)
-                                                  : const Iyandikishe(
-                                                      message:
-                                                          "Banza wiyandikishe, ubone kwishyura wige!",
+                                                  : Iyandikishe(
+                                                      message: isUrStudent ==
+                                                              true
+                                                          ? "Register first, then pay and start learning!"
+                                                          : "Banza wiyandikishe, ubone kwishyura wige!",
                                                     );
                                             }));
                                           },
@@ -150,7 +191,9 @@ class Ifatabuguzi extends StatelessWidget {
                                                 horizontal: 8.0,
                                                 vertical: 0.05),
                                             child: Text(
-                                              'ISHYURA',
+                                              isUrStudent
+                                                  ? 'PAY NOW'
+                                                  : 'ISHYURA',
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w700,
@@ -196,7 +239,7 @@ class Ifatabuguzi extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.center,
                     child: Text(
-                      'HARIMO:',
+                      isUrStudent ? 'INCLUDES:' : 'HARIMO:',
                       style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: MediaQuery.of(context).size.width * 0.042,
@@ -237,7 +280,7 @@ class Ifatabuguzi extends StatelessWidget {
                                             '${entry.key + 1}. ${entry.value}',
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
-                                              fontWeight: FontWeight.w400,
+                                              fontWeight: FontWeight.w600,
                                               fontSize: MediaQuery.of(context)
                                                       .size
                                                       .width *
@@ -258,7 +301,7 @@ class Ifatabuguzi extends StatelessWidget {
                             ifatabuguzi.ubusobanuro,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.w600,
                               fontSize:
                                   MediaQuery.of(context).size.width * 0.04,
                               color: const Color.fromARGB(255, 255, 255, 255),

@@ -107,8 +107,8 @@ List<Map<String, dynamic>> _icons = [
   },
   {
     'icon': 'assets/images/email.svg',
-    'title': 'quizblog.rw@gmail.com',
-    'url': 'mailto:quizblog.rw@gmail.com',
+    'title': 'itsindire.rw@gmail.com',
+    'url': 'mailto:itsindire.rw@gmail.com',
   },
   {
     'icon': 'assets/images/twitter.svg',

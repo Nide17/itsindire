@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:itsindire/firebase_services/isomo_progress.dart';
+import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
 import 'package:provider/provider.dart';
-import 'package:tegura/models/course_progress.dart';
-import 'package:tegura/models/isomo.dart';
-import 'package:tegura/models/pop_question.dart';
-import 'package:tegura/screens/iga/utils/custom_radio_button.dart';
-import 'package:tegura/screens/iga/utils/gradient_title.dart';
-import 'package:tegura/providers/quiz_score_provider.dart';
-import 'package:tegura/firebase_services/isomo_progress.dart';
-import 'package:tegura/utilities/ikibazo_button.dart';
+import 'package:itsindire/models/course_progress.dart';
+import 'package:itsindire/models/isomo.dart';
+import 'package:itsindire/models/pop_question.dart';
+import 'package:itsindire/screens/iga/utils/custom_radio_button.dart';
+import 'package:itsindire/screens/iga/utils/gradient_title.dart';
+import 'package:itsindire/providers/quiz_score_provider.dart';
+import 'package:itsindire/screens/iga/utils/iga_content.dart';
+import 'package:itsindire/utilities/ikibazo_button.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 typedef ShowQnCallback = void Function(int index);
@@ -44,12 +46,9 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
   Widget build(BuildContext context) {
     final QuizScoreProvider scoreProviderModel =
         Provider.of<QuizScoreProvider>(context);
-
-    // GET THE POP QUESTIONS
+    final quizPopQuestions = Provider.of<List<PopQuestionModel>?>(context);
     final List<ScoreQuestion> scorePopQns =
         scoreProviderModel.quizScore.questions;
-
-    // GET THE POP QUESTIONS LENGTH
     final scorePopQnsLength = scoreProviderModel.quizScore.questions.length;
 
     return Consumer<QuizScoreProvider>(
@@ -206,8 +205,8 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                             .isAnswerCorrect,
                                         isThisCorrect: widget.isCurrentCorrect,
                                         scoreProviderModel: scoreProviderModel,
-                                        isSelected: option.id ==
-                                            widget.selectedOption,
+                                        isSelected:
+                                            option.id == widget.selectedOption,
                                         currentQuestion:
                                             scorePopQns[widget.qnIndex]
                                                 .popQuestion,
@@ -236,20 +235,45 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                     )),
           ElevatedButton(
             onPressed: () {
-              CourseProgressService().updateUserCourseProgress(
-                widget.courseProgress != null
-                    ? widget.courseProgress!.userId
-                    : widget.userID,
-                widget.courseProgress != null
-                    ? widget.courseProgress!.courseId
-                    : 0,
-                0,
-                widget.courseProgress != null
-                    ? widget.courseProgress!.totalIngingos
-                    : 1,
-              );
-              // GO BACK TO THE COURSE PAGE
-              Navigator.pop(context);
+              showDialog(
+                  context: context,
+                  barrierDismissible: false, 
+                  builder: (BuildContext context) {
+                    return ItsindireAlert(
+                      errorTitle: 'IBIJYANYE NIRI SOMO',
+                      errorMsg:
+                          'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "${widget.courseProgress!.totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : widget.courseProgress!.totalIngingos * 3}" gusa!',
+                      firstButtonTitle: 'Inyuma',
+                      firstButtonFunction: () {
+                        Navigator.pop(context);
+                      },
+                      firstButtonColor: const Color(0xFFE60000),
+                      secondButtonTitle: 'Tangira',
+                      secondButtonFunction: () {
+                        Navigator.pop(context);
+                        // Update the user progress in the database
+                        if (widget.courseProgress != null &&  quizPopQuestions != null) {
+                          CourseProgressService().updateUserCourseProgress(
+                              widget.courseProgress!.userId,
+                              widget.courseProgress!.courseId,
+                              0,
+                              widget.courseProgress!.totalIngingos,
+                              quizPopQuestions.length);
+                        }
+
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => IgaContent(
+                                      isomo: widget.isomo,
+                                      courseProgress: widget.courseProgress,
+                                      thisCourseTotalIngingos:
+                                          widget.courseProgress!.totalIngingos,
+                                    )));
+                      },
+                      secondButtonColor: const Color(0xFF00A651),
+                    );
+                  });
             },
             child: const Text('Ongera utangire iri somo!'),
           ),

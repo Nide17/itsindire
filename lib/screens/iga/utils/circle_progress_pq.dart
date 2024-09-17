@@ -6,17 +6,19 @@ class CircleProgressPq extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    
     return CircularPercentIndicator(
       radius: MediaQuery.of(context).size.width * 0.05,
-      lineWidth: MediaQuery.of(context).size.width * 0.01,
+      lineWidth: MediaQuery.of(context).size.width * 0.008,
       animation: true,
       percent: percent,
       center: Text(
         '${(percent * 100).toStringAsFixed(0)}%',
         style: TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: MediaQuery.of(context).size.width * 0.03,
+          fontWeight: FontWeight.w900,
+          fontSize: percent < 0.9
+              ? MediaQuery.of(context).size.width * 0.03
+              : MediaQuery.of(context).size.width * 0.025,
         ),
       ),
       circularStrokeCap: CircularStrokeCap.butt,

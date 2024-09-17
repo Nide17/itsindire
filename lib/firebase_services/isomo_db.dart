@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tegura/models/isomo.dart';
+import 'package:itsindire/models/isomo.dart';
 
 class IsomoService {
   final CollectionReference amasomoCollection =
@@ -38,8 +38,38 @@ class IsomoService {
   }
 
   Stream<List<IsomoModel?>>? getAllAmasomo(String? uid) {
+    print('getting all amasomo');
     if (uid == null) return null;
     return amasomoCollection.snapshots().map(_amasomoFromSnapshot);
+  }
+
+  // GET AMASOMO BY ID
+  Future<IsomoModel?> getIsomoById(int id) async {
+    final amasomoDocument = await amasomoCollection.doc(id.toString()).get();
+
+    if (amasomoDocument.exists) {
+      final data = amasomoDocument.data() as Map<String, dynamic>;
+
+      final title = data.containsKey('title') ? data['title'] : '';
+      final description =
+          data.containsKey('description') ? data['description'] : '';
+      final introText = data.containsKey('introText') ? data['introText'] : '';
+      final conclusion =
+          data.containsKey('conclusion') ? data['conclusion'] : '';
+      final duration = data.containsKey('duration') ? data['duration'] : 0;
+
+      return IsomoModel(
+        id: id,
+        title: title,
+        description: description,
+        introText: introText,
+        conclusion: conclusion,
+        duration: duration,
+      );
+    } else {
+      print('\nIsomo document does not exist\n');
+      return null;
+    }
   }
 
   Future<List<String>> getAmasomoTitlesByIds(List<String> ids) async {

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tegura/models/pop_question.dart';
+import 'package:itsindire/models/pop_question.dart';
 
 class PopQuestionService {
   final CollectionReference popQuestionCollection =
