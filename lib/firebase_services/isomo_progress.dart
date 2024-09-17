@@ -64,7 +64,6 @@ class CourseProgressService {
 
   // GET A LIST OF PROGRESSES OF USER ON finished and unfinished progress ON A COURSE STREAM
   Stream<List<CourseProgressModel?>>? getUserProgresses(String? uid) {
-    print('getUserProgresses called');
     if (uid == null || uid == '') return null;
     return progressCollection
         .where('userId', isEqualTo: uid)
@@ -124,7 +123,6 @@ Future updateUserCourseProgress(
     int totalIngingos,
     int? unansweredPopQuestions,
   ) async {
-    print('updateUserCourseProgress called');
 
     // Fetch the current progress document
     DocumentSnapshot progressSnapshot =
@@ -158,7 +156,6 @@ Future updateUserCourseProgress(
     String progressId,
     int count,
   ) async {
-    print('updateUnansweredPopQuestions called');
     return await progressCollection.doc(progressId).update({
       'unansweredPopQuestions': FieldValue.increment(count),
     });

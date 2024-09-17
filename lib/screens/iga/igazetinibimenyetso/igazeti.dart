@@ -25,7 +25,6 @@ class _IgazetiBookState extends State<IgazetiBook> {
   Future<String> _loadPdf() async {
     try {
       // Load PDF file from network
-      print('Loading PDF...');
       final file = await DefaultCacheManager().getSingleFile(
           'https://firebasestorage.googleapis.com/v0/b/tegura-rw.appspot.com/o/docs%2FIGAZETI-%5BShared%20by%20QuizBlog%5D.PDF?alt=media&token=dd96dc37-679a-48c8-8416-0312d615dc76');
       return file.path;
@@ -54,14 +53,11 @@ class _IgazetiBookState extends State<IgazetiBook> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               // While waiting for the Future to complete
-              print('Loading PDFss...');
               return const LoadingWidget();
             } else if (snapshot.hasError || snapshot.data!.isEmpty) {
               // If there was an error or the path is empty
-              print('Failed to load PDF');
               return Center(child: Text('Failed to load PDF'));
             } else {
-              print('PDF loaded');
               // When the Future completes successfully
               return PdfViewer.openFile(
                 snapshot.data!,

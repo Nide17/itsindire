@@ -91,18 +91,14 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
 
           // CALLBACK FOR FORWARD BUTTON
           void forward() {
-            setState(() {
-              qnIndex = qnIndex + 1;
-            });
+            setState(() => qnIndex = qnIndex + 1);
           }
 
           // CALLBACK FOR BACKWARD BUTTON
           void backward() {
             if (qnIndex <= 1) {
             } else {
-              setState(() {
-                qnIndex = qnIndex - 1;
-              });
+              setState(() => qnIndex = qnIndex - 1);
             }
           }
 
@@ -285,9 +281,7 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
   }
 
   void showQn(int index) {
-    setState(() {
-      qnIndex = index;
-    });
+    setState(() => qnIndex = index);
   }
 
   Future<void> _showTheDialog(

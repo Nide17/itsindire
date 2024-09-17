@@ -38,7 +38,6 @@ class IsomoService {
   }
 
   Stream<List<IsomoModel?>>? getAllAmasomo(String? uid) {
-    print('getting all amasomo');
     if (uid == null) return null;
     return amasomoCollection.snapshots().map(_amasomoFromSnapshot);
   }
@@ -81,8 +80,6 @@ class IsomoService {
         final data = amasomoDocument.data() as Map<String, dynamic>;
         final title = data.containsKey('title') ? data['title'] : '';
         amasomoTitles.add(title);
-      } else {
-        print('\nAmasomo document does not exist\n');
       }
     }
     return amasomoTitles;

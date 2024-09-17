@@ -47,9 +47,7 @@ class _IgaContentState extends State<IgaContent> {
     final IsomoModel? irindisomo =
         await IsomoService().getIsomoById(widget.isomo.id + 1);
     if (_isMounted) {
-      setState(() {
-        nextIsomo = irindisomo;
-      });
+      setState(() => nextIsomo = irindisomo);
     }
   }
 

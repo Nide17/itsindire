@@ -7,9 +7,7 @@ class LoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Color.fromARGB(255, 71, 103, 158),
-      ),
+      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.1),
       child: Center(
         child: LoadingAnimationWidget.discreteCircle(
             color: Colors.white,

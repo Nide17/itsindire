@@ -23,9 +23,7 @@ class _ContactFormState extends State<ContactForm> {
 
   Future<void> sendEmail() async {
     try {
-      setState(() {
-        isLoading = true;
-      });
+      setState(() => isLoading = true);
 
       final isSent = await EmailService.sendEmail(
         name: _name!,
@@ -33,9 +31,7 @@ class _ContactFormState extends State<ContactForm> {
         message: _message!,
       );
 
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
 
       final snackBarMessage =
           isSent ? 'Ubutumwa bwawe bwagiye!' : 'Ubutumwa bwawe ntibwagiye!';
@@ -54,9 +50,7 @@ class _ContactFormState extends State<ContactForm> {
         _formKey.currentState!.reset();
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(

@@ -103,16 +103,24 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
                                   barrierDismissible: false,
                                   builder: (BuildContext context) {
                                     return ItsindireAlert(
-                                        errorTitle: 'Ntibyagenze neza',
-                                        errorMsg: payment == null
-                                            ? 'Nturishyura'
-                                            : payment.isApproved == false
-                                                ? 'Ifatabuguzi ryawe ntiriremezwa'
-                                                : !payment.endAt
-                                                        .isAfter(DateTime.now())
-                                                    ? 'Ifatabuguzi ryawe ryararangiye'
-                                                    : 'Ibyo wifuza ntibyagenze neza. Ongera ushyure kugira ngo ugerageze!',
-                                        alertType: 'error');
+                                      errorTitle: 'Ntibyagenze neza',
+                                      errorMsg: payment == null
+                                          ? 'Nturishyura'
+                                          : payment.isApproved == false
+                                              ? 'Ifatabuguzi ryawe ntiriremezwa'
+                                              : !payment.endAt
+                                                      .isAfter(DateTime.now())
+                                                  ? 'Ifatabuguzi ryawe ryararangiye'
+                                                  : 'Ibyo wifuza ntibyagenze neza. Ongera ushyure kugira ngo ugerageze!',
+                                      alertType: 'error',
+                                      secondButtonTitle: 'Ishyura',
+                                      secondButtonFunction: () {
+                                        Navigator.pop(context);
+                                        Navigator.pushReplacementNamed(
+                                            context, '/ibiciro');
+                                      },
+                                      secondButtonColor: Color(0xFF00A651),
+                                    );
                                   });
                     },
                     child: Container(

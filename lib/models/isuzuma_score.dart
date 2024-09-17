@@ -45,8 +45,6 @@ class IsuzumaScoreModel extends ChangeNotifier {
         // This call tells the widgets that are listening to this model to rebuild.
         notifyListeners();
         break;
-      } else {
-        print('Not set to answered!');
       }
     }
   }
