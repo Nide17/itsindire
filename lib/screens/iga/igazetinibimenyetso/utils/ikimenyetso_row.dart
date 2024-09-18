@@ -22,10 +22,11 @@ class IkimenyetsoRow extends StatelessWidget {
             ),
             child: Center(
                 child: FadeInImage.memoryNetwork(
-                    placeholder: kTransparentImage,
-                    image: imgUrl,
-                    fit: BoxFit.cover,
-                    width: 100)),
+              placeholder: kTransparentImage,
+              image: imgUrl,
+              fit: BoxFit.cover,
+              width: MediaQuery.of(context).size.width * 0.9,
+            )),
           ),
           Container(
             margin: EdgeInsets.only(

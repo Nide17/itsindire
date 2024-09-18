@@ -4,10 +4,11 @@ import 'package:transparent_image/transparent_image.dart';
 class InyongeraRow extends StatelessWidget {
   final String txt;
   final String imgUrl;
-  const InyongeraRow(
-      {super.key,
-      required this.txt,
-      required this.imgUrl,});
+  const InyongeraRow({
+    super.key,
+    required this.txt,
+    required this.imgUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +30,11 @@ class InyongeraRow extends StatelessWidget {
             ),
             child: Center(
                 child: FadeInImage.memoryNetwork(
-                    placeholder: kTransparentImage,
-                    image: imgUrl,
-                    fit: BoxFit.cover,
-                    width: 100)),
+              placeholder: kTransparentImage,
+              image: imgUrl,
+              fit: BoxFit.cover,
+              width: MediaQuery.of(context).size.width * 0.9,
+            )),
           ),
           Container(
             margin: EdgeInsets.only(

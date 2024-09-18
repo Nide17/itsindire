@@ -130,7 +130,8 @@ class AuthState with ChangeNotifier {
       }
 
       String? sessionIdentity = querySnapshot.docs.first.get('sessionID');
-      if (sessionIdentity != '' || sessionIdentity != null) {
+      print("sessionIdentity: $sessionIdentity");
+      if (sessionIdentity != '' && sessionIdentity != null) {
         return AuthResult(
           error:
               'Mwemerewe gukoresha konti imwe muri telefoni imwe. Duhamagare kuri 0794033360 tugufashe!',

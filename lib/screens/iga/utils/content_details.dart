@@ -112,7 +112,7 @@ class _ContentDetailsState extends State<ContentDetails> {
                                   return ItsindireAlert(
                                     errorTitle: 'IBIJYANYE NIRI SOMO',
                                     errorMsg:
-                                        'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "${totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : totalIngingos * 3}" gusa!',
+                                        'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n\’ingingo "${totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : totalIngingos * 3}" gusa!',
                                     firstButtonTitle: 'Inyuma',
                                     firstButtonFunction: () {
                                       Navigator.pop(context);
@@ -220,12 +220,13 @@ class _ContentDetailsState extends State<ContentDetails> {
                                 ],
                               ),
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
+                                borderRadius: BorderRadius.circular(
+                                    MediaQuery.of(context).size.width * 0.02),
                                 child: FadeInImage.memoryNetwork(
                                   placeholder: kTransparentImage,
                                   image: currPageIngingos[index].imageUrl ?? '',
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.2,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
                                   fit: BoxFit.cover,
                                 ),
                               ),
