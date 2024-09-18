@@ -133,7 +133,7 @@ class _UserProgressState extends State<UserProgress> {
                                         errorTitle: 'IBIJYANYE NIRI SOMO',
                                         errorMsg: loadingRealTotalIngingos
                                             ? 'Tegereza gato ...'
-                                            : 'Iri somo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "$thisCourseTotalIngingos" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : widget.courseProgress!.totalIngingos * 3}" gusa!',
+                                            : 'Iri somo ryitwa "${widget.isomo.title}" rigizwe n\’ingingo "$thisCourseTotalIngingos" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : widget.courseProgress!.totalIngingos * 3}" gusa!',
                                         firstButtonTitle: 'Inyuma',
                                         firstButtonFunction: () {
                                           Navigator.pop(context);

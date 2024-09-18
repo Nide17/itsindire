@@ -35,6 +35,7 @@ class _PopQuizState extends State<PopQuiz> {
   int selectedOption = 0;
   bool isCurrentCorrect = false;
   int currQnID = 0;
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +47,7 @@ class _PopQuizState extends State<PopQuiz> {
           widget
               .coursechangeSkipNumber(5); // Update skip value in parent widget
 
+          loading = true;
           // Update the number of answered questions in the course progress
           CourseProgressService()
               .updateUnansweredPopQuestions(
@@ -59,6 +61,7 @@ class _PopQuizState extends State<PopQuiz> {
                 widget.courseProgress.totalIngingos,
                 null);
           });
+          loading = false;
         }
         selectedOption = 0;
         isCurrentCorrect = false;
@@ -76,138 +79,154 @@ class _PopQuizState extends State<PopQuiz> {
       }
     }
 
-    return currQnID >= 0 && currQnID < widget.popQuestions.length
-        ? Scaffold(
-            backgroundColor: const Color.fromARGB(255, 228, 225, 225),
-            appBar: PreferredSize(
-              preferredSize: Size.fromHeight(58.0),
-              child: AppBarItsindire(),
-            ),
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 4.0),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF5B8BDF),
-                    ),
-                    child: GradientTitle(
-                        title: widget.isomo.title, icon: '', marginTop: 8.0),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
-                    child: Column(
-                      children: [
-                        Text(
-                          widget.popQuestions[currQnID].title ?? '',
-                          style: const TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                          ),
+    return loading == true
+        ? const Center(child: CircularProgressIndicator())
+        : currQnID >= 0 && currQnID < widget.popQuestions.length
+            ? Scaffold(
+                backgroundColor: const Color.fromARGB(255, 228, 225, 225),
+                appBar: PreferredSize(
+                  preferredSize: Size.fromHeight(58.0),
+                  child: AppBarItsindire(),
+                ),
+                body: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 4.0),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF5B8BDF),
                         ),
-                        widget.popQuestions[currQnID].imageUrl == null ||
-                                widget.popQuestions[currQnID].imageUrl == ''
-                            ? const SizedBox.shrink()
-                            : SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.4,
-                                child: Container(
-                                  padding: const EdgeInsets.all(4.0),
-                                  margin: const EdgeInsets.only(top: 10.0),
-                                  decoration: const BoxDecoration(
-                                    color: Color.fromARGB(255, 255, 255, 255),
-                                    border: Border.fromBorderSide(
-                                      BorderSide(
-                                        color: Color.fromARGB(255, 0, 0, 0),
-                                        width: 1,
-                                        style: BorderStyle.solid,
+                        child: GradientTitle(
+                            title: widget.isomo.title,
+                            icon: '',
+                            marginTop: 8.0),
+                      ),
+                      Container(
+                        padding:
+                            const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              widget.popQuestions[currQnID].title ?? '',
+                              style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.024,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            widget.popQuestions[currQnID].imageUrl == null ||
+                                    widget.popQuestions[currQnID].imageUrl == ''
+                                ? const SizedBox.shrink()
+                                : SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4.0),
+                                      margin: const EdgeInsets.only(top: 10.0),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            Color.fromARGB(255, 255, 255, 255),
+                                        border: Border.fromBorderSide(
+                                          BorderSide(
+                                            color: Color.fromARGB(255, 0, 0, 0),
+                                            width: 1,
+                                            style: BorderStyle.solid,
+                                          ),
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(
+                                                MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.02)),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Color.fromARGB(255, 0, 0, 0),
+                                            offset: Offset(0, 1),
+                                            blurRadius: 1,
+                                          ),
+                                        ],
+                                      ),
+                                      child: FadeInImage.memoryNetwork(
+                                        placeholder: kTransparentImage,
+                                        image: widget
+                                            .popQuestions[currQnID].imageUrl!,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.9,
+                                        fit: BoxFit.cover,
                                       ),
                                     ),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10.0)),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Color.fromARGB(255, 0, 0, 0),
-                                        offset: Offset(0, 1),
-                                        blurRadius: 1,
-                                      ),
-                                    ],
                                   ),
-                                  child: FadeInImage.memoryNetwork(
-                                    placeholder: kTransparentImage,
-                                    image:
-                                        widget.popQuestions[currQnID].imageUrl!,
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.4,
-                                  ),
-                                ),
-                              ),
-                        const SizedBox(height: 10.0),
-                        Column(
-                          children: widget.popQuestions[currQnID].options
-                              .map<Widget>((option) {
-                            return CustomRadioButton(
-                              option: option,
-                              isSelected: option.id == selectedOption,
-                              isThisCorrect: isCurrentCorrect,
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.02),
+                            Column(
+                              children: widget.popQuestions[currQnID].options
+                                  .map<Widget>((option) {
+                                return CustomRadioButton(
+                                  option: option,
+                                  isSelected: option.id == selectedOption,
+                                  isThisCorrect: isCurrentCorrect,
 
-                              // ON CHANGE
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedOption = option.id;
-                                  isCurrentCorrect = option.isCorrect;
-                                });
-                              },
-                            );
-                          }).toList(),
+                                  // ON CHANGE
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedOption = option.id;
+                                      isCurrentCorrect = option.isCorrect;
+                                    });
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            bottomNavigationBar: Container(
-              margin: EdgeInsets.zero,
-              padding: EdgeInsets.zero,
-              height: MediaQuery.of(context).size.height * 0.1,
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 255, 255, 255),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromARGB(255, 72, 255, 0),
-                    offset: Offset(0, -1),
-                    blurRadius: 1,
+                ),
+                bottomNavigationBar: Container(
+                  margin: EdgeInsets.zero,
+                  padding: EdgeInsets.zero,
+                  height: MediaQuery.of(context).size.height * 0.1,
+                  decoration: const BoxDecoration(
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color.fromARGB(255, 72, 255, 0),
+                        offset: Offset(0, -1),
+                        blurRadius: 1,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  DirectionButtonPq(
-                    buttonText: 'inyuma',
-                    direction: 'inyuma',
-                    opacity: 1,
-                    backward: backward,
-                    popQuestions: widget.popQuestions,
-                    currQnID: currQnID,
-                    isDisabled: selectedOption == 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      DirectionButtonPq(
+                        buttonText: 'inyuma',
+                        direction: 'inyuma',
+                        opacity: 1,
+                        backward: backward,
+                        popQuestions: widget.popQuestions,
+                        currQnID: currQnID,
+                        isDisabled: selectedOption == 0,
+                      ),
+                      CircleProgressPq(
+                        percent: (currQnID + 1) / widget.popQuestions.length,
+                      ),
+                      DirectionButtonPq(
+                        buttonText: 'komeza',
+                        direction: 'komeza',
+                        opacity: 1,
+                        forward: forward,
+                        popQuestions: widget.popQuestions,
+                        currQnID: currQnID,
+                        isDisabled: selectedOption == 0 || !isCurrentCorrect,
+                      ),
+                    ],
                   ),
-                  CircleProgressPq(
-                    percent: (currQnID + 1) / widget.popQuestions.length,
-                  ),
-                  DirectionButtonPq(
-                    buttonText: 'komeza',
-                    direction: 'komeza',
-                    opacity: 1,
-                    forward: forward,
-                    popQuestions: widget.popQuestions,
-                    currQnID: currQnID,
-                    isDisabled: selectedOption == 0 || !isCurrentCorrect,
-                  ),
-                ],
-              ),
-            ),
-          )
-        : const SizedBox.shrink();
+                ),
+              )
+            : const SizedBox.shrink();
   }
 }
