@@ -45,16 +45,21 @@ class OptionContent extends StatelessWidget {
                     flex: 1,
                     // LOOSE FIT
                     fit: FlexFit.loose,
-                    child: Container(
-                      margin: EdgeInsets.only(
-                          right: MediaQuery.of(context).size.width * 0.023),
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.13,
-                        child: FadeInImage.memoryNetwork(
-                          placeholder: kTransparentImage,
-                          image: option!.leftImageUrl!,
-                          height: MediaQuery.of(context).size.height * 0.1,
-                          width: MediaQuery.of(context).size.width * 0.001,
+                    child: GestureDetector(
+                      onTap: () {
+                        _showZoomDialog(context, option!.leftImageUrl!);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            right: MediaQuery.of(context).size.width * 0.023),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.13,
+                          child: FadeInImage.memoryNetwork(
+                            placeholder: kTransparentImage,
+                            image: option!.leftImageUrl!,
+                            height: MediaQuery.of(context).size.height * 0.1,
+                            width: MediaQuery.of(context).size.width * 0.001,
+                          ),
                         ),
                       ),
                     ),
@@ -122,5 +127,22 @@ class OptionContent extends StatelessWidget {
           ],
         ),
     ]);
+  }
+
+  void _showZoomDialog(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: InteractiveViewer(
+            child: FadeInImage.memoryNetwork(
+              placeholder: kTransparentImage,
+              image: imageUrl,
+              fit: BoxFit.contain,
+            ),
+          ),
+        );
+      },
+    );
   }
 }
