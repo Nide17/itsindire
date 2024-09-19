@@ -235,8 +235,6 @@ class _ContentDetailsState extends State<ContentDetails> {
                                     placeholder: kTransparentImage,
                                     image:
                                         currPageIngingos[index].imageUrl ?? '',
-                                    height: MediaQuery.of(context).size.height *
-                                        0.32,
                                     fit: BoxFit.cover,
                                   ),
                                 ),

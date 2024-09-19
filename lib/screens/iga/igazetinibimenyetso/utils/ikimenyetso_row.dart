@@ -13,19 +13,24 @@ class IkimenyetsoRow extends StatelessWidget {
       padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.01),
       child: Row(
         children: [
-          Container(
-            //   icyapa img
-            width: MediaQuery.of(context).size.width * 0.2,
-            height: MediaQuery.of(context).size.width * 0.24,
-            margin: EdgeInsets.only(
-              bottom: MediaQuery.of(context).size.width * 0.02,
+          GestureDetector(
+            onTap: () {
+              _showZoomDialog(context, imgUrl);
+            },
+            child: Container(
+              //   icyapa img
+              width: MediaQuery.of(context).size.width * 0.2,
+              height: MediaQuery.of(context).size.width * 0.24,
+              margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.width * 0.02,
+              ),
+              child: Center(
+                  child: FadeInImage.memoryNetwork(
+                      placeholder: kTransparentImage,
+                      image: imgUrl,
+                      fit: BoxFit.cover,
+                      width: 100)),
             ),
-            child: Center(
-                child: FadeInImage.memoryNetwork(
-                    placeholder: kTransparentImage,
-                    image: imgUrl,
-                    fit: BoxFit.cover,
-                    width: 100)),
           ),
           Container(
             margin: EdgeInsets.only(
@@ -58,6 +63,23 @@ class IkimenyetsoRow extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showZoomDialog(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: InteractiveViewer(
+            child: FadeInImage.memoryNetwork(
+              placeholder: kTransparentImage,
+              image: imageUrl,
+              fit: BoxFit.contain,
+            ),
+          ),
+        );
+      },
     );
   }
 }
