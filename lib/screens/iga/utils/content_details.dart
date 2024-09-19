@@ -112,7 +112,7 @@ class _ContentDetailsState extends State<ContentDetails> {
                                   return ItsindireAlert(
                                     errorTitle: 'IBIJYANYE NIRI SOMO',
                                     errorMsg:
-                                        'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "${totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : totalIngingos * 3}" gusa!',
+                                        'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n\’ingingo "${totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : totalIngingos * 3}" gusa!',
                                     firstButtonTitle: 'Inyuma',
                                     firstButtonFunction: () {
                                       Navigator.pop(context);

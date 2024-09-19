@@ -119,8 +119,8 @@ class UmurongoRow extends StatelessWidget {
                   child: FadeInImage.memoryNetwork(
                     placeholder: kTransparentImage,
                     image: imgUrl,
+                    width: MediaQuery.of(context).size.width * 0.9,
                     fit: BoxFit.cover,
-                    width: MediaQuery.of(context).size.width * 0.8,
                   ),
                 ),
 
