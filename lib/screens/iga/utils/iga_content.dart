@@ -149,7 +149,7 @@ class _IgaContentState extends State<IgaContent> {
                               body: ItsindireAlert(
                                 errorTitle: 'Isomo rirarangiye!',
                                 errorMsg:
-                                    'Wasoje neza ingingo zose zigize iri somo 🙂!',
+                                    'Wasoje neza ingingo zose zigize iri somo 😄!',
                                 firstButtonTitle: 'Funga',
                                 firstButtonFunction: () {
                                   Navigator.pushAndRemoveUntil(

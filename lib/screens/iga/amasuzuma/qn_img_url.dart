@@ -12,7 +12,7 @@ class QuestionImgUrl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.16,
+      width: MediaQuery.of(context).size.width * 0.9,
       child: Container(
         padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
         margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.02),
@@ -37,7 +37,7 @@ class QuestionImgUrl extends StatelessWidget {
         child: FadeInImage.memoryNetwork(
           placeholder: kTransparentImage,
           image: currentQn.imageUrl!,
-          width: MediaQuery.of(context).size.width * 1,
+          height: MediaQuery.of(context).size.height * 0.2,
         ),
       ),
     );

@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:itsindire/firebase_services/isomo_db.dart';
 import 'package:itsindire/firebase_services/isuzuma_score_db.dart';
 import 'package:itsindire/models/isuzuma.dart';
@@ -281,7 +280,7 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
                 },
                 style: ElevatedButton.styleFrom(
                   fixedSize: Size(
-                    MediaQuery.of(context).size.width * 0.4,
+                    MediaQuery.of(context).size.width * 0.5,
                     MediaQuery.of(context).size.height * 0.0,
                   ),
                   foregroundColor: const Color.fromARGB(255, 0, 0, 0),
@@ -292,22 +291,28 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
                   ),
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center, // Adjust as needed
                   children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: SvgPicture.asset(
-                        'assets/images/play.svg',
-                        height: MediaQuery.of(context).size.height * 0.024,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0,
+                        vertical: 6.0,
+                      ),
+                      child: Image.asset(
+                        'assets/images/isuzuma.png',
+                        height: MediaQuery.of(context).size.height * 0.028,
                       ),
                     ),
-                    Text(
-                      scoreUserIsuzuma == null ? 'Tangira ukore' : 'Subiramo',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width * 0.036,
-                        fontWeight: FontWeight.w700,
+                    Flexible( // This allows the Text to take only available space
+                      child: Text(
+                        // widget.isuzuma.title.toUpperCase(),
+                        'RITANGIRE'.toUpperCase(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.035,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],

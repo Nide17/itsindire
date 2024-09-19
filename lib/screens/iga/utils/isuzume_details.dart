@@ -137,10 +137,8 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                               ''
                                       ? const SizedBox.shrink()
                                       : SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.16,
+                                          width: MediaQuery.of(context).size.width *
+                                              0.8,
                                           child: Container(
                                             padding: const EdgeInsets.all(4.0),
                                             margin: const EdgeInsets.only(
@@ -172,10 +170,9 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                               image: scorePopQns[widget.qnIndex]
                                                   .popQuestion
                                                   .imageUrl!,
-                                              width: MediaQuery.of(context)
+                                              height: MediaQuery.of(context)
                                                       .size
-                                                      .width *
-                                                  1,
+                                                      .height * 0.2,
                                             ),
                                           ),
                                         ),
