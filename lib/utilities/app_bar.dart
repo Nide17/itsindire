@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +21,7 @@ class AppBarItsindire extends StatefulWidget {
 class _AppBarItsindireState extends State<AppBarItsindire> {
   final CollectionReference paymentsCollection =
       FirebaseFirestore.instance.collection('payments');
+  late StreamSubscription<QuerySnapshot> _paymentsSubscription;
 
   // payments stream
   Stream<QuerySnapshot> get payments {
@@ -34,33 +37,36 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   void initState() {
     super.initState();
 
-    payments.listen((event) {
+    _paymentsSubscription = payments.listen((event) {
+      if (!mounted) return;
       for (var change in event.docChanges) {
         dynamic doc = change.doc.data();
 
         if (change.type == DocumentChangeType.modified &&
-            doc['userId'] == FirebaseAuth.instance.currentUser!.uid) {
-          String msg = doc['isApproved'] == true
-              ? 'Ifatabuguzi ryawe ryemejwe. Ubu watangira kwiga!'
-              : 'Ifatabuguzi ryawe ryahinduwe. Murakoze!';
+            doc['userId'] == FirebaseAuth.instance.currentUser!.uid &&
+            doc['isApproved'] == true) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(msg),
-              action: SnackBarAction(
-                label: 'Funga',
-                onPressed: () {
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                },
-              ),
-              duration: const Duration(seconds: 20),
-              backgroundColor: doc['isApproved'] == true
-                  ? const Color(0xFF00A651)
-                  : const Color.fromARGB(255, 255, 0, 0),
-            ),
+                content:
+                    Text('Ifatabuguzi ryawe ryemejwe. Ubu watangira kwiga!'),
+                action: SnackBarAction(
+                  label: 'Funga',
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                  },
+                ),
+                duration: const Duration(seconds: 20),
+                backgroundColor: const Color(0xFF00A651)),
           );
         }
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _paymentsSubscription.cancel(); // Cancel the subscription
+    super.dispose();
   }
 
   @override

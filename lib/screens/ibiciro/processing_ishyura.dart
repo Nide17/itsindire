@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:itsindire/firebase_services/payment_db.dart';
+import 'package:itsindire/main.dart';
 import 'package:itsindire/models/ifatabuguzi.dart';
 import 'package:itsindire/models/payment.dart';
 import 'package:itsindire/screens/ibiciro/ifatabuguzi.dart';
@@ -134,45 +135,50 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
                                 _formKey.currentState!.save();
 
                                 // PAY THE MONEY
-                                dynamic payRes = await PaymentService()
-                                    .createPayment(payment);
+                                try {
+                                  ReturnedResult payRes = await PaymentService()
+                                      .createPayment(payment);
+                                      print("PAYMENT RESULT: $payRes");
 
-                                // CHECK IF PAYMENT SUCCESSFUL & LOAD PAYMENT DATA
-                                if (payRes != null) {
-                                  await _loadPaymentData();
+                                  if (payRes.value == true) {
+                                    print("PAYMENT SUCCESSFUL");
+                                    await _loadPaymentData();
 
-                                  // NAVIGATE TO THE PREVIOUS 2 PAGES
-                                  if (!mounted) return;
+                                    // NAVIGATE TO THE PREVIOUS 2 PAGES
+                                    if (!mounted) return;
 
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
 
-                                  // SHOW THE ALERT DIALOG
-                                  showDialog(
-                                      context: context,
-                                      barrierDismissible: false,
-                                      builder: (BuildContext context) {
-                                        return ItsindireAlert(
-                                            errorTitle:
-                                                widget.ifatabuguzi.type == 'ur'
-                                                    ? 'Pay via MOMO'
-                                                    : 'Ishyura na MOMO',
-                                            errorMsg: widget.ifatabuguzi.type ==
-                                                    'ur'
-                                                ? 'You can now pay on 0794033360 and you should be confirmed shortly!'
-                                                : 'Ubu noneho wakwishyura kuri 0794033360, ugategereza gato bikemezwa!',
-                                            alertType: 'success');
-                                      });
-                                } else {
-                                  setState(() => error =
-                                      'Error occured, please try again!');
+                                    // SHOW THE ALERT DIALOG
+                                    showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (BuildContext context) {
+                                          return ItsindireAlert(
+                                              errorTitle:
+                                                  widget.ifatabuguzi.type ==
+                                                          'ur'
+                                                      ? 'Pay via MOMO'
+                                                      : 'Ishyura na MOMO',
+                                              errorMsg: widget
+                                                          .ifatabuguzi.type ==
+                                                      'ur'
+                                                  ? 'You can now pay [${widget.ifatabuguzi.igiciro}] on 0794033360 and you should be confirmed shortly!'
+                                                  : 'Ubu noneho wakwishyura [${widget.ifatabuguzi.igiciro}] kuri 0794033360, ugategereza gato bikemezwa!',
+                                              alertType: 'success');
+                                        });
+                                  } else {
+                                    setState(() =>
+                                        error = payRes.error ?? 'An error occurred');
+                                  }
+                                } catch (e) {
+                                  setState(
+                                      () => error = 'An error occurred: $e');
+                                } finally {
+                                  setState(() => loading = false);
                                 }
-                              } else {
-                                setState(() =>
-                                    error = 'Error occured, please try again!');
                               }
-                              // SET THE LOADING STATE TO FALSE
-                              setState(() => loading = false);
 
                               if (error.isNotEmpty)
                                 showDialog(

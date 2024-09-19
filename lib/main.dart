@@ -225,3 +225,11 @@ class _ItsindireAppState extends State<ItsindireApp> {
     );
   }
 }
+
+class ReturnedResult<T> {
+  late final T? value;
+  late final String? error;
+  late final String? warning;
+  ReturnedResult({this.value, this.error, this.warning});
+  bool get isSuccess => error == null;
+}

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:itsindire/main.dart';
 import 'package:itsindire/models/payment.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
@@ -78,8 +79,7 @@ class PaymentService {
   }
 
   // CREATE PAYMENT
-  Future<bool> createPayment(PaymentModel payment) async {
-
+  Future<ReturnedResult> createPayment(PaymentModel payment) async {
     // CHECK IF THERE IS AN ACTIVE PAYMENT FOR THE USER
     final activePayment = await paymentsCollection
         .where('userId', isEqualTo: payment.userId)
@@ -88,45 +88,42 @@ class PaymentService {
 
     // IF THE ACTIVE PAYMENT IS NOT EMPTY, RETURN FALSE WITH A MESSAGE
     if (activePayment.docs.isNotEmpty) {
-      print(
-          'You gave an active payment, please wait until it expires or contact us for more information.');
-      return false;
-    }
-
-    try {
-      // CREATE PAYMENT IN FIRESTORE AND SET THE ID AS THE PHONE NUMBER
-      await paymentsCollection.doc(payment.phone).set(payment.toJson());
-
-      String username = dotenv.env['GMAIL_EMAIL']!;
-      String password = dotenv.env['GMAIL_PASSWORD']!;
-
-      // CREATE THE SMTP SERVER
-      final smtpServer = gmail(username, password);
-
-      // CREATE THE MESSAGE
-      final message = Message()
-        ..from = Address(username, 'Itsindire')
-        ..recipients.add(username)
-        ..ccRecipients.addAll(['brucendati@gmail.com'])
-        ..subject = 'Itsindire Payment'
-        ..html =
-            "<h1>Payment</h1>\n<p>Payment ${payment.phone} has been made by user ID: ${payment.userId!}</p>\n<p>Payment Phone: ${payment.phone!}</p>\n<p>Payment amount: ${payment.igiciro!}</p>\n<p>Payment Created At: ${payment.createdAt}</p>\n<p>Payment End At: ${payment.endAt}</p>\n<p>Payment isApproved: ${payment.isApproved}</p>";
-
-      // SEND THE MESSAGE
-      try {
-        final sendReport = await send(message, smtpServer);
-        print('Message sent: $sendReport');
-      } on MailerException catch (e) {
-        print('Message not sent.');
-        for (var p in e.problems) {
-          print('Problem: ${p.code}: ${p.msg}');
+      for (var doc in activePayment.docs) {
+        if (doc.get('isApproved')) {
+          return ReturnedResult(
+            error: 'You have an active payment. Please wait for it to end!',
+          );
         }
       }
-
-      return true;
-    } catch (e) {
-      print("\n$e");
-      return false;
     }
+
+    // CREATE PAYMENT IN FIRESTORE AND SET THE ID AS THE PHONE NUMBER
+    await paymentsCollection.doc(payment.phone).set(payment.toJson());
+
+    String username = dotenv.env['GMAIL_EMAIL']!;
+    String password = dotenv.env['GMAIL_PASSWORD']!;
+
+    // CREATE THE SMTP SERVER
+    final smtpServer = gmail(username, password);
+
+    // CREATE THE MESSAGE
+    final message = Message()
+      ..from = Address(username, 'Itsindire')
+      ..recipients.add(username)
+      ..ccRecipients.addAll(['brucendati@gmail.com'])
+      ..subject = 'Itsindire Payment'
+      ..html =
+          "<h1>Payment</h1>\n<p>Payment ${payment.phone} has been made by user ID: ${payment.userId!}</p>\n<p>Payment Phone: ${payment.phone!}</p>\n<p>Payment amount: ${payment.igiciro!}</p>\n<p>Payment Created At: ${payment.createdAt}</p>\n<p>Payment End At: ${payment.endAt}</p>\n<p>Payment isApproved: ${payment.isApproved}</p>";
+
+    // SEND THE MESSAGE
+    try {
+      final sendReport = await send(message, smtpServer);
+      print('Message sent: $sendReport');
+    } on Exception catch (e) {
+      print('Error: $e');
+      return ReturnedResult(value: true);
+    }
+
+    return ReturnedResult(value: true);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
+import 'package:itsindire/main.dart';
 import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
@@ -158,7 +159,7 @@ class _IyandikisheState extends State<Iyandikishe> {
                           onPressed: () async {
                             setState(() => loading = true);
                             if (_formKey.currentState!.validate()) {
-                              AuthResult result =
+                              ReturnedResult result =
                                   await authState.registerNewUser(
                                       username, email, password, false, '', '');
 

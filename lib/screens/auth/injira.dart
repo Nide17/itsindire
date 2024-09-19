@@ -168,7 +168,7 @@ class _InjiraState extends State<Injira> {
                                     _formKey.currentState!.save();
                                     setState(() => loading = true);
 
-                                    AuthResult result = await authState
+                                    ReturnedResult result = await authState
                                         .userLogin(email, password);
 
                                     if (!mounted) return;

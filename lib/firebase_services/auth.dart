@@ -6,14 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:itsindire/models/profile.dart';
 import 'package:itsindire/models/user.dart';
 import 'package:itsindire/firebase_services/profiledb.dart';
+import 'package:itsindire/main.dart';
 
-class AuthResult<T> {
-  late final T? value;
-  late final String? error;
-  late final String? warning;
-  AuthResult({this.value, this.error, this.warning});
-  bool get isSuccess => error == null;
-}
 
 class AuthState with ChangeNotifier {
   final FirebaseAuth _authInstance = FirebaseAuth.instance;
@@ -124,14 +118,14 @@ class AuthState with ChangeNotifier {
           await profilesCollection.where('email', isEqualTo: email).get();
 
       if (querySnapshot.docs.isEmpty) {
-        return AuthResult(
+        return ReturnedResult(
           error: 'Konti ntibashije kuboneka. Iyandikishe!',
         );
       }
 
       String? sessionIdentity = querySnapshot.docs.first.get('sessionID');
       if (sessionIdentity != '' && sessionIdentity != null) {
-        return AuthResult(
+        return ReturnedResult(
           error:
               'Mwemerewe gukoresha konti imwe muri telefoni imwe. Duhamagare kuri 0794033360 tugufashe!',
         );
@@ -143,7 +137,7 @@ class AuthState with ChangeNotifier {
       );
 
       if (result.user == null || result.user!.uid.isEmpty) {
-        return AuthResult(
+        return ReturnedResult(
             error:
                 'Kwinjira ntibikunda. Duhamagare kuri 0794033360 tugufashe!');
       }
@@ -155,18 +149,18 @@ class AuthState with ChangeNotifier {
         'sessionID': sessionId,
       }, SetOptions(merge: true));
 
-      return AuthResult(value: _userFromFirebaseUser(result.user!));
+      return ReturnedResult(value: _userFromFirebaseUser(result.user!));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        return AuthResult(error: 'Konti ntibashije kuboneka. Iyandikishe!');
+        return ReturnedResult(error: 'Konti ntibashije kuboneka. Iyandikishe!');
       } else if (e.code == 'wrong-password') {
-        return AuthResult(error: 'Ijambo banga siryo!');
+        return ReturnedResult(error: 'Ijambo banga siryo!');
       } else {
-        return AuthResult(error: 'Ntibikunze, reba ko ufite interineti!');
+        return ReturnedResult(error: 'Ntibikunze, reba ko ufite interineti!');
       }
     } catch (e) {
       print(e);
-      return AuthResult(error: 'Habayeho ikosa, ibyo musabye ntibyakunda.');
+      return ReturnedResult(error: 'Habayeho ikosa, ibyo musabye ntibyakunda.');
     }
   }
 
@@ -197,22 +191,22 @@ class AuthState with ChangeNotifier {
         // Log out the user
         await _authInstance.signOut();
 
-        return AuthResult(
+        return ReturnedResult(
           value: 'User registered successfully. Please log in.',
         );
       } else {
-        return AuthResult(error: 'User registration failed.');
+        return ReturnedResult(error: 'User registration failed.');
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        return AuthResult(error: 'Ijambo banga ntiryujuje ibisabwa!');
+        return ReturnedResult(error: 'Ijambo banga ntiryujuje ibisabwa!');
       } else if (e.code == 'email-already-in-use') {
-        return AuthResult(error: 'Iyi imeyili yarakoreshejwe! Injira!');
+        return ReturnedResult(error: 'Iyi imeyili yarakoreshejwe! Injira!');
       } else {
-        return AuthResult(error: 'Unknown Firebase Auth error occurred');
+        return ReturnedResult(error: 'Unknown Firebase Auth error occurred');
       }
     } catch (e) {
-      return AuthResult(error: 'Unknown error occurred');
+      return ReturnedResult(error: 'Unknown error occurred');
     }
   }
 
