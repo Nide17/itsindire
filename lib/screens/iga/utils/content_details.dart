@@ -205,28 +205,40 @@ class _ContentDetailsState extends State<ContentDetails> {
                           currPageIngingos[index].imageUrl != '')
                         Column(
                           children: [
-                            Container(
-                              margin: EdgeInsets.fromLTRB(0.0, 4.0, 0.0,
-                                  MediaQuery.of(context).size.height * 0.01),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.8),
-                                    spreadRadius: 2.0,
-                                    blurRadius: 5.0,
-                                    offset: const Offset(0, 3),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              child: Container(
+                                padding: const EdgeInsets.all(4.0),
+                                margin: const EdgeInsets.only(top: 10.0),
+                                decoration: const BoxDecoration(
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                  border: Border.fromBorderSide(
+                                    BorderSide(
+                                      color: Color.fromARGB(255, 0, 0, 0),
+                                      width: 1,
+                                      style: BorderStyle.solid,
+                                    ),
                                   ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
-                                child: FadeInImage.memoryNetwork(
-                                  placeholder: kTransparentImage,
-                                  image: currPageIngingos[index].imageUrl ?? '',
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.2,
-                                  fit: BoxFit.cover,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color.fromARGB(255, 0, 0, 0),
+                                      offset: Offset(0, 1),
+                                      blurRadius: 1,
+                                    ),
+                                  ],
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: FadeInImage.memoryNetwork(
+                                    placeholder: kTransparentImage,
+                                    image:
+                                        currPageIngingos[index].imageUrl ?? '',
+                                    height: MediaQuery.of(context).size.height *
+                                        0.32,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
