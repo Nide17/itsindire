@@ -140,7 +140,6 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                     onPressed: () {
                       showDialog(
                         context: context,
-                        barrierDismissible: false,
                         builder: (BuildContext context) {
                           return AlertDialog(
                             shape: RoundedRectangleBorder(

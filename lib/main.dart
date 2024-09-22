@@ -207,7 +207,7 @@ class _ItsindireAppState extends State<ItsindireApp> {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primarySwatch: Colors.blue,
-            textTheme: GoogleFonts.openSansTextTheme(),
+            textTheme: GoogleFonts.poppinsTextTheme(),
           ),
           home: const LoadingLightning(
             duration: 4,
