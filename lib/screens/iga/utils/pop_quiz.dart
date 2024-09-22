@@ -109,7 +109,7 @@ class _PopQuizState extends State<PopQuiz> {
                                 widget.popQuestions[currQnID].imageUrl == ''
                             ? const SizedBox.shrink()
                             : SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.4,
+                                width: MediaQuery.of(context).size.width * 0.7,
                                 child: Container(
                                   padding: const EdgeInsets.all(4.0),
                                   margin: const EdgeInsets.only(top: 10.0),
@@ -136,8 +136,6 @@ class _PopQuizState extends State<PopQuiz> {
                                     placeholder: kTransparentImage,
                                     image:
                                         widget.popQuestions[currQnID].imageUrl!,
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.4,
                                   ),
                                 ),
                               ),

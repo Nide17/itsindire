@@ -75,7 +75,7 @@ class _HagatiState extends State<Hagati> {
                         usr: authState.currentUser,
                       ),
                       if (authState.currentProfile != null)
-                        AmasomoProgress(progressesToShow: notFinishedProgresses)
+                        AmasomoProgress(progressesToShow: notFinishedProgresses, isHagati: true)
                       else
                         const ViewNotLoggedIn(),
                     ]),
