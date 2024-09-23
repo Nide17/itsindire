@@ -237,13 +237,13 @@ class _IgaContentState extends State<IgaContent> {
   Widget _buildIngingosScreen(
       BuildContext context, int currentIngingo, int totalIngingos) {
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 1000),
       transitionBuilder: (Widget child, Animation<double> animation) {
         final offsetAnimation = isMovingForward
             ? Tween<Offset>(begin: const Offset(1.0, 0.0), end: Offset.zero)
-                .animate(animation)
+                .animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut))
             : Tween<Offset>(begin: const Offset(-1.0, 0.0), end: Offset.zero)
-                .animate(animation);
+                .animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut));
 
         return SlideTransition(
           position: offsetAnimation,

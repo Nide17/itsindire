@@ -105,7 +105,8 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
           // RETURN THE WIDGETS
           return PopScope(
             canPop: false,
-            onPopInvoked: (_) async {
+            onPopInvokedWithResult: (didPop, result) async {
+              if (didPop) return;
               _showTheDialog(
                 context,
                 'Ugiye gusohoka udasoje?',
