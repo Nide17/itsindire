@@ -251,6 +251,7 @@ class _ContentDetailsState extends State<ContentDetails> {
                                 ),
                               ),
                             ),
+                            SizedBox(height: MediaQuery.of(context).size.height * 0.016),
                             if (currPageIngingos[index].imageDesc != null &&
                                 currPageIngingos[index].imageDesc != '')
                               Text(

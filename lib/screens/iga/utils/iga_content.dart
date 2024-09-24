@@ -97,20 +97,17 @@ class _IgaContentState extends State<IgaContent> {
         finishedCourses.map((progress) => progress!.courseId).toSet();
 
     int irindisomoId = widget.isomo.id + 1;
-    IsomoModel? nextIsomoCandidate =
-        await IsomoService().getIsomoById(irindisomoId);
+    IsomoModel? nextIsomoCandidate;
 
     while (finishedCourseIds.contains(irindisomoId)) {
-      nextIsomoCandidate = await IsomoService().getIsomoById(irindisomoId);
       irindisomoId++;
+      nextIsomoCandidate = await IsomoService().getIsomoById(irindisomoId);
     }
 
     if (mounted) setState(() => nextIsomo = nextIsomoCandidate);
-
     if (nextIsomo?.id != null) {
       IngingoService().getTotalIsomoIngingos(widget.isomo.id).listen((event) {
-        if (mounted)
-          setState(() => nextIsomoTotalIngingos = event.realTotalIngingos);
+        if (mounted) setState(() => nextIsomoTotalIngingos = event.realTotalIngingos);
       });
     }
   }

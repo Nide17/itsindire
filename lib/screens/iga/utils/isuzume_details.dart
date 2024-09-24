@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:itsindire/firebase_services/isomo_progress.dart';
 import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
-import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:itsindire/models/course_progress.dart';
 import 'package:itsindire/models/isomo.dart';
@@ -138,7 +137,7 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                                     .popQuestion
                                                     .imageUrl ==
                                                 ''
-                                        ? const LoadingWidget()
+                                        ? const SizedBox.shrink()
                                         : SizedBox(
                                             width: MediaQuery.of(context)
                                                     .size
@@ -189,7 +188,7 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                     SizedBox(
                                         height:
                                             MediaQuery.of(context).size.height *
-                                                0.02),
+                                                0.016),
                                     Column(
                                       children: scoreProviderModel
                                           .quizScore

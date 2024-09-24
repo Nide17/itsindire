@@ -151,7 +151,7 @@ class _PopQuizState extends State<PopQuiz> {
                                   ),
                             SizedBox(
                                 height:
-                                    MediaQuery.of(context).size.height * 0.02),
+                                    MediaQuery.of(context).size.height * 0.016),
                             Column(
                               children: widget.popQuestions[currQnID].options
                                   .map<Widget>((option) {
