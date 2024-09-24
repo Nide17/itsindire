@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:itsindire/firebase_services/isomo_progress.dart';
 import 'package:itsindire/models/pop_question.dart';
@@ -27,16 +29,19 @@ class ContentDetails extends StatefulWidget {
 class _ContentDetailsState extends State<ContentDetails> {
   int thisCourseTotalIngingos = 0;
   bool loadingTotalIngingos = true;
+  late StreamSubscription<IsomoIngingoSum> _subscription;
 
   Future<void> getTotalIngingos() async {
     Stream<IsomoIngingoSum> totalIngingos =
         IngingoService().getTotalIsomoIngingos(widget.isomo.id);
 
-    totalIngingos.listen((event) {
-      setState(() {
-        thisCourseTotalIngingos = event.totalIngingos;
-        loadingTotalIngingos = false;
-      });
+    _subscription = totalIngingos.listen((event) {
+      if (mounted) {
+        setState(() {
+          thisCourseTotalIngingos = event.totalIngingos;
+          loadingTotalIngingos = false;
+        });
+      }
     });
   }
 
@@ -44,6 +49,12 @@ class _ContentDetailsState extends State<ContentDetails> {
   void initState() {
     super.initState();
     getTotalIngingos();
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -112,7 +123,7 @@ class _ContentDetailsState extends State<ContentDetails> {
                                   return ItsindireAlert(
                                     errorTitle: 'IBIJYANYE NIRI SOMO',
                                     errorMsg:
-                                        'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "${totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : totalIngingos * 3}" gusa!',
+                                        'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "${totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : totalIngingos * 4}" gusa!',
                                     firstButtonTitle: 'Inyuma',
                                     firstButtonFunction: () {
                                       Navigator.pop(context);
@@ -240,6 +251,7 @@ class _ContentDetailsState extends State<ContentDetails> {
                                 ),
                               ),
                             ),
+                            SizedBox(height: MediaQuery.of(context).size.height * 0.016),
                             if (currPageIngingos[index].imageDesc != null &&
                                 currPageIngingos[index].imageDesc != '')
                               Text(

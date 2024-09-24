@@ -84,10 +84,6 @@ class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
           }
         },
         style: ElevatedButton.styleFrom(
-          fixedSize: Size(
-            MediaQuery.of(context).size.width * 0.21,
-            MediaQuery.of(context).size.height * 0.0,
-          ),
           backgroundColor: isDisabled
               ? const Color(0xFF1B56CB).withOpacity(0.4)
               : const Color(0xFF1B56CB),
@@ -99,7 +95,7 @@ class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
                 width: MediaQuery.of(context).size.width * 0.005,
               )),
           padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.05,
+              horizontal: MediaQuery.of(context).size.width * 0.04,
               vertical: MediaQuery.of(context).size.height * 0.01),
         ),
         child: SingleChildScrollView(
@@ -120,6 +116,9 @@ class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
                   ),
                 ),
               ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.01,
+              ),
               Text(
                 widget.direction,
                 style: TextStyle(
@@ -127,6 +126,9 @@ class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
                     fontSize: MediaQuery.of(context).size.width * 0.024,
                     color: Colors.white),
               ), // ICON
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.01,
+              ),
               Visibility(
                 visible: widget.direction == 'inyuma' ? false : true,
                 child: Opacity(

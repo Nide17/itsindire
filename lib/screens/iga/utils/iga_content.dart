@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,48 +40,76 @@ class _IgaContentState extends State<IgaContent> {
   int _increment = 0;
   IsomoModel? nextIsomo;
   int nextIsomoTotalIngingos = 0;
-  bool _isMounted = false;
-  bool loadingTotalIngingos = true;
   final ScrollController _scrollController = ScrollController();
   bool isMovingForward = true;
-
-  Future<void> getNextIsomo() async {
-    final IsomoModel? irindisomo =
-        await IsomoService().getIsomoById(widget.isomo.id + 1);
-    if (_isMounted) {
-      setState(() => nextIsomo = irindisomo);
-    }
-  }
-
-  Future<void> getNextIsomoTotalIngingos() async {
-    Stream<IsomoIngingoSum> totalIngingos =
-        IngingoService().getTotalIsomoIngingos(widget.isomo.id + 1);
-    totalIngingos.listen((event) {
-      setState(() {
-        nextIsomoTotalIngingos = event.totalIngingos;
-        loadingTotalIngingos = false;
-      });
-    });
-  }
+  bool loadingNextIsomo = true;
+  StreamSubscription<List<CourseProgressModel?>>?
+      _finishedProgressesSubscription;
 
   @override
   void initState() {
     super.initState();
-    _skip = (widget.courseProgress != null &&
-            widget.courseProgress.currentIngingo !=
-                widget.courseProgress.totalIngingos)
-        ? widget.courseProgress.currentIngingo
-        : 0;
-    _isMounted = true;
-    getNextIsomo();
-    getNextIsomoTotalIngingos();
+    _skip = _calculateInitialSkip();
+    _fetchNextIsomo();
+    loadingNextIsomo = false;
   }
 
   @override
   void dispose() {
+    _finishedProgressesSubscription?.cancel();
     _scrollController.dispose();
-    _isMounted = false;
     super.dispose();
+  }
+
+  int _calculateInitialSkip() {
+    if (widget.courseProgress != null &&
+        widget.courseProgress.currentIngingo !=
+            widget.courseProgress.totalIngingos) {
+      return widget.courseProgress.currentIngingo;
+    }
+    return 0;
+  }
+
+  Future<void> _fetchNextIsomo() async {
+    try {
+      final finishedProgresses = CourseProgressService()
+          .getFinishedProgresses(FirebaseAuth.instance.currentUser!.uid);
+
+      _finishedProgressesSubscription =
+          finishedProgresses?.listen((progresses) async {
+        if (progresses.isNotEmpty) {
+          _processFinishedProgresses(progresses);
+        }
+      });
+    } catch (e) {
+      print('Error fetching next isomo: $e');
+    }
+  }
+
+  void _processFinishedProgresses(List<CourseProgressModel?> progresses) async {
+    final finishedCourses = progresses
+        .where((progress) =>
+            progress?.currentIngingo == progress?.totalIngingos &&
+            progress?.unansweredPopQuestions == 0)
+        .toList();
+
+    final finishedCourseIds =
+        finishedCourses.map((progress) => progress!.courseId).toSet();
+
+    int irindisomoId = widget.isomo.id + 1;
+    IsomoModel? nextIsomoCandidate;
+
+    while (finishedCourseIds.contains(irindisomoId)) {
+      irindisomoId++;
+      nextIsomoCandidate = await IsomoService().getIsomoById(irindisomoId);
+    }
+
+    if (mounted) setState(() => nextIsomo = nextIsomoCandidate);
+    if (nextIsomo?.id != null) {
+      IngingoService().getTotalIsomoIngingos(widget.isomo.id).listen((event) {
+        if (mounted) setState(() => nextIsomoTotalIngingos = event.realTotalIngingos);
+      });
+    }
   }
 
   void _scrollToTop() {
@@ -141,191 +171,204 @@ class _IgaContentState extends State<IgaContent> {
             builder: (context, popQuestions, _) {
               return Consumer<List<IngingoModel>?>(
                 builder: (context, ingingos, _) {
-                  return ingingos == null
-                      ? const Scaffold(body: LoadingWidget())
-                      : currentIngingo >= totalIngingos &&
-                              unansweredPopQuestions == 0
-                          ? Scaffold(
-                              body: ItsindireAlert(
-                                errorTitle: 'Isomo rirarangiye!',
-                                errorMsg:
-                                    'Wasoje neza ingingo zose zigize iri somo 😄!',
-                                firstButtonTitle: 'Funga',
-                                firstButtonFunction: () {
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Hagati()),
-                                    ModalRoute.withName('/iga-landing'),
-                                  );
-                                },
-                                firstButtonColor: const Color(0xFFE60000),
-                                secondButtonTitle:
-                                    nextIsomo != null ? 'Irindi somo' : '',
-                                secondButtonFunction: nextIsomo != null
-                                    ? () {
-                                        Navigator.pop(context);
-                                        showDialog(
-                                          context: context,
-                                          barrierDismissible: false,
-                                          builder: (BuildContext context) {
-                                            return ItsindireAlert(
-                                              errorTitle: 'IBIJYANYE NIRI SOMO',
-                                              errorMsg:
-                                                  'Ugiye kwiga isomo ryitwa "${nextIsomo!.title}" rigizwe n’ingingo "${nextIsomoTotalIngingos}" ni iminota "${(nextIsomo!.duration != null && nextIsomo!.duration! > 0) ? nextIsomo!.duration : nextIsomoTotalIngingos * 3}" gusa!',
-                                              firstButtonTitle: 'Inyuma',
-                                              firstButtonFunction: () {
-                                                Navigator.popAndPushNamed(
-                                                    context, '/iga-landing');
-                                              },
-                                              firstButtonColor:
-                                                  const Color(0xFFE60000),
-                                              secondButtonTitle: 'Tangira',
-                                              secondButtonFunction: () {
-                                                Navigator.pop(context);
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        IgaContent(
-                                                      isomo: nextIsomo!,
-                                                      courseProgress:
-                                                          CourseProgressModel(
-                                                        id: '${nextIsomo!.id}_${usr!.uid}',
-                                                        userId: usr.uid,
-                                                        totalIngingos:
-                                                            nextIsomoTotalIngingos,
-                                                        currentIngingo: 0,
-                                                        courseId: nextIsomo!.id,
-                                                        unansweredPopQuestions:
-                                                            popQuestions!
-                                                                .length,
-                                                      ),
-                                                      thisCourseTotalIngingos:
-                                                          widget
-                                                              .thisCourseTotalIngingos,
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              secondButtonColor:
-                                                  const Color(0xFF00A651),
-                                            );
-                                          },
-                                        );
-                                      }
-                                    : null,
-                                alertType: 'success',
-                              ),
-                            )
-                          : AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 500),
-                              transitionBuilder:
-                                  (Widget child, Animation<double> animation) {
-                                final offsetAnimation = isMovingForward
-                                    ? Tween<Offset>(
-                                            begin: const Offset(1.0, 0.0),
-                                            end: Offset.zero)
-                                        .animate(animation)
-                                    : Tween<Offset>(
-                                            begin: const Offset(-1.0, 0.0),
-                                            end: Offset.zero)
-                                        .animate(animation);
-
-                                return SlideTransition(
-                                  position: offsetAnimation,
-                                  child: child,
-                                );
-                              },
-                              child: Scaffold(
-                                key: ValueKey<int>(_skip),
-                                backgroundColor: Colors.white,
-                                appBar: PreferredSize(
-                                  preferredSize: Size.fromHeight(58.0),
-                                  child: AppBarItsindire(),
-                                ),
-                                body: ScrollbarTheme(
-                                  data: ScrollbarThemeData(
-                                    thumbColor: WidgetStateProperty.all(
-                                        const Color(0xFF00A651)),
-                                  ),
-                                  child: Scrollbar(
-                                    controller: _scrollController,
-                                    child: ContentDetails(
-                                      isomo: widget.isomo,
-                                      controller: _scrollController,
-                                    ),
-                                  ),
-                                ),
-                                bottomNavigationBar: Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.1,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color(0xFFFFBD59),
-                                        offset: const Offset(0, 2),
-                                        blurRadius: 3,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Center(
-                                        child: Text(
-                                          widget.isomo.title,
-                                          style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.02,
-                                            color: Color.fromARGB(255, 0, 193, 218),
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          DirectionButton(
-                                            buttonText: 'inyuma',
-                                            direction: 'inyuma',
-                                            opacity: 1,
-                                            skip: _skip,
-                                            increment: _increment,
-                                            changeSkipNumber: changeSkipNumber,
-                                            scrollTop: _scrollToTop,
-                                            isomo: widget.isomo,
-                                          ),
-                                          const CircleProgress(),
-                                          DirectionButton(
-                                            buttonText: 'komeza',
-                                            direction: 'komeza',
-                                            opacity: 1,
-                                            skip: _skip,
-                                            increment: _increment,
-                                            changeSkipNumber: changeSkipNumber,
-                                            scrollTop: _scrollToTop,
-                                            isomo: widget.isomo,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
+                  if (ingingos == null) {
+                    return const Scaffold(body: LoadingWidget());
+                  }
+                  return loadingNextIsomo
+                      ? const LoadingWidget()
+                      : _buildContent(context, currentIngingo, totalIngingos,
+                          unansweredPopQuestions, popQuestions, usr);
                 },
               );
             },
           );
         },
       ),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    int currentIngingo,
+    int totalIngingos,
+    int unansweredPopQuestions,
+    List<PopQuestionModel>? popQuestions,
+    User? usr,
+  ) {
+    if (currentIngingo >= totalIngingos && unansweredPopQuestions == 0) {
+      return _buildCompletionScreen(context, popQuestions, usr);
+    }
+
+    return _buildIngingosScreen(context, currentIngingo, totalIngingos);
+  }
+
+  Widget _buildCompletionScreen(
+    BuildContext context,
+    List<PopQuestionModel>? popQuestions,
+    User? usr,
+  ) {
+    return Scaffold(
+      body: ItsindireAlert(
+        errorTitle: 'Isomo rirarangiye!',
+        errorMsg: 'Wasoje neza ingingo zose zigize iri somo 🙂!',
+        firstButtonTitle: 'Funga',
+        firstButtonFunction: () {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const Hagati()),
+            ModalRoute.withName('/iga-landing'),
+          );
+        },
+        firstButtonColor: const Color(0xFFE60000),
+        secondButtonTitle: nextIsomo != null ? 'Irindi somo' : '',
+        secondButtonFunction: nextIsomo != null
+            ? () {
+                _startNextIsomo(context, popQuestions, usr);
+              }
+            : null,
+        alertType: 'success',
+      ),
+    );
+  }
+
+  Widget _buildIngingosScreen(
+      BuildContext context, int currentIngingo, int totalIngingos) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 1000),
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        final offsetAnimation = isMovingForward
+            ? Tween<Offset>(begin: const Offset(1.0, 0.0), end: Offset.zero)
+                .animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut))
+            : Tween<Offset>(begin: const Offset(-1.0, 0.0), end: Offset.zero)
+                .animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut));
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+      child: Scaffold(
+        key: ValueKey<int>(_skip),
+        backgroundColor: Colors.white,
+        appBar: const PreferredSize(
+          preferredSize: Size.fromHeight(58.0),
+          child: AppBarItsindire(),
+        ),
+        body: ScrollbarTheme(
+          data: const ScrollbarThemeData(
+            thumbColor: WidgetStatePropertyAll(Color(0xFF00A651)),
+          ),
+          child: Scrollbar(
+            controller: _scrollController,
+            child: ContentDetails(
+              isomo: widget.isomo,
+              controller: _scrollController,
+            ),
+          ),
+        ),
+        bottomNavigationBar: _buildBottomNavigationBar(context),
+      ),
+    );
+  }
+
+  Widget _buildBottomNavigationBar(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.1,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Color(0xFFFFBD59),
+            offset: Offset(0, 2),
+            blurRadius: 3,
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Center(
+            child: Text(
+              widget.isomo.title,
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.height * 0.02,
+                color: const Color.fromARGB(255, 0, 193, 218),
+                fontWeight: FontWeight.w900,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              DirectionButton(
+                buttonText: 'inyuma',
+                direction: 'inyuma',
+                opacity: 1,
+                skip: _skip,
+                increment: _increment,
+                changeSkipNumber: changeSkipNumber,
+                scrollTop: _scrollToTop,
+                isomo: widget.isomo,
+              ),
+              const CircleProgress(),
+              DirectionButton(
+                buttonText: 'komeza',
+                direction: 'komeza',
+                opacity: 1,
+                skip: _skip,
+                increment: _increment,
+                changeSkipNumber: changeSkipNumber,
+                scrollTop: _scrollToTop,
+                isomo: widget.isomo,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _startNextIsomo(
+      BuildContext context, List<PopQuestionModel>? popQuestions, User? usr) {
+    Navigator.pop(context);
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return ItsindireAlert(
+          errorTitle: 'IBIJYANYE NIRI SOMO',
+          errorMsg:
+              'Ugiye kwiga isomo ryitwa "${nextIsomo!.title}" rigizwe n\’ingingo "${nextIsomoTotalIngingos}" ni iminota "${(nextIsomo!.duration != null && nextIsomo!.duration! > 0) ? nextIsomo!.duration : nextIsomoTotalIngingos * 4}" gusa!',
+          firstButtonTitle: 'Inyuma',
+          firstButtonFunction: () {
+            Navigator.popAndPushNamed(context, '/iga-landing');
+          },
+          firstButtonColor: const Color(0xFFE60000),
+          secondButtonTitle: 'Tangira',
+          secondButtonFunction: () {
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => IgaContent(
+                  isomo: nextIsomo!,
+                  courseProgress: CourseProgressModel(
+                    id: '${nextIsomo!.id}_${usr!.uid}',
+                    userId: usr.uid,
+                    totalIngingos: nextIsomoTotalIngingos,
+                    currentIngingo: 0,
+                    courseId: nextIsomo!.id,
+                    unansweredPopQuestions: popQuestions!.length,
+                  ),
+                  thisCourseTotalIngingos: widget.thisCourseTotalIngingos,
+                ),
+              ),
+            );
+          },
+          secondButtonColor: const Color(0xFF00A651),
+        );
+      },
     );
   }
 }

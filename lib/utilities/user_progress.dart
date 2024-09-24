@@ -29,7 +29,6 @@ class UserProgress extends StatefulWidget {
 }
 
 class _UserProgressState extends State<UserProgress> {
-
   int thisCourseTotalIngingos = 0;
   bool loadingRealTotalIngingos = true;
 
@@ -53,7 +52,6 @@ class _UserProgressState extends State<UserProgress> {
 
   @override
   Widget build(BuildContext context) {
-
     final int? curCourseIngingo = widget.courseProgress != null
         ? widget.courseProgress?.currentIngingo
         : 0;
@@ -66,18 +64,18 @@ class _UserProgressState extends State<UserProgress> {
         : 1.0;
 
     return MultiProvider(
-            providers: [
-              StreamProvider<ProfileModel?>.value(
-                value: FirebaseAuth.instance.currentUser != null
+      providers: [
+        StreamProvider<ProfileModel?>.value(
+          value: FirebaseAuth.instance.currentUser != null
               ? ProfileService()
                   .getCurrentProfileByID(FirebaseAuth.instance.currentUser!.uid)
               : null,
-                initialData: null,
-                catchError: (context, error) {
-                  return null;
-                },
-              ),
-              StreamProvider<PaymentModel?>.value(
+          initialData: null,
+          catchError: (context, error) {
+            return null;
+          },
+        ),
+        StreamProvider<PaymentModel?>.value(
           value: FirebaseAuth.instance.currentUser != null
               ? PaymentService()
                   .getNewestPytByUserId(FirebaseAuth.instance.currentUser!.uid)
@@ -87,128 +85,130 @@ class _UserProgressState extends State<UserProgress> {
             return null;
           },
         ),
-            ],
+      ],
       child: Consumer<ProfileModel?>(builder: (context, profile, _) {
         final bool isUrStudent = profile != null &&
             profile.urStudent != null &&
             profile.urStudent == true;
-          return Consumer<PaymentModel?>(builder: (context, payment, _) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  LinearPercentIndicator(
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    animation: true,
-                    lineHeight: MediaQuery.of(context).size.height * 0.032,
-                    animationDuration: 2500,
-                    percent: unansweredPopQuestions != 0 && percent > 0.1 ? percent - 0.1 : percent,
-                    center: Text(
-                      '${(unansweredPopQuestions != 0 && percent > 0.1) ? ((percent - 0.1) * 100).toStringAsFixed(0) : (percent * 100).toStringAsFixed(0)}%',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: MediaQuery.of(context).size.width * 0.035,
-                        color: Colors.white,
-                      ),
-                    ),
-                    barRadius: Radius.circular(MediaQuery.of(context).size.width * 0.3),
-                    backgroundColor: const Color.fromARGB(255, 76, 87, 99),
-                    progressColor:
-                        percent > 0.5 ? const Color(0xFF00A651) : const Color(0xFFFF3131),
+        return Consumer<PaymentModel?>(builder: (context, payment, _) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              LinearPercentIndicator(
+                width: MediaQuery.of(context).size.width * 0.4,
+                animation: true,
+                lineHeight: MediaQuery.of(context).size.height * 0.032,
+                animationDuration: 2500,
+                percent: unansweredPopQuestions != 0 && percent > 0.1
+                    ? percent - 0.1
+                    : percent,
+                center: Text(
+                  '${(unansweredPopQuestions != 0 && percent > 0.1) ? ((percent - 0.1) * 100).toStringAsFixed(0) : (percent * 100).toStringAsFixed(0)}%',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: MediaQuery.of(context).size.width * 0.035,
+                    color: Colors.white,
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      showDialog(
-                          context: context,
-                          barrierDismissible: false, 
-                          builder: (BuildContext context) {
-                            return payment != null &&
-                                    payment.isApproved != true
-                                ? const ItsindireAlert(
-                                    errorTitle: 'Ntibyagenze neza',
-                                    errorMsg: 'Ifatabuguzi ryawe ntiriremezwa!',
-                                    alertType: 'error',
+                ),
+                barRadius:
+                    Radius.circular(MediaQuery.of(context).size.width * 0.3),
+                backgroundColor: const Color.fromARGB(255, 76, 87, 99),
+                progressColor: percent > 0.5
+                    ? const Color(0xFF00A651)
+                    : const Color(0xFFFF3131),
+              ),
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (BuildContext context) {
+                        return payment != null && payment.isApproved != true
+                            ? const ItsindireAlert(
+                                errorTitle: 'Ntibyagenze neza',
+                                errorMsg: 'Ifatabuguzi ryawe ntiriremezwa!',
+                                alertType: 'error',
+                              )
+                            : percent != 1.0 || unansweredPopQuestions != 0
+                                ? ItsindireAlert(
+                                    errorTitle: 'IBIJYANYE NIRI SOMO',
+                                    errorMsg: loadingRealTotalIngingos
+                                        ? 'Tegereza gato ...'
+                                        : 'Iri somo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "$thisCourseTotalIngingos" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : widget.courseProgress!.totalIngingos * 4}" gusa!',
+                                    firstButtonTitle: 'Inyuma',
+                                    firstButtonFunction: () {
+                                      Navigator.pop(context);
+                                    },
+                                    firstButtonColor: const Color(0xFFE60000),
+                                    secondButtonTitle:
+                                        percent == 0.0 ? 'Tangira' : 'Komeza',
+                                    secondButtonFunction: () {
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => payment ==
+                                                          null ||
+                                                      !payment.endAt.isAfter(
+                                                          DateTime.now())
+                                                  ? Ibiciro(
+                                                      message: isUrStudent
+                                                          ? 'Buy a package to continue learning!'
+                                                          : 'Banza ugure ifatabuguzi!')
+                                                  : IgaContent(
+                                                      isomo: widget.isomo,
+                                                      courseProgress:
+                                                          widget.courseProgress,
+                                                      thisCourseTotalIngingos:
+                                                          thisCourseTotalIngingos)));
+                                    },
+                                    secondButtonColor: const Color(0xFF00A651),
+                                    alertType: 'success',
                                   )
-                                : percent != 1.0 || unansweredPopQuestions != 0
-                                    ? ItsindireAlert(
-                                        errorTitle: 'IBIJYANYE NIRI SOMO',
-                                        errorMsg: loadingRealTotalIngingos
-                                            ? 'Tegereza gato ...'
-                                            : 'Iri somo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "$thisCourseTotalIngingos" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : widget.courseProgress!.totalIngingos * 3}" gusa!',
-                                        firstButtonTitle: 'Inyuma',
-                                        firstButtonFunction: () {
-                                          Navigator.pop(context);
-                                        },
-                                        firstButtonColor: const Color(0xFFE60000),
-                                        secondButtonTitle:
-                                            percent == 0.0 ? 'Tangira' : 'Komeza',
-                                        secondButtonFunction: () {
-                                          Navigator.pop(context);
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => payment == null ||
-                                                          !payment.endAt
-                                                              .isAfter(DateTime.now())
-                                                      ? Ibiciro(
-                                                          message: isUrStudent
-                                                              ? 'Buy a package to continue learning!'
-                                                              : 'Banza ugure ifatabuguzi!')
-                                                      : IgaContent(
-                                                          isomo: widget.isomo,
-                                                          courseProgress:
-                                                              widget.courseProgress,
-                                                          thisCourseTotalIngingos:
-                                                              thisCourseTotalIngingos)));
-                                        },
-                                        secondButtonColor: const Color(0xFF00A651),
-                                        alertType: 'success',
-                                      )
-                                    : (payment == null ||
-                                            !payment.endAt.isAfter(DateTime.now()))
-                                        ? Ibiciro(
-                                            message: isUrStudent
-                                                ? 'Buy a package to continue learning!'
-                                                : 'Banza ugure ifatabuguzi!')
-                                        : IsuzumeContent(
-                                            isomo: widget.isomo,
-                                            courseProgress: widget.courseProgress,
-                                          );
-                          });
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      height: MediaQuery.of(context).size.height * 0.033,
-                      decoration: BoxDecoration(
-                        color: const Color(0XFF00CCE5),
-                        borderRadius: BorderRadius.circular(
-                            MediaQuery.of(context).size.width * 0.3),
-                        border: Border.all(
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                          width: MediaQuery.of(context).size.width * 0.004,
-                        ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          (percent == 0.0)
-                              ? "TANGIRA"
-                              : percent == 1.0 && unansweredPopQuestions == 0
-                                  ? "ISUZUME"
-                                  : "KOMEZA",
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.03,
-                            color: const Color.fromARGB(255, 255, 255, 255),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                                : (payment == null ||
+                                        !payment.endAt.isAfter(DateTime.now()))
+                                    ? Ibiciro(
+                                        message: isUrStudent
+                                            ? 'Buy a package to continue learning!'
+                                            : 'Banza ugure ifatabuguzi!')
+                                    : IsuzumeContent(
+                                        isomo: widget.isomo,
+                                        courseProgress: widget.courseProgress,
+                                      );
+                      });
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.3,
+                  height: MediaQuery.of(context).size.height * 0.033,
+                  decoration: BoxDecoration(
+                    color: const Color(0XFF00CCE5),
+                    borderRadius: BorderRadius.circular(
+                        MediaQuery.of(context).size.width * 0.3),
+                    border: Border.all(
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                      width: MediaQuery.of(context).size.width * 0.004,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      (percent == 0.0)
+                          ? "TANGIRA"
+                          : percent == 1.0 && unansweredPopQuestions == 0
+                              ? "ISUZUME"
+                              : "KOMEZA",
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.03,
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                ],
-              );
-            }
+                ),
+              ),
+            ],
           );
-        }
-      ),
+        });
+      }),
     );
   }
 }

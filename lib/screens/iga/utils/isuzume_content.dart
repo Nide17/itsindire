@@ -107,7 +107,8 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
               // RETURN THE WIDGETS
               return PopScope(
                 canPop: false,
-                onPopInvoked: (_) async {
+                onPopInvokedWithResult: (didPop, result) async {
+                  if (didPop) return;
                   _showExitDialog(
                       context,
                       scoreProviderModel.quizScore.isAllAnswered(),
