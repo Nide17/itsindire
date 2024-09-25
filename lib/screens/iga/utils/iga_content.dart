@@ -107,7 +107,8 @@ class _IgaContentState extends State<IgaContent> {
     if (mounted) setState(() => nextIsomo = nextIsomoCandidate);
     if (nextIsomo?.id != null) {
       IngingoService().getTotalIsomoIngingos(widget.isomo.id).listen((event) {
-        if (mounted) setState(() => nextIsomoTotalIngingos = event.realTotalIngingos);
+        if (mounted)
+          setState(() => nextIsomoTotalIngingos = event.realTotalIngingos);
       });
     }
   }
@@ -238,9 +239,11 @@ class _IgaContentState extends State<IgaContent> {
       transitionBuilder: (Widget child, Animation<double> animation) {
         final offsetAnimation = isMovingForward
             ? Tween<Offset>(begin: const Offset(1.0, 0.0), end: Offset.zero)
-                .animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut))
+                .animate(
+                    CurvedAnimation(parent: animation, curve: Curves.easeInOut))
             : Tween<Offset>(begin: const Offset(-1.0, 0.0), end: Offset.zero)
-                .animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut));
+                .animate(CurvedAnimation(
+                    parent: animation, curve: Curves.easeInOut));
 
         return SlideTransition(
           position: offsetAnimation,
@@ -287,17 +290,6 @@ class _IgaContentState extends State<IgaContent> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Center(
-            child: Text(
-              widget.isomo.title,
-              style: TextStyle(
-                fontSize: MediaQuery.of(context).size.height * 0.02,
-                color: const Color.fromARGB(255, 0, 193, 218),
-                fontWeight: FontWeight.w900,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [

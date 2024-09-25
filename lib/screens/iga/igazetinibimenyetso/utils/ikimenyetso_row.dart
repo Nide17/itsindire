@@ -26,6 +26,7 @@ class IkimenyetsoRow extends StatelessWidget {
               ),
               child: Center(
                   child: FadeInImage.memoryNetwork(
+                      fadeInDuration: const Duration(milliseconds: 200),
                       placeholder: kTransparentImage,
                       image: imgUrl,
                       fit: BoxFit.cover,
@@ -73,6 +74,7 @@ class IkimenyetsoRow extends StatelessWidget {
         return Dialog(
           child: InteractiveViewer(
             child: FadeInImage.memoryNetwork(
+              fadeInDuration: const Duration(milliseconds: 200),
               placeholder: kTransparentImage,
               image: imageUrl,
               fit: BoxFit.contain,

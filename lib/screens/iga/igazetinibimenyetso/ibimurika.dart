@@ -40,6 +40,7 @@ class _IgazetiIbimurikaState extends State<IgazetiIbimurika> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.4,
                             child: FadeInImage.memoryNetwork(
+                              fadeInDuration: const Duration(milliseconds: 200),
                               placeholder: kTransparentImage,
                               image:
                                   'https://firebasestorage.googleapis.com/v0/b/tegura-rw.appspot.com/o/ibimurika%2FIbimenyetso%20bimurika.png?alt=media&token=324800c8-f077-47f3-95df-3d6deb3aff21',

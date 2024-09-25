@@ -55,6 +55,7 @@ class OptionContent extends StatelessWidget {
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width * 0.13,
                           child: FadeInImage.memoryNetwork(
+                            fadeInDuration: const Duration(milliseconds: 200),
                             placeholder: kTransparentImage,
                             image: option!.leftImageUrl!,
                             height: MediaQuery.of(context).size.height * 0.1,
@@ -117,6 +118,7 @@ class OptionContent extends StatelessWidget {
                 borderRadius: BorderRadius.circular(
                     10.0), // Set the desired border radius
                 child: FadeInImage.memoryNetwork(
+                  fadeInDuration: const Duration(milliseconds: 200),
                   placeholder: kTransparentImage,
                   image: option!.imageUrl!,
                   height: MediaQuery.of(context).size.height * 0.2,
@@ -136,6 +138,7 @@ class OptionContent extends StatelessWidget {
         return Dialog(
           child: InteractiveViewer(
             child: FadeInImage.memoryNetwork(
+              fadeInDuration: const Duration(milliseconds: 200),
               placeholder: kTransparentImage,
               image: imageUrl,
               fit: BoxFit.contain,

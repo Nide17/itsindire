@@ -142,6 +142,8 @@ class _PopQuizState extends State<PopQuiz> {
                                         ],
                                       ),
                                       child: FadeInImage.memoryNetwork(
+                                        fadeInDuration:
+                                            const Duration(milliseconds: 200),
                                         placeholder: kTransparentImage,
                                         image: widget
                                             .popQuestions[currQnID].imageUrl!,
