@@ -66,7 +66,6 @@ class IsomoService {
         duration: duration,
       );
     } else {
-      print('\nIsomo document does not exist\n');
       return null;
     }
   }

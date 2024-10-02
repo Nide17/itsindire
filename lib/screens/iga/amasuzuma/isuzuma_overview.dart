@@ -305,8 +305,9 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
                     ),
                     Flexible( // This allows the Text to take only available space
                       child: Text(
-                        // widget.isuzuma.title.toUpperCase(),
-                        'RITANGIRE'.toUpperCase(),
+                        scoreUserIsuzuma != null
+                            ? 'SUBIRAMO'.toUpperCase()
+                            : 'RITANGIRE'.toUpperCase(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.035,

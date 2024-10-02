@@ -8,7 +8,6 @@ import 'package:itsindire/models/user.dart';
 import 'package:itsindire/firebase_services/profiledb.dart';
 import 'package:itsindire/main.dart';
 
-
 class AuthState with ChangeNotifier {
   final FirebaseAuth _authInstance = FirebaseAuth.instance;
   final ProfileService _profileService = ProfileService();
@@ -21,7 +20,7 @@ class AuthState with ChangeNotifier {
       FirebaseFirestore.instance.collection('roles');
 
   UserModel? _userFromFirebaseUser(User usr) {
-    return UserModel(uid: usr.uid, usr.email);
+    return UserModel(uid: usr.uid, usr.email, usr.displayName);
   }
 
   User? _currentUser;
@@ -149,7 +148,12 @@ class AuthState with ChangeNotifier {
         'sessionID': sessionId,
       }, SetOptions(merge: true));
 
-      return ReturnedResult(value: _userFromFirebaseUser(result.user!));
+      String username = result.user!.displayName ??
+          querySnapshot.docs.first.get('username') ??
+          email;
+      return ReturnedResult(
+          value: _userFromFirebaseUser(result.user!),
+          successMessage: 'Ikaze ${username}, Kwinjira byagenze neza!');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         return ReturnedResult(error: 'Konti ntibashije kuboneka. Iyandikishe!');
@@ -173,6 +177,8 @@ class AuthState with ChangeNotifier {
         email: email,
         password: password,
       );
+      result.user?.updateDisplayName(username);
+      // result.user?.sendEmailVerification();
 
       User? user = result.user;
 

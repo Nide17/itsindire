@@ -15,64 +15,59 @@ class ProgressCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
+    return Container(
+      padding: EdgeInsets.symmetric(
+          vertical: MediaQuery.of(context).size.height * 0.02,
+          horizontal: MediaQuery.of(context).size.width * 0.08),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(
-            height: usr != null
-                ? MediaQuery.of(context).size.height * 0.2
-                : MediaQuery.of(context).size.height * 0.3,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // 1. TEXT OUTPUT
-                if (usr != null)
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.36,
-                    child: Text(progress,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: MediaQuery.of(context).size.width * 0.045,
-                        )),
-                  )
-                else
-                  Container(),
-
-                // 2. CIRCULAR PERCENT INDICATOR
-                CircularPercentIndicator(
-                  radius: MediaQuery.of(context).size.width * 0.14,
-                  lineWidth: MediaQuery.of(context).size.width * 0.035,
-                  animation: true,
-                  animationDuration: 1000,
-                  restartAnimation: true,
-                  percent: percent,
-                  center: Text(
-                    '${(percent * 100).toStringAsFixed(0)}%',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: MediaQuery.of(context).size.width * 0.07,
-                    ),
+          if (usr != null)
+            Expanded(
+              child: Text(progress,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: MediaQuery.of(context).size.width * 0.045,
                   ),
-                  circularStrokeCap: CircularStrokeCap.butt,
-                  progressColor: const Color(0xFF9D14DD),
-                  backgroundColor: const Color(0xFFBCCCBF),
-                  footer: usr == null
-                      ? Padding(
-                          padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).size.height * 0.03),
-                          child: Text(
-                            progress,
-                            style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.07,
-                                overflow: TextOverflow.ellipsis),
-                          ),
-                        )
-                      : null,
+                  textAlign: TextAlign.center), // Center the text
+            )
+          else
+            SizedBox.shrink(),
+          Container(
+            margin: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.08,),
+            child: CircularPercentIndicator(
+                radius: MediaQuery.of(context).size.width * 0.12,
+                lineWidth: MediaQuery.of(context).size.width * 0.032,
+                animation: true,
+                animationDuration: 800,
+                restartAnimation: false,
+                percent: percent,
+                center: Text(
+                  '${(percent * 100).toStringAsFixed(0)}%',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: MediaQuery.of(context).size.width * 0.068,
+                  ),
                 ),
-              ],
-            ),
+                circularStrokeCap: CircularStrokeCap.butt,
+                progressColor: const Color(0xFF9D14DD),
+                backgroundColor: const Color(0xFFBCCCBF),
+                footer: usr == null
+                    ? Padding(
+                        padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.03),
+                        child: Text(
+                          progress,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.07,
+                              overflow: TextOverflow.ellipsis),
+                        ),
+                      )
+                    : SizedBox.shrink()),
           ),
         ],
       ),

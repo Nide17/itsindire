@@ -72,14 +72,16 @@ class _IgaContentState extends State<IgaContent> {
 
   Future<void> _fetchNextIsomo() async {
     try {
-      final finishedProgresses = CourseProgressService()
+      final finishedProgressesStream = CourseProgressService()
           .getFinishedProgresses(FirebaseAuth.instance.currentUser!.uid);
 
       _finishedProgressesSubscription =
-          finishedProgresses?.listen((progresses) async {
+          finishedProgressesStream?.listen((progresses) {
         if (progresses.isNotEmpty) {
           _processFinishedProgresses(progresses);
         }
+      }, onError: (error) {
+        print('Error fetching finished progresses: $error');
       });
     } catch (e) {
       print('Error fetching next isomo: $e');
@@ -101,8 +103,8 @@ class _IgaContentState extends State<IgaContent> {
 
     while (finishedCourseIds.contains(irindisomoId)) {
       irindisomoId++;
-      nextIsomoCandidate = await IsomoService().getIsomoById(irindisomoId);
     }
+    nextIsomoCandidate = await IsomoService().getIsomoById(irindisomoId);
 
     if (mounted) setState(() => nextIsomo = nextIsomoCandidate);
     if (nextIsomo?.id != null) {
@@ -173,7 +175,7 @@ class _IgaContentState extends State<IgaContent> {
               return Consumer<List<IngingoModel>?>(
                 builder: (context, ingingos, _) {
                   if (ingingos == null) {
-                    return const Scaffold(body: LoadingWidget());
+                    return const Scaffold(body: const LoadingWidget());
                   }
                   return loadingNextIsomo
                       ? const LoadingWidget()
@@ -211,7 +213,7 @@ class _IgaContentState extends State<IgaContent> {
     return Scaffold(
       body: ItsindireAlert(
         errorTitle: 'Isomo rirarangiye!',
-        errorMsg: 'Wasoje neza ingingo zose zigize iri somo 🙂!',
+        errorMsg: 'Wasoje neza ingingo zose zigize iri somo 😄!',
         firstButtonTitle: 'Funga',
         firstButtonFunction: () {
           Navigator.pushAndRemoveUntil(
@@ -257,17 +259,42 @@ class _IgaContentState extends State<IgaContent> {
           preferredSize: Size.fromHeight(58.0),
           child: AppBarItsindire(),
         ),
-        body: ScrollbarTheme(
-          data: const ScrollbarThemeData(
-            thumbColor: WidgetStatePropertyAll(Color(0xFF00A651)),
-          ),
-          child: Scrollbar(
-            controller: _scrollController,
-            child: ContentDetails(
-              isomo: widget.isomo,
-              controller: _scrollController,
+        body: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            SliverAppBar(
+              pinned: true,
+              automaticallyImplyLeading: false,
+              expandedHeight: MediaQuery.of(context).size.height * 0.091,
+              flexibleSpace: FlexibleSpaceBar(
+                expandedTitleScale: 1.2,
+                title: Text(
+                  widget.isomo.title,
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height * 0.02,
+                    color: const Color.fromARGB(255, 0, 193, 218),
+                    fontWeight: FontWeight.w900,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                centerTitle: true,
+              ),
             ),
-          ),
+            SliverToBoxAdapter(
+              child: ScrollbarTheme(
+                data: const ScrollbarThemeData(
+                  thumbColor: WidgetStatePropertyAll(Color(0xFF00A651)),
+                ),
+                child: Scrollbar(
+                  controller: _scrollController,
+                  child: ContentDetails(
+                    isomo: widget.isomo,
+                    controller: _scrollController,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
         bottomNavigationBar: _buildBottomNavigationBar(context),
       ),

@@ -35,8 +35,6 @@ int getRemainingDays() {
             1; // Remaining time within a day should be considered as a full day remaining
       }
     }
-
-    print('\nEndAt: $endAt\nNow: $now\nDays Difference: $daysDifference\n');
     return daysDifference;
   }
 

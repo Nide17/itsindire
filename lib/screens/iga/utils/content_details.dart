@@ -102,19 +102,6 @@ class _ContentDetailsState extends State<ContentDetails> {
                     children: [
                       // IF ITEM IS THE FIRST ITEM, ...
                       if (index == 0) ...[
-                        // DISPLAY THE TITLE OF THE ISOMO
-                        Center(
-                          child: Text(
-                            widget.isomo.title,
-                            style: TextStyle(
-                              fontSize:
-                                  MediaQuery.of(context).size.height * 0.022,
-                              color: const Color.fromARGB(255, 0, 193, 218),
-                              fontWeight: FontWeight.w900,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
                         // DISPLAY THE MESSAGE TO THE USER
                         if (currentIngingo == totalIngingos &&
                             unansweredPopQuestions == 0)
