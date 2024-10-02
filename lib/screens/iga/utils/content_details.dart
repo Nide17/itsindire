@@ -100,76 +100,93 @@ class _ContentDetailsState extends State<ContentDetails> {
                       EdgeInsets.all(MediaQuery.of(context).size.width * 0.024),
                   child: Column(
                     children: [
-                      if (index == 0 &&
-                          currentIngingo == totalIngingos &&
-                          unansweredPopQuestions == 0)
-                        Text(
-                          'Wasoje kwiga isomo!',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                      // IF ITEM IS THE FIRST ITEM, ...
+                      if (index == 0) ...[
+                        // DISPLAY THE TITLE OF THE ISOMO
+                        Center(
+                          child: Text(
+                            widget.isomo.title,
+                            style: TextStyle(
                               fontSize:
-                                  MediaQuery.of(context).size.height * 0.021,
-                              color: Colors.green),
+                                  MediaQuery.of(context).size.height * 0.022,
+                              color: const Color.fromARGB(255, 0, 193, 218),
+                              fontWeight: FontWeight.w900,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      if (index == 0 &&
-                          currentIngingo == totalIngingos &&
-                          unansweredPopQuestions == 0)
-                        ElevatedButton(
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (BuildContext context) {
-                                  return ItsindireAlert(
-                                    errorTitle: 'IBIJYANYE NIRI SOMO',
-                                    errorMsg:
-                                        'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "${totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : totalIngingos * 4}" gusa!',
-                                    firstButtonTitle: 'Inyuma',
-                                    firstButtonFunction: () {
-                                      Navigator.pop(context);
-                                    },
-                                    firstButtonColor: const Color(0xFFE60000),
-                                    secondButtonTitle: 'Tangira',
-                                    secondButtonFunction: () {
-                                      // Update the user progress in the database
-                                      if (courseProgress != null &&
-                                          quizPopQuestions != null) {
-                                        CourseProgressService()
-                                            .updateUserCourseProgress(
-                                                courseProgress.userId,
-                                                courseProgress.courseId,
-                                                0,
-                                                courseProgress.totalIngingos,
-                                                quizPopQuestions.length);
-                                      }
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => IgaContent(
-                                                  isomo: widget.isomo,
-                                                  courseProgress:
-                                                      courseProgress,
-                                                  thisCourseTotalIngingos:
-                                                      thisCourseTotalIngingos)));
-                                    },
-                                    secondButtonColor: const Color(0xFF00A651),
-                                  );
-                                });
-                          },
-                          child: const Text('Ongera utangire iri somo!'),
-                        ),
-                      if (index == 0 &&
-                          currentIngingo == totalIngingos &&
-                          unansweredPopQuestions == 0)
-                        const SizedBox(height: 10.0),
-                      if (index == 0 && widget.isomo.introText != '')
-                        Text(
-                          '\n${widget.isomo.introText}\n\n',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize:
-                                  MediaQuery.of(context).size.height * 0.02),
-                        ),
+                        // DISPLAY THE MESSAGE TO THE USER
+                        if (currentIngingo == totalIngingos &&
+                            unansweredPopQuestions == 0)
+                          Text(
+                            'Wasoje kwiga isomo!',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.021,
+                                color: Colors.green),
+                          ),
+                        // IF THE USER HAS COMPLETED THE ISOMO, SHOW THE BUTTON TO REDO THE ISOMO
+                        if (currentIngingo == totalIngingos &&
+                            unansweredPopQuestions == 0)
+                          ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (BuildContext context) {
+                                    return ItsindireAlert(
+                                      errorTitle: 'IBIJYANYE NIRI SOMO',
+                                      errorMsg:
+                                          'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "${totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : totalIngingos * 4}" gusa!',
+                                      firstButtonTitle: 'Inyuma',
+                                      firstButtonFunction: () {
+                                        Navigator.pop(context);
+                                      },
+                                      firstButtonColor: const Color(0xFFE60000),
+                                      secondButtonTitle: 'Tangira',
+                                      secondButtonFunction: () {
+                                        // Update the user progress in the database
+                                        if (courseProgress != null &&
+                                            quizPopQuestions != null) {
+                                          CourseProgressService()
+                                              .updateUserCourseProgress(
+                                                  courseProgress.userId,
+                                                  courseProgress.courseId,
+                                                  0,
+                                                  courseProgress.totalIngingos,
+                                                  quizPopQuestions.length);
+                                        }
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => IgaContent(
+                                                    isomo: widget.isomo,
+                                                    courseProgress:
+                                                        courseProgress,
+                                                    thisCourseTotalIngingos:
+                                                        thisCourseTotalIngingos)));
+                                      },
+                                      secondButtonColor:
+                                          const Color(0xFF00A651),
+                                    );
+                                  });
+                            },
+                            child: const Text('Ongera utangire iri somo!'),
+                          ),
+
+                        // IF THE INTROTEXT IS NOT EMPTY, DISPLAY IT
+                        if (widget.isomo.introText != '')
+                          Text(
+                            '\n${widget.isomo.introText}\n',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.022),
+                          ),
+                      ],
+
+                      // DISPLAY THE CONTENT OF THE ISOMO
                       ContentTitlenText(
                         title: '${currPageIngingos[index].title} ',
                         text: '${currPageIngingos[index].text}',
@@ -177,7 +194,7 @@ class _ContentDetailsState extends State<ContentDetails> {
                       if (currPageIngingos[index].insideTitle != null &&
                           currPageIngingos[index].insideTitle != '')
                         Text(
-                          '\n\n${currPageIngingos[index].insideTitle}',
+                          '\n${currPageIngingos[index].insideTitle}',
                           style: TextStyle(
                               fontSize:
                                   MediaQuery.of(context).size.height * 0.021,
@@ -243,6 +260,8 @@ class _ContentDetailsState extends State<ContentDetails> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10.0),
                                   child: FadeInImage.memoryNetwork(
+                                    fadeInDuration:
+                                        const Duration(milliseconds: 200),
                                     placeholder: kTransparentImage,
                                     image:
                                         currPageIngingos[index].imageUrl ?? '',
@@ -251,7 +270,9 @@ class _ContentDetailsState extends State<ContentDetails> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: MediaQuery.of(context).size.height * 0.016),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.016),
                             if (currPageIngingos[index].imageDesc != null &&
                                 currPageIngingos[index].imageDesc != '')
                               Text(

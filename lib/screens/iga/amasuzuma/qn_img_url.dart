@@ -35,6 +35,7 @@ class QuestionImgUrl extends StatelessWidget {
           ],
         ),
         child: FadeInImage.memoryNetwork(
+          fadeInDuration: const Duration(milliseconds: 200),
           placeholder: kTransparentImage,
           image: currentQn.imageUrl!,
           height: MediaQuery.of(context).size.height * 0.2,

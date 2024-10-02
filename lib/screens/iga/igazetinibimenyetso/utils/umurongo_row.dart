@@ -53,6 +53,7 @@ class UmurongoRow extends StatelessWidget {
                           borderRadius: BorderRadius.circular(
                               10), // Adjust the radius as needed
                           child: FadeInImage.memoryNetwork(
+                            fadeInDuration: const Duration(milliseconds: 200),
                             placeholder: kTransparentImage,
                             image:
                                 'https://firebasestorage.googleapis.com/v0/b/tegura-rw.appspot.com/o/imirongo%2Ftitle.png?alt=media&token=ea01425f-45fa-4187-a0b6-6a6d168daf4d',
@@ -117,6 +118,7 @@ class UmurongoRow extends StatelessWidget {
                     top: MediaQuery.of(context).size.width * 0.04,
                   ),
                   child: FadeInImage.memoryNetwork(
+                    fadeInDuration: const Duration(milliseconds: 200),
                     placeholder: kTransparentImage,
                     image: imgUrl,
                     fit: BoxFit.cover,

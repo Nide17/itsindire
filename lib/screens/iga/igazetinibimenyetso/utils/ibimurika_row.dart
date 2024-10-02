@@ -44,6 +44,7 @@ class IbimurikaRow extends StatelessWidget {
             ),
             child: Center(
                 child: FadeInImage.memoryNetwork(
+                    fadeInDuration: const Duration(milliseconds: 200),
                     placeholder: kTransparentImage,
                     image: imgUrl,
                     fit: BoxFit.cover,

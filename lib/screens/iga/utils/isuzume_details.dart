@@ -171,6 +171,8 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                                                 ],
                                               ),
                                               child: FadeInImage.memoryNetwork(
+                                                fadeInDuration: const Duration(
+                                                    milliseconds: 200),
                                                 placeholder: kTransparentImage,
                                                 image:
                                                     scorePopQns[widget.qnIndex]
