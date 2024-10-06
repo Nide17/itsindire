@@ -230,6 +230,13 @@ class ReturnedResult<T> {
   late final T? value;
   late final String? error;
   late final String? warning;
-  ReturnedResult({this.value, this.error, this.warning});
+  late final String? successMessage;
+  ReturnedResult({this.value, this.error, this.warning, this.successMessage});
   bool get isSuccess => error == null;
+
+  // toString
+  @override
+  String toString() {
+    return "ReturnedResult {value: $value, error: $error, warning: $warning, successMessage: $successMessage}";
+  }
 }

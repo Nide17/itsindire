@@ -4,6 +4,7 @@ import 'package:itsindire/firebase_services/isomo_db.dart';
 import 'package:itsindire/models/course_progress.dart';
 import 'package:itsindire/models/isomo.dart';
 import 'package:itsindire/screens/iga/amasuzuma/amasuzuma.dart';
+import 'package:itsindire/screens/iga/hagati/hagati.dart';
 import 'package:itsindire/utilities/cta_button.dart';
 import 'package:itsindire/utilities/user_progress.dart';
 import 'package:provider/provider.dart';
@@ -63,9 +64,16 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
           return _buildMessageColumn(
             context,
             'Nta masomo urasoza!',
-            'Inyuma',
+            'Tangira',
             () {
-              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const Hagati();
+                  },
+                ),
+              );
             },
             Colors.red,
           );

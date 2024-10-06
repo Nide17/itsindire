@@ -163,33 +163,39 @@ class _InjiraState extends State<Injira> {
                               ),
                               CtaButton(
                                 text: 'Injira - Login',
-                                onPressed: () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    _formKey.currentState!.save();
-                                    setState(() => loading = true);
+                                onPressed: _formKey.currentState != null
+                                    ? () async {
+                                        if (_formKey.currentState!.validate()) {
+                                          _formKey.currentState!.save();
+                                          setState(() => loading = true);
 
-                                    ReturnedResult result = await authState
-                                        .userLogin(email, password);
+                                          ReturnedResult result =
+                                              await authState.userLogin(
+                                                  email, password);
 
-                                    if (!mounted) return;
-                                    setState(() => loading = false);
-                                    if (result.error != null) {
-                                      _showSnackbar(
-                                          result.error ??
-                                              'Kwinjira ntibikunze. Mwongere mugerageze!',
-                                          Colors.red);
-                                    } else if (result.value != null) {
-                                      authState.setCurrentUser(
-                                          FirebaseAuth.instance.currentUser);
-                                      _showSnackbar('Kwinjira byagenze neza!',
-                                          Colors.green);
-                                    } else {
-                                      _showSnackbar(
-                                          'Kwinjira ntibyagenze neza! Duhamagare kuri 0794033360 tugufashe!',
-                                          Colors.red);
-                                    }
-                                  }
-                                },
+                                          if (!mounted) return;
+                                          setState(() => loading = false);
+                                          if (result.error != null) {
+                                            _showSnackbar(
+                                                result.error ??
+                                                    'Kwinjira ntibikunze. Mwongere mugerageze!',
+                                                Colors.red);
+                                          } else if (result.value != null) {
+                                            authState.setCurrentUser(
+                                                FirebaseAuth
+                                                    .instance.currentUser);
+                                            _showSnackbar(
+                                                result.successMessage ??
+                                                    'Kwinjira byagenze neza!',
+                                                Colors.green);
+                                          } else {
+                                            _showSnackbar(
+                                                'Kwinjira ntibyagenze neza! Duhamagare kuri 0794033360 tugufashe!',
+                                                Colors.red);
+                                          }
+                                        }
+                                      }
+                                    : null,
                               ),
                               SizedBox(
                                 height:

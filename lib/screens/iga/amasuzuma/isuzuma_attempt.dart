@@ -115,7 +115,8 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
                 const Color(0xFF00A651),
                 'YEGO',
                 () {
-                  Navigator.of(context).pop();
+                  Navigator.pop(context);
+                  Navigator.pop(context);
                   Navigator.pop(context);
                 },
                 const Color(0xFFE60000),
@@ -178,6 +179,7 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
                                     .createOrUpdateIsuzumaScore(scorePrModel);
                                 Navigator.pop(context);
                                 Navigator.pop(context);
+                                Navigator.pop(context);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -200,7 +202,8 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
                               () {
                                 IsuzumaScoreService()
                                     .createOrUpdateIsuzumaScore(scorePrModel);
-                                Navigator.of(context).pop();
+                                Navigator.pop(context);
+                                Navigator.pop(context);
                                 Navigator.pop(context);
                                 Navigator.push(
                                   context,

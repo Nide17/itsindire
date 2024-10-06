@@ -138,10 +138,9 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
                                 try {
                                   ReturnedResult payRes = await PaymentService()
                                       .createPayment(payment);
-                                      print("PAYMENT RESULT: $payRes");
 
                                   if (payRes.value == true) {
-                                    print("PAYMENT SUCCESSFUL");
+                                    
                                     await _loadPaymentData();
 
                                     // NAVIGATE TO THE PREVIOUS 2 PAGES

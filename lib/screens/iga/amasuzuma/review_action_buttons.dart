@@ -68,7 +68,7 @@ class _ReviewActionButtonsState extends State<ReviewActionButtons> {
         ),
         child: SingleChildScrollView(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               widget.text != 'Kora irindi suzuma'
@@ -78,7 +78,7 @@ class _ReviewActionButtonsState extends State<ReviewActionButtons> {
                         opacity: 1,
                         child: SvgPicture.asset(
                           widget.icon,
-                          width: MediaQuery.of(context).size.width * 0.04,
+                          width: MediaQuery.of(context).size.width * 0.042,
                         ),
                       ),
                     )
@@ -87,7 +87,7 @@ class _ReviewActionButtonsState extends State<ReviewActionButtons> {
                 widget.text,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.of(context).size.width * 0.03,
+                    fontSize: MediaQuery.of(context).size.width * 0.028,
                     color: Color(widget.color)),
               ),
               widget.text == 'Kora irindi suzuma'
@@ -97,7 +97,7 @@ class _ReviewActionButtonsState extends State<ReviewActionButtons> {
                         opacity: 1,
                         child: SvgPicture.asset(
                           widget.icon,
-                          width: MediaQuery.of(context).size.width * 0.04,
+                          width: MediaQuery.of(context).size.width * 0.042,
                         ),
                       ),
                     )
