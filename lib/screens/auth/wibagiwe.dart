@@ -118,7 +118,13 @@ class _WibagiweState extends State<Wibagiwe> {
                               if (output.isNotEmpty && context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(output),
+                                    content: Text(
+                                      output,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
                                     duration: const Duration(seconds: 10),
                                     backgroundColor: const Color(0xFFFFBD59),
                                   ),

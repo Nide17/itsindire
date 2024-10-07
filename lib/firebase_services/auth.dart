@@ -153,7 +153,7 @@ class AuthState with ChangeNotifier {
           email;
       return ReturnedResult(
           value: _userFromFirebaseUser(result.user!),
-          successMessage: 'Ikaze ${username}, Kwinjira byagenze neza!');
+          successMessage: 'Ikaze ${username}!');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         return ReturnedResult(error: 'Konti ntibashije kuboneka. Iyandikishe!');

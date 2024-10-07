@@ -47,8 +47,13 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
             doc['isApproved'] == true) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-                content:
-                    Text('Ifatabuguzi ryawe ryemejwe. Ubu watangira kwiga!'),
+                content: Text(
+                  'Ifatabuguzi ryawe ryemejwe. Ubu watangira kwiga!',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
                 action: SnackBarAction(
                   label: 'Funga',
                   onPressed: () {
@@ -308,9 +313,8 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                                                 const Color(0xFF00A651),
                                           ),
                                         );
-                                        if (Navigator.of(context).canPop()) {
-                                          Navigator.of(context).pop();
-                                        }
+                                        Navigator.of(context)
+                                            .popUntil((route) => route.isFirst);
                                       },
                                       icon: Icon(
                                         Icons.logout,

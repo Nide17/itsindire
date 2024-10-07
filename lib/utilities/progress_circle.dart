@@ -20,7 +20,7 @@ class ProgressCircle extends StatelessWidget {
           vertical: MediaQuery.of(context).size.height * 0.02,
           horizontal: MediaQuery.of(context).size.width * 0.08),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (usr != null)

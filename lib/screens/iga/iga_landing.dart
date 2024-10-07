@@ -214,13 +214,12 @@ Future<void> checkInternet(BuildContext context, ConnectionStatus conn) async {
   if (conn.isOnline == false) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            textAlign: TextAlign.center,
             'Nta internet mufite!.',
-            style: TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.w600,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.w900,
             ),
           ),
           backgroundColor: Color.fromARGB(255, 255, 8, 0),

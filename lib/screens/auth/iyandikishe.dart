@@ -164,10 +164,15 @@ class _IyandikisheState extends State<Iyandikishe> {
                                       username, email, password, false, '', '');
 
                               if (result.value != null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
                                         content: Text(
-                                            'Kwiyandikisha byagenze neza, Injira!'),
+                                          'Kwiyandikisha byagenze neza, Injira!',
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        ),
                                         backgroundColor: Color(0xFF00A651)));
 
                                 if (!mounted) return;
