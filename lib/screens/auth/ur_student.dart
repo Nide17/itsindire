@@ -183,10 +183,15 @@ class _UrStudentState extends State<UrStudent> {
                                   regNbr,
                                   _selectedCampus);
                               if (result.value != null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
                                         content: Text(
-                                            'Registered successfully, Login!'),
+                                          'Registered successfully, Login!',
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        ),
                                         backgroundColor: Color(0xFF00A651)));
 
                                 if (!mounted) return;

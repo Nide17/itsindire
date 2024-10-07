@@ -265,13 +265,17 @@ class _IgaContentState extends State<IgaContent> {
             SliverAppBar(
               pinned: true,
               automaticallyImplyLeading: false,
-              expandedHeight: MediaQuery.of(context).size.height * 0.091,
+              collapsedHeight: MediaQuery.of(context).size.height * 0.042,
+              toolbarHeight: MediaQuery.of(context).size.height * 0.042,
               flexibleSpace: FlexibleSpaceBar(
                 expandedTitleScale: 1.2,
+                titlePadding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height * 0.008,
+                ),
                 title: Text(
                   widget.isomo.title,
                   style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height * 0.02,
+                    fontSize: MediaQuery.of(context).size.height * 0.018,
                     color: const Color.fromARGB(255, 0, 193, 218),
                     fontWeight: FontWeight.w900,
                   ),

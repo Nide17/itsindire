@@ -40,6 +40,9 @@ class _ContactFormState extends State<ContactForm> {
           content: Text(
             snackBarMessage,
             textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.w900,
+            ),
           ),
           duration: const Duration(seconds: 10),
           backgroundColor: isSent ? const Color(0xFF00A651) : Colors.red,
@@ -56,6 +59,9 @@ class _ContactFormState extends State<ContactForm> {
           content: Text(
             'Error sending email. Please try again.',
             textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.w900,
+            ),
           ),
           backgroundColor: Colors.red,
         ),
