@@ -138,10 +138,8 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                       ? const SizedBox.shrink()
                       : Container(
                           margin: EdgeInsets.zero,
-                          padding: EdgeInsets.symmetric(
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.024),
-                          height: MediaQuery.of(context).size.height * 0.1,
+                          padding: EdgeInsets.zero,
+                          height: MediaQuery.of(context).size.height * 0.06,
                           decoration: const BoxDecoration(
                             color: Color.fromARGB(255, 255, 255, 255),
                             boxShadow: [
@@ -168,8 +166,15 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                                   foregroundColor: Colors.white,
                                   backgroundColor: Colors.red,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
+                                      borderRadius: BorderRadius.circular(32.0),
+                                      side: BorderSide(
+                                        color:
+                                            const Color.fromARGB(255, 0, 0, 0),
+                                        style: BorderStyle.solid,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.005,
+                                      )),
                                 ),
                                 child: Text(
                                   'Soza kwisuzuma',
@@ -226,7 +231,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
     if (!isAllAnswered || _isCurrentCorrect == false) {
       showDialog(
         context: context,
-        barrierDismissible: false, 
+        barrierDismissible: false,
         builder: (context) {
           return ItsindireAlert(
             errorTitle: 'Subiza byose',

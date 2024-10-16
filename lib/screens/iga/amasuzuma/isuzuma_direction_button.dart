@@ -53,7 +53,7 @@ class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
             if (widget.currQnID == 1) {
               showDialog(
                 context: context,
-                barrierDismissible: false, 
+                barrierDismissible: false,
                 builder: (BuildContext context) {
                   return const ItsindireAlert(
                     errorTitle: 'Ikosa!',
@@ -69,7 +69,7 @@ class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
             if (widget.currQnID == widget.qnsLength) {
               showDialog(
                 context: context,
-                barrierDismissible: false, 
+                barrierDismissible: false,
                 builder: (BuildContext context) {
                   return const ItsindireAlert(
                     errorTitle: 'Ikosa!',
@@ -95,8 +95,8 @@ class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
                 width: MediaQuery.of(context).size.width * 0.005,
               )),
           padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.04,
-              vertical: MediaQuery.of(context).size.height * 0.01),
+              horizontal: MediaQuery.of(context).size.width * 0.036,
+              vertical: 0.0),
         ),
         child: SingleChildScrollView(
           child: Row(

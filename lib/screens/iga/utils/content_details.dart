@@ -97,7 +97,7 @@ class _ContentDetailsState extends State<ContentDetails> {
                 ),
                 child: Padding(
                   padding:
-                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.024),
+                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.022),
                   child: Column(
                     children: [
                       // IF ITEM IS THE FIRST ITEM, ...
@@ -117,6 +117,16 @@ class _ContentDetailsState extends State<ContentDetails> {
                         if (currentIngingo == totalIngingos &&
                             unansweredPopQuestions == 0)
                           ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.02,
+                              ),
+                              fixedSize: Size(
+                                MediaQuery.of(context).size.width * 0.8,
+                                MediaQuery.of(context).size.height * 0.002,
+                              ),
+                            ),
                             onPressed: () {
                               showDialog(
                                   context: context,
@@ -159,7 +169,12 @@ class _ContentDetailsState extends State<ContentDetails> {
                                     );
                                   });
                             },
-                            child: const Text('Ongera utangire iri somo!'),
+                            child: Text('Ongera utangire iri somo!',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        MediaQuery.of(context).size.height *
+                                            0.012)),
                           ),
 
                         // IF THE INTROTEXT IS NOT EMPTY, DISPLAY IT

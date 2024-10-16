@@ -307,7 +307,7 @@ class _IgaContentState extends State<IgaContent> {
 
   Widget _buildBottomNavigationBar(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.1,
+      height: MediaQuery.of(context).size.height * 0.092,
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [

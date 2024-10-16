@@ -137,7 +137,7 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
               bottomNavigationBar: Container(
                 margin: EdgeInsets.zero,
                 padding: EdgeInsets.zero,
-                height: MediaQuery.of(context).size.height * 0.1,
+                height: MediaQuery.of(context).size.height * 0.06,
                 decoration: const BoxDecoration(
                   color: Color.fromARGB(255, 216, 215, 215),
                 ),
@@ -224,14 +224,24 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
                           backgroundColor: const Color.fromARGB(255, 255, 0, 0)
                               .withOpacity(unansweredQns.isNotEmpty ? 0.6 : 1),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                              borderRadius: BorderRadius.circular(32.0),
+                              side: BorderSide(
+                                color: const Color.fromARGB(255, 0, 0, 0),
+                                style: BorderStyle.solid,
+                                width:
+                                    MediaQuery.of(context).size.width * 0.005,
+                              )),
+                          padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width * 0.036,
+                              vertical:
+                                  MediaQuery.of(context).size.height * 0.002),
                         ),
                         child: Row(
                           children: [
                             SvgPicture.asset(
                               'assets/images/tick.svg',
-                              width: MediaQuery.of(context).size.width * 0.03,
+                              width: MediaQuery.of(context).size.width * 0.024,
                               colorFilter: ColorFilter.mode(
                                 const Color.fromARGB(255, 255, 255, 255)
                                     .withOpacity(
@@ -243,7 +253,7 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
                               ' Soza isuzuma',
                               style: TextStyle(
                                 fontSize:
-                                    MediaQuery.of(context).size.width * 0.03,
+                                    MediaQuery.of(context).size.width * 0.024,
                                 color: const Color.fromARGB(255, 255, 255, 255)
                                     .withOpacity(
                                         unansweredQns.isNotEmpty ? 0.65 : 1),

@@ -84,23 +84,45 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                           Align(
                             alignment: Alignment.topCenter,
                             child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal:
-                                      MediaQuery.of(context).size.width * 0.008,
-                                ),
-                                child: Wrap(
-                                    spacing: 10.0,
-                                    direction: Axis.horizontal,
-                                    children: List.generate(
-                                      scorePopQnsLength,
-                                      (index) => IkibazoButton(
-                                        isActive: index == widget.qnIndex
-                                            ? true
-                                            : false,
-                                        showQn: widget.showQn,
-                                        qnIndex: index,
+                              padding: EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.008,
+                              ),
+                              child: Container(
+                                height: 80.0,
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                child: ScrollbarTheme(
+                                  data: const ScrollbarThemeData(
+                                    thumbColor: WidgetStatePropertyAll(
+                                        Color.fromARGB(255, 166, 0, 0)),
+                                  ),
+                                  child: Scrollbar(
+                                    child: SingleChildScrollView(
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.008,
+                                        ),
+                                        child: Wrap(
+                                          spacing: 10.0,
+                                          direction: Axis.horizontal,
+                                          children: List.generate(
+                                            scorePopQnsLength,
+                                            (index) => IkibazoButton(
+                                              isActive: index == widget.qnIndex,
+                                              showQn: widget.showQn,
+                                              qnIndex: index,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ))),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
 
                           // SHOW THE QUESTION AND OPTIONS
@@ -109,8 +131,6 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                               padding: EdgeInsets.symmetric(
                                 horizontal:
                                     MediaQuery.of(context).size.width * 0.04,
-                                vertical:
-                                    MediaQuery.of(context).size.height * 0.03,
                               ),
                               child: SingleChildScrollView(
                                 child: Column(
@@ -246,54 +266,73 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                       )),
             if (loadingProgressUpdate) const CircularProgressIndicator(),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width * 0.02,
+                ),
+                fixedSize: Size(
+                  MediaQuery.of(context).size.width * 0.8,
+                  MediaQuery.of(context).size.height * 0.002,
+                ),
+              ),
               onPressed: () {
                 showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (BuildContext context) {
-                      return ItsindireAlert(
-                        errorTitle: 'IBIJYANYE NIRI SOMO',
-                        errorMsg:
-                            'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "${widget.courseProgress!.totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : widget.courseProgress!.totalIngingos * 4}" gusa!',
-                        firstButtonTitle: 'Inyuma',
-                        firstButtonFunction: () {
-                          Navigator.pop(context);
-                        },
-                        firstButtonColor: const Color(0xFFE60000),
-                        secondButtonTitle: 'Tangira',
-                        secondButtonFunction: () async {
-                          setState(() {
-                            loadingProgressUpdate = true;
-                          });
-                          // Update the user progress in the database
-                          if (widget.courseProgress != null &&
-                              quizPopQuestions != null) {
-                            CourseProgressService().updateUserCourseProgress(
-                                widget.courseProgress!.userId,
-                                widget.courseProgress!.courseId,
-                                0,
-                                widget.courseProgress!.totalIngingos,
-                                quizPopQuestions.length);
-                          }
-                          setState(() {
-                            loadingProgressUpdate = false;
-                          });
-                          Navigator.pop(context);
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => IgaContent(
-                                        isomo: widget.isomo,
-                                        courseProgress: widget.courseProgress,
-                                        thisCourseTotalIngingos: widget
-                                            .courseProgress!.totalIngingos,
-                                      )));
-                        },
-                        secondButtonColor: const Color(0xFF00A651),
-                      );
-                    });
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) {
+                    return ItsindireAlert(
+                      errorTitle: 'IBIJYANYE NIRI SOMO',
+                      errorMsg:
+                          'Ugiye kwiga isomo ryitwa "${widget.isomo.title}" rigizwe n’ingingo "${widget.courseProgress!.totalIngingos}" ni iminota "${(widget.isomo.duration != null && widget.isomo.duration! > 0) ? widget.isomo.duration : widget.courseProgress!.totalIngingos * 4}" gusa!',
+                      firstButtonTitle: 'Inyuma',
+                      firstButtonFunction: () {
+                        Navigator.pop(context);
+                      },
+                      firstButtonColor: const Color(0xFFE60000),
+                      secondButtonTitle: 'Tangira',
+                      secondButtonFunction: () async {
+                        setState(() {
+                          loadingProgressUpdate = true;
+                        });
+                        // Update the user progress in the database
+                        if (widget.courseProgress != null &&
+                            quizPopQuestions != null) {
+                          CourseProgressService().updateUserCourseProgress(
+                            widget.courseProgress!.userId,
+                            widget.courseProgress!.courseId,
+                            0,
+                            widget.courseProgress!.totalIngingos,
+                            quizPopQuestions.length,
+                          );
+                        }
+                        setState(() {
+                          loadingProgressUpdate = false;
+                        });
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => IgaContent(
+                              isomo: widget.isomo,
+                              courseProgress: widget.courseProgress,
+                              thisCourseTotalIngingos:
+                                  widget.courseProgress!.totalIngingos,
+                            ),
+                          ),
+                        );
+                      },
+                      secondButtonColor: const Color(0xFF00A651),
+                    );
+                  },
+                );
               },
-              child: const Text('Ongera utangire iri somo!'),
+              child: Text(
+                'Ongera utangire iri somo!',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: MediaQuery.of(context).size.height * 0.014,
+                ),
+              ),
             ),
           ]),
         ),
