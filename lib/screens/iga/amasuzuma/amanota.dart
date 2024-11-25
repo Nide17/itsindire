@@ -43,7 +43,7 @@ class Amanota extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                        "${userScore?.marks ?? 0}/${userScore?.totalMarks ?? 0}",
+                        "${userScore?.marks ?? 0}/${userScore?.totalMarks ?? 1}",
                         style: TextStyle(
                           fontWeight: FontWeight.w900,
                           fontSize: MediaQuery.of(context).size.width * 0.04,
@@ -58,7 +58,7 @@ class Amanota extends StatelessWidget {
                     ),
                     Text(
                         (userScore?.marks ?? 0) /
-                                    (userScore?.totalMarks ?? 0) >=
+                                    (userScore?.totalMarks ?? 1) >=
                                 0.6
                             ? "Watsinze!"
                             : "Watsinzwe!",

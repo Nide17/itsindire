@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:itsindire/firebase_services/isuzuma_score_db.dart';
 import 'package:provider/provider.dart';
 import 'package:itsindire/firebase_services/payment_db.dart';
 import 'package:itsindire/models/isuzuma.dart';
@@ -21,6 +22,7 @@ class AmasuzumaCard extends StatefulWidget {
 }
 
 class _AmasuzumaCardState extends State<AmasuzumaCard> {
+
   dynamic payment;
   bool loading = false;
 
@@ -59,135 +61,144 @@ class _AmasuzumaCardState extends State<AmasuzumaCard> {
 
   @override
   Widget build(BuildContext context) {
+
     final usr = FirebaseAuth.instance.currentUser;
-    final amaUserScores = Provider.of<List<IsuzumaScoreModel>?>(context);
-    IsuzumaScoreModel? userScore;
-    if (amaUserScores != null) {
-      for (var i = 0; i < amaUserScores.length; i++) {
-        if (amaUserScores[i].isuzumaID == widget.isuzuma.id) {
-          userScore = amaUserScores[i];
-          break;
-        }
-      }
-    }
 
     return loading
         ? const LoadingWidget()
-        : Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
+        : MultiProvider(
+      providers: [
+        StreamProvider<IsuzumaScoreModel?>.value(
+          value: usr == null
+              ? null
+              :
+          IsuzumaScoreService()
+              .getScoreByID('${usr.uid}_${widget.isuzuma.id}'),
+          initialData: null,
+          catchError: (context, error) {
+            return null;
+          },
+        ),
+      ],
+      child:
+          Consumer<IsuzumaScoreModel?>(builder: (context, userScore, _) {
+            return Column(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      usr == null
-                          ? Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Iyandikishe(
-                                      message:
-                                          'Banza wiyandikishe, wishyure ubone aya masuzumabumenyi yose!')))
-                          : payment != null &&
-                                  payment.isApproved &&
-                                  payment.endAt.isAfter(DateTime.now())
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          usr == null
                               ? Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => IsuzumaOverview(
-                                            isuzuma: widget.isuzuma,
-                                          )),
-                                )
-                              : showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (BuildContext context) {
-                                    return ItsindireAlert(
-                                      errorTitle: 'Ntibyagenze neza',
-                                      errorMsg: payment == null
-                                          ? 'Nturishyura'
-                                          : payment.isApproved == false
-                                              ? 'Ifatabuguzi ryawe ntiriremezwa'
-                                              : !payment.endAt
-                                                      .isAfter(DateTime.now())
-                                                  ? 'Ifatabuguzi ryawe ryararangiye'
-                                                  : 'Ibyo wifuza ntibyagenze neza. Ongera ushyure kugira ngo ugerageze!',
-                                      alertType: 'error',
-                                      secondButtonTitle: 'Ishyura',
-                                      secondButtonFunction: () {
-                                        Navigator.pop(context);
-                                        Navigator.pushReplacementNamed(
-                                            context, '/ibiciro');
-                                      },
-                                      secondButtonColor: Color(0xFF00A651),
-                                    );
-                                  });
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF00CCE5),
-                        borderRadius: BorderRadius.circular(
-                            MediaQuery.of(context).size.width * 0.03),
-                        border: Border.all(
-                          width: MediaQuery.of(context).size.width * 0.006,
-                          color: const Color(0xFFFFBD59),
+                                      builder: (context) => const Iyandikishe(
+                                          message:
+                                              'Banza wiyandikishe, wishyure ubone aya masuzumabumenyi yose!')))
+                              : payment != null &&
+                                      payment.isApproved &&
+                                      payment.endAt.isAfter(DateTime.now())
+                                  ? Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => IsuzumaOverview(
+                                                isuzuma: widget.isuzuma,
+                                              )),
+                                    )
+                                  : showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (BuildContext context) {
+                                        return ItsindireAlert(
+                                          errorTitle: 'Ntibyagenze neza',
+                                          errorMsg: payment == null
+                                              ? 'Nturishyura'
+                                              : payment.isApproved == false
+                                                  ? 'Ifatabuguzi ryawe ntiriremezwa'
+                                                  : !payment.endAt
+                                                          .isAfter(DateTime.now())
+                                                      ? 'Ifatabuguzi ryawe ryararangiye'
+                                                      : 'Ibyo wifuza ntibyagenze neza. Ongera ushyure kugira ngo ugerageze!',
+                                          alertType: 'error',
+                                          secondButtonTitle: 'Ishyura',
+                                          secondButtonFunction: () {
+                                            Navigator.pop(context);
+                                            Navigator.pushReplacementNamed(
+                                                context, '/ibiciro');
+                                          },
+                                          secondButtonColor: Color(0xFF00A651),
+                                        );
+                                      });
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF00CCE5),
+                            borderRadius: BorderRadius.circular(
+                                MediaQuery.of(context).size.width * 0.03),
+                            border: Border.all(
+                              width: MediaQuery.of(context).size.width * 0.006,
+                              color: const Color(0xFFFFBD59),
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(
+                                  MediaQuery.of(context).size.width * 0.01,
+                                ),
+                                child: Text(
+                                  widget.isuzuma.title.toUpperCase(),
+                                  textAlign: TextAlign.center,
+                                  softWrap: true,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width * 0.035,
+                                    color: const Color.fromARGB(255, 255, 255, 255),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                color: const Color(0xFFFFBD59),
+                                height: MediaQuery.of(context).size.height * 0.009,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0,
+                                  vertical: 6.0,
+                                ),
+                                child: Image.asset(
+                                  'assets/images/isuzuma.png',
+                                  height: MediaQuery.of(context).size.height * 0.2,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(
-                              MediaQuery.of(context).size.width * 0.01,
-                            ),
-                            child: Text(
-                              widget.isuzuma.title.toUpperCase(),
-                              textAlign: TextAlign.center,
-                              softWrap: true,
+                      usr == null
+                          ? Text(
+                              '/${widget.isuzuma.questions.length}',
                               style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.035,
-                                color: const Color.fromARGB(255, 255, 255, 255),
+                                color: Colors.red,
+                                fontSize: MediaQuery.of(context).size.width * 0.08,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ),
-                          ),
-                          Container(
-                            color: const Color(0xFFFFBD59),
-                            height: MediaQuery.of(context).size.height * 0.009,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
-                              vertical: 6.0,
-                            ),
-                            child: Image.asset(
-                              'assets/images/isuzuma.png',
-                              height: MediaQuery.of(context).size.height * 0.2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                            )
+                          : Amanota(userScore: userScore)
+                    ],
                   ),
-                  usr == null
-                      ? Text(
-                          '/${widget.isuzuma.questions.length}',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: MediaQuery.of(context).size.width * 0.08,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      : Amanota(userScore: userScore)
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.04,
+                  ),
                 ],
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.04,
-              ),
-            ],
-          );
+              );
+          }),
+    );
   }
 }
