@@ -1,27 +1,24 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:itsindire/models/ifatabuguzi.dart';
-import 'package:itsindire/models/profile.dart';
 import 'package:itsindire/screens/auth/iyandikishe.dart';
 import 'package:itsindire/screens/ibiciro/processing_ishyura.dart';
-import 'package:provider/provider.dart';
 
 class Ifatabuguzi extends StatelessWidget {
   final int index;
   final IfatabuguziModel ifatabuguzi;
   final String curWidget;
+  final bool isUrStudent;
 
   const Ifatabuguzi(
       {super.key,
       required this.index,
       required this.ifatabuguzi,
-      required this.curWidget});
+      required this.curWidget,
+      required this.isUrStudent});
 
   @override
   Widget build(BuildContext context) {
-    final profile = Provider.of<ProfileModel?>(context);
-    final bool isUrStudent = profile?.urStudent ?? false;
-
     return Column(
       children: [
         Padding(
@@ -177,7 +174,9 @@ class Ifatabuguzi extends StatelessWidget {
                                                           .currentUser !=
                                                       null
                                                   ? ProcessingIshyura(
-                                                      ifatabuguzi: ifatabuguzi)
+                                                      ifatabuguzi: ifatabuguzi,
+                                                      isUrStudent: isUrStudent,
+                                                    )
                                                   : Iyandikishe(
                                                       message: isUrStudent ==
                                                               true

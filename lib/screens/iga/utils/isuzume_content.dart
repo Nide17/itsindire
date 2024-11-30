@@ -43,6 +43,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
       ],
       child: Consumer<QuizScoreProvider>(
         builder: (context, scoreProviderModel, child) {
+          
           return Consumer<List<PopQuestionModel>?>(
             builder: (context, popQuestions, _) {
               if (popQuestions == null) {

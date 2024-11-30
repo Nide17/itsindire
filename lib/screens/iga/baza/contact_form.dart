@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:itsindire/firebase_services/profiledb.dart';
 import 'package:itsindire/models/profile.dart';
 import 'package:itsindire/utilities/default_input.dart';
 import 'package:itsindire/utilities/loading_widget.dart';
@@ -71,63 +73,74 @@ class _ContactFormState extends State<ContactForm> {
 
   @override
   Widget build(BuildContext context) {
-    final profile = Provider.of<ProfileModel?>(context);
-
-    _name = profile?.username;
-    _email = profile?.email;
-
     return isLoading
         ? Container(
             padding: EdgeInsets.symmetric(
                 horizontal: MediaQuery.of(context).size.width * 0.05,
                 vertical: MediaQuery.of(context).size.height * 0.16),
             child: const LoadingWidget())
-        : Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.05,
-                vertical: MediaQuery.of(context).size.height * 0.048),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  DefaultInput(
-                    placeholder: _name ?? 'Izina',
-                    validation: _name == null
-                        ? 'Izina ryawe rirakenewe!'
-                        : null, // Skip validation if _name is not null
-                    enabled: _name == null,
-                    onChanged: (value) => setState(() => _name = value),
-                  ),
-                  DefaultInput(
-                    placeholder: _email ?? 'Imeyili',
-                    validation:
-                        _email == null ? 'Imeyili yawe irakenewe!' : null,
-                    enabled: _email == null,
-                    onChanged: (value) => setState(() => _email = value),
-                  ),
-                  DefaultInput(
-                    placeholder: 'Ubutumwa',
-                    validation: 'Ubutumwa bwawe burakenewe!',
-                    maxLines: 5,
-                    onChanged: (value) => setState(() => _message = value),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.008,
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: RouteActionButton(
-                      btnText: 'Ohereza',
-                      action: () => _formKey.currentState != null &&
-                              _formKey.currentState!.validate()
-                          ? sendEmail()
-                          : null,
-                    ),
-                  ),
-                ],
+        : MultiProvider(
+            providers: [
+              StreamProvider<ProfileModel?>.value(
+                value: FirebaseAuth.instance.currentUser != null
+                    ? ProfileService().getCurrentProfileByID(
+                        FirebaseAuth.instance.currentUser!.uid)
+                    : null,
+                initialData: null,
+                catchError: (context, error) => null,
               ),
-            ),
+            ],
+            child: Consumer<ProfileModel?>(builder: (context, profile, _) {
+                _name = profile?.username;
+                _email = profile?.email;
+              return Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.05,
+                    vertical: MediaQuery.of(context).size.height * 0.048),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      DefaultInput(
+                        placeholder: _name ?? 'Izina',
+                        validation: _name == null
+                            ? 'Izina ryawe rirakenewe!'
+                            : null, // Skip validation if _name is not null
+                        enabled: _name == null,
+                        onChanged: (value) => setState(() => _name = value),
+                      ),
+                      DefaultInput(
+                        placeholder: _email ?? 'Imeyili',
+                        validation:
+                            _email == null ? 'Imeyili yawe irakenewe!' : null,
+                        enabled: _email == null,
+                        onChanged: (value) => setState(() => _email = value),
+                      ),
+                      DefaultInput(
+                        placeholder: 'Ubutumwa',
+                        validation: 'Ubutumwa bwawe burakenewe!',
+                        maxLines: 5,
+                        onChanged: (value) => setState(() => _message = value),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.008,
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: RouteActionButton(
+                          btnText: 'Ohereza',
+                          action: () => _formKey.currentState != null &&
+                                  _formKey.currentState!.validate()
+                              ? sendEmail()
+                              : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
           );
   }
 }

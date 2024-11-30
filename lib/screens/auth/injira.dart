@@ -50,6 +50,7 @@ class _InjiraState extends State<Injira> {
   }
 
   void _showSnackbar(String message, ReturnedResult result) {
+    print(message);
     if (scaffoldMessenger != null) {
       scaffoldMessenger!.showSnackBar(
         SnackBar(

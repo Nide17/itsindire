@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -45,27 +44,30 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
         if (change.type == DocumentChangeType.modified &&
             doc['userId'] == FirebaseAuth.instance.currentUser!.uid &&
             doc['isApproved'] == true) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(
-                  'Ifatabuguzi ryawe ryemejwe. Ubu watangira kwiga!',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                action: SnackBarAction(
-                  label: 'Funga',
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                  },
-                ),
-                duration: const Duration(seconds: 20),
-                backgroundColor: const Color(0xFF00A651)),
-          );
+          _showSnackBar('Ifatabuguzi ryawe ryemejwe. Ubu watangira kwiga!');
         }
       }
     });
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontWeight: FontWeight.w900),
+        ),
+        action: SnackBarAction(
+          label: 'Funga',
+          onPressed: () {
+            ScaffoldMessenger.of(context).clearSnackBars();
+          },
+        ),
+        duration: const Duration(seconds: 20),
+        backgroundColor: const Color(0xFF00A651),
+      ),
+    );
   }
 
   @override
@@ -84,9 +86,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                   .getNewestPytByUserId(FirebaseAuth.instance.currentUser!.uid)
               : null,
           initialData: null,
-          catchError: (context, error) {
-            return null;
-          },
+          catchError: (context, error) => null,
         ),
         StreamProvider<ProfileModel?>.value(
           value: FirebaseAuth.instance.currentUser != null
@@ -94,9 +94,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                   .getCurrentProfileByID(FirebaseAuth.instance.currentUser!.uid)
               : null,
           initialData: null,
-          catchError: (context, error) {
-            return null;
-          },
+          catchError: (context, error) => null,
         ),
       ],
       child: Consumer<AuthState>(builder: (context, authState, _) {
@@ -114,262 +112,277 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                   height: MediaQuery.of(context).size.height * 0.01,
                 ),
               ),
-              title: Row(
-                children: <Widget>[
-                  SvgPicture.asset(
-                    'assets/images/car.svg',
-                    height: MediaQuery.of(context).size.height * 0.045,
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.height * 0.012,
-                  ),
-                  Text('Itsindire.rw',
-                      style: TextStyle(
-                        color: const Color.fromARGB(255, 0, 0, 0),
-                        fontWeight: FontWeight.w900,
-                        fontSize: MediaQuery.of(context).size.width * 0.048,
-                      )),
-                ],
-              ),
+              title: _buildTitle(context),
               actions: <Widget>[
                 if (user != null && profile != null)
-                  IconButton(
-                    icon: profile.photo == ''
-                        ? SvgPicture.asset(
-                            'assets/images/avatar.svg',
-                            height: MediaQuery.of(context).size.height * 0.048,
-                          )
-                        : CircleAvatar(
-                            backgroundImage: NetworkImage(profile.photo ?? ''),
-                          ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  MediaQuery.of(context).size.width * 0.024),
-                              side: BorderSide(
-                                color: const Color(0xFF5B8BDF),
-                                width: MediaQuery.of(context).size.width * 0.01,
-                              ),
-                            ),
-                            icon: profile.photo == ''
-                                ? SvgPicture.asset(
-                                    'assets/images/avatar.svg',
-                                    height: MediaQuery.of(context).size.height *
-                                        0.048,
-                                  )
-                                : CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                      profile.photo ?? '',
-                                      scale: 2,
-                                    ),
-                                  ),
-                            title: Align(
-                              alignment: Alignment.center,
-                              child: Text.rich(
-                                textAlign: TextAlign.center,
-                                TextSpan(
-                                    text: capitalizeWords(user.displayName ??
-                                        profile.username ??
-                                        ''),
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                    children: [
-                                      TextSpan(
-                                          text: '\n${user.email}',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 12.0)),
-                                    ]),
-                              ),
-                            ),
-                            backgroundColor: const Color(0xFFFFBD59),
-                            elevation: 10.0,
-                            shadowColor: const Color(0xFF5B8BDF),
-                            content: SingleChildScrollView(
-                              child: ListBody(
-                                children: <Widget>[
-                                  Align(
-                                    child: Text(
-                                        newestPyt == null
-                                            ? 'NTA FATABUGUZI URAFATA'
-                                            : newestPyt.getRemainingDays() >
-                                                        0 &&
-                                                    newestPyt.isApproved == true
-                                                ? 'IFATABUGUZI RYAWE'
-                                                : newestPyt.getRemainingDays() >
-                                                            0 &&
-                                                        newestPyt.isApproved ==
-                                                            false
-                                                    ? ''
-                                                    : 'IFATABUGUZI RYARANGIYE!',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.04,
-                                          color: newestPyt != null &&
-                                                  newestPyt.getRemainingDays() >
-                                                      0
-                                              ? const Color.fromARGB(
-                                                  255, 255, 255, 255)
-                                              : const Color.fromARGB(
-                                                  255, 255, 0, 0),
-                                        )),
-                                  ),
-                                  if (newestPyt != null &&
-                                      newestPyt.getRemainingDays() > 0 &&
-                                      newestPyt.isApproved == true)
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.024,
-                                    ),
-                                  if (newestPyt != null &&
-                                      newestPyt.getRemainingDays() > 0 &&
-                                      newestPyt.isApproved == true)
-                                    Text(
-                                        'Rizarangira kuri ${newestPyt.getFormatedEndDate()}',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.004,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.036,
-                                          color: const Color.fromARGB(
-                                              255, 0, 27, 116),
-                                        )),
-                                  if (newestPyt != null &&
-                                      newestPyt.getRemainingDays() > 0 &&
-                                      newestPyt.isApproved == true)
-                                    Text(
-                                        'Usigaje iminsi ${newestPyt.getRemainingDays()}',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.0032,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.032,
-                                          color: const Color.fromARGB(
-                                              255, 0, 27, 116),
-                                        )),
-                                  if (newestPyt != null &&
-                                      newestPyt.getRemainingDays() > 0 &&
-                                      newestPyt.isApproved == false)
-                                    Container(
-                                      padding: EdgeInsets.only(
-                                          top: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.01),
-                                      child: Align(
-                                        child: Text(
-                                            'Murakoze kwishyura, ifatabuguzi ryawe riri kwigwaho...',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.04,
-                                              color: const Color.fromARGB(
-                                                  255, 255, 0, 0),
-                                            )),
-                                      ),
-                                    ),
-                                  const SizedBox(height: 10.0),
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: ElevatedButton.icon(
-                                      onPressed: () async {
-                                        dynamic result =
-                                            await authState.logOut();
-
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              result != null
-                                                  ? result
-                                                  : 'Ntibikunze, ongera ugerageze!',
-                                            ),
-                                            duration:
-                                                const Duration(seconds: 10),
-                                            backgroundColor:
-                                                const Color(0xFF00A651),
-                                          ),
-                                        );
-                                        Navigator.of(context)
-                                            .popUntil((route) => route.isFirst);
-                                      },
-                                      icon: Icon(
-                                        Icons.logout,
-                                        size:
-                                            MediaQuery.of(context).size.width *
-                                                0.048,
-                                      ),
-                                      label: Text(
-                                        'Sohoka',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.04,
-                                        ),
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.04,
-                                          vertical: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.014,
-                                        ),
-                                        backgroundColor:
-                                            const Color(0xFF5B8BDF),
-                                        foregroundColor:
-                                            const Color(0xFFFFBD59),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.04),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
+                  _buildProfileIcon(context, profile, newestPyt, authState),
               ],
             );
           });
         });
       }),
+    );
+  }
+
+  Widget _buildTitle(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        SvgPicture.asset(
+          'assets/images/car.svg',
+          height: MediaQuery.of(context).size.height * 0.045,
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.height * 0.012,
+        ),
+        Text('Itsindire.rw',
+            style: TextStyle(
+              color: const Color.fromARGB(255, 0, 0, 0),
+              fontWeight: FontWeight.w900,
+              fontSize: MediaQuery.of(context).size.width * 0.048,
+            )),
+      ],
+    );
+  }
+
+  Widget _buildProfileIcon(BuildContext context, ProfileModel profile,
+      PaymentModel? newestPyt, AuthState authState) {
+    return IconButton(
+      icon: profile.photo == ''
+          ? SvgPicture.asset(
+              'assets/images/avatar.svg',
+              height: MediaQuery.of(context).size.height * 0.048,
+            )
+          : CircleAvatar(
+              backgroundImage: NetworkImage(profile.photo ?? ''),
+            ),
+      onPressed: () {
+        _showProfileDialog(context, profile, newestPyt, authState);
+      },
+    );
+  }
+
+  void _showProfileDialog(BuildContext context, ProfileModel profile,
+      PaymentModel? newestPyt, AuthState authState) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(MediaQuery.of(context).size.width * 0.024),
+            side: BorderSide(
+              color: const Color(0xFF5B8BDF),
+              width: MediaQuery.of(context).size.width * 0.01,
+            ),
+          ),
+          icon: profile.photo == ''
+              ? SvgPicture.asset(
+                  'assets/images/avatar.svg',
+                  height: MediaQuery.of(context).size.height * 0.048,
+                )
+              : CircleAvatar(
+                  backgroundImage: NetworkImage(
+                    profile.photo ?? '',
+                    scale: 2,
+                  ),
+                ),
+          title: Align(
+            alignment: Alignment.center,
+            child: Text.rich(
+              textAlign: TextAlign.center,
+              TextSpan(
+                  text: capitalizeWords(
+                      FirebaseAuth.instance.currentUser?.displayName ??
+                          profile.username ??
+                          ''),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  children: [
+                    TextSpan(
+                        text: '\n${FirebaseAuth.instance.currentUser?.email}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 12.0)),
+                  ]),
+            ),
+          ),
+          backgroundColor: const Color(0xFFFFBD59),
+          elevation: 10.0,
+          shadowColor: const Color(0xFF5B8BDF),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                _buildSubscriptionStatus(context, newestPyt),
+                const SizedBox(height: 10.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildLogoutButton(context, authState),
+                    _buildAccountDetailsButton(context),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSubscriptionStatus(BuildContext context, PaymentModel? newestPyt) {
+    if (newestPyt == null) {
+      return Align(
+        child: Text(
+          'NTA FATABUGUZI URAFATA',
+          style: TextStyle(
+            fontWeight: FontWeight.w900,
+            fontSize: MediaQuery.of(context).size.width * 0.032,
+            color: const Color.fromARGB(255, 255, 0, 0),
+          ),
+        ),
+      );
+    }
+
+    if (newestPyt.getRemainingDays() > 0 && newestPyt.isApproved == true) {
+      return Column(
+        children: [
+          Text(
+            'IFATABUGUZI RYAWE',
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: MediaQuery.of(context).size.width * 0.032,
+              color: const Color.fromARGB(255, 255, 255, 255),
+            ),
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.024),
+          Text(
+            'Rizarangira kuri ${newestPyt.getFormatedEndDate()}',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              height: MediaQuery.of(context).size.height * 0.004,
+              fontWeight: FontWeight.w600,
+              fontSize: MediaQuery.of(context).size.width * 0.036,
+              color: const Color.fromARGB(255, 0, 27, 116),
+            ),
+          ),
+          Text(
+            'Usigaje iminsi ${newestPyt.getRemainingDays()}',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              height: MediaQuery.of(context).size.height * 0.0032,
+              fontWeight: FontWeight.w600,
+              fontSize: MediaQuery.of(context).size.width * 0.032,
+              color: const Color.fromARGB(255, 0, 27, 116),
+            ),
+          ),
+        ],
+      );
+    }
+
+    if (newestPyt.getRemainingDays() > 0 && newestPyt.isApproved == false) {
+      return Container(
+        padding: EdgeInsets.only(
+            top: MediaQuery.of(context).size.height * 0.01),
+        child: Align(
+          child: Text(
+            'Murakoze kwishyura, ifatabuguzi ryawe riri kwigwaho...',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: MediaQuery.of(context).size.width * 0.04,
+              color: const Color.fromARGB(255, 255, 0, 0),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Align(
+      child: Text(
+        'IFATABUGUZI RYARANGIYE!',
+        style: TextStyle(
+          fontWeight: FontWeight.w900,
+          fontSize: MediaQuery.of(context).size.width * 0.032,
+          color: const Color.fromARGB(255, 255, 0, 0),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton(BuildContext context, AuthState authState) {
+    return Align(
+      alignment: Alignment.center,
+      child: ElevatedButton.icon(
+        onPressed: () async {
+          dynamic result = await authState.logOut();
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                result != null ? result : 'Ntibikunze, ongera ugerageze!',
+              ),
+              duration: const Duration(seconds: 10),
+              backgroundColor: const Color(0xFF00A651),
+            ),
+          );
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        },
+        icon: Icon(
+          Icons.logout,
+          size: MediaQuery.of(context).size.width * 0.03,
+        ),
+        label: Text(
+          'Sohoka',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: MediaQuery.of(context).size.width * 0.03,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.03,
+            vertical: MediaQuery.of(context).size.height * 0.006,
+          ),
+          backgroundColor: const Color(0xFF5B8BDF),
+          foregroundColor: const Color(0xFFFFBD59),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+                MediaQuery.of(context).size.width * 0.02),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAccountDetailsButton(BuildContext context) {
+    return Align(
+      alignment: Alignment.center,
+      child: ElevatedButton.icon(
+        onPressed: () {
+          Navigator.of(context).pushNamed('/account');
+        },
+        icon: Icon(
+          Icons.account_circle,
+          size: MediaQuery.of(context).size.width * 0.03,
+        ),
+        label: Text(
+          'Byinshi',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: MediaQuery.of(context).size.width * 0.03,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.03,
+            vertical: MediaQuery.of(context).size.height * 0.006,
+          ),
+          backgroundColor: const Color(0xFF5B8BDF),
+          foregroundColor: const Color(0xFFFFBD59),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+                MediaQuery.of(context).size.width * 0.02),
+          ),
+        ),
+      ),
     );
   }
 

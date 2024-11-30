@@ -142,12 +142,12 @@ class _IgaContentState extends State<IgaContent> {
 
     return MultiProvider(
       providers: [
-        StreamProvider<List<IngingoModel>?>.value(
+        StreamProvider<List<IngingoModel>>.value(
           value: _skip >= 0
               ? IngingoService().getIngingosByIsomoIdPaginated(
                   widget.isomo.id, ingingosPageLimit, _skip)
-              : const Stream<List<IngingoModel>?>.empty(),
-          initialData: null,
+              : const Stream<List<IngingoModel>>.empty(),
+          initialData: [],
           catchError: (context, error) => [],
         ),
         StreamProvider<CourseProgressModel?>.value(

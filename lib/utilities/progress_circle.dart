@@ -56,16 +56,16 @@ class ProgressCircle extends StatelessWidget {
                 backgroundColor: const Color(0xFFBCCCBF),
                 footer: usr == null
                     ? Padding(
-                        padding: EdgeInsets.only(
-                            top: MediaQuery.of(context).size.height * 0.03),
-                        child: Text(
-                          progress,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w900,
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.07,
-                              overflow: TextOverflow.ellipsis),
-                        ),
+                      padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.03),
+                      child: Text(
+                        progress,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize:
+                            MediaQuery.of(context).size.width * 0.05),
+                        overflow: TextOverflow.visible,
+                      ),
                       )
                     : SizedBox.shrink()),
           ),

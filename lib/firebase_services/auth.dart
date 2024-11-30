@@ -18,6 +18,12 @@ class AuthState with ChangeNotifier {
       FirebaseFirestore.instance.collection('profiles');
   final CollectionReference rolesCollection =
       FirebaseFirestore.instance.collection('roles');
+  final CollectionReference paymentsCollection =
+      FirebaseFirestore.instance.collection('payments');
+  final CollectionReference progressCollection =
+      FirebaseFirestore.instance.collection('progresses');
+  final CollectionReference isuzumaScoresCollection =
+      FirebaseFirestore.instance.collection('scores');
 
   UserModel? _userFromFirebaseUser(User usr) {
     return UserModel(uid: usr.uid, usr.email, usr.displayName);
@@ -213,6 +219,57 @@ class AuthState with ChangeNotifier {
       }
     } catch (e) {
       return ReturnedResult(error: 'Unknown error occurred');
+    }
+  }
+
+  // Delete user account
+  Future deleteAccount() async {
+    try {
+      // delete scores
+      await isuzumaScoresCollection
+          .where('takerID', isEqualTo: _currentUser?.uid)
+          .get()
+          .then((value) {
+        value.docs.forEach((element) {
+          element.reference.delete();
+        });
+      });
+
+      // delete progresses
+      await progressCollection
+          .where('userId', isEqualTo: _currentUser?.uid)
+          .get()
+          .then((value) {
+        value.docs.forEach((element) {
+          element.reference.delete();
+        });
+      });
+
+      // delete payments
+      await paymentsCollection
+          .where('userId', isEqualTo: _currentUser?.uid)
+          .get()
+          .then((value) {
+        value.docs.forEach((element) {
+          element.reference.delete();
+        });
+      });
+
+      // delete profile
+      await profilesCollection.doc(_currentUser?.uid).delete();
+      print('\n\nProfile deleted');
+
+      // delete account
+      await _authInstance.currentUser?.delete();
+      print('User account deleted');
+      return ReturnedResult(
+        successMessage: 'Konti yawe yasibwe!',
+      );
+    } catch (e) {
+      print('Failed to delete user account: $e');
+      return ReturnedResult(
+        error: 'Gusiba konti ntibikunda!',
+      );
     }
   }
 

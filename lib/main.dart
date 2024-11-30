@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:itsindire/firebase_services/auth.dart';
-import 'package:itsindire/firebase_services/ibibazo_bibaza_db.dart';
 import 'package:itsindire/firebase_services/ifatabuguzi_db.dart';
 import 'package:itsindire/firebase_services/isomo_db.dart';
 import 'package:itsindire/firebase_services/isomo_progress.dart';
@@ -16,13 +15,12 @@ import 'package:itsindire/firebase_services/isuzuma_db.dart';
 import 'package:itsindire/firebase_services/payment_db.dart';
 import 'package:itsindire/firebase_services/profiledb.dart';
 import 'package:itsindire/models/course_progress.dart';
-import 'package:itsindire/models/ibibazo_bibaza.dart';
 import 'package:itsindire/models/ifatabuguzi.dart';
 import 'package:itsindire/models/isomo.dart';
 import 'package:itsindire/models/isuzuma.dart';
 import 'package:itsindire/models/isuzuma_score.dart';
 import 'package:itsindire/models/payment.dart';
-import 'package:itsindire/models/profile.dart';
+import 'package:itsindire/screens/auth/Konti.dart';
 import 'package:itsindire/screens/auth/injira.dart';
 import 'package:itsindire/screens/auth/iyandikishe.dart';
 import 'package:itsindire/screens/auth/ur_student.dart';
@@ -149,16 +147,6 @@ class _ItsindireAppState extends State<ItsindireApp> {
             return null;
           },
         ),
-        StreamProvider<ProfileModel?>.value(
-          value: FirebaseAuth.instance.currentUser != null
-              ? ProfileService()
-                  .getCurrentProfileByID(FirebaseAuth.instance.currentUser!.uid)
-              : null,
-          initialData: null,
-          catchError: (context, error) {
-            return null;
-          },
-        ),
         StreamProvider<List<IsomoModel?>?>.value(
           value: IsomoService()
               .getAllAmasomo(FirebaseAuth.instance.currentUser?.uid),
@@ -181,10 +169,6 @@ class _ItsindireAppState extends State<ItsindireApp> {
           catchError: (context, error) {
             return [];
           },
-        ),
-        StreamProvider<List<IbibazoBibazaModel>>.value(
-          value: IbibazoBibazaService().ibibazoBibaza,
-          initialData: const [],
         ),
         StreamProvider<List<IsuzumaModel>?>.value(
           value: IsuzumaService().amasuzumabumenyi,
@@ -219,6 +203,7 @@ class _ItsindireAppState extends State<ItsindireApp> {
             '/iyandikishe': (context) => const Iyandikishe(),
             '/ur-student': (context) => const UrStudent(),
             '/wibagiwe': (context) => const Wibagiwe(),
+            '/account': (context) => const Konti(),
           },
         );
       }),

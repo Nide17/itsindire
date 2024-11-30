@@ -12,8 +12,9 @@ import 'package:itsindire/utilities/loading_widget.dart';
 
 class ProcessingIshyura extends StatefulWidget {
   final IfatabuguziModel ifatabuguzi;
+  final bool isUrStudent;
 
-  const ProcessingIshyura({super.key, required this.ifatabuguzi});
+  const ProcessingIshyura({super.key, required this.ifatabuguzi, required this.isUrStudent});
 
   @override
   State<ProcessingIshyura> createState() => _ProcessingIshyuraState();
@@ -290,7 +291,8 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
             Ifatabuguzi(
                 index: 0,
                 ifatabuguzi: widget.ifatabuguzi,
-                curWidget: runtimeType.toString()),
+                curWidget: runtimeType.toString(),
+                isUrStudent: widget.isUrStudent),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.03,
             )
