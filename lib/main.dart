@@ -12,14 +12,12 @@ import 'package:itsindire/firebase_services/ifatabuguzi_db.dart';
 import 'package:itsindire/firebase_services/isomo_db.dart';
 import 'package:itsindire/firebase_services/isomo_progress.dart';
 import 'package:itsindire/firebase_services/isuzuma_db.dart';
-import 'package:itsindire/firebase_services/payment_db.dart';
 import 'package:itsindire/firebase_services/profiledb.dart';
 import 'package:itsindire/models/course_progress.dart';
 import 'package:itsindire/models/ifatabuguzi.dart';
 import 'package:itsindire/models/isomo.dart';
 import 'package:itsindire/models/isuzuma.dart';
 import 'package:itsindire/models/isuzuma_score.dart';
-import 'package:itsindire/models/payment.dart';
 import 'package:itsindire/screens/auth/Konti.dart';
 import 'package:itsindire/screens/auth/injira.dart';
 import 'package:itsindire/screens/auth/iyandikishe.dart';
@@ -137,16 +135,6 @@ class _ItsindireAppState extends State<ItsindireApp> {
         ),
         ChangeNotifierProvider(create: (_) => AuthState()),
         ChangeNotifierProvider(create: (_) => ProfileService()),
-        StreamProvider<PaymentModel?>.value(
-          value: FirebaseAuth.instance.currentUser != null
-              ? PaymentService()
-                  .getNewestPytByUserId(FirebaseAuth.instance.currentUser!.uid)
-              : null,
-          initialData: null,
-          catchError: (context, error) {
-            return null;
-          },
-        ),
         StreamProvider<List<IsomoModel?>?>.value(
           value: IsomoService()
               .getAllAmasomo(FirebaseAuth.instance.currentUser?.uid),

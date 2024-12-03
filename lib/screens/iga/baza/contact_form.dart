@@ -158,7 +158,7 @@ class EmailService {
     final emailMessage = Message()
       ..from = Address(email, name)
       ..recipients.add('itsindire.rw@gmail.com')
-      ..ccRecipients.addAll(['quizblog.rw@gmail.com'])
+      ..ccRecipients.addAll(['quizblog.rw@gmail.com', 'info@quizblog.rw'])
       ..subject = 'Message from $name [$email]'
       ..text = message;
 

@@ -1,9 +1,12 @@
+import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class PaymentModel {
-  DateTime createdAt;
-  DateTime endAt;
+  DateTime? createdAt;
+  DateTime? endAt;
   String? userId;
   String? ifatabuguziID;
-  String? igiciro;
+  int? igiciro;
   bool? isApproved;
   String? phone;
 
@@ -18,9 +21,12 @@ class PaymentModel {
   });
 
   // GET REMAINING DAYS
-int getRemainingDays() {
+  int getRemainingDays() {
     DateTime now = DateTime.now();
-    Duration diff = endAt.difference(now);
+    if (endAt == null) {
+      return 0;
+    }
+    Duration diff = endAt!.difference(now);
     int daysDifference = diff.inDays;
 
     // Check if there is any remaining time in the day beyond the full days difference
@@ -38,25 +44,61 @@ int getRemainingDays() {
     return daysDifference;
   }
 
-  // GET FORMATED END DATE - 2021-09-30
+  // GET REMAINING MINUTES
+  int getRemainingMinutes() {
+    DateTime now = DateTime.now();
+    if (endAt == null) {
+      return 0;
+    }
+    Duration diff = endAt!.difference(now);
+    int minutesDifference = diff.inMinutes;
+
+    // Check if there is any remaining time in the day beyond the full days difference
+    if (diff.inSeconds % 60 > 0) {
+      if (diff.isNegative) {
+        minutesDifference -=
+            1; // Passed time within a day should be considered as a full day passed
+      } else {
+        minutesDifference +=
+            1; // Remaining time within a day should be considered as a full day remaining
+      }
+    }
+    return minutesDifference;
+  }
+
+  // GET FORMATTED END DATE - 2021-09-30
   String getFormatedEndDate() {
-    DateTime end = endAt;
-    String formatedEnd = '${end.day}-${end.month}-${end.year}';
-    return formatedEnd;
+    DateFormat formatter = DateFormat('yyyy-MM-dd');
+    if (endAt != null) {
+      return formatter.format(endAt!);
+    } else {
+      return 'N/A'; // or any default value you prefer
+    }
   }
 
   String getFormatedEndDateTime() {
-    DateTime end = endAt;
-    String formatedEnd =
-        '${end.day}-${end.month}-${end.year} ${end.hour}:${end.minute}';
-    return formatedEnd;
+    DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
+    if (endAt != null) {
+      return formatter.format(endAt!);
+    } else {
+      return 'N/A'; // or any default value you prefer
+    }
+    }
+
+  String getFormattedCreatedAt() {
+    DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
+    if (createdAt != null) {
+      return formatter.format(createdAt!);
+    } else {
+      return 'N/A'; // or any default value you prefer
+    }
   }
 
   // FROM JSON
   factory PaymentModel.fromJson(Map<String, dynamic> json) {
     return PaymentModel(
-      createdAt: json['createdAt'].toDate(),
-      endAt: json['endAt'].toDate(),
+      createdAt: (json['createdAt'] as Timestamp).toDate(),
+      endAt: (json['endAt'] as Timestamp).toDate(),
       userId: json['userId'],
       ifatabuguziID: json['ifatabuguziID'],
       igiciro: json['igiciro'],
@@ -68,8 +110,8 @@ int getRemainingDays() {
   // TO JSON
   Map<String, dynamic> toJson() {
     return {
-      'createdAt': createdAt,
-      'endAt': endAt,
+      'createdAt': createdAt?.toIso8601String(),
+      'endAt': endAt?.toIso8601String(),
       'userId': userId,
       'ifatabuguziID': ifatabuguziID,
       'igiciro': igiciro,

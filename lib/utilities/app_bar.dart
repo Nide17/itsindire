@@ -21,12 +21,13 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   final CollectionReference paymentsCollection =
       FirebaseFirestore.instance.collection('payments');
   late StreamSubscription<QuerySnapshot> _paymentsSubscription;
+  final User? currentUser = FirebaseAuth.instance.currentUser;
 
   // payments stream
   Stream<QuerySnapshot> get payments {
-    if (FirebaseAuth.instance.currentUser != null) {
+    if (currentUser != null) {
       return paymentsCollection
-          .where('userId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .where('userId', isEqualTo: currentUser!.uid)
           .snapshots();
     }
     return const Stream.empty();
@@ -42,7 +43,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
         dynamic doc = change.doc.data();
 
         if (change.type == DocumentChangeType.modified &&
-            doc['userId'] == FirebaseAuth.instance.currentUser!.uid &&
+            doc['userId'] == currentUser!.uid &&
             doc['isApproved'] == true) {
           _showSnackBar('Ifatabuguzi ryawe ryemejwe. Ubu watangira kwiga!');
         }
@@ -81,17 +82,15 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
     return MultiProvider(
       providers: [
         StreamProvider<PaymentModel?>.value(
-          value: FirebaseAuth.instance.currentUser != null
-              ? PaymentService()
-                  .getNewestPytByUserId(FirebaseAuth.instance.currentUser!.uid)
+          value: currentUser != null
+              ? PaymentService().getNewestPytByUserId(currentUser!.uid)
               : null,
           initialData: null,
           catchError: (context, error) => null,
         ),
         StreamProvider<ProfileModel?>.value(
-          value: FirebaseAuth.instance.currentUser != null
-              ? ProfileService()
-                  .getCurrentProfileByID(FirebaseAuth.instance.currentUser!.uid)
+          value: currentUser != null
+              ? ProfileService().getCurrentProfileByID(currentUser!.uid)
               : null,
           initialData: null,
           catchError: (context, error) => null,
@@ -100,8 +99,6 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
       child: Consumer<AuthState>(builder: (context, authState, _) {
         return Consumer<ProfileModel?>(builder: (context, profile, _) {
           return Consumer<PaymentModel?>(builder: (context, newestPyt, _) {
-            final user = FirebaseAuth.instance.currentUser;
-
             return AppBar(
               backgroundColor: const Color(0xFF5B8BDF),
               automaticallyImplyLeading: false,
@@ -114,7 +111,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
               ),
               title: _buildTitle(context),
               actions: <Widget>[
-                if (user != null && profile != null)
+                if (currentUser != null && profile != null && newestPyt != null)
                   _buildProfileIcon(context, profile, newestPyt, authState),
               ],
             );
@@ -145,7 +142,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   }
 
   Widget _buildProfileIcon(BuildContext context, ProfileModel profile,
-      PaymentModel? newestPyt, AuthState authState) {
+      PaymentModel newestPyt, AuthState authState) {
     return IconButton(
       icon: profile.photo == ''
           ? SvgPicture.asset(
@@ -162,14 +159,14 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   }
 
   void _showProfileDialog(BuildContext context, ProfileModel profile,
-      PaymentModel? newestPyt, AuthState authState) {
+      PaymentModel newestPyt, AuthState authState) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(MediaQuery.of(context).size.width * 0.024),
+            borderRadius: BorderRadius.circular(
+                MediaQuery.of(context).size.width * 0.024),
             side: BorderSide(
               color: const Color(0xFF5B8BDF),
               width: MediaQuery.of(context).size.width * 0.01,
@@ -192,9 +189,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
               textAlign: TextAlign.center,
               TextSpan(
                   text: capitalizeWords(
-                      FirebaseAuth.instance.currentUser?.displayName ??
-                          profile.username ??
-                          ''),
+                      currentUser?.displayName ?? profile.username ?? ''),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                   children: [
                     TextSpan(
@@ -227,7 +222,8 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
     );
   }
 
-  Widget _buildSubscriptionStatus(BuildContext context, PaymentModel? newestPyt) {
+  Widget _buildSubscriptionStatus(
+      BuildContext context, PaymentModel? newestPyt) {
     if (newestPyt == null) {
       return Align(
         child: Text(
@@ -235,6 +231,22 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
           style: TextStyle(
             fontWeight: FontWeight.w900,
             fontSize: MediaQuery.of(context).size.width * 0.032,
+            color: const Color.fromARGB(255, 255, 0, 0),
+          ),
+        ),
+      );
+    }
+
+    if (newestPyt.ifatabuguziID == 'UGl3ahnKZdVrBVTItht7') {
+      return Align(
+        child: Text(
+          newestPyt.getRemainingMinutes() > 0
+              ? 'USIGAJE IMINOTA ${newestPyt.getRemainingMinutes()}, GURA IFATABUGUZI VUBA!'
+              : 'IGERAGEZA RYARANGIYE, GURA IFATABUGUZI',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: MediaQuery.of(context).size.width * 0.04,
             color: const Color.fromARGB(255, 255, 0, 0),
           ),
         ),
@@ -279,8 +291,8 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
 
     if (newestPyt.getRemainingDays() > 0 && newestPyt.isApproved == false) {
       return Container(
-        padding: EdgeInsets.only(
-            top: MediaQuery.of(context).size.height * 0.01),
+        padding:
+            EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.01),
         child: Align(
           child: Text(
             'Murakoze kwishyura, ifatabuguzi ryawe riri kwigwaho...',
@@ -297,7 +309,9 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
 
     return Align(
       child: Text(
-        'IFATABUGUZI RYARANGIYE!',
+        (newestPyt.ifatabuguziID == 'UGl3ahnKZdVrBVTItht7')
+            ? 'IGERAGEZA RYARANGIYE, GURA IFATABUGUZI'
+            : 'IFATABUGUZI RYARANGIYE!',
         style: TextStyle(
           fontWeight: FontWeight.w900,
           fontSize: MediaQuery.of(context).size.width * 0.032,
@@ -344,8 +358,8 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
           backgroundColor: const Color(0xFF5B8BDF),
           foregroundColor: const Color(0xFFFFBD59),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-                MediaQuery.of(context).size.width * 0.02),
+            borderRadius:
+                BorderRadius.circular(MediaQuery.of(context).size.width * 0.02),
           ),
         ),
       ),
@@ -378,8 +392,8 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
           backgroundColor: const Color(0xFF5B8BDF),
           foregroundColor: const Color(0xFFFFBD59),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-                MediaQuery.of(context).size.width * 0.02),
+            borderRadius:
+                BorderRadius.circular(MediaQuery.of(context).size.width * 0.02),
           ),
         ),
       ),

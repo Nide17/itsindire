@@ -10,6 +10,7 @@ import 'package:itsindire/utilities/default_input.dart';
 import 'package:itsindire/utilities/description.dart';
 import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:itsindire/screens/auth/message_container.dart';
 
 class Injira extends StatefulWidget {
   final String? message;
@@ -50,7 +51,7 @@ class _InjiraState extends State<Injira> {
   }
 
   void _showSnackbar(String message, ReturnedResult result) {
-    print(message);
+
     if (scaffoldMessenger != null) {
       scaffoldMessenger!.showSnackBar(
         SnackBar(
@@ -66,6 +67,27 @@ class _InjiraState extends State<Injira> {
               : const Color.fromARGB(255, 255, 0, 0),
         ),
       );
+    }
+  }
+
+  Future<void> _handleLogin(AuthState authState) async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      setState(() => loading = true);
+      try {
+        ReturnedResult result = await authState.userLogin(email, password);
+
+        _showSnackbar(
+          result.successMessage ?? result.error ?? 'Kwinjira ntibikunze. Mwongere mugerageze!',
+          result,
+        );
+      } finally {
+        if (mounted)
+        setState(() => loading = false);
+      }
+    } else {
+      if (mounted)
+      setState(() => loading = false);
     }
   }
 
@@ -101,65 +123,15 @@ class _InjiraState extends State<Injira> {
               ),
               child: ListView(
                 children: [
-                  widget.message != null
-                      ? Container(
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          margin: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.05,
-                            vertical: MediaQuery.of(context).size.height * 0.03,
-                          ),
-                          padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * 0.04,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFFDE59),
-                            border: Border.all(
-                              width: 2.0,
-                              color: const Color.fromARGB(255, 255, 204, 0),
-                            ),
-                            borderRadius: BorderRadius.circular(24.0),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Color.fromARGB(255, 59, 57, 77),
-                                offset: Offset(0, 3),
-                                blurRadius: 8,
-                                spreadRadius: -7,
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                widget.message!,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width * 0.04,
-                                  fontWeight: FontWeight.w900,
-                                  color: const Color.fromARGB(255, 0, 0, 0),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Container(),
-                  const GradientTitle(
-                      title: 'INJIRA', icon: 'assets/images/injira.svg'),
+                  if (widget.message != null) 
+                    MessageContainer(message: widget.message!),
+                  const GradientTitle(title: 'INJIRA', icon: 'assets/images/injira.svg'),
                   const Description(text: 'Banza winjire ubone gukomeza!'),
-                  loading == true
-                      ? const LoadingWidget()
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                              Image.asset(
-                                'assets/images/house_keys.png',
-                                height:
-                                    MediaQuery.of(context).size.height * 0.2,
-                                width: MediaQuery.of(context).size.width * 0.2,
-                              ),
-                            ]),
+                  loading ? const LoadingWidget() : Image.asset(
+                    'assets/images/house_keys.png',
+                    height: MediaQuery.of(context).size.height * 0.2,
+                    width: MediaQuery.of(context).size.width * 0.2,
+                  ),
                   Padding(
                     padding: EdgeInsets.symmetric(
                         horizontal: MediaQuery.of(context).size.width * 0.05,
@@ -184,25 +156,7 @@ class _InjiraState extends State<Injira> {
                           ),
                           CtaButton(
                             text: 'Injira - Login',
-                            onPressed: _formKey.currentState != null
-                                ? () async {
-                                    if (_formKey.currentState!.validate()) {
-                                      _formKey.currentState!.save();
-                                      setState(() => loading = true);
-                                      ReturnedResult result = await authState
-                                          .userLogin(email, password);
-                                      _showSnackbar(
-                                        result.successMessage ??
-                                            result.error ??
-                                            'Kwinjira ntibikunze. Mwongere mugerageze!',
-                                        result,
-                                      );
-
-                                      if (mounted)
-                                        setState(() => loading = false);
-                                    }
-                                  }
-                                : null,
+                            onPressed: () => _handleLogin(authState),
                           ),
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,

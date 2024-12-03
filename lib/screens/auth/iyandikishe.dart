@@ -6,11 +6,12 @@ import 'package:provider/provider.dart';
 import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
 import 'package:itsindire/utilities/cta_button.dart';
 import 'package:itsindire/utilities/cta_link.dart';
-import 'package:itsindire/utilities/default_input.dart';
 import 'package:itsindire/utilities/description.dart';
 import 'package:itsindire/screens/iga/utils/gradient_title.dart';
 import 'package:itsindire/utilities/app_bar.dart';
 import 'package:itsindire/firebase_services/auth.dart';
+import 'package:itsindire/screens/auth/message_container.dart';
+import 'package:itsindire/screens/auth/form_fields.dart';
 
 class Iyandikishe extends StatefulWidget {
   final String? message;
@@ -62,66 +63,27 @@ class _IyandikisheState extends State<Iyandikishe> {
             ),
             child: ListView(
               children: [
-                widget.message != null
-                    ? Container(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        margin: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.05,
-                          vertical: MediaQuery.of(context).size.height * 0.03,
-                        ),
-                        padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width * 0.04,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFDE59),
-                          border: Border.all(
-                            width: 2.0,
-                            color: const Color.fromARGB(255, 255, 204, 0),
-                          ),
-                          borderRadius: BorderRadius.circular(24.0),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color.fromARGB(255, 59, 57, 77),
-                              offset: Offset(0, 3),
-                              blurRadius: 8,
-                              spreadRadius: -7,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              widget.message!,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.04,
-                                fontWeight: FontWeight.w900,
-                                color: const Color.fromARGB(255, 0, 0, 0),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Container(),
+                if (widget.message != null)
+                  MessageContainer(message: widget.message!),
                 const GradientTitle(
                     title: 'IYANDIKISHE',
                     icon: 'assets/images/iyandikishe.svg'),
                 const Description(
                     text:
                         'Iyandikishe ubundi, wige, umenye utsindire provisoire!'),
-                loading == true
-                    ? const LoadingWidget()
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                            Image.asset(
-                              'assets/images/house_keys.png',
-                              height: MediaQuery.of(context).size.height * 0.2,
-                              width: MediaQuery.of(context).size.width * 0.2,
-                            ),
-                          ]),
+                if (loading) const LoadingWidget(),
+                if (!loading)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/house_keys.png',
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        width: MediaQuery.of(context).size.width * 0.2,
+                      ),
+                    ],
+                  ),
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width * 0.05,
@@ -131,79 +93,16 @@ class _IyandikisheState extends State<Iyandikishe> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        DefaultInput(
-                          placeholder: 'Izina',
-                          validation: 'Injiza izina ryawe!',
-                          onChanged: (val) {
-                            setState(() => username = val);
-                          },
-                        ),
-                        DefaultInput(
-                          placeholder: 'Imeyili',
-                          validation: 'Injiza imeyili yawe!',
-                          onChanged: (val) {
-                            setState(() => email = val);
-                          },
-                        ),
-
-                        // IJAMBOBANGA
-                        DefaultInput(
-                          placeholder: 'Ijambobanga',
-                          validation: 'Injiza ijambobanga!',
-                          onChanged: (val) {
-                            setState(() => password = val);
-                          },
+                        FormFields(
+                          onUsernameChanged: (val) =>
+                              setState(() => username = val),
+                          onEmailChanged: (val) => setState(() => email = val),
+                          onPasswordChanged: (val) =>
+                              setState(() => password = val),
                         ),
                         CtaButton(
                           text: 'Iyandikishe',
-                          onPressed: () async {
-                            setState(() => loading = true);
-                            if (_formKey.currentState!.validate()) {
-                              ReturnedResult result =
-                                  await authState.registerNewUser(
-                                      username, email, password, false, '', '');
-
-                              if (result.value != null) {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(const SnackBar(
-                                        content: Text(
-                                          'Kwiyandikisha byagenze neza, Injira!',
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                        ),
-                                        backgroundColor: Color(0xFF00A651)));
-
-                                if (!mounted) return;
-                                setState(() => loading = false);
-                                Navigator.pushReplacementNamed(
-                                    context, '/injira');
-                              } else {
-                                if (!mounted) return;
-                                showDialog(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (BuildContext context) {
-                                    return ItsindireAlert(
-                                      errorTitle:
-                                          'Kwiyandisha ntibyagenze neza!',
-                                      errorMsg: result.error ??
-                                          'Kwiyandisha ntibyagenze neza, hamagara 0794033360 tugufashe!',
-                                      alertType: 'error',
-                                      secondButtonTitle: 'Injira',
-                                      secondButtonFunction: () {
-                                        Navigator.pop(context);
-                                        Navigator.pushReplacementNamed(
-                                            context, '/injira');
-                                      },
-                                      secondButtonColor: Color(0xFF00A651),
-                                    );
-                                  },
-                                );
-                              }
-                            }
-                          },
+                          onPressed: () => _registerUser(authState),
                         ),
                         const CtaAuthLink(
                           text1: 'Niba wariyandikishije, ',
@@ -255,5 +154,74 @@ class _IyandikisheState extends State<Iyandikishe> {
             ),
           ));
     });
+  }
+
+  void _registerUser(AuthState authState) async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => loading = true);
+
+      try {
+        ReturnedResult registerResult = await authState.registerNewUser(
+            username, email, password, false, '', '');
+
+        if (registerResult.value != null) {
+          await _loginUser(authState);
+        } else {
+          _showErrorDialog(
+              'Kwiyandikisha ntibyagenze neza!',
+              registerResult.error ??
+                  'Kwiyandikisha ntibyagenze neza, hamagara 0794033360 tugufashe!');
+        }
+      } catch (e) {
+        _showErrorDialog('Kwiyandikisha ntibyagenze neza!',
+            'Hari ikibazo cya network, gerageza nanone!');
+      } finally {
+        setState(() => loading = false);
+      }
+    } else {
+      setState(() => loading = false);
+    }
+  }
+
+  Future<void> _loginUser(AuthState authState) async {
+    ReturnedResult loginResult = await authState.userLogin(email, password);
+
+    if (loginResult.value != null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+            'Kwiyandikisha byagenze neza!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          backgroundColor: Color(0xFF00A651)));
+
+      Navigator.pushReplacementNamed(context, '/iga-landing');
+    } else {
+      _showErrorDialog('Kwinjira ntibyagenze neza!',
+          loginResult.error ?? 'Kwinjira ntibyagenze neza, Injira nanone!');
+    }
+  }
+
+  void _showErrorDialog(String title, String message) {
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return ItsindireAlert(
+          errorTitle: title,
+          errorMsg: message,
+          alertType: 'error',
+          secondButtonTitle: 'Injira',
+          secondButtonFunction: () {
+            Navigator.pop(context);
+            Navigator.pushReplacementNamed(context, '/injira');
+          },
+          secondButtonColor: Color(0xFF00A651),
+        );
+      },
+    );
   }
 }

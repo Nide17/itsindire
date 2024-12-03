@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
+import 'package:itsindire/utilities/default_input.dart';
 import 'package:provider/provider.dart';
 import 'package:itsindire/utilities/description.dart';
 import 'package:itsindire/screens/iga/utils/gradient_title.dart';
@@ -14,6 +16,8 @@ class Konti extends StatefulWidget {
 
 // STATE FOR THE SIGN IN PAGE - STATEFUL
 class _KontiState extends State<Konti> {
+  final _formKey = GlobalKey<FormState>();
+  String password = '';
   bool _isDeleting = false;
 
   @override
@@ -43,121 +47,60 @@ class _KontiState extends State<Konti> {
             ),
           ),
           child: ListView(
-            padding: const EdgeInsets.all(16.0),
             children: [
               const GradientTitle(
                 title: 'KONTI YAWE',
                 icon: 'assets/images/avatar.svg',
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Description(
-                  text:
-                      'Ikaze ${authState.currentProfile!.username}, aya ni amakuri ya konti yawe kuri Itsindire.',
-                ),
+              Description(
+                text:
+                    'Ikaze ${authState.currentProfile!.username}, aya ni amakuri ya konti yawe kuri Itsindire.',
               ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+              _buildProfileInfo(
+                context,
+                'Izina rya konti',
+                authState.currentProfile!.username ?? 'N/A',
+              ),
+              _buildProfileInfo(
+                context,
+                'Imeyili',
+                authState.currentProfile!.email ?? 'N/A',
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.05,
+                    vertical: 0.0),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildProfileInfo(
-                          context,
-                          'Izina rya konti',
-                          authState.currentProfile!.username ?? 'N/A',
-                        ),
-                        _buildProfileInfo(
-                          context,
-                          'Imeyili',
-                          authState.currentProfile!.email ?? 'N/A',
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.02,
-                        ),
-                        _isDeleting
-                            ? CircularProgressIndicator()
-                            : ElevatedButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text('Siba konti yawe!'),
-                                        content: const Text(
-                                            'Ubu se wifuza gusiba konti yawe kuri Itsindire? ushobora kuyisiba ariko igenda burundu.'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Oya',
-                                                style: TextStyle(
-                                                    color: Colors.white)),
-                                            style: TextButton.styleFrom(
-                                              backgroundColor: Colors.green,
-                                            ),
-                                          ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              setState(() {
-                                                _isDeleting = true;
-                                              });
-                                              try {
-                                                await authState.deleteAccount();
-                                                Navigator.of(context).popUntil(
-                                                    (route) => route.isFirst);
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                        'Konti yawe yasibwe neza.'),
-                                                    backgroundColor:
-                                                        Colors.green,
-                                                  ),
-                                                );
-                                              } catch (e) {
-                                                Navigator.of(context).pop();
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                        'Habayeho ikosa: $e'),
-                                                    backgroundColor: Colors.red,
-                                                  ),
-                                                );
-                                              } finally {
-                                                setState(() {
-                                                  _isDeleting = false;
-                                                });
-                                              }
-                                            },
-                                            child: const Text('Yego',
-                                                style: TextStyle(
-                                                    color: Colors.white)),
-                                            style: TextButton.styleFrom(
-                                              backgroundColor: Colors.red,
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24.0,
-                                    vertical: 12.0,
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          DefaultInput(
+                            placeholder: 'Ijambobanga',
+                            validation: 'Injiza ijambobanga!',
+                            onChanged: (value) =>
+                                setState(() => password = value),
+                          ),
+                          _isDeleting
+                              ? CircularProgressIndicator()
+                              : ElevatedButton(
+                                  onPressed: () => _showDeleteAccountDialog(
+                                      context, authState),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24.0,
+                                      vertical: 12.0,
+                                    ),
                                   ),
+                                  child: const Text('Siba konti yawe',
+                                      style: TextStyle(color: Colors.white)),
                                 ),
-                                child: const Text('Siba konti yawe',
-                                    style: TextStyle(color: Colors.white)),
-                              ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -169,9 +112,89 @@ class _KontiState extends State<Konti> {
     });
   }
 
+  void _showDeleteAccountDialog(BuildContext context, AuthState authState) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Siba konti yawe!'),
+          content: const Text(
+              'Ubu se wifuza gusiba konti yawe kuri Itsindire? ushobora kuyisiba ariko igenda burundu.'),
+          actions: [
+            _buildDialogButton(
+              context: context,
+              label: 'Oya',
+              color: Colors.green,
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            _buildDialogButton(
+              context: context,
+              label: 'Yego',
+              color: Colors.red,
+              onPressed: () => _deleteAccount(context, authState),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  TextButton _buildDialogButton({
+    required BuildContext context,
+    required String label,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return TextButton(
+      onPressed: onPressed,
+      child: Text(label, style: const TextStyle(color: Colors.white)),
+      style: TextButton.styleFrom(backgroundColor: color),
+    );
+  }
+
+  Future<void> _deleteAccount(BuildContext context, AuthState authState) async {
+    setState(() {
+      _isDeleting = true;
+    });
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null && user.email != null) {
+        await authState.deleteAccount(user.uid, user.email!, password);
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Konti yawe yasibwe neza.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        _showErrorSnackBar(
+            context, 'Email is not provided. Log out and log in again.');
+      }
+    } catch (e) {
+      _showErrorSnackBar(context, 'Habayeho ikosa: $e');
+    } finally {
+      setState(() {
+        _isDeleting = false;
+      });
+    }
+  }
+
+  void _showErrorSnackBar(BuildContext context, String message) {
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
   Widget _buildProfileInfo(BuildContext context, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.05,
+          vertical: MediaQuery.of(context).size.height * 0.01),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

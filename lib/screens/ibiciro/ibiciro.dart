@@ -25,49 +25,42 @@ class _IbiciroState extends State<Ibiciro> {
   bool isUrStudent = false;
   List<IfatabuguziModel?> subscriptionsToUse = [];
 
+  void showSnackBar(String message, Color backgroundColor) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width * 0.04,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          backgroundColor: backgroundColor,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final conn = Provider.of<ConnectionStatus>(context);
 
     if (conn.isOnline == false) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              textAlign: TextAlign.center,
-              isUrStudent == true
-                  ? 'No internet connection!'
-                  : 'Nta internet mufite!.',
-              style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width * 0.04,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            backgroundColor: const Color.fromARGB(255, 255, 8, 0),
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      });
+      showSnackBar(
+        isUrStudent ? 'No internet connection!' : 'Nta internet mufite!.',
+        const Color.fromARGB(255, 255, 8, 0),
+      );
       everDisconnected = true;
     }
 
     if (conn.isOnline == true && everDisconnected == true) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              isUrStudent == true ? 'Back online!' : 'Internet yagarutse!',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width * 0.04,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            backgroundColor: const Color.fromARGB(255, 0, 255, 85),
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      });
+      showSnackBar(
+        isUrStudent ? 'Back online!' : 'Internet yagarutse!',
+        const Color.fromARGB(255, 0, 255, 85),
+      );
     }
 
     return MultiProvider(
@@ -96,15 +89,27 @@ class _IbiciroState extends State<Ibiciro> {
         return Consumer<List<IfatabuguziModel?>?>(
             builder: (context, amafatabuguzi, _) {
           if (amafatabuguzi != null) {
-            if (profile != null && profile.urStudent == true) {
-              subscriptionsToUse = amafatabuguzi
-                  .where((element) => element!.type == 'ur')
-                  .toList();
-            } else {
-              subscriptionsToUse = amafatabuguzi
-                  .where((element) => element!.type == 'standard')
-                  .toList();
-            }
+            subscriptionsToUse = amafatabuguzi
+                .where((element) => element!.type == (isUrStudent ? 'ur' : 'standard'))
+                .toList();
+          }
+
+          // loading
+          if (subscriptionsToUse.isEmpty) {
+            return Scaffold(
+              backgroundColor: const Color.fromARGB(255, 71, 103, 158),
+              appBar: PreferredSize(
+                preferredSize: Size.fromHeight(58.0),
+                child: AppBarItsindire(),
+              ),
+              body: conn.isOnline == false
+                  ? const NoInternet()
+                  : const Center(
+                      child: CircularProgressIndicator(
+                        color: const Color(0xFFFFBD59),
+                      ),
+                    ),
+            );
           }
           return Scaffold(
             backgroundColor: const Color.fromARGB(255, 71, 103, 158),

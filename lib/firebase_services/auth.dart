@@ -36,7 +36,9 @@ class AuthState with ChangeNotifier {
     _authSubscription = _authInstance.authStateChanges().listen((user) {
       if (!isDisposed) {
         _currentUser = user;
-        _currentUser != null ? _updateProfile(_currentUser) : null;
+        if (_currentUser != null) {
+          _updateProfile(_currentUser);
+        }
         notifyListeners();
       }
     });
@@ -74,9 +76,14 @@ class AuthState with ChangeNotifier {
     await _profileSubscription?.cancel();
 
     if (user != null) {
-      _profileService.getCurrentProfileByID(user.uid).listen((profile) async {
-        setCurrentProfile(profile);
-      });
+      try {
+        _profileSubscription =
+            _profileService.getCurrentProfileByID(user.uid).listen((profile) {
+          setCurrentProfile(profile);
+        });
+      } catch (e) {
+        print('Failed to update profile: $e');
+      }
     } else {
       setCurrentProfile(null);
     }
@@ -84,26 +91,31 @@ class AuthState with ChangeNotifier {
 
   // LOG OUT METHOD
   Future logOut() async {
-    String? loggedOutUserName =
-        currentProfile?.username != null && currentProfile?.username != ''
-            ? currentProfile?.username
-            : currentUser?.email;
+    try {
+      String? loggedOutUserName =
+          currentProfile?.username != null && currentProfile?.username != ''
+              ? currentProfile?.username
+              : currentUser?.email;
 
-    // Sign out
-    await _authInstance.signOut();
+      // Sign out
+      await _authInstance.signOut();
 
-    // Clear sessionID in the profile
-    if (currentProfile != null) {
-      await profilesCollection
-          .doc(currentProfile?.uid)
-          .update({'sessionID': null});
+      // Clear sessionID in the profile
+      if (currentProfile != null) {
+        await profilesCollection
+            .doc(currentProfile?.uid)
+            .update({'sessionID': null});
+      }
+
+      // Clear the current user and profile
+      setCurrentUser(null);
+      setCurrentProfile(null);
+
+      return 'Bye $loggedOutUserName!';
+    } catch (e) {
+      print('Failed to log out: $e');
+      return 'Failed to log out';
     }
-
-    // Clear the current user and profile
-    setCurrentUser(null);
-    setCurrentProfile(null);
-
-    return 'Bye $loggedOutUserName!';
   }
 
   // RESET PASSWORD METHOD
@@ -111,8 +123,16 @@ class AuthState with ChangeNotifier {
     try {
       await _authInstance.sendPasswordResetEmail(email: email);
       return 'success';
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        return 'User not found';
+      } else if (e.code == 'invalid-email') {
+        return 'Invalid email';
+      } else {
+        return 'Failed to send reset email';
+      }
     } catch (e) {
-      return null;
+      return 'An unknown error occurred';
     }
   }
 
@@ -154,6 +174,19 @@ class AuthState with ChangeNotifier {
         'sessionID': sessionId,
       }, SetOptions(merge: true));
 
+      // Update the current user's payment data
+      await paymentsCollection.doc(result.user?.uid).get().then((value) {
+        if (value.exists &&
+            value.get('ifatabuguziID') == 'UGl3ahnKZdVrBVTItht7' &&
+            value.get('endAt') == null) {
+          paymentsCollection.doc(result.user?.uid).update({
+            'createdAt': DateTime.now(),
+            'endAt': DateTime.now().add(Duration(minutes: 30)),
+            'isApproved': true,
+          });
+        }
+      });
+
       String username = result.user!.displayName ??
           querySnapshot.docs.first.get('username') ??
           email;
@@ -165,11 +198,15 @@ class AuthState with ChangeNotifier {
         return ReturnedResult(error: 'Konti ntibashije kuboneka. Iyandikishe!');
       } else if (e.code == 'wrong-password') {
         return ReturnedResult(error: 'Ijambo banga siryo!');
+      } else if (e.code == 'invalid-email') {
+        return ReturnedResult(error: 'Invalid email format');
+      } else if (e.code == 'user-disabled') {
+        return ReturnedResult(error: 'User account is disabled');
       } else {
         return ReturnedResult(error: 'Ntibikunze, reba ko ufite interineti!');
       }
     } catch (e) {
-      print(e);
+      print("\n\n\n Error occured: $e \n\n\n");
       return ReturnedResult(error: 'Habayeho ikosa, ibyo musabye ntibyakunda.');
     }
   }
@@ -184,7 +221,6 @@ class AuthState with ChangeNotifier {
         password: password,
       );
       result.user?.updateDisplayName(username);
-      // result.user?.sendEmailVerification();
 
       User? user = result.user;
 
@@ -200,14 +236,22 @@ class AuthState with ChangeNotifier {
           'sessionID': '',
         });
 
-        // Log out the user
-        await _authInstance.signOut();
+        // save trial payment
+        await paymentsCollection.doc(user.uid).set({
+          'ifatabuguziID': 'UGl3ahnKZdVrBVTItht7',
+          'userId': user.uid,
+          'igiciro': 0,
+          'createdAt': null,
+          'endAt': null,
+          'isApproved': true,
+          'phone': null,
+        });
 
         return ReturnedResult(
-          value: 'User registered successfully. Please log in.',
+          value: 'Registered successfully, welcome!',
         );
       } else {
-        return ReturnedResult(error: 'User registration failed.');
+        return ReturnedResult(error: 'Registration failed.');
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -223,41 +267,47 @@ class AuthState with ChangeNotifier {
   }
 
   // Delete user account
-  Future deleteAccount() async {
+  Future deleteAccount(String userId, String email, String password) async {
     try {
+
+      // re-authenticate user before deleting account
+      AuthCredential credential = EmailAuthProvider.credential(
+        email: email,
+        password: password,
+      );
+
+      await _authInstance.currentUser?.reauthenticateWithCredential(credential);
+      print('Deleting user account: ${userId}');
+
+      // delete payments
+      await paymentsCollection.doc(userId).delete();
+      print('Payments deleted');
+
+      // delete profile
+      await profilesCollection.doc(userId).delete();
+      print('\n\nProfile deleted');
+
       // delete scores
       await isuzumaScoresCollection
-          .where('takerID', isEqualTo: _currentUser?.uid)
+          .where('takerID', isEqualTo: userId)
           .get()
           .then((value) {
         value.docs.forEach((element) {
           element.reference.delete();
         });
       });
+      print('Scores deleted');
 
       // delete progresses
       await progressCollection
-          .where('userId', isEqualTo: _currentUser?.uid)
+          .where('userId', isEqualTo: userId)
           .get()
           .then((value) {
         value.docs.forEach((element) {
           element.reference.delete();
         });
       });
-
-      // delete payments
-      await paymentsCollection
-          .where('userId', isEqualTo: _currentUser?.uid)
-          .get()
-          .then((value) {
-        value.docs.forEach((element) {
-          element.reference.delete();
-        });
-      });
-
-      // delete profile
-      await profilesCollection.doc(_currentUser?.uid).delete();
-      print('\n\nProfile deleted');
+      print('Progresses deleted');
 
       // delete account
       await _authInstance.currentUser?.delete();
@@ -266,7 +316,7 @@ class AuthState with ChangeNotifier {
         successMessage: 'Konti yawe yasibwe!',
       );
     } catch (e) {
-      print('Failed to delete user account: $e');
+      print('\n\n\nFailed to delete user account: $e');
       return ReturnedResult(
         error: 'Gusiba konti ntibikunda!',
       );
