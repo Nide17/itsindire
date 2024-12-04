@@ -170,7 +170,6 @@ class _IyandikisheState extends State<Iyandikishe> {
 
         if (registerResult.value != null) {
           await _loginUser(authState);
-          // appBarItsindire.startTrialTimer();
         } else {
           _showErrorDialog(
               'Kwiyandikisha ntibyagenze neza!',
@@ -179,7 +178,7 @@ class _IyandikisheState extends State<Iyandikishe> {
         }
       } catch (e) {
         _showErrorDialog('Kwiyandikisha ntibyagenze neza!',
-            'Hari ikibazo cya network, gerageza nanone!');
+            'Habayeho ikibazo, gerageza nanone! Error: $e');
       } finally {
         setState(() => loading = false);
       }
@@ -193,6 +192,7 @@ class _IyandikisheState extends State<Iyandikishe> {
 
     if (loginResult.value != null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          duration: Duration(seconds: 2),
           content: Text(
             'Kwiyandikisha byagenze neza!',
             textAlign: TextAlign.center,
@@ -203,6 +203,17 @@ class _IyandikisheState extends State<Iyandikishe> {
           backgroundColor: Color(0xFF00A651)));
 
       Navigator.pushReplacementNamed(context, '/iga-landing');
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        duration: Duration(seconds: 6),
+          content: Text(
+            'UTANGIYE IGERAGEZA RIRANGIRA MUMINOTA 30',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              color: Color.fromARGB(255, 0, 105, 51)
+            ),
+          ),
+          backgroundColor: Color.fromARGB(255, 250, 213, 6)));
     } else {
       _showErrorDialog('Kwinjira ntibyagenze neza!',
           loginResult.error ?? 'Kwinjira ntibyagenze neza, Injira nanone!');
