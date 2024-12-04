@@ -28,61 +28,63 @@ class DirectionButtonIsuzume extends StatefulWidget {
 }
 
 class _DirectionButtonIsuzumeState extends State<DirectionButtonIsuzume> {
+  void _handleOnPressed() {
+    if (widget.isDisabled) return;
+
+    if (widget.direction == 'inyuma') {
+      widget.backward!();
+      if (widget.currQnID == 0) {
+        Navigator.pop(context);
+      }
+    } else if (widget.direction == 'komeza') {
+      widget.forward!();
+      if (widget.currQnID == widget.lastQn) {
+        Navigator.pop(context);
+      }
+    }
+  }
+
+  Widget _buildIcon(String direction, double opacity) {
+    return Opacity(
+      opacity: opacity,
+      child: SvgPicture.asset(
+        direction == 'inyuma'
+            ? 'assets/images/backward.svg'
+            : 'assets/images/forward.svg',
+        width: MediaQuery.of(context).size.width * 0.03,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // RETURN THE WIDGETS
     return ElevatedButton(
-      onPressed: () {
-        if (widget.direction == 'inyuma' && widget.isDisabled == false) {
-          // DECREASE SKIP STATE
-          widget.backward!();
-
-          // REMOVE THE CURRENT PAGE FROM THE STACK IF NO MORE PREVIOUS PAGES
-          if (widget.currQnID == 0) {
-            Navigator.pop(context);
-          }
-        } else if (widget.direction == 'komeza' && widget.isDisabled == false) {
-          // INCREASE SKIP STATE
-          widget.forward!();
-
-          // REMOVE THE CURRENT PAGE FROM THE STACK IF NO MORE NEXT PAGES
-          if (widget.currQnID == widget.lastQn) {
-            Navigator.pop(context);
-          }
-        }
-      },
+      onPressed: _handleOnPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: widget.isDisabled
             ? const Color(0xFF00CCE5).withOpacity(0.4)
             : const Color(0xFF00CCE5),
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(32.0),
-            side: BorderSide(
-              color: const Color.fromARGB(255, 0, 0, 0),
-              style: BorderStyle.solid,
-              width: MediaQuery.of(context).size.width * 0.005,
-            )),
+          borderRadius: BorderRadius.circular(32.0),
+          side: BorderSide(
+            color: const Color.fromARGB(255, 0, 0, 0),
+            style: BorderStyle.solid,
+            width: MediaQuery.of(context).size.width * 0.005,
+          ),
+        ),
         padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.036,
-            vertical: 0.0),
+          horizontal: MediaQuery.of(context).size.width * 0.036,
+          vertical: 0.0,
+        ),
       ),
       child: SingleChildScrollView(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // ICON
             Visibility(
-              visible: widget.direction == 'inyuma' ? true : false,
-              child: Opacity(
-                opacity: widget.opacity,
-                child: SvgPicture.asset(
-                  widget.direction == 'inyuma'
-                      ? 'assets/images/backward.svg'
-                      : 'assets/images/forward.svg',
-                  width: MediaQuery.of(context).size.width * 0.03,
-                ),
-              ),
+              visible: widget.direction == 'inyuma',
+              child: _buildIcon(widget.direction, widget.opacity),
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.01,
@@ -90,24 +92,19 @@ class _DirectionButtonIsuzumeState extends State<DirectionButtonIsuzume> {
             Text(
               widget.buttonText,
               style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: MediaQuery.of(context).size.width * 0.024,
-                  color: Colors.black),
-            ), // ICON
+                fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.of(context).size.width * 0.024,
+                color: Colors.black,
+              ),
+            ),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.01,
             ),
             Visibility(
-              visible: widget.direction == 'inyuma' ? false : true,
-              child: Opacity(
-                opacity:
-                    widget.currQnID == widget.lastQn ? 1.0 : widget.opacity,
-                child: SvgPicture.asset(
-                  widget.direction == 'inyuma'
-                      ? 'assets/images/backward.svg'
-                      : 'assets/images/forward.svg',
-                  width: MediaQuery.of(context).size.width * 0.032,
-                ),
+              visible: widget.direction != 'inyuma',
+              child: _buildIcon(
+                widget.direction,
+                widget.currQnID == widget.lastQn ? 1.0 : widget.opacity,
               ),
             ),
           ],

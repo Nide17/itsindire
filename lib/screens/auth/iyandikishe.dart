@@ -37,7 +37,8 @@ class _IyandikisheState extends State<Iyandikishe> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (Provider.of<AuthState>(context, listen: false).currentUser != null) {
+      final user = Provider.of<AuthState>(context, listen: false).currentUser;
+      if (user != null && user.refreshToken != null) {
         Navigator.pushReplacementNamed(context, '/iga-landing');
       }
     });

@@ -25,75 +25,78 @@ class _HagatiState extends State<Hagati> {
 
   @override
   Widget build(BuildContext context) {
-
     return MultiProvider(
-        providers: [
-          StreamProvider<List<IsomoModel?>?>.value(
-            value: IsomoService()
-                .getAllAmasomo(FirebaseAuth.instance.currentUser?.uid),
-            initialData: null,
-            catchError: (context, error) => [],
-          ),
-          StreamProvider<List<CourseProgressModel?>?>.value(
-            value: FirebaseAuth.instance.currentUser != null
-                ? CourseProgressService().getUnfinishedProgresses(
-                    FirebaseAuth.instance.currentUser!.uid)
-                : null,
-            initialData: null,
-            catchError: (context, error) {
-              return [];
-            },
-          ),
-        ],
-        child: Consumer<List<IsomoModel?>?>(
-                builder: (context, allAmasomos, child) {
-            return Consumer<List<CourseProgressModel?>?>(
-                builder: (context, notFinishedProgresses, child) {
-
+      providers: [
+        StreamProvider<List<IsomoModel?>?>.value(
+          value: IsomoService().getAllAmasomo(FirebaseAuth.instance.currentUser?.uid),
+          initialData: null,
+          catchError: (context, error) => [],
+        ),
+        StreamProvider<List<CourseProgressModel?>?>.value(
+          value: FirebaseAuth.instance.currentUser != null
+              ? CourseProgressService().getUnfinishedProgresses(FirebaseAuth.instance.currentUser!.uid)
+              : null,
+          initialData: null,
+          catchError: (context, error) => [],
+        ),
+      ],
+      child: Consumer<List<IsomoModel?>?>(
+        builder: (context, allAmasomos, child) {
+          return Consumer<List<CourseProgressModel?>?>(
+            builder: (context, notFinishedProgresses, child) {
               if (notFinishedProgresses != null && allAmasomos != null &&
                   (allAmasomos.length - notFinishedProgresses.length > 0)) {
-                overallProgress =
-                    (allAmasomos.length - notFinishedProgresses.length) /
-                        allAmasomos.length;
+                overallProgress = (allAmasomos.length - notFinishedProgresses.length) / allAmasomos.length;
               }
-            
-              return Consumer<AuthState>(builder: (context, authState, _) {
-                return Scaffold(
+              return Consumer<AuthState>(
+                builder: (context, authState, _) {
+                  return Scaffold(
                     backgroundColor: const Color.fromARGB(255, 71, 103, 158),
                     appBar: PreferredSize(
                       preferredSize: Size.fromHeight(58.0),
                       child: AppBarItsindire(),
                     ),
-                    body: ScrollbarTheme(
-                      data: ScrollbarThemeData(
-                        thumbColor: WidgetStateProperty.all(Color(0xFFFFBD59)),
-                      ),
-                      child: Scrollbar(
-                        child: ListView(children: <Widget>[
-                          const GradientTitle(
-                              title: 'AMASOMO UGEZEMO HAGATI',
-                              icon: 'assets/images/video_icon.svg'),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.01,
-                          ),
-                          ProgressCircle(
-                            percent: authState.currentProfile != null ? overallProgress : 0.0,
-                            progress: authState.currentProfile != null
-                                ? 'Ugeze kukigero cya ${(overallProgress * 100).toStringAsFixed(0)}% wiga!'
-                                : 'Banza winjire!',
-                            usr: authState.currentUser,
-                          ),
-                          if (authState.currentProfile != null)
-                            AmasomoProgress(progressesToShow: notFinishedProgresses, isHagati: true)
-                          else
-                            const ViewNotLoggedIn(),
-                        ]),
-                      ),
-                    ),
-                    bottomNavigationBar: const RebaIbiciro());
-              });
-            });
-          }
-        ));
+                    body: buildBody(context, authState, allAmasomos, notFinishedProgresses),
+                    bottomNavigationBar: const RebaIbiciro(),
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildBody(BuildContext context, AuthState authState, List<IsomoModel?>? allAmasomos, List<CourseProgressModel?>? notFinishedProgresses) {
+    return ScrollbarTheme(
+      data: ScrollbarThemeData(
+        thumbColor: WidgetStateProperty.all(Color(0xFFFFBD59)),
+      ),
+      child: Scrollbar(
+        child: ListView(
+          children: <Widget>[
+            const GradientTitle(
+              title: 'AMASOMO UGEZEMO HAGATI',
+              icon: 'assets/images/video_icon.svg',
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.01,
+            ),
+            ProgressCircle(
+              percent: authState.currentProfile != null ? overallProgress : 0.0,
+              progress: authState.currentProfile != null
+                  ? 'Ugeze kukigero cya ${(overallProgress * 100).toStringAsFixed(0)}% wiga!'
+                  : 'Banza winjire!',
+              usr: authState.currentUser,
+            ),
+            if (authState.currentProfile != null)
+              AmasomoProgress(progressesToShow: notFinishedProgresses, isHagati: true)
+            else
+              const ViewNotLoggedIn(),
+          ],
+        ),
+      ),
+    );
   }
 }

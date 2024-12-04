@@ -15,10 +15,11 @@ class PaymentService {
     final data = documentSnapshot.data() as Map<String, dynamic>;
 
     try {
-      final createdAt = data['createdAt'] != null
+      final createdAt = data['createdAt'] is Timestamp
           ? (data['createdAt'] as Timestamp).toDate()
           : null;
-      final endAt = data['endAt'] != null
+
+      final endAt = data['endAt'] is Timestamp
           ? (data['endAt'] as Timestamp).toDate()
           : null;
       final userId = data.containsKey('userId') ? data['userId'] : '';
@@ -89,16 +90,28 @@ class PaymentService {
       // IF THE ACTIVE PAYMENT IS NOT EMPTY, RETURN FALSE WITH A MESSAGE
       if (activePayment.docs.isNotEmpty) {
         for (var doc in activePayment.docs) {
-          if (doc.get('isApproved')) {
+          if (doc.get('isApproved') && doc.get('ifatabuguziID') != 'UGl3ahnKZdVrBVTItht7') {
             return ReturnedResult(
               error:
-                  'You have an active payment. Please wait for it to end, or contact us for change!',
+                  'Ufite ifatabuguzi ritararangira, reka rirangire cga utuvugishe turihindure!',
             );
           }
         }
       }
 
-      // CREATE PAYMENT IN FIRESTORE AND SET THE ID AS THE PHONE NUMBER
+      // DLETE THE UGl3ahnKZdVrBVTItht7 PAYMENT IF ANY
+      final uGl3ahnKZdVrBVTItht7Payment = await paymentsCollection
+          .where('userId', isEqualTo: payment.userId)
+          .where('ifatabuguziID', isEqualTo: 'UGl3ahnKZdVrBVTItht7')
+          .get();
+
+      if (uGl3ahnKZdVrBVTItht7Payment.docs.isNotEmpty) {
+        for (var doc in uGl3ahnKZdVrBVTItht7Payment.docs) {
+          await paymentsCollection.doc(doc.id).delete();
+        }
+      }
+
+      // CREATE PAYMENT IN FIRESTORE AND SET THE ID AS THE USER ID
       await paymentsCollection.doc(payment.userId).set(payment.toJson());
 
       // SEND EMAIL NOTIFICATION

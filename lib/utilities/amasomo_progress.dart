@@ -24,12 +24,7 @@ class AmasomoProgress extends StatefulWidget {
 class _AmasomoProgressState extends State<AmasomoProgress> {
   @override
   Widget build(BuildContext context) {
-
-    final sortedProgresses = widget.progressesToShow
-      ?..sort((a, b) {
-        return a!.courseId.compareTo(b!.courseId);
-      });
-      
+    final sortedProgresses = _getSortedProgresses(widget.progressesToShow);
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
     final screenHeight = mediaQuery.size.height;
@@ -94,11 +89,17 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
 
                 return _buildProgressCard(
                     context, isomo, progress, screenWidth, screenHeight);
-              }).toList() ??
-              [],
+              }).toList() ?? [],
         );
       }),
     );
+  }
+
+  List<CourseProgressModel?>? _getSortedProgresses(List<CourseProgressModel?>? progresses) {
+    final sortedProgresses = progresses?..sort((a, b) {
+      return a!.courseId.compareTo(b!.courseId);
+    });
+    return sortedProgresses;
   }
 
   Widget _buildMessageColumn(BuildContext context, String messageText,

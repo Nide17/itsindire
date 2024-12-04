@@ -9,19 +9,19 @@ class RouteActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void _handleOnPressed() {
+      if (route != null) {
+        Navigator.pushNamed(context, route!);
+      } else if (action != null) {
+        action!();
+      } else {
+        print('No action provided');
+      }
+    }
+
     return Center(
       child: ElevatedButton(
-        onPressed: route != null
-            ? () {
-                Navigator.pushNamed(context, route!);
-              }
-            : action != null
-                ? () {
-                    action!();
-                  }
-                : () {
-                    print('No action provided');
-                  },
+        onPressed: _handleOnPressed,
         style: ElevatedButton.styleFrom(
           fixedSize: Size(
             MediaQuery.of(context).size.width * 0.4,

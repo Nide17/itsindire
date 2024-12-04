@@ -8,18 +8,11 @@ class Description extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(children: [
       Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: MediaQuery.of(context).size.height * 0.05,
-          horizontal: MediaQuery.of(context).size.width * 0.05,
-        ),
+        padding: _getPadding(context),
         child: Text(
           text,
           textAlign: TextAlign.justify,
-          style: TextStyle(
-            fontSize: MediaQuery.of(context).size.width * 0.05,
-            color: const Color.fromARGB(255, 255, 255, 255),
-            fontWeight: FontWeight.w600,
-          ),
+          style: _getTextStyle(context),
         ),
       ),
       Container(
@@ -27,5 +20,20 @@ class Description extends StatelessWidget {
         height: MediaQuery.of(context).size.height * 0.01,
       ),
     ]);
+  }
+
+  EdgeInsets _getPadding(BuildContext context) {
+    return EdgeInsets.symmetric(
+      vertical: MediaQuery.of(context).size.height * 0.05,
+      horizontal: MediaQuery.of(context).size.width * 0.05,
+    );
+  }
+
+  TextStyle _getTextStyle(BuildContext context) {
+    return TextStyle(
+      fontSize: MediaQuery.of(context).size.width * 0.05,
+      color: const Color.fromARGB(255, 255, 255, 255),
+      fontWeight: FontWeight.w600,
+    );
   }
 }

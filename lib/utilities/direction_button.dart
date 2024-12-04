@@ -36,10 +36,10 @@ class DirectionButton extends StatefulWidget {
 }
 
 class _DirectionButtonState extends State<DirectionButton> {
+  int ingingoID = 0;
+
   @override
   Widget build(BuildContext context) {
-    int ingingoID = 0;
-
     // Generate a list of ingingos IDs from ingingoID
     List<int> listIngingosID2 = List.generate(5, (i) => ingingoID + i);
 
@@ -56,99 +56,114 @@ class _DirectionButtonState extends State<DirectionButton> {
           catchError: (context, error) => [],
         ),
       ],
-      child: Consumer<List<IngingoModel>>(builder: (context, pageIngingos, _) {
-        ingingoID = pageIngingos.isNotEmpty ? pageIngingos[0].id : 0;
-        return Consumer<CourseProgressModel?>(
-            builder: (context, courseProgress, _) {
-          return Consumer<List<PopQuestionModel>?>(
-              builder: (context, popQuestions, child) {
-            List<int> currentIngingosIds =
-                pageIngingos.isNotEmpty ? pageIngingos.map((e) => e.id).toList() : [];
+      child: Consumer3<List<IngingoModel>, CourseProgressModel?, List<PopQuestionModel>?>(
+        builder: (context, pageIngingos, courseProgress, pagePopQuestions, _) {
+          print('pagePopQuestions: $pagePopQuestions');
 
-            bool isIngingosHavePopQuestions = currentIngingosIds.contains(
-                popQuestions != null && popQuestions.isNotEmpty
-                    ? popQuestions[0].ingingoID
-                    : 0);
+          if (pageIngingos.isNotEmpty && ingingoID != pageIngingos[0].id) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              setState(() {
+                ingingoID = pageIngingos[0].id;
+              });
+            });
+          }
 
-            return ElevatedButton(
-              onPressed: () {
-                widget.scrollTop();
-                if (widget.direction == 'inyuma') {
-                  widget.changeSkipNumber(-5);
-                } else if (widget.direction == 'komeza') {
-                  // UPDATE THE CURRENT INGINGO
-                  if (widget.skip >= 0 &&
-                      widget.skip <= courseProgress!.totalIngingos &&
-                      pageIngingos.length + widget.skip >
-                          courseProgress.currentIngingo &&
-                      popQuestions!.isEmpty) {
-                    CourseProgressService().updateUserCourseProgress(
-                      courseProgress.userId,
-                      widget.isomo.id,
-                      widget.skip + pageIngingos.length,
-                      courseProgress.totalIngingos,
-                      null,
-                    );
-                  }
+          List<int> currentIngingosIds =
+              pageIngingos.isNotEmpty ? pageIngingos.map((e) => e.id).toList() : [];
 
-                  if (popQuestions != null &&
-                      popQuestions.isNotEmpty &&
-                      isIngingosHavePopQuestions) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PopQuiz(
-                          popQuestions: popQuestions,
-                          isomo: widget.isomo,
-                          courseProgress: courseProgress!,
-                          currentIngingo: widget.skip + pageIngingos.length,
-                          coursechangeSkipNumber: widget.changeSkipNumber,
-                        ),
-                      ),
-                    );
-                  } else {
-                    widget.changeSkipNumber(5);
-                  }
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                fixedSize: Size(
-                  MediaQuery.of(context).size.width * 0.3,
-                  MediaQuery.of(context).size.height * 0.0,
-                ),
-                backgroundColor: const Color(0xFF00CCE5),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(32.0),
-                    side: BorderSide(
-                      color: const Color.fromARGB(255, 0, 0, 0),
-                      style: BorderStyle.solid,
-                      width: MediaQuery.of(context).size.width * 0.005,
-                    )),
-                padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.05,
-                    vertical: MediaQuery.of(context).size.height * 0.01),
-              ),
-              child: SingleChildScrollView(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildIcon(widget.direction == 'inyuma'),
-                    Text(
-                      widget.buttonText,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: MediaQuery.of(context).size.width * 0.035,
-                          color: Colors.black),
-                    ),
-                    _buildIcon(widget.direction != 'inyuma'),
-                  ],
-                ),
-              ),
-            );
-          });
-        });
-      }),
+          bool isPageIngingosHavePopQuestions = currentIngingosIds.contains(
+              pagePopQuestions != null && pagePopQuestions.isNotEmpty
+                  ? pagePopQuestions[0].ingingoID
+                  : 0);
+
+          return ElevatedButton(
+            onPressed: () => _handleOnPressed(context, pageIngingos, courseProgress, pagePopQuestions, isPageIngingosHavePopQuestions),
+            style: _buttonStyle(context),
+            child: _buttonChild(context),
+          );
+        },
+      ),
+    );
+  }
+
+  void _handleOnPressed(BuildContext context, List<IngingoModel> pageIngingos, CourseProgressModel? courseProgress, List<PopQuestionModel>? pagePopQuestions, bool isPageIngingosHavePopQuestions) {
+    widget.scrollTop();
+    if (widget.direction == 'inyuma') {
+      widget.changeSkipNumber(-5);
+    } else if (widget.direction == 'komeza') {
+      // UPDATE THE CURRENT INGINGO
+      if (widget.skip >= 0 &&
+          widget.skip <= courseProgress!.totalIngingos &&
+          pageIngingos.length + widget.skip >
+              courseProgress.currentIngingo &&
+          pagePopQuestions!.isEmpty) {
+        CourseProgressService().updateUserCourseProgress(
+          courseProgress.userId,
+          widget.isomo.id,
+          widget.skip + pageIngingos.length,
+          courseProgress.totalIngingos,
+          null,
+        );
+      }
+
+      if (pagePopQuestions != null &&
+          pagePopQuestions.isNotEmpty &&
+          isPageIngingosHavePopQuestions) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PopQuiz(
+              popQuestions: pagePopQuestions,
+              isomo: widget.isomo,
+              courseProgress: courseProgress!,
+              currentIngingo: widget.skip + pageIngingos.length,
+              coursechangeSkipNumber: widget.changeSkipNumber,
+            ),
+          ),
+        );
+      } else {
+        widget.changeSkipNumber(5);
+      }
+    }
+  }
+
+  ButtonStyle _buttonStyle(BuildContext context) {
+    return ElevatedButton.styleFrom(
+      fixedSize: Size(
+        MediaQuery.of(context).size.width * 0.3,
+        MediaQuery.of(context).size.height * 0.0,
+      ),
+      backgroundColor: const Color(0xFF00CCE5),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(32.0),
+          side: BorderSide(
+            color: const Color.fromARGB(255, 0, 0, 0),
+            style: BorderStyle.solid,
+            width: MediaQuery.of(context).size.width * 0.005,
+          )),
+      padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.05,
+          vertical: MediaQuery.of(context).size.height * 0.01),
+    );
+  }
+
+  Widget _buttonChild(BuildContext context) {
+    return SingleChildScrollView(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _buildIcon(widget.direction == 'inyuma'),
+          Text(
+            widget.buttonText,
+            style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: MediaQuery.of(context).size.width * 0.035,
+                color: Colors.black),
+          ),
+          _buildIcon(widget.direction != 'inyuma'),
+        ],
+      ),
     );
   }
 

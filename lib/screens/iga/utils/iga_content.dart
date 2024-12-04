@@ -36,6 +36,7 @@ class IgaContent extends StatefulWidget {
 }
 
 class _IgaContentState extends State<IgaContent> {
+  // Variables to manage pagination and state
   int _skip = 0;
   int _increment = 0;
   IsomoModel? nextIsomo;
@@ -61,6 +62,7 @@ class _IgaContentState extends State<IgaContent> {
     super.dispose();
   }
 
+  // Calculate initial skip value based on course progress
   int _calculateInitialSkip() {
     if (widget.courseProgress != null &&
         widget.courseProgress.currentIngingo !=
@@ -70,6 +72,7 @@ class _IgaContentState extends State<IgaContent> {
     return 0;
   }
 
+  // Fetch the next Isomo (lesson) asynchronously
   Future<void> _fetchNextIsomo() async {
     try {
       final finishedProgressesStream = CourseProgressService()
@@ -88,6 +91,7 @@ class _IgaContentState extends State<IgaContent> {
     }
   }
 
+  // Process finished progresses to determine the next Isomo
   void _processFinishedProgresses(List<CourseProgressModel?> progresses) async {
     final finishedCourses = progresses
         .where((progress) =>
@@ -115,6 +119,7 @@ class _IgaContentState extends State<IgaContent> {
     }
   }
 
+  // Scroll to the top of the page
   void _scrollToTop() {
     _scrollController.animateTo(
       0.0,
@@ -123,6 +128,7 @@ class _IgaContentState extends State<IgaContent> {
     );
   }
 
+  // Change the skip number for pagination
   void changeSkipNumber(int number) {
     setState(() {
       _skip += number;
@@ -172,6 +178,7 @@ class _IgaContentState extends State<IgaContent> {
 
           return Consumer<List<PopQuestionModel>?>(
             builder: (context, popQuestions, _) {
+              
               return Consumer<List<IngingoModel>?>(
                 builder: (context, ingingos, _) {
                   if (ingingos == null) {
@@ -190,6 +197,7 @@ class _IgaContentState extends State<IgaContent> {
     );
   }
 
+  // Build the main content of the screen
   Widget _buildContent(
     BuildContext context,
     int currentIngingo,
@@ -205,6 +213,7 @@ class _IgaContentState extends State<IgaContent> {
     return _buildIngingosScreen(context, currentIngingo, totalIngingos);
   }
 
+  // Build the completion screen when all ingingos are completed
   Widget _buildCompletionScreen(
     BuildContext context,
     List<PopQuestionModel>? popQuestions,
@@ -234,6 +243,7 @@ class _IgaContentState extends State<IgaContent> {
     );
   }
 
+  // Build the ingingos screen for the current lesson
   Widget _buildIngingosScreen(
       BuildContext context, int currentIngingo, int totalIngingos) {
     return AnimatedSwitcher(
@@ -305,6 +315,7 @@ class _IgaContentState extends State<IgaContent> {
     );
   }
 
+  // Build the bottom navigation bar with direction buttons
   Widget _buildBottomNavigationBar(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.092,
@@ -352,6 +363,7 @@ class _IgaContentState extends State<IgaContent> {
     );
   }
 
+  // Start the next Isomo (lesson)
   void _startNextIsomo(
       BuildContext context, List<PopQuestionModel>? popQuestions, User? usr) {
     Navigator.pop(context);

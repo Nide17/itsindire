@@ -45,30 +45,56 @@ class _UserProgressState extends State<UserProgress> {
   }
 
   void _showProgressDialog(BuildContext context, PaymentModel payment, double percent, int? unansweredPopQuestions, bool isUrStudent) {
+    if (payment.isApproved != true) {
+      _showErrorDialog(context, 'Ntibyagenze neza', 'Ifatabuguzi ryawe ntiriremezwa!');
+      return;
+    }
+
+    if (percent == 1.0 && unansweredPopQuestions == 0) {
+      _showCompletionDialog(context, payment, isUrStudent);
+      return;
+    }
+
+    _showProgressDialogContent(context, payment, percent, unansweredPopQuestions, isUrStudent);
+  }
+
+  void _showErrorDialog(BuildContext context, String title, String message) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        if (payment.isApproved != true) {
-          return const ItsindireAlert(
-            errorTitle: 'Ntibyagenze neza',
-            errorMsg: 'Ifatabuguzi ryawe ntiriremezwa!',
-            alertType: 'error',
-          );
-        }
+        return ItsindireAlert(
+          errorTitle: title,
+          errorMsg: message,
+          alertType: 'error',
+        );
+      },
+    );
+  }
 
-        if (percent == 1.0 && unansweredPopQuestions == 0) {
-          return !(payment.endAt?.isAfter(DateTime.now()) ?? false)
-              ? Ibiciro(
-                  message: isUrStudent
-                      ? 'Buy a package to continue learning!'
-                      : 'Banza ugure ifatabuguzi!')
-              : IsuzumeContent(
-                  isomo: widget.isomo,
-                  courseProgress: widget.courseProgress,
-                );
-        }
+  void _showCompletionDialog(BuildContext context, PaymentModel payment, bool isUrStudent) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return !(payment.endAt?.isAfter(DateTime.now()) ?? false)
+            ? Ibiciro(
+                message: isUrStudent
+                    ? 'Buy a package to continue learning!'
+                    : 'Banza ugure ifatabuguzi!')
+            : IsuzumeContent(
+                isomo: widget.isomo,
+                courseProgress: widget.courseProgress,
+              );
+      },
+    );
+  }
 
+  void _showProgressDialogContent(BuildContext context, PaymentModel payment, double percent, int? unansweredPopQuestions, bool isUrStudent) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
         return ItsindireAlert(
           errorTitle: 'IBIJYANYE NIRI SOMO',
           errorMsg: loadingRealTotalIngingos
@@ -119,6 +145,7 @@ class _UserProgressState extends State<UserProgress> {
     final int? unansweredPopQuestions = widget.courseProgress != null
         ? widget.courseProgress?.unansweredPopQuestions
         : 0;
+
     final double percent = (widget.courseProgress?.totalIngingos != 0 &&
             widget.courseProgress!.totalIngingos >= curCourseIngingo!)
         ? (curCourseIngingo / widget.courseProgress!.totalIngingos)

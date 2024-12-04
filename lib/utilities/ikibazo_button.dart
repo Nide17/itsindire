@@ -36,9 +36,7 @@ class _IkibazoButtonState extends State<IkibazoButton> {
           horizontal: MediaQuery.of(context).size.width * 0.00,
         ),
         child: ElevatedButton(
-          onPressed: () {
-            widget.isActive ? null : widget.showQn(widget.qnIndex);
-          },
+          onPressed: widget.isActive ? null : () => widget.showQn(widget.qnIndex),
           style: ElevatedButton.styleFrom(
             backgroundColor: widget.isActive
                 ? const Color.fromARGB(255, 0, 47, 142)
@@ -67,9 +65,9 @@ class _IkibazoButtonState extends State<IkibazoButton> {
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: MediaQuery.of(context).size.width * 0.035,
-                      color: scoreProviderModel.quizScore
+                      color: (scoreProviderModel.quizScore
                                   .questions[widget.qnIndex].isAnswered ||
-                              widget.isActive
+                              widget.isActive)
                           ? Colors.white
                           : Colors.black),
                 ),

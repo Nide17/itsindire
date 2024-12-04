@@ -25,12 +25,7 @@ class ProgressCircle extends StatelessWidget {
         children: [
           if (usr != null)
             Expanded(
-              child: Text(progress,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: MediaQuery.of(context).size.width * 0.045,
-                  ),
-                  textAlign: TextAlign.center), // Center the text
+              child: _buildProgressText(context),
             )
           else
             SizedBox.shrink(),
@@ -58,19 +53,23 @@ class ProgressCircle extends StatelessWidget {
                     ? Padding(
                       padding: EdgeInsets.only(
                         top: MediaQuery.of(context).size.height * 0.03),
-                      child: Text(
-                        progress,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize:
-                            MediaQuery.of(context).size.width * 0.05),
-                        overflow: TextOverflow.visible,
-                      ),
+                      child: _buildProgressText(context),
                       )
                     : SizedBox.shrink()),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildProgressText(BuildContext context) {
+    return Text(
+      progress,
+      style: TextStyle(
+        fontWeight: FontWeight.w900,
+        fontSize: MediaQuery.of(context).size.width * 0.045,
+      ),
+      textAlign: TextAlign.center,
     );
   }
 }

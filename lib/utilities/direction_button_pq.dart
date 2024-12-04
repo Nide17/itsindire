@@ -71,18 +71,7 @@ class _DirectionButtonPqState extends State<DirectionButtonPq> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Visibility(
-              visible: widget.direction == 'inyuma' ? true : false,
-              child: Opacity(
-                opacity: widget.opacity,
-                child: SvgPicture.asset(
-                  widget.direction == 'inyuma'
-                      ? 'assets/images/backward.svg'
-                      : 'assets/images/forward.svg',
-                  width: MediaQuery.of(context).size.width * 0.05,
-                ),
-              ),
-            ),
+            _buildIcon(widget.direction == 'inyuma', widget.opacity),
             Text(
               widget.buttonText,
               style: TextStyle(
@@ -90,19 +79,21 @@ class _DirectionButtonPqState extends State<DirectionButtonPq> {
                   fontSize: MediaQuery.of(context).size.width * 0.035,
                   color: Colors.black),
             ),
-            Visibility(
-              visible: widget.direction == 'inyuma' ? false : true,
-              child: Opacity(
-                opacity: widget.currQnID == lastQn ? 1.0 : widget.opacity,
-                child: SvgPicture.asset(
-                  widget.direction == 'inyuma'
-                      ? 'assets/images/backward.svg'
-                      : 'assets/images/forward.svg',
-                  width: MediaQuery.of(context).size.width * 0.05,
-                ),
-              ),
-            ),
+            _buildIcon(widget.direction != 'inyuma', widget.currQnID == lastQn ? 1.0 : widget.opacity),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIcon(bool isVisible, double opacity) {
+    return Visibility(
+      visible: isVisible,
+      child: Opacity(
+        opacity: opacity,
+        child: SvgPicture.asset(
+          isVisible ? 'assets/images/backward.svg' : 'assets/images/forward.svg',
+          width: MediaQuery.of(context).size.width * 0.05,
         ),
       ),
     );

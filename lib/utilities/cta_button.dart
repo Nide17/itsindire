@@ -12,8 +12,13 @@ class CtaButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return // 4. BUTTON
-        Column(
+    final double buttonElevation = MediaQuery.of(context).size.width * 0.015;
+    final double horizontalPadding = MediaQuery.of(context).size.width * 0.1;
+    final double verticalPadding = MediaQuery.of(context).size.height * 0.016;
+    final double fontSize = MediaQuery.of(context).size.width * 0.036;
+    final double spacing = MediaQuery.of(context).size.height * 0.035;
+
+    return Column(
       children: [
         SizedBox(
           width: double.infinity,
@@ -23,11 +28,11 @@ class CtaButton extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24.0),
               ),
-              elevation: MediaQuery.of(context).size.width * 0.015,
+              elevation: buttonElevation,
               shadowColor: const Color.fromARGB(255, 0, 0, 0),
               padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.1,
-                  vertical: MediaQuery.of(context).size.height * 0.016),
+                  horizontal: horizontalPadding,
+                  vertical: verticalPadding),
               side: const BorderSide(
                 color: Color.fromARGB(255, 255, 255, 255),
                 width: 3.0,
@@ -39,13 +44,13 @@ class CtaButton extends StatelessWidget {
               textAlign: TextAlign.right,
               style: TextStyle(
                 color: const Color.fromARGB(255, 255, 255, 255),
-                fontSize: MediaQuery.of(context).size.width * 0.036,
+                fontSize: fontSize,
               ),
             ),
           ),
         ),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.035,
+          height: spacing,
         )
       ],
     );

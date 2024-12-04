@@ -6,6 +6,7 @@ class CtaAuthLink extends StatelessWidget {
   final String route;
   final Color color1;
   final Color color2;
+  final double? fontSize;
 
   const CtaAuthLink(
       {super.key,
@@ -13,7 +14,8 @@ class CtaAuthLink extends StatelessWidget {
       required this.text2,
       required this.route,
       required this.color1,
-      required this.color2});
+      required this.color2,
+      this.fontSize});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class CtaAuthLink extends StatelessWidget {
               text1,
               style: TextStyle(
                 color: color1,
-                fontSize: MediaQuery.of(context).size.width * 0.035,
+                fontSize: fontSize ?? MediaQuery.of(context).size.width * 0.035,
               ),
             ),
 
@@ -38,7 +40,7 @@ class CtaAuthLink extends StatelessWidget {
                 text2,
                 style: TextStyle(
                     color: color2,
-                    fontSize: MediaQuery.of(context).size.width * 0.035,
+                    fontSize: fontSize ?? MediaQuery.of(context).size.width * 0.035,
                     decoration: TextDecoration.underline,
                     decorationColor: const Color(0xFFFFBD59),
                     fontWeight: FontWeight.bold,

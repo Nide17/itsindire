@@ -6,6 +6,7 @@ class DefaultInput extends StatefulWidget {
   final int maxLines;
   final bool? enabled;
   final Function(String)? onChanged;
+  final TextInputType? keyboardType;
 
   const DefaultInput({
     super.key,
@@ -14,6 +15,7 @@ class DefaultInput extends StatefulWidget {
     this.maxLines = 1,
     this.enabled,
     this.onChanged,
+    this.keyboardType,
   });
 
   // EMAIL VALIDATION REGEX
@@ -126,18 +128,19 @@ class _DefaultInputState extends State<DefaultInput> {
                       ? DefaultInput._validateMtnNumber
                       : _validateEmpty,
           onSaved: (value) {},
-          keyboardType: (widget.placeholder == 'Nimero yawe ya MTN' ||
-                  widget.placeholder == 'Your MTN Number')
-              ? TextInputType.number
-              : (widget.placeholder == 'Imeyili' ||
-                      widget.placeholder == 'E-mail')
-                  ? TextInputType.emailAddress
-                  : TextInputType.text,
+          keyboardType: widget.keyboardType ?? // Use the new property
+              ((widget.placeholder == 'Nimero yawe ya MTN' ||
+                      widget.placeholder == 'Your MTN Number')
+                  ? TextInputType.number
+                  : (widget.placeholder == 'Imeyili' ||
+                          widget.placeholder == 'E-mail')
+                      ? TextInputType.emailAddress
+                      : TextInputType.text),
           obscureText: (widget.placeholder == 'Ijambobanga' ||
                   widget.placeholder == 'Password')
               ? _isObscure
               : false,
-              enabled: widget.enabled,
+          enabled: widget.enabled,
         ),
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.024,

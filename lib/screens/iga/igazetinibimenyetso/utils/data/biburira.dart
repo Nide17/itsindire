@@ -15,7 +15,7 @@ List<Map<String, dynamic>> ibyapaBiburira = [
     'txt':
         'Iki cyapa kiravuga ngo “Amakoni abiri cyangwa uruhererekane ry\'amakoni arenga abiri, irya mbere riri ibumoso.” ',
     'imgUrl':
-        'https://firebasestorage.googleapis.com/v0/b/tegura-rw.appspot.com/o/ibyapa%2FIfungana%20(Ibumoso).png?alt=media&token=3441f3f0-9b46-4696-8321-e4d17b9485e4'
+        'https://firebasestorage.googleapis.com/v0/b/tegura-rw.appspot.com/o/ibyapa%2FUruhererekane%20(Ibumoso).png?alt=media&token=3839e44b-4389-41b7-974b-378230fdb399'
   },
   {
     'txt':

@@ -110,8 +110,8 @@ class PaymentModel {
   // TO JSON
   Map<String, dynamic> toJson() {
     return {
-      'createdAt': createdAt?.toIso8601String(),
-      'endAt': endAt?.toIso8601String(),
+      'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
+      'endAt': endAt != null ? Timestamp.fromDate(endAt!) : null,
       'userId': userId,
       'ifatabuguziID': ifatabuguziID,
       'igiciro': igiciro,
