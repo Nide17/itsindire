@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-class IsuzumaTimer extends StatefulWidget {
+class CountdownTimer extends StatefulWidget {
   final int duration;
   final VoidCallback onTimerExpired;
 
-  const IsuzumaTimer({
+  const CountdownTimer({
     super.key,
     required this.duration,
     required this.onTimerExpired,
   });
 
   @override
-  IsuzumaTimerState createState() => IsuzumaTimerState();
+  CountdownTimerState createState() => CountdownTimerState();
 }
 
-class IsuzumaTimerState extends State<IsuzumaTimer>
+class CountdownTimerState extends State<CountdownTimer>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<int> _animation;
@@ -57,18 +57,19 @@ class IsuzumaTimerState extends State<IsuzumaTimer>
             : Colors.green;
 
         return Container(
-          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.012),
+          padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.008),
           decoration: BoxDecoration(
             color: const Color(0xFFFFBD59),
-            borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.02),
+            borderRadius:
+                BorderRadius.circular(MediaQuery.of(context).size.width * 0.02),
             border: Border.all(
               color: const Color(0xFF5B8BDF),
-              width: MediaQuery.of(context).size.width * 0.005,
+              width: MediaQuery.of(context).size.width * 0.0024,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.blue.withOpacity(0.8),
-                offset: const Offset(0, 3),
+                color: Colors.blue.withOpacity(0.6),
+                offset: const Offset(0, 2),
                 blurRadius: 1,
               ),
             ],
@@ -76,7 +77,7 @@ class IsuzumaTimerState extends State<IsuzumaTimer>
           child: Text(
             '$minutes:${remainingSeconds.toString().padLeft(2, '0')}',
             style: TextStyle(
-              fontSize: MediaQuery.of(context).size.width * 0.04,
+              fontSize: MediaQuery.of(context).size.width * 0.03,
               fontWeight: FontWeight.bold,
               color: textColor,
             ),

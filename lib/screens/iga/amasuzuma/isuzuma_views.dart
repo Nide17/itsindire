@@ -6,7 +6,7 @@ import 'package:itsindire/models/isuzuma_score.dart';
 import 'package:itsindire/screens/iga/amasuzuma/isuzuma_custom_radio_button.dart';
 import 'package:itsindire/screens/iga/amasuzuma/isuzuma_ikibazo_button.dart';
 import 'package:itsindire/screens/iga/amasuzuma/isuzuma_score_review.dart';
-import 'package:itsindire/screens/iga/amasuzuma/isuzuma_timer.dart';
+import 'package:itsindire/screens/iga/utils/countdown_timer.dart';
 import 'package:itsindire/screens/iga/amasuzuma/qn_img_url.dart';
 import 'package:itsindire/screens/iga/utils/itsindire_alert.dart';
 import 'package:itsindire/screens/iga/utils/gradient_title.dart';
@@ -39,32 +39,36 @@ class _IsuzumaViewsState extends State<IsuzumaViews> {
       context: context,
       barrierDismissible: false, 
       builder: (BuildContext context) {
-        return ItsindireAlert(
-          errorTitle: 'Iminota yarangiye!',
-          errorMsg: 'Igihe cyashize, reba uko wakoze cyangwa usubiremo!',
-          firstButtonTitle: 'Funga',
-          firstButtonFunction: () {
-            for (var qn in widget.scorePrModel!.questions) {
-              if (!qn.isAnswered) {
-                qn.isAnswered = true;
-              }
-            }
-
-            // SAVE THE SCORE
-            IsuzumaScoreService()
-                .createOrUpdateIsuzumaScore(widget.scorePrModel!);
-
-            // GO TO THE REVIEW PAGE
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      IsuzumaScoreReview(isuzuma: widget.isuzuma),
-                ));
-          },
-          alertType: 'error',
-        );
+        return buildTimerExpiredDialog();
       },
+    );
+  }
+
+  Widget buildTimerExpiredDialog() {
+    return ItsindireAlert(
+      errorTitle: 'Iminota yarangiye!',
+      errorMsg: 'Igihe cyashize, reba uko wakoze cyangwa usubiremo!',
+      firstButtonTitle: 'Funga',
+      firstButtonFunction: () {
+        for (var qn in widget.scorePrModel!.questions) {
+          if (!qn.isAnswered) {
+            qn.isAnswered = true;
+          }
+        }
+
+        // SAVE THE SCORE
+        IsuzumaScoreService()
+            .createOrUpdateIsuzumaScore(widget.scorePrModel!);
+
+        // GO TO THE REVIEW PAGE
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  IsuzumaScoreReview(isuzuma: widget.isuzuma),
+            ));
+      },
+      alertType: 'error',
     );
   }
 
@@ -90,9 +94,8 @@ class _IsuzumaViewsState extends State<IsuzumaViews> {
                   marginTop: MediaQuery.of(context).size.height * 0.02,
                   parentWidget: 'isuzume'),
               SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-              IsuzumaTimer(
+              CountdownTimer(
                 duration: 1200, // Duration in seconds - 20 minutes
-                // duration: 12, // Duration in seconds
                 onTimerExpired: handleTimerExpired,
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.01),

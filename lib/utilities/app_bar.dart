@@ -8,6 +8,7 @@ import 'package:itsindire/firebase_services/payment_db.dart';
 import 'package:itsindire/firebase_services/profiledb.dart';
 import 'package:itsindire/models/payment.dart';
 import 'package:itsindire/models/profile.dart';
+import 'package:itsindire/screens/iga/utils/countdown_timer.dart';
 import 'package:provider/provider.dart';
 
 class AppBarItsindire extends StatefulWidget {
@@ -22,16 +23,14 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
       FirebaseFirestore.instance.collection('payments');
   late StreamSubscription<QuerySnapshot> _paymentsSubscription;
   final User? currentUser = FirebaseAuth.instance.currentUser;
+  int remainingMinutes = 0;
 
   // payments stream
-  Stream<QuerySnapshot> get payments {
-    if (currentUser != null) {
-      return paymentsCollection
+  Stream<QuerySnapshot> get payments => currentUser != null
+      ? paymentsCollection
           .where('userId', isEqualTo: currentUser!.uid)
-          .snapshots();
-    }
-    return const Stream.empty();
-  }
+          .snapshots()
+      : const Stream.empty();
 
   @override
   void initState() {
@@ -52,22 +51,26 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   }
 
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontWeight: FontWeight.w900),
-        ),
-        action: SnackBarAction(
-          label: 'Funga',
-          onPressed: () {
-            ScaffoldMessenger.of(context).clearSnackBars();
-          },
-        ),
-        duration: const Duration(seconds: 20),
-        backgroundColor: const Color(0xFF00A651),
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(_buildSnackBar(message, const Color(0xFF00A651)));
+  }
+
+  SnackBar _buildSnackBar(String message, Color backgroundColor) {
+    return SnackBar(
+      content: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontWeight: FontWeight.w900),
       ),
+      action: SnackBarAction(
+        label: 'Funga',
+        onPressed: () {
+          ScaffoldMessenger.of(context).clearSnackBars();
+        },
+      ),
+      duration: const Duration(seconds: 20),
+      backgroundColor: backgroundColor,
     );
   }
 
@@ -99,6 +102,10 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
       child: Consumer<AuthState>(builder: (context, authState, _) {
         return Consumer<ProfileModel?>(builder: (context, profile, _) {
           return Consumer<PaymentModel?>(builder: (context, newestPyt, _) {
+            if (newestPyt != null) {
+              remainingMinutes = newestPyt.getRemainingMinutes();
+            }
+
             return AppBar(
               backgroundColor: const Color(0xFF5B8BDF),
               automaticallyImplyLeading: false,
@@ -110,10 +117,15 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                 ),
               ),
               title: _buildTitle(context),
-              actions: <Widget>[
-                if (currentUser != null && profile != null && newestPyt != null)
-                  _buildProfileIcon(context, profile, newestPyt, authState),
-              ],
+              actions: (currentUser != null &&
+                      profile != null &&
+                      newestPyt != null)
+                  ? <Widget>[
+                      if (newestPyt.ifatabuguziID == 'UGl3ahnKZdVrBVTItht7')
+                        _buildCountdownTimer(context),
+                      _buildProfileIcon(context, profile, newestPyt, authState),
+                    ]
+                  : [],
             );
           });
         });
@@ -154,6 +166,17 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
             ),
       onPressed: () {
         _showProfileDialog(context, profile, newestPyt, authState);
+      },
+    );
+  }
+
+  Widget _buildCountdownTimer(BuildContext context) {
+    return CountdownTimer(
+      duration: 1 + (remainingMinutes * 60),
+      onTimerExpired: () {
+        ScaffoldMessenger.of(context).showSnackBar(_buildSnackBar(
+            'IGERAGEZA RYARANGIYE, GURA IFATABUGUZI!',
+            const Color.fromARGB(255, 255, 0, 0)));
       },
     );
   }
@@ -328,15 +351,9 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
         onPressed: () async {
           dynamic result = await authState.logOut();
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                result != null ? result : 'Ntibikunze, ongera ugerageze!',
-              ),
-              duration: const Duration(seconds: 10),
-              backgroundColor: const Color(0xFF00A651),
-            ),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(_buildSnackBar(
+              result != null ? result : 'Ntibikunze, ongera ugerageze!',
+              const Color(0xFF00A651)));
           Navigator.of(context).popUntil((route) => route.isFirst);
         },
         icon: Icon(

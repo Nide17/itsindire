@@ -269,7 +269,6 @@ class AuthState with ChangeNotifier {
   // Delete user account
   Future deleteAccount(String userId, String email, String password) async {
     try {
-
       // re-authenticate user before deleting account
       AuthCredential credential = EmailAuthProvider.credential(
         email: email,

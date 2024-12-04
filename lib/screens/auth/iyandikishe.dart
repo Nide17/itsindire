@@ -33,9 +33,12 @@ class _IyandikisheState extends State<Iyandikishe> {
   String email = '';
   String password = '';
 
+  late AppBarItsindire appBarItsindire;
+
   @override
   void initState() {
     super.initState();
+    appBarItsindire = AppBarItsindire();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final user = Provider.of<AuthState>(context, listen: false).currentUser;
       if (user != null && user.refreshToken != null) {
@@ -167,6 +170,7 @@ class _IyandikisheState extends State<Iyandikishe> {
 
         if (registerResult.value != null) {
           await _loginUser(authState);
+          // appBarItsindire.startTrialTimer();
         } else {
           _showErrorDialog(
               'Kwiyandikisha ntibyagenze neza!',

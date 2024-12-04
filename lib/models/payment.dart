@@ -63,7 +63,7 @@ class PaymentModel {
             1; // Remaining time within a day should be considered as a full day remaining
       }
     }
-    return minutesDifference;
+    return minutesDifference < 0 ? 0 : minutesDifference;
   }
 
   // GET FORMATTED END DATE - 2021-09-30
