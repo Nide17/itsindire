@@ -314,6 +314,12 @@ class AuthState with ChangeNotifier {
       return ReturnedResult(
         successMessage: 'Konti yawe yasibwe!',
       );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'wrong-password') {
+        return ReturnedResult(error: 'Ijambo banga siryo!');
+      } else {
+        return ReturnedResult(error: 'Ntibikunze, habayemo ikosa!');
+      }
     } catch (e) {
       print('\n\n\nFailed to delete user account: $e');
       return ReturnedResult(

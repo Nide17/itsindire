@@ -71,13 +71,15 @@ class _IgaLandingState extends State<IgaLanding> {
                       PopQuestionService()
                           .getPopQuestionsByIsomoID(isomo.id)
                           .listen((popQnEvent) {
-                        CourseProgressService().updateUserCourseProgress(
-                          FirebaseAuth.instance.currentUser!.uid,
-                          isomo.id,
-                          0,
-                          isomoEvent.realTotalIngingos,
-                          popQnEvent.length,
-                        );
+                            if (FirebaseAuth.instance.currentUser != null) {
+                              CourseProgressService().updateUserCourseProgress(
+                                FirebaseAuth.instance.currentUser!.uid,
+                                isomo.id,
+                                0,
+                                isomoEvent.realTotalIngingos,
+                                popQnEvent.length,
+                              );
+                            }
                       });
                     });
                   }

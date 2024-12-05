@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
+import 'package:itsindire/main.dart';
 import 'package:itsindire/utilities/default_input.dart';
 import 'package:provider/provider.dart';
 import 'package:itsindire/utilities/description.dart';
@@ -14,7 +15,6 @@ class Konti extends StatefulWidget {
   State<Konti> createState() => _KontiState();
 }
 
-// STATE FOR THE SIGN IN PAGE - STATEFUL
 class _KontiState extends State<Konti> {
   final _formKey = GlobalKey<FormState>();
   String password = '';
@@ -159,20 +159,21 @@ class _KontiState extends State<Konti> {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null && user.email != null) {
-        await authState.deleteAccount(user.uid, user.email!, password);
-        Navigator.of(context).popUntil((route) => route.isFirst);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Konti yawe yasibwe neza.'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        ReturnedResult result =
+            await authState.deleteAccount(user.uid, user.email!, password);
+
+        if (result.isSuccess) {
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+          _showSnackBar(context, 'success', 'Konti yawe yasibwe neza.');
+        } else {
+          _showSnackBar(context, 'error', result.error ?? 'Ntibikunze.');
+        }
       } else {
-        _showErrorSnackBar(
-            context, 'Email is not provided. Log out and log in again.');
+        _showSnackBar(context, 'error', 'Nta imeyili, sohoka wongere winjire.');
       }
     } catch (e) {
-      _showErrorSnackBar(context, 'Habayeho ikosa: $e');
+      _showSnackBar(context, 'error', 'Habayeho ikosa: $e');
     } finally {
       setState(() {
         _isDeleting = false;
@@ -180,12 +181,12 @@ class _KontiState extends State<Konti> {
     }
   }
 
-  void _showErrorSnackBar(BuildContext context, String message) {
+  void _showSnackBar(BuildContext context, String type, String message) {
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.red,
+        backgroundColor: type == 'error' ? Colors.red : Colors.green,
       ),
     );
   }

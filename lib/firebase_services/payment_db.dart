@@ -15,20 +15,13 @@ class PaymentService {
     final data = documentSnapshot.data() as Map<String, dynamic>;
 
     try {
-      final createdAt = data['createdAt'] is Timestamp
-          ? (data['createdAt'] as Timestamp).toDate()
-          : null;
-
-      final endAt = data['endAt'] is Timestamp
-          ? (data['endAt'] as Timestamp).toDate()
-          : null;
-      final userId = data.containsKey('userId') ? data['userId'] : '';
-      final ifatabuguziID =
-          data.containsKey('ifatabuguziID') ? data['ifatabuguziID'] : '';
-      final igiciro = data.containsKey('igiciro') ? data['igiciro'] : 0;
-      final isApproved =
-          data.containsKey('isApproved') ? data['isApproved'] : false;
-      final phone = data.containsKey('phone') ? data['phone'] : '';
+      final createdAt = (data['createdAt'] as Timestamp?)?.toDate();
+      final endAt = (data['endAt'] as Timestamp?)?.toDate();
+      final userId = data['userId'] ?? '';
+      final ifatabuguziID = data['ifatabuguziID'] ?? '';
+      final igiciro = data['igiciro'] ?? 0;
+      final isApproved = data['isApproved'] ?? false;
+      final phone = data['phone'] ?? '';
 
       return PaymentModel(
         createdAt: createdAt,
@@ -45,10 +38,8 @@ class PaymentService {
     }
   }
 
-// GET DATA
-// #############################################################################
-  // GET USER LATEST PAYMENT BY USER ID
   Stream<PaymentModel?> getNewestPytByUserId(String userId) {
+    print('User ID: $userId');
     return paymentsCollection
         .where('userId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
@@ -56,14 +47,15 @@ class PaymentService {
         .snapshots()
         .map((snapshot) {
       if (snapshot.docs.isEmpty) {
+        print('No payment found');
         return null;
       } else {
+        print('Payment found');
         return _paymentFromSnapshot(snapshot.docs.first);
       }
     });
   }
 
-  // GET PAYMENT DATA
   Future<dynamic> getUserLatestPytData(String uid) async {
     final snapshot = await paymentsCollection
         .where('userId', isEqualTo: uid)
@@ -72,55 +64,63 @@ class PaymentService {
         .get();
 
     if (snapshot.docs.isEmpty) {
+      print('No payment found');
       return null;
     } else {
+      print('Payment found');
       return _paymentFromSnapshot(snapshot.docs.first);
     }
   }
 
-  // CREATE PAYMENT
   Future<ReturnedResult> createPayment(PaymentModel payment) async {
     try {
-      // CHECK IF THERE IS AN ACTIVE PAYMENT FOR THE USER
-      final activePayment = await paymentsCollection
-          .where('userId', isEqualTo: payment.userId)
-          .where('endAt', isGreaterThan: DateTime.now())
-          .get();
-
-      // IF THE ACTIVE PAYMENT IS NOT EMPTY, RETURN FALSE WITH A MESSAGE
-      if (activePayment.docs.isNotEmpty) {
-        for (var doc in activePayment.docs) {
-          if (doc.get('isApproved') && doc.get('ifatabuguziID') != 'UGl3ahnKZdVrBVTItht7') {
-            return ReturnedResult(
-              error:
-                  'Ufite ifatabuguzi ritararangira, reka rirangire cga utuvugishe turihindure!',
-            );
-          }
-        }
+      final activePaymentError = await _checkActivePayments(payment.userId!);
+      if (activePaymentError != null) {
+        return ReturnedResult(error: activePaymentError);
       }
 
-      // DLETE THE UGl3ahnKZdVrBVTItht7 PAYMENT IF ANY
-      final uGl3ahnKZdVrBVTItht7Payment = await paymentsCollection
-          .where('userId', isEqualTo: payment.userId)
-          .where('ifatabuguziID', isEqualTo: 'UGl3ahnKZdVrBVTItht7')
-          .get();
-
-      if (uGl3ahnKZdVrBVTItht7Payment.docs.isNotEmpty) {
-        for (var doc in uGl3ahnKZdVrBVTItht7Payment.docs) {
-          await paymentsCollection.doc(doc.id).delete();
-        }
+      if (payment.userId != null) {
+        await _deleteSpecificPayments(payment.userId!, 'UGl3ahnKZdVrBVTItht7');
+      } else {
+        throw Exception('User ID is null');
       }
 
-      // CREATE PAYMENT IN FIRESTORE AND SET THE ID AS THE USER ID
       await paymentsCollection.doc(payment.userId).set(payment.toJson());
 
-      // SEND EMAIL NOTIFICATION
       await _sendPaymentNotification(payment);
 
       return ReturnedResult(value: true);
     } catch (e) {
       print('Error: $e');
       return ReturnedResult(error: 'Failed to create payment: $e');
+    }
+  }
+
+  Future<String?> _checkActivePayments(String userId) async {
+    final activePayment = await paymentsCollection
+        .where('userId', isEqualTo: userId)
+        .where('endAt', isGreaterThan: DateTime.now())
+        .get();
+
+    if (activePayment.docs.isNotEmpty) {
+      for (var doc in activePayment.docs) {
+        if (doc.get('isApproved') &&
+            doc.get('ifatabuguziID') != 'UGl3ahnKZdVrBVTItht7') {
+          return 'Ufite ifatabuguzi ritararangira, reka rirangire cga utuvugishe turihindure!';
+        }
+      }
+    }
+    return null;
+  }
+
+  Future<void> _deleteSpecificPayments(String userId, String ifatabuguziID) async {
+    final specificPayments = await paymentsCollection
+        .where('userId', isEqualTo: userId)
+        .where('ifatabuguziID', isEqualTo: ifatabuguziID)
+        .get();
+
+    for (var doc in specificPayments.docs) {
+      await paymentsCollection.doc(doc.id).delete();
     }
   }
 

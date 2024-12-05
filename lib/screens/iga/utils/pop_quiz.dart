@@ -37,47 +37,117 @@ class _PopQuizState extends State<PopQuiz> {
   int currQnID = 0;
   bool loading = false;
 
-  @override
-  Widget build(BuildContext context) {
-    void forward() {
-      setState(() {
-        if (currQnID < widget.popQuestions.length - 1) {
-          currQnID++;
-        } else {
-          widget
-              .coursechangeSkipNumber(5); // Update skip value in parent widget
+  void handleQuizCompletion() {
+    widget.coursechangeSkipNumber(5); // Update skip value in parent widget
 
-          // Update the number of answered questions in the course progress
-          CourseProgressService()
-              .updateUnansweredPopQuestions(
-                  '${widget.isomo.id}_${FirebaseAuth.instance.currentUser!.uid}',
-                  -widget.popQuestions.length)
-              .then((value) {
-            CourseProgressService().updateUserCourseProgress(
-                widget.courseProgress.userId,
-                widget.isomo.id,
-                widget.currentIngingo,
-                widget.courseProgress.totalIngingos,
-                null);
-            loading = false;
-          });
-        }
+    // Update the number of answered questions in the course progress
+    CourseProgressService()
+        .updateUnansweredPopQuestions(
+            '${widget.isomo.id}_${FirebaseAuth.instance.currentUser!.uid}',
+            -widget.popQuestions.length)
+        .then((value) {
+      CourseProgressService().updateUserCourseProgress(
+          widget.courseProgress.userId,
+          widget.isomo.id,
+          widget.currentIngingo,
+          widget.courseProgress.totalIngingos,
+          null);
+      setState(() {
+        loading = false;
+      });
+    });
+  }
+
+  void forward() {
+    setState(() {
+      if (currQnID < widget.popQuestions.length - 1) {
+        currQnID++;
+      } else {
+        handleQuizCompletion();
+      }
+      selectedOption = 0;
+      isCurrentCorrect = false;
+    });
+  }
+
+  void backward() {
+    if (currQnID > 0 && selectedOption != 0) {
+      // Ensure an option is selected
+      setState(() {
+        currQnID--;
         selectedOption = 0;
         isCurrentCorrect = false;
       });
     }
+  }
 
-    void backward() {
-      if (currQnID > 0 && selectedOption != 0) {
-        // Ensure an option is selected
-        setState(() {
-          currQnID--;
-          selectedOption = 0;
-          isCurrentCorrect = false;
-        });
-      }
-    }
+  Widget buildQuestionTitle() {
+    return Text(
+      widget.popQuestions[currQnID].title ?? '',
+      style: const TextStyle(
+        fontSize: 18.0,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
 
+  Widget buildQuestionImage() {
+    return widget.popQuestions[currQnID].imageUrl == null ||
+            widget.popQuestions[currQnID].imageUrl == ''
+        ? const SizedBox.shrink()
+        : SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: Container(
+              padding: const EdgeInsets.all(4.0),
+              margin: const EdgeInsets.only(top: 10.0),
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 255, 255, 255),
+                border: Border.fromBorderSide(
+                  BorderSide(
+                    color: Color.fromARGB(255, 0, 0, 0),
+                    width: 1,
+                    style: BorderStyle.solid,
+                  ),
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromARGB(255, 0, 0, 0),
+                    offset: Offset(0, 1),
+                    blurRadius: 1,
+                  ),
+                ],
+              ),
+              child: FadeInImage.memoryNetwork(
+                fadeInDuration: const Duration(milliseconds: 200),
+                placeholder: kTransparentImage,
+                image: widget.popQuestions[currQnID].imageUrl!,
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+  }
+
+  Widget buildOptions() {
+    return Column(
+      children: widget.popQuestions[currQnID].options.map<Widget>((option) {
+        return CustomRadioButton(
+          option: option,
+          isSelected: option.id == selectedOption,
+          isThisCorrect: isCurrentCorrect,
+          onChanged: (value) {
+            setState(() {
+              selectedOption = option.id;
+              isCurrentCorrect = option.isCorrect;
+            });
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return loading == true
         ? const Center(child: CircularProgressIndicator())
         : currQnID >= 0 && currQnID < widget.popQuestions.length
@@ -105,73 +175,12 @@ class _PopQuizState extends State<PopQuiz> {
                             const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
                         child: Column(
                           children: [
-                            Text(
-                              widget.popQuestions[currQnID].title ?? '',
-                              style: const TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            widget.popQuestions[currQnID].imageUrl == null ||
-                                    widget.popQuestions[currQnID].imageUrl == ''
-                                ? const SizedBox.shrink()
-                                : SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.8,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(4.0),
-                                      margin: const EdgeInsets.only(top: 10.0),
-                                      decoration: const BoxDecoration(
-                                        color:
-                                            Color.fromARGB(255, 255, 255, 255),
-                                        border: Border.fromBorderSide(
-                                          BorderSide(
-                                            color: Color.fromARGB(255, 0, 0, 0),
-                                            width: 1,
-                                            style: BorderStyle.solid,
-                                          ),
-                                        ),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10.0)),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Color.fromARGB(255, 0, 0, 0),
-                                            offset: Offset(0, 1),
-                                            blurRadius: 1,
-                                          ),
-                                        ],
-                                      ),
-                                      child: FadeInImage.memoryNetwork(
-                                        fadeInDuration:
-                                            const Duration(milliseconds: 200),
-                                        placeholder: kTransparentImage,
-                                        image: widget
-                                            .popQuestions[currQnID].imageUrl!,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
+                            buildQuestionTitle(),
+                            buildQuestionImage(),
                             SizedBox(
                                 height:
                                     MediaQuery.of(context).size.height * 0.016),
-                            Column(
-                              children: widget.popQuestions[currQnID].options
-                                  .map<Widget>((option) {
-                                return CustomRadioButton(
-                                  option: option,
-                                  isSelected: option.id == selectedOption,
-                                  isThisCorrect: isCurrentCorrect,
-
-                                  // ON CHANGE
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedOption = option.id;
-                                      isCurrentCorrect = option.isCorrect;
-                                    });
-                                  },
-                                );
-                              }).toList(),
-                            ),
+                            buildOptions(),
                           ],
                         ),
                       ),

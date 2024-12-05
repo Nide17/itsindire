@@ -25,6 +25,10 @@ class _HagatiState extends State<Hagati> {
 
   @override
   Widget build(BuildContext context) {
+    return buildProviders(context);
+  }
+
+  Widget buildProviders(BuildContext context) {
     return MultiProvider(
       providers: [
         StreamProvider<List<IsomoModel?>?>.value(
@@ -42,29 +46,37 @@ class _HagatiState extends State<Hagati> {
       ],
       child: Consumer<List<IsomoModel?>?>(
         builder: (context, allAmasomos, child) {
-          return Consumer<List<CourseProgressModel?>?>(
-            builder: (context, notFinishedProgresses, child) {
-              if (notFinishedProgresses != null && allAmasomos != null &&
-                  (allAmasomos.length - notFinishedProgresses.length > 0)) {
-                overallProgress = (allAmasomos.length - notFinishedProgresses.length) / allAmasomos.length;
-              }
-              return Consumer<AuthState>(
-                builder: (context, authState, _) {
-                  return Scaffold(
-                    backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-                    appBar: PreferredSize(
-                      preferredSize: Size.fromHeight(58.0),
-                      child: AppBarItsindire(),
-                    ),
-                    body: buildBody(context, authState, allAmasomos, notFinishedProgresses),
-                    bottomNavigationBar: const RebaIbiciro(),
-                  );
-                },
-              );
-            },
-          );
+          return buildCourseProgressConsumer(context, allAmasomos);
         },
       ),
+    );
+  }
+
+  Widget buildCourseProgressConsumer(BuildContext context, List<IsomoModel?>? allAmasomos) {
+    return Consumer<List<CourseProgressModel?>?>(
+      builder: (context, notFinishedProgresses, child) {
+        if (notFinishedProgresses != null && allAmasomos != null &&
+            (allAmasomos.length - notFinishedProgresses.length > 0)) {
+          overallProgress = (allAmasomos.length - notFinishedProgresses.length) / allAmasomos.length;
+        }
+        return buildAuthStateConsumer(context, allAmasomos, notFinishedProgresses);
+      },
+    );
+  }
+
+  Widget buildAuthStateConsumer(BuildContext context, List<IsomoModel?>? allAmasomos, List<CourseProgressModel?>? notFinishedProgresses) {
+    return Consumer<AuthState>(
+      builder: (context, authState, _) {
+        return Scaffold(
+          backgroundColor: const Color.fromARGB(255, 71, 103, 158),
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(58.0),
+            child: AppBarItsindire(),
+          ),
+          body: buildBody(context, authState, allAmasomos, notFinishedProgresses),
+          bottomNavigationBar: const RebaIbiciro(),
+        );
+      },
     );
   }
 

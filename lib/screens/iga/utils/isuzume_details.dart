@@ -303,8 +303,7 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                             loadingProgressUpdate = true;
                           });
                           // Update the user progress in the database
-                          if (widget.courseProgress != null &&
-                              quizPopQuestions != null) {
+                          if (quizPopQuestions != null) {
                             CourseProgressService().updateUserCourseProgress(
                               widget.courseProgress!.userId,
                               widget.courseProgress!.courseId,

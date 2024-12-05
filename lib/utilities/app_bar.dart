@@ -117,11 +117,10 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                 ),
               ),
               title: _buildTitle(context),
-              actions: (currentUser != null &&
-                      profile != null &&
-                      newestPyt != null)
+              actions: (currentUser != null && profile != null)
                   ? <Widget>[
-                      if (newestPyt.ifatabuguziID == 'UGl3ahnKZdVrBVTItht7')
+                      if (newestPyt != null &&
+                          newestPyt.ifatabuguziID == 'UGl3ahnKZdVrBVTItht7')
                         _buildCountdownTimer(context),
                       _buildProfileIcon(context, profile, newestPyt, authState),
                     ]
@@ -154,7 +153,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   }
 
   Widget _buildProfileIcon(BuildContext context, ProfileModel profile,
-      PaymentModel newestPyt, AuthState authState) {
+      PaymentModel? newestPyt, AuthState authState) {
     return IconButton(
       icon: profile.photo == ''
           ? SvgPicture.asset(
@@ -182,7 +181,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   }
 
   void _showProfileDialog(BuildContext context, ProfileModel profile,
-      PaymentModel newestPyt, AuthState authState) {
+      PaymentModel? newestPyt, AuthState authState) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

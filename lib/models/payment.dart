@@ -44,7 +44,6 @@ class PaymentModel {
     return daysDifference;
   }
 
-  // GET REMAINING MINUTES
   int getRemainingMinutes() {
     DateTime now = DateTime.now();
     if (endAt == null) {

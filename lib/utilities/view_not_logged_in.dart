@@ -6,31 +6,34 @@ class ViewNotLoggedIn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final height = mediaQuery.size.height;
+    final width = mediaQuery.size.width;
+
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.03),
+      padding: EdgeInsets.symmetric(vertical: height * 0.03),
       child: Column(
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.7,
-            child: Text(
+            width: width * 0.7,
+            child: const Text(
               'Injira niba wariyandikishije cyangwa wiyandikishe utangire kwiga!',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.w900,
-                fontSize: MediaQuery.of(context).size.width * 0.05,
+                fontSize: 20, // Adjusted to a fixed size for consistency
                 color: Colors.white,
               ),
             ),
           ),
-
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.06,
+            height: height * 0.06,
           ),
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.9,
+            width: width * 0.9,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+              children: const [
                 RouteActionButton(btnText: 'Injira', route: '/injira'),
                 RouteActionButton(btnText: 'Iyandikishe', route: '/iyandikishe'),
               ],
