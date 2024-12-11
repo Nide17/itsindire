@@ -191,8 +191,8 @@ class Ifatabuguzi extends StatelessWidget {
                                                 vertical: 0.05),
                                             child: Text(
                                               isUrStudent
-                                                  ? 'PAY NOW'
-                                                  : 'ISHYURA',
+                                                  ? 'BUY NOW'
+                                                  : 'GURA',
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w700,

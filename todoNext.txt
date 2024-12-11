@@ -44,3 +44,8 @@ https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply
 
 - On back button: are you sure you want to quit the quiz? ✅
 - Serve paid only ✅
+
+
+https://appsgeyser.com/blog/how-to-publish-flutter-app-on-play-store/
+https://medium.com/blocship/publish-flutter-app-to-play-store-69cb0cd5a30b
+https://www.linkedin.com/pulse/how-publish-flutter-app-play-store-durgesh-sharma-kxtic/
