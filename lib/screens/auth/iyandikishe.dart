@@ -41,7 +41,7 @@ class _IyandikisheState extends State<Iyandikishe> {
     appBarItsindire = AppBarItsindire();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final user = Provider.of<AuthState>(context, listen: false).currentUser;
-      if (user != null && user.refreshToken != null) {
+      if (user != null) {
         Navigator.pushReplacementNamed(context, '/iga-landing');
       }
     });
