@@ -7,6 +7,7 @@ class DefaultInput extends StatefulWidget {
   final bool? enabled;
   final Function(String)? onChanged;
   final TextInputType? keyboardType;
+  final bool isPassword;
 
   const DefaultInput({
     super.key,
@@ -16,6 +17,7 @@ class DefaultInput extends StatefulWidget {
     this.enabled,
     this.onChanged,
     this.keyboardType,
+    this.isPassword = false,
   });
 
   // EMAIL VALIDATION REGEX
@@ -46,17 +48,14 @@ class DefaultInput extends StatefulWidget {
     return null;
   }
 
-  static final RegExp _mtnRegExp = RegExp(
-    r'^07[89][0-9]{7}$',
-  );
-
   // VALIDATION - MTN NUMBER
   static String? _validateMtnNumber(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Injiza numero yawe ya MTN! - Please enter your MTN number!';
+      return 'Injiza numero yawe ya MTN nyayo (imibare 10)! - Please enter valid MTN number!';
     }
-    if (!_mtnRegExp.hasMatch(value)) {
-      return 'Injiza numero yawe ya MTN nyayo! - Please enter a valid MTN number!';
+    // Check if the input matches the required format and length
+    if (!RegExp(r'^(078|079)[0-9]{7}$').hasMatch(value)) {
+      return 'Injiza numero yawe ya MTN nyayo (imibare 10)! - Please enter a valid MTN number!';
     }
     return null;
   }
@@ -101,45 +100,46 @@ class _DefaultInputState extends State<DefaultInput> {
               borderRadius: BorderRadius.circular(20.0),
             ),
             contentPadding: const EdgeInsets.symmetric(
-              vertical: 16.0,
-              horizontal: 24.0,
+              vertical: 12.0,
+              horizontal: 16.0,
             ),
-            suffixIcon: (widget.placeholder == 'Ijambobanga' ||
-                    widget.placeholder == 'Password')
+            errorStyle: const TextStyle(
+              fontSize: 9.0,
+              color: Colors.red,
+              overflow: TextOverflow.ellipsis,
+            ),
+            errorMaxLines: 2,
+            suffixIcon: widget.isPassword
                 ? GestureDetector(
                     onTap: () {
                       setState(() => _isObscure = !_isObscure);
                     },
-                    child: const Icon(
-                      Icons.visibility,
+                    child: Icon(
+                      _isObscure ? Icons.visibility : Icons.visibility_off,
                       color: Color.fromARGB(255, 139, 145, 155),
                     ),
                   )
                 : null,
           ),
-          validator: (widget.placeholder == 'Imeyili' ||
-                  widget.placeholder == 'E-mail')
+          validator: (widget.placeholder!.contains('Imeyili') ||
+                  widget.placeholder!.contains('E-mail'))
               ? DefaultInput._validateEmail
-              : (widget.placeholder == 'Ijambobanga' ||
-                      widget.placeholder == 'Password')
+              : widget.isPassword
                   ? DefaultInput._validatePassword
-                  : (widget.placeholder == 'Nimero yawe ya MTN' ||
-                          widget.placeholder == 'Your MTN Number')
+                  : (widget.placeholder!.contains('Nimero yawe ya MTN') ||
+                          widget.placeholder!.contains('Your MTN Number'))
                       ? DefaultInput._validateMtnNumber
                       : _validateEmpty,
           onSaved: (value) {},
-          keyboardType: widget.keyboardType ?? // Use the new property
-              ((widget.placeholder == 'Nimero yawe ya MTN' ||
-                      widget.placeholder == 'Your MTN Number')
+          keyboardType: widget.keyboardType ??
+              ((widget.placeholder!.contains('Nimero yawe ya MTN') ||
+                      widget.placeholder!.contains('Your MTN Number'))
                   ? TextInputType.number
-                  : (widget.placeholder == 'Imeyili' ||
-                          widget.placeholder == 'E-mail')
+                  : (widget.placeholder!.contains('Imeyili') ||
+                          widget.placeholder!.contains('E-mail'))
                       ? TextInputType.emailAddress
                       : TextInputType.text),
-          obscureText: (widget.placeholder == 'Ijambobanga' ||
-                  widget.placeholder == 'Password')
-              ? _isObscure
-              : false,
+          obscureText: widget.isPassword ? _isObscure : false,
           enabled: widget.enabled,
         ),
         SizedBox(

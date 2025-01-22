@@ -94,7 +94,7 @@ class QBAppFooter extends StatelessWidget {
 }
 
 // List of icons and their links or texts
-List<Map<String, dynamic>> _icons = [
+const List<Map<String, dynamic>> _icons = [
   {
     'icon': 'assets/images/whatsapp.svg',
     'title': '0794033360',
@@ -134,29 +134,9 @@ List<Map<String, dynamic>> _icons = [
 
 // Handle the click with corresponding link or text
 void _handleClick(String url) async {
-  if (url.contains('0794033360')) {
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+  final Uri _url = Uri.parse(url);
 
-  // Send email
-  else if (url.contains('mailto:')) {
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
-  // Open url
-  else {
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.inAppBrowserView);
-    } else {
-      throw 'Could not launch $url';
-    }
+  if (!await launchUrl(_url, mode: LaunchMode.inAppBrowserView)) {
+    throw Exception('Could not launch $_url');
   }
 }

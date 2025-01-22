@@ -69,7 +69,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
           ScaffoldMessenger.of(context).clearSnackBars();
         },
       ),
-      duration: const Duration(seconds: 20),
+      duration: const Duration(seconds: 5),
       backgroundColor: backgroundColor,
     );
   }
@@ -185,6 +185,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        String email = FirebaseAuth.instance.currentUser?.email ?? '';
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
@@ -215,7 +216,8 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                   style: const TextStyle(fontWeight: FontWeight.bold),
                   children: [
                     TextSpan(
-                        text: '\n${FirebaseAuth.instance.currentUser?.email}',
+                        text:
+                            '\n${FirebaseAuth.instance.currentUser?.email ?? ''}',
                         style: const TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 12.0)),
                   ]),
@@ -227,7 +229,11 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                _buildSubscriptionStatus(context, newestPyt),
+                (email != '' &&
+                        email != 'nidehazard10@gmail.com' &&
+                        email != 'testing@mail.com')
+                    ? _buildSubscriptionStatus(context, newestPyt)
+                    : Container(),
                 const SizedBox(height: 10.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -317,7 +323,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
             EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.01),
         child: Align(
           child: Text(
-            'Murakoze kwishyura, ifatabuguzi ryawe riri kwigwaho...',
+            'Mwishyuye, ifatabuguzi ryanyu riri kwigwaho...',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.w600,

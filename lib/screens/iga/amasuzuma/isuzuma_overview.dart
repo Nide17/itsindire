@@ -321,13 +321,13 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
                               ? 'Nturishyura'
                               : payment.isApproved == false
                                   ? 'Ifatabuguzi ryawe ntiriremezwa'
-                              : payment.ifatabuguziID == 'UGl3ahnKZdVrBVTItht7'
-                                  ? 'Nta fatabuguzi urafata, rigure aka kanya'
                                   : !payment.endAt.isAfter(DateTime.now())
                                       ? 'Ifatabuguzi ryawe ryararangiye'
+                                  : payment.ifatabuguziID == 'UGl3ahnKZdVrBVTItht7'
+                                  ? 'Nta fatabuguzi urafata, rigure aka kanya'
                                       : 'Ibyo wifuza ntibyagenze neza. Ongera ushyure kugira ngo ugerageze!',
                           alertType: 'error',
-                          secondButtonTitle: 'Ishyura',
+                          secondButtonTitle: payment.isApproved != false ? 'Ishyura' : null,
                           secondButtonFunction: () {
                             Navigator.pop(context);
                             Navigator.pushReplacementNamed(context, '/ibiciro');

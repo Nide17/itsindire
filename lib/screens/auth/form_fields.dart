@@ -31,6 +31,7 @@ class FormFields extends StatelessWidget {
         DefaultInput(
           placeholder: 'Ijambobanga',
           validation: 'Injiza ijambobanga!',
+          isPassword: true,
           onChanged: onPasswordChanged,
         ),
       ],

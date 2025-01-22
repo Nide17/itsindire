@@ -8,7 +8,6 @@ import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:provider/provider.dart';
-
 import '../../../utilities/route_action_button.dart';
 
 class ContactForm extends StatefulWidget {
@@ -23,51 +22,49 @@ class _ContactFormState extends State<ContactForm> {
   String? _name, _email, _message;
   bool isLoading = false;
 
-  Future<void> sendEmail() async {
-    try {
-      setState(() => isLoading = true);
+  void showSnackBar(String message, {Color backgroundColor = Colors.red}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        backgroundColor: backgroundColor,
+        duration: const Duration(seconds: 5),
+      ),
+    );
+  }
 
-      final isSent = await EmailService.sendEmail(
+  Future<void> sendEmail() async {
+    setState(() => isLoading = true);
+
+    try {
+      final isSent = await EmailService.sendMail(
         name: _name!,
         email: _email!,
         message: _message!,
       );
 
-      setState(() => isLoading = false);
-
       final snackBarMessage =
           isSent ? 'Ubutumwa bwawe bwagiye!' : 'Ubutumwa bwawe ntibwagiye!';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            snackBarMessage,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          duration: const Duration(seconds: 10),
-          backgroundColor: isSent ? const Color(0xFF00A651) : Colors.red,
-        ),
+
+      showSnackBar(
+        snackBarMessage,
+        backgroundColor: isSent ? const Color(0xFF00A651) : Colors.red,
       );
 
       if (isSent && _formKey.currentState != null) {
         _formKey.currentState!.reset();
       }
     } catch (e) {
-      setState(() => isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Error sending email. Please try again.',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          backgroundColor: Colors.red,
-        ),
+      showSnackBar(
+        'Error sending email. Please try again.',
       );
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 
@@ -91,8 +88,11 @@ class _ContactFormState extends State<ContactForm> {
               ),
             ],
             child: Consumer<ProfileModel?>(builder: (context, profile, _) {
-                _name = profile?.username;
-                _email = profile?.email;
+              if (profile != null) {
+                _name = profile.username;
+                _email = profile.email;
+              }
+
               return Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: MediaQuery.of(context).size.width * 0.05,
@@ -102,21 +102,23 @@ class _ContactFormState extends State<ContactForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      DefaultInput(
-                        placeholder: _name ?? 'Izina',
-                        validation: _name == null
-                            ? 'Izina ryawe rirakenewe!'
-                            : null, // Skip validation if _name is not null
-                        enabled: _name == null,
-                        onChanged: (value) => setState(() => _name = value),
-                      ),
-                      DefaultInput(
-                        placeholder: _email ?? 'Imeyili',
-                        validation:
-                            _email == null ? 'Imeyili yawe irakenewe!' : null,
-                        enabled: _email == null,
-                        onChanged: (value) => setState(() => _email = value),
-                      ),
+                      profile?.username == null
+                          ? DefaultInput(
+                              placeholder: 'Izina',
+                              validation: 'Izina ryawe rirakenewe!',
+                              onChanged: (value) =>
+                                  setState(() => _name = value),
+                            )
+                          : Container(),
+                      profile?.email == null
+                          ? DefaultInput(
+                              placeholder: 'Imeyili',
+                              validation: 'Imeyili yawe irakenewe!',
+                              enabled: profile?.email == null,
+                              onChanged: (value) =>
+                                  setState(() => _email = value),
+                            )
+                          : Container(),
                       DefaultInput(
                         placeholder: 'Ubutumwa',
                         validation: 'Ubutumwa bwawe burakenewe!',
@@ -130,8 +132,7 @@ class _ContactFormState extends State<ContactForm> {
                         alignment: Alignment.topRight,
                         child: RouteActionButton(
                           btnText: 'Ohereza',
-                          action: () => _formKey.currentState != null &&
-                                  _formKey.currentState!.validate()
+                          action: () => _formKey.currentState!.validate()
                               ? sendEmail()
                               : null,
                         ),
@@ -146,13 +147,19 @@ class _ContactFormState extends State<ContactForm> {
 }
 
 class EmailService {
-  static Future<bool> sendEmail({
+  static Future<bool> sendMail({
     required String name,
     required String email,
     required String message,
   }) async {
-    String username = dotenv.env['GMAIL_EMAIL']!;
-    String password = dotenv.env['GMAIL_PASSWORD']!;
+    String? username = dotenv.env['GMAIL_EMAIL'];
+    String? password = dotenv.env['GMAIL_PASSWORD'];
+
+    if (username == null || password == null) {
+      print('Error: Missing environment variables for email credentials.');
+      return false;
+    }
+
     final smtpServer = gmail(username, password);
 
     final emailMessage = Message()

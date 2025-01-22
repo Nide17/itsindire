@@ -131,18 +131,17 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
           children: [
             DefaultInput(
               placeholder: widget.ifatabuguzi.type == 'ur'
-                  ? 'Your MTN Number'
-                  : 'Nimero yawe ya MTN wishyurisha',
+                  ? 'Your MTN Number - 078/9...'
+                  : 'Nimero yawe ya MTN wishyurisha  - 078/9...',
               validation: widget.ifatabuguzi.type == 'ur'
-                  ? 'Please provide your MTN number'
-                  : 'Injiza numero ya MTN telefone yawe!',
+                  ? 'Please provide your MTN number  - 078/9...'
+                  : 'Injiza numero ya MTN telefone yawe - 078/9...',
               onChanged: (value) => setState(() => phone = value),
             ),
             loading
                 ? const LoadingWidget()
                 : GestureDetector(
                     onTap: () async {
-                      setState(() => loading = true);
                       await _handlePayment(context);
                     },
                     child: _buildConfirmButton(context),
@@ -239,7 +238,6 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
   }
 
   Future<void> _handlePayment(BuildContext context) async {
-    // GET THE CURRENT USER
     User? usr = FirebaseAuth.instance.currentUser;
     PaymentModel? payment = usr != null
         ? PaymentModel(
@@ -254,6 +252,7 @@ class _ProcessingIshyuraState extends State<ProcessingIshyura> {
 
     // CREATE THE PAYMENT IN FIRESTORE
     if (_formKey.currentState!.validate() && payment != null) {
+      setState(() => loading = true);
       _formKey.currentState!.save();
 
       // PAY THE MONEY

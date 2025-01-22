@@ -29,7 +29,7 @@ class CtaAuthLink extends StatelessWidget {
               text1,
               style: TextStyle(
                 color: color1,
-                fontSize: fontSize ?? MediaQuery.of(context).size.width * 0.035,
+                fontSize: fontSize ?? MediaQuery.of(context).size.width * 0.04,
               ),
             ),
 
@@ -40,7 +40,7 @@ class CtaAuthLink extends StatelessWidget {
                 text2,
                 style: TextStyle(
                     color: color2,
-                    fontSize: fontSize ?? MediaQuery.of(context).size.width * 0.035,
+                    fontSize: fontSize ?? MediaQuery.of(context).size.width * 0.041,
                     decoration: TextDecoration.underline,
                     decorationColor: const Color(0xFFFFBD59),
                     fontWeight: FontWeight.bold,

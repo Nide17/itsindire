@@ -23,10 +23,10 @@ class DefaultFirebaseOptions {
   }
 
   static FirebaseOptions android = FirebaseOptions(
-    apiKey: dotenv.env['apiKey'] ?? '',
-    appId: dotenv.env['appId'] ?? '',
-    messagingSenderId: dotenv.env['messagingSenderId'] ?? '',
-    projectId: dotenv.env['projectId'] ?? '',
-    storageBucket: dotenv.env['storageBucket'] ?? '',
+    apiKey: dotenv.env['API_KEY'] ?? '',
+    appId: dotenv.env['APP_ID'] ?? '',
+    messagingSenderId: dotenv.env['MESSAGING_SENDER_ID'] ?? '',
+    projectId: dotenv.env['PROJECT_ID'] ?? '',
+    storageBucket: dotenv.env['STORAGE_BUCKET'] ?? '',
   );
 }

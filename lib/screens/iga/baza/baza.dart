@@ -16,7 +16,6 @@ class Baza extends StatefulWidget {
 class _BazaState extends State<Baza> {
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 71, 103, 158),
         appBar: PreferredSize(
@@ -32,26 +31,17 @@ class _BazaState extends State<Baza> {
               const GradientTitle(
                   title: 'BAZA MWARIMU',
                   icon: 'assets/images/ibibazo_bibaza.svg'),
-
-              // 2. DESCRIPTION
               const Description(
                   text:
                       'Ugize ikibazo? Hari ibyo utumva neza? Tubaze tugufashe!'),
-
-              // 3. CONTACT FORM
               const ContactForm(),
-
-              // BORDER
               Container(
                 color: const Color(0xFF000000),
                 height: MediaQuery.of(context).size.height * 0.01,
               ),
-
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.05,
               ),
-
-              // SOCIAL MEDIA
               const Social(),
             ]),
           ),

@@ -1,8 +1,11 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:itsindire/utilities/view_not_logged_in.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:itsindire/utilities/route_action_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:itsindire/firebase_services/auth.dart';
 import 'package:itsindire/utilities/app_bar.dart';
-import 'package:itsindire/utilities/route_action_button.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,6 +16,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future<void> _openLink(String url) async {
+    final Uri _url = Uri.parse(url);
+
+    if (!await launchUrl(_url)) {
+      throw Exception('Could not launch $_url');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthState>(builder: (context, authState, _) {
@@ -98,6 +109,80 @@ class _HomePageState extends State<HomePage> {
               btnText: 'IBICIRO',
               route: '/ibiciro',
             ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.032,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                GestureDetector(
+                  onTap: () => _openLink(
+                      'https://www.quizblog.online/itsindire-privacy'),
+                  child: Text(
+                    'Privacy Policy',
+                    style: linkTextStyle,
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.02,
+                ),
+                GestureDetector(
+                  onTap: () => showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      title: const Text(
+                        'Disclaimer',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                          color: Colors.black,
+                        ),
+                      ),
+                      content: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: RichText(
+                          text: TextSpan(
+                            text:
+                                'This app is intended for educational purposes only and is neither affiliated with nor endorsed by the Rwandan government or National Police. It utilizes publicly available resources to support learners. The app assumes no responsibility for any misuse of the provided materials. For official information, ',
+                            style: disclaimerTextStyle,
+                            children: [
+                              TextSpan(
+                                text:
+                                    'please refer to the Rwanda National Police website.',
+                                style: linkTextStyle,
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () => _openLink(
+                                      'https://police.gov.rw/uploads/tx_download/Iteka_rya_Perezida_no_85_01_ryo_ku_wa_02_09_2002_rishyiraho_amabwiriza_rusange_agenga_imihanda_n_uburyo_bwo_kuyigendamo.pdf'),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text(
+                            'Close',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  child: Text(
+                    'Disclaimer',
+                    style: linkTextStyle,
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       );

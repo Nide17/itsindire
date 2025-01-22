@@ -98,7 +98,7 @@ class QBAppBar extends StatelessWidget {
                                 'assets/images/car.svg',
                                 height:
                                     MediaQuery.of(context).size.height * 0.04,
-                                color: const Color(0xFF157A6E),
+                                colorFilter: const ColorFilter.mode(Color(0xFF157A6E), BlendMode.srcIn),
                               ),
 
                               // SPACING BETWEEN THE TWO WIDGETS
@@ -143,6 +143,7 @@ class QBAppBar extends StatelessWidget {
                     SvgPicture.asset(
                       'assets/images/phone.svg',
                       height: MediaQuery.of(context).size.height * 0.026,
+                      colorFilter: const ColorFilter.mode(Color(0xFF000000), BlendMode.srcIn),
                     ),
                     Text(
                       '\t\t+250 794 033 360',

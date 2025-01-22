@@ -54,7 +54,7 @@ class _KontiState extends State<Konti> {
               ),
               Description(
                 text:
-                    'Ikaze ${authState.currentProfile!.username}, aya ni amakuri ya konti yawe kuri Itsindire.',
+                    'Ikaze ${authState.currentProfile!.username}, aya ni amakuru ya konti yawe kuri Itsindire.',
               ),
               _buildProfileInfo(
                 context,
@@ -81,6 +81,7 @@ class _KontiState extends State<Konti> {
                           DefaultInput(
                             placeholder: 'Ijambobanga',
                             validation: 'Injiza ijambobanga!',
+                            isPassword: true,
                             onChanged: (value) =>
                                 setState(() => password = value),
                           ),

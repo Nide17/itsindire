@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +6,12 @@ import 'package:itsindire/models/profile.dart';
 import 'package:itsindire/models/user.dart';
 import 'package:itsindire/firebase_services/profiledb.dart';
 import 'package:itsindire/main.dart';
+import 'package:logger/logger.dart';
 
 class AuthState with ChangeNotifier {
   final FirebaseAuth _authInstance = FirebaseAuth.instance;
   final ProfileService _profileService = ProfileService();
-  late StreamSubscription<User?> _authSubscription;
+  late final StreamSubscription<User?> _authSubscription;
   StreamSubscription<ProfileModel?>? _profileSubscription;
 
   final CollectionReference profilesCollection =
@@ -24,6 +24,8 @@ class AuthState with ChangeNotifier {
       FirebaseFirestore.instance.collection('progresses');
   final CollectionReference isuzumaScoresCollection =
       FirebaseFirestore.instance.collection('scores');
+
+  final Logger _logger = Logger();
 
   UserModel? _userFromFirebaseUser(User usr) {
     return UserModel(uid: usr.uid, usr.email, usr.displayName);
@@ -82,7 +84,8 @@ class AuthState with ChangeNotifier {
           setCurrentProfile(profile);
         });
       } catch (e) {
-        print('Failed to update profile: $e');
+        _logger.e('Failed to update profile', error: e);
+        setCurrentProfile(null); // Ensure profile is set to null on error
       }
     } else {
       setCurrentProfile(null);
@@ -113,7 +116,7 @@ class AuthState with ChangeNotifier {
 
       return 'Bye $loggedOutUserName!';
     } catch (e) {
-      print('Failed to log out: $e');
+      _logger.e('Failed to log out', error: e);
       return 'Failed to log out';
     }
   }
@@ -149,7 +152,9 @@ class AuthState with ChangeNotifier {
       }
 
       String? sessionIdentity = querySnapshot.docs.first.get('sessionID');
-      if (email != 'nidehazard10@gmail.com' && sessionIdentity != '' && sessionIdentity != null) {
+      if (sessionIdentity != '' &&
+          email != 'nidehazard10@gmail.com' &&
+          email != 'testing@mail.com') {
         return ReturnedResult(
           error:
               'Mwemerewe gukoresha konti imwe muri telefoni imwe. Duhamagare kuri 0794033360 tugufashe!',
@@ -206,21 +211,21 @@ class AuthState with ChangeNotifier {
         return ReturnedResult(error: 'Ntibikunze, reba ko ufite interineti!');
       }
     } catch (e) {
-      print("\n\n\n Error occured: $e \n\n\n");
+      _logger.e('Error occurred during login', error: e);
       return ReturnedResult(error: 'Habayeho ikosa, ibyo musabye ntibyakunda.');
     }
   }
 
   // REGISTER WITH EMAIL AND PASSWORD METHOD
-  Future registerNewUser(String username, String email, String password,
-      bool? urStudent, String? regNbr, String? campus) async {
+  Future<ReturnedResult> registerNewUser(String username, String email,
+      String password, bool? urStudent, String? regNbr, String? campus) async {
     try {
       UserCredential result =
           await _authInstance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      result.user?.updateDisplayName(username);
+      await result.user?.updateDisplayName(username);
 
       User? user = result.user;
 
@@ -238,11 +243,23 @@ class AuthState with ChangeNotifier {
 
         // save trial payment
         await paymentsCollection.doc(user.uid).set({
-          'ifatabuguziID': 'UGl3ahnKZdVrBVTItht7',
+          'ifatabuguziID':
+              (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
+                  ? 'UGl3ahnKZdVrBVTItht7'
+                  : 'Wfp1cRTYMMYnYJo4vYmJ',
           'userId': user.uid,
-          'igiciro': 0,
-          'createdAt': null,
-          'endAt': null,
+          'igiciro':
+              (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
+                  ? 0
+                  : 4000,
+          'createdAt':
+              (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
+                  ? null
+                  : DateTime.now(),
+          'endAt':
+              (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
+                  ? null
+                  : DateTime.now().add(Duration(days: 60)),
           'isApproved': true,
           'phone': null,
         });
@@ -276,15 +293,15 @@ class AuthState with ChangeNotifier {
       );
 
       await _authInstance.currentUser?.reauthenticateWithCredential(credential);
-      print('Deleting user account: ${userId}');
+      _logger.i('Deleting user account: $userId');
 
       // delete payments
       await paymentsCollection.doc(userId).delete();
-      print('Payments deleted');
+      _logger.i('Payments deleted');
 
       // delete profile
       await profilesCollection.doc(userId).delete();
-      print('\n\nProfile deleted');
+      _logger.i('Profile deleted');
 
       // delete scores
       await isuzumaScoresCollection
@@ -295,7 +312,7 @@ class AuthState with ChangeNotifier {
           element.reference.delete();
         });
       });
-      print('Scores deleted');
+      _logger.i('Scores deleted');
 
       // delete progresses
       await progressCollection
@@ -306,11 +323,11 @@ class AuthState with ChangeNotifier {
           element.reference.delete();
         });
       });
-      print('Progresses deleted');
+      _logger.i('Progresses deleted');
 
       // delete account
       await _authInstance.currentUser?.delete();
-      print('User account deleted');
+      _logger.i('User account deleted');
       return ReturnedResult(
         successMessage: 'Konti yawe yasibwe!',
       );
@@ -321,7 +338,7 @@ class AuthState with ChangeNotifier {
         return ReturnedResult(error: 'Ntibikunze, habayemo ikosa!');
       }
     } catch (e) {
-      print('\n\n\nFailed to delete user account: $e');
+      _logger.e('Failed to delete user account', error: e);
       return ReturnedResult(
         error: 'Gusiba konti ntibikunda!',
       );

@@ -125,7 +125,7 @@ class _WibagiweState extends State<Wibagiwe> {
                                         fontWeight: FontWeight.w900,
                                       ),
                                     ),
-                                    duration: const Duration(seconds: 10),
+                                    duration: const Duration(seconds: 5),
                                     backgroundColor: const Color(0xFFFFBD59),
                                   ),
                                 );

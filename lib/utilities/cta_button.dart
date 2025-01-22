@@ -15,7 +15,7 @@ class CtaButton extends StatelessWidget {
     final double buttonElevation = MediaQuery.of(context).size.width * 0.015;
     final double horizontalPadding = MediaQuery.of(context).size.width * 0.1;
     final double verticalPadding = MediaQuery.of(context).size.height * 0.016;
-    final double fontSize = MediaQuery.of(context).size.width * 0.036;
+    final double fontSize = MediaQuery.of(context).size.width * 0.037;
     final double spacing = MediaQuery.of(context).size.height * 0.035;
 
     return Column(

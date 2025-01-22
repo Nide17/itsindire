@@ -51,113 +51,121 @@ class _IyandikisheState extends State<Iyandikishe> {
   Widget build(BuildContext context) {
     return Consumer<AuthState>(builder: (context, authState, _) {
       return Scaffold(
-          backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(58.0),
-            child: AppBarItsindire(),
+        backgroundColor: const Color.fromARGB(255, 71, 103, 158),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(58.0),
+          child: AppBarItsindire(),
+        ),
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xff14e4ff), Color(0xFF5B8BDF)],
+              stops: [0.01, 0.6],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
           ),
-          body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xff14e4ff), Color(0xFF5B8BDF)],
-                stops: [0.01, 0.6],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-              ),
-            ),
-            child: ListView(
-              children: [
-                if (widget.message != null)
-                  MessageContainer(message: widget.message!),
-                const GradientTitle(
-                    title: 'IYANDIKISHE',
-                    icon: 'assets/images/iyandikishe.svg'),
-                const Description(
-                    text:
-                        'Iyandikishe ubundi, wige, umenye utsindire provisoire!'),
-                if (loading) const LoadingWidget(),
-                if (!loading)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/house_keys.png',
-                        height: MediaQuery.of(context).size.height * 0.2,
-                        width: MediaQuery.of(context).size.width * 0.2,
-                      ),
-                    ],
-                  ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.05,
-                      vertical: 0.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        FormFields(
-                          onUsernameChanged: (val) =>
-                              setState(() => username = val),
-                          onEmailChanged: (val) => setState(() => email = val),
-                          onPasswordChanged: (val) =>
-                              setState(() => password = val),
-                        ),
-                        CtaButton(
-                          text: 'Iyandikishe',
-                          onPressed: () => _registerUser(authState),
-                        ),
-                        const CtaAuthLink(
-                          text1: 'Niba wariyandikishije, ',
-                          text2: 'injira',
-                          color1: Color.fromARGB(255, 255, 255, 255),
-                          color2: Color.fromARGB(255, 0, 27, 116),
-                          route: '/injira',
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF2C64C6),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(24.0),
-                                    side: const BorderSide(
-                                      color: Color.fromARGB(255, 255, 255, 255),
-                                      width: 3.0,
-                                    ),
-                                  )),
-                              onPressed: () {
-                                Navigator.pushReplacementNamed(
-                                    context, '/ur-student');
-                              },
-                              child: const Text(
-                                'Register as UR student',
-                                textAlign: TextAlign.right,
-                                style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 255, 255),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.02,
-                            ),
-                            Image.asset(
-                              'assets/images/50off.png',
-                              height: MediaQuery.of(context).size.height * 0.1,
-                              width: MediaQuery.of(context).size.width * 0.1,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ));
+          child: ListView(
+            children: [
+              if (widget.message != null)
+                MessageContainer(message: widget.message!),
+              const GradientTitle(
+                  title: 'IYANDIKISHE',
+                  icon: 'assets/images/iyandikishe.svg'),
+              const Description(
+                  text: 'Iyandikishe ubundi, wige, umenye utsindire provisoire!'),
+              if (loading) const LoadingWidget(),
+              if (!loading) _buildImage(context),
+              _buildForm(context, authState),
+            ],
+          ),
+        ),
+      );
     });
+  }
+
+  Widget _buildImage(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Image.asset(
+          'assets/images/house_keys.png',
+          height: MediaQuery.of(context).size.height * 0.2,
+          width: MediaQuery.of(context).size.width * 0.2,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildForm(BuildContext context, AuthState authState) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.05,
+          vertical: 0.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FormFields(
+              onUsernameChanged: (val) => setState(() => username = val),
+              onEmailChanged: (val) => setState(() => email = val),
+              onPasswordChanged: (val) => setState(() => password = val),
+            ),
+            CtaButton(
+              text: 'Iyandikishe',
+              onPressed: () => _registerUser(authState),
+            ),
+            const CtaAuthLink(
+              text1: 'Niba wariyandikishije, ',
+              text2: 'injira',
+              color1: Color.fromARGB(255, 255, 255, 255),
+              color2: Color.fromARGB(255, 0, 27, 116),
+              route: '/injira',
+            ),
+            _buildRegisterAsURStudentButton(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRegisterAsURStudentButton(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF2C64C6),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24.0),
+                side: const BorderSide(
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  width: 3.0,
+                ),
+              )),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/ur-student');
+          },
+          child: const Text(
+            'Register as UR student',
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              color: Color.fromARGB(255, 255, 255, 255),
+            ),
+          ),
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.02,
+        ),
+        Image.asset(
+          'assets/images/50off.png',
+          height: MediaQuery.of(context).size.height * 0.1,
+          width: MediaQuery.of(context).size.width * 0.1,
+        ),
+      ],
+    );
   }
 
   void _registerUser(AuthState authState) async {
@@ -203,17 +211,21 @@ class _IyandikisheState extends State<Iyandikishe> {
           backgroundColor: Color(0xFF00A651)));
 
       Navigator.pushReplacementNamed(context, '/iga-landing');
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        duration: Duration(seconds: 6),
-          content: Text(
-            'UTANGIYE IGERAGEZA RIRANGIRA MUMINOTA 30',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.w900,
-              color: Color.fromARGB(255, 0, 105, 51)
+
+      if (loginResult.value!.email != null &&
+          loginResult.value!.email != 'testing@mail.com' &&
+          loginResult.value!.email != 'nidehazard10@gmail.com') {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            duration: Duration(seconds: 5),
+            content: Text(
+              'UTANGIYE IGERAGEZA RIRANGIRA MUMINOTA 30',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  color: Color.fromARGB(255, 0, 105, 51)),
             ),
-          ),
-          backgroundColor: Color.fromARGB(255, 250, 213, 6)));
+            backgroundColor: Color.fromARGB(255, 250, 213, 6)));
+      }
     } else {
       _showErrorDialog('Kwinjira ntibyagenze neza!',
           loginResult.error ?? 'Kwinjira ntibyagenze neza, Injira nanone!');

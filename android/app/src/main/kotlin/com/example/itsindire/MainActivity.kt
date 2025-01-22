@@ -1,4 +1,4 @@
-package rw.quizblog.itsindire
+package rw.quizblog.itsindire.android
 
 import io.flutter.embedding.android.FlutterActivity
 

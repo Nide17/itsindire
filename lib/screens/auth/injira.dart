@@ -151,6 +151,7 @@ class _InjiraState extends State<Injira> {
                           DefaultInput(
                             placeholder: 'Ijambobanga',
                             validation: 'Injiza ijambobanga!',
+                            isPassword: true,
                             onChanged: (value) =>
                                 setState(() => password = value),
                           ),
