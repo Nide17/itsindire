@@ -23,24 +23,32 @@ class RebaIbiciro extends StatelessWidget {
               child: const Ibiciro(),
             ),
           ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF00CCE5),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0),
-            ),
-            elevation: 5.0,
-            shadowColor: const Color.fromARGB(255, 0, 0, 0),
-          ),
+          style: _buttonStyle(),
           child: Text(
             'Reba ibiciro byo kwiga',
-            style: TextStyle(
-              fontSize: MediaQuery.of(context).size.width * 0.05,
-              color: const Color.fromARGB(255, 255, 255, 255),
-              fontWeight: FontWeight.bold,
-            ),
+            style: _textStyle(context),
           ),
         ),
       ),
+    );
+  }
+
+  ButtonStyle _buttonStyle() {
+    return ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFF00CCE5),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30.0),
+      ),
+      elevation: 5.0,
+      shadowColor: const Color.fromARGB(255, 0, 0, 0),
+    );
+  }
+
+  TextStyle _textStyle(BuildContext context) {
+    return TextStyle(
+      fontSize: MediaQuery.of(context).size.width * 0.05,
+      color: const Color.fromARGB(255, 255, 255, 255),
+      fontWeight: FontWeight.bold,
     );
   }
 }

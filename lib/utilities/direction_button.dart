@@ -58,7 +58,6 @@ class _DirectionButtonState extends State<DirectionButton> {
       ],
       child: Consumer3<List<IngingoModel>, CourseProgressModel?, List<PopQuestionModel>?>(
         builder: (context, pageIngingos, courseProgress, pagePopQuestions, _) {
-          print('pagePopQuestions: $pagePopQuestions');
 
           if (pageIngingos.isNotEmpty && ingingoID != pageIngingos[0].id) {
             WidgetsBinding.instance.addPostFrameCallback((_) {

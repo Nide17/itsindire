@@ -6,21 +6,21 @@ import 'package:itsindire/models/course_progress.dart';
 class CircleProgress extends StatelessWidget {
   const CircleProgress({super.key});
 
+  double _calculatePercentage(CourseProgressModel? courseProgress) {
+    if (courseProgress == null || courseProgress.totalIngingos == 0) {
+      return 1.0;
+    }
+    final int curCourseIngingo = courseProgress.currentIngingo;
+    return (courseProgress.totalIngingos >= curCourseIngingo)
+        ? (curCourseIngingo / courseProgress.totalIngingos)
+        : 1.0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<CourseProgressModel?>(
         builder: (context, courseProgress, _) {
-      // GET THE CURRENT INGINGO
-      final int curCourseIngingo =
-          courseProgress != null ? courseProgress.currentIngingo : 1;
-
-      // GET THE PERCENTAGE
-      final double percent = (courseProgress != null &&
-              courseProgress.totalIngingos != 0 &&
-              courseProgress.totalIngingos >= curCourseIngingo)
-          ? (curCourseIngingo /
-              courseProgress.totalIngingos) // GET THE PROGRESS
-          : 1.0; // GET THE PROGRESS
+      final double percent = _calculatePercentage(courseProgress);
 
       return CircularPercentIndicator(
         radius: MediaQuery.of(context).size.width * 0.05,

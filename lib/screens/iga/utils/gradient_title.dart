@@ -17,6 +17,8 @@ class GradientTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isIsuzume = parentWidget == 'isuzume';
+
     return Center(
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
@@ -31,11 +33,11 @@ class GradientTitle extends StatelessWidget {
           borderRadius: BorderRadius.circular(100),
           border: Border.all(
             width: MediaQuery.of(context).size.width * 0.006,
-            color: parentWidget == 'isuzume'
+            color: isIsuzume
                 ? const Color(0xFF5B8BDF)
                 : const Color(0xFF9D14DD),
           ),
-          gradient: parentWidget == 'isuzume'
+          gradient: isIsuzume
               ? null
               : const LinearGradient(
                   begin: Alignment.centerLeft,
@@ -46,7 +48,7 @@ class GradientTitle extends StatelessWidget {
                     Color(0xFF9D14DD),
                   ],
                 ),
-          boxShadow: parentWidget == 'isuzume'
+          boxShadow: isIsuzume
               ? null
               : const [
                   BoxShadow(
@@ -62,36 +64,29 @@ class GradientTitle extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // HORIZONTAL SPACE
-            if (icon != '')
+            if (icon.isNotEmpty) ...[
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.02,
               ),
-
-            // SVG ICON
-            if (icon != '')
               SvgPicture.asset(icon,
                   width: MediaQuery.of(context).size.width * 0.05,
                   colorFilter: const ColorFilter.mode(
                       Color(0xFF5B8BDF), BlendMode.srcIn)),
-            // HORIZONTAL SPACE
-            if (icon != '')
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.02,
               ),
-
-            // TEXT WIDGET
+            ],
             Flexible(
               child: Text(
                 title.toUpperCase(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: parentWidget == 'isuzume'
+                  fontSize: isIsuzume
                       ? MediaQuery.of(context).size.width * 0.04
                       : MediaQuery.of(context).size.width * 0.045,
                   color:
-                      parentWidget == 'isuzume' ? Colors.black : Colors.white,
-                  fontWeight: parentWidget == 'isuzume'
+                      isIsuzume ? Colors.black : Colors.white,
+                  fontWeight: isIsuzume
                       ? FontWeight.w700
                       : FontWeight.w600,
                 ),

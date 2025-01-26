@@ -8,6 +8,7 @@ import 'package:itsindire/utilities/description.dart';
 import 'package:itsindire/screens/iga/utils/gradient_title.dart';
 import 'package:itsindire/utilities/app_bar.dart';
 import 'package:itsindire/firebase_services/auth.dart';
+import 'package:itsindire/utilities/snackbar_util.dart';
 
 class Wibagiwe extends StatefulWidget {
   const Wibagiwe({super.key});
@@ -116,18 +117,10 @@ class _WibagiweState extends State<Wibagiwe> {
 
                               // SHOW SNACKBAR IF OUTPUT IS NOT EMPTY
                               if (output.isNotEmpty && context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      output,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                      ),
-                                    ),
-                                    duration: const Duration(seconds: 5),
-                                    backgroundColor: const Color(0xFFFFBD59),
-                                  ),
+                                SnackbarUtil.showSnackBar(
+                                  context,
+                                  output,
+                                  const Color(0xFFFFBD59),
                                 );
                               }
                             }

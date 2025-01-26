@@ -41,26 +41,22 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
   Widget build(BuildContext context) {
     bool? isThisCorrect = widget.isAnswered == null
         ? widget.isThisCorrect
-        : // CASE OF POP QUESTIONS
-        (widget.isAnswered == true &&
+        : (widget.isAnswered == true &&
+                widget.option != null &&
                 widget.option!.id == widget.choosenOption &&
                 widget.isAnswerCorrect == true)
             ? true
             : null;
 
-    bool? isSelected = widget.isAnswered == null
+    bool isSelected = widget.isAnswered == null
         ? widget.isSelected
-        : // CASE OF POP QUESTIONS
-        (widget.isAnswered == true && widget.option!.id == widget.choosenOption)
+        : (widget.isAnswered == true && widget.option != null && widget.option!.id == widget.choosenOption)
             ? true
             : false;
 
     return GestureDetector(
       onTap: () {
-        // CALL THE ONCHANGED FUNCTION
         widget.onChanged(!isSelected);
-
-        // SET THE OPTION CHOICE ID
         if (widget.scoreProviderModel != null) {
           for (var element in widget.scoreProviderModel!.quizScore.questions) {
             if (element.popQuestion.id == widget.currentQuestion!.id) {
@@ -74,120 +70,115 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
       },
       child: Column(
         children: [
-          Container(
-            padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.006),
-            margin: EdgeInsets.fromLTRB(
-                0, 0, 0, MediaQuery.of(context).size.height * 0.015),
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: isSelected
-                      ? getDisplayColor(isThisCorrect)
-                      : Colors.grey.withOpacity(0.4),
-                  offset: const Offset(0, 1),
-                  blurRadius: 1,
-                ),
-              ],
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(
-                color:
-                    isSelected ? getDisplayColor(isThisCorrect) : Colors.grey,
-                width: 1.0,
-              ),
-            ),
-
-            // THE OPTION: CHECKMARK, TEXT
-            child: Row(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.height * 0.023,
-                  height: MediaQuery.of(context).size.height * 0.023,
-                  margin: EdgeInsets.symmetric(
-                    vertical: MediaQuery.of(context).size.height * 0.004,
-                  ),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: isSelected ? Colors.black : Colors.grey,
-                      width: MediaQuery.of(context).size.height * 0.002,
-                    ),
-                  ),
-
-                  // THE CHECKMARK OR CROSS
-                  child: isSelected
-                      ? Icon(
-                          isThisCorrect == true
-                              ? Icons.check_circle
-                              : Icons.cancel,
-                          color: isThisCorrect == true
-                              ? const Color(0xFF00A651)
-                              : Colors.red,
-                          size: MediaQuery.of(context).size.height * 0.018,
-                        )
-                      : Container(),
-                ),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-                Expanded(
-                  child: Text(
-                    widget.option == null ? '' : widget.option!.text ?? '',
-                    style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.height * 0.017,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // THE DESCRIPTION SUBTITLE IF SELECTED
-          isSelected
-              ? Wrap(
-                  children: [
-                    isThisCorrect == true
-                        ? Text('Wabikoze! ',
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                color: const Color(0xFF00A651),
-                                fontSize:
-                                    MediaQuery.of(context).size.height * 0.014,
-                                fontWeight: FontWeight.bold))
-                        : Align(
-                            alignment: Alignment.topLeft,
-                            child: Text('Ongera ugerageze!',
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize:
-                                        MediaQuery.of(context).size.height *
-                                            0.014,
-                                    fontWeight: FontWeight.bold)),
-                          ),
-                    SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.025),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).size.height * 0.01),
-                      child: Text(
-                        isThisCorrect == true &&
-                                widget.option != null &&
-                                widget.option!.description != null
-                            ? widget.option!.description ?? ''
-                            : '',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.height * 0.014,
-                          color: Colors.black.withOpacity(0.9),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-                  ],
-                )
-              : Container(),
+          _buildOptionContainer(context, isSelected, isThisCorrect),
+          if (isSelected) _buildDescriptionSubtitle(context, isThisCorrect),
         ],
       ),
+    );
+  }
+
+  Widget _buildOptionContainer(BuildContext context, bool isSelected, bool? isThisCorrect) {
+    return Container(
+      padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.006),
+      margin: EdgeInsets.fromLTRB(
+          0, 0, 0, MediaQuery.of(context).size.height * 0.015),
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: isSelected
+                ? getDisplayColor(isThisCorrect)
+                : Colors.grey.withOpacity(0.4),
+            offset: const Offset(0, 1),
+            blurRadius: 1,
+          ),
+        ],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(
+          color: isSelected ? getDisplayColor(isThisCorrect) : Colors.grey,
+          width: 1.0,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.height * 0.023,
+            height: MediaQuery.of(context).size.height * 0.023,
+            margin: EdgeInsets.symmetric(
+              vertical: MediaQuery.of(context).size.height * 0.004,
+            ),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isSelected ? Colors.black : Colors.grey,
+                width: MediaQuery.of(context).size.height * 0.002,
+              ),
+            ),
+            child: isSelected
+                ? Icon(
+                    isThisCorrect == true
+                        ? Icons.check_circle
+                        : Icons.cancel,
+                    color: isThisCorrect == true
+                        ? const Color(0xFF00A651)
+                        : Colors.red,
+                    size: MediaQuery.of(context).size.height * 0.018,
+                  )
+                : Container(),
+          ),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+          Expanded(
+            child: Text(
+              widget.option == null ? '' : widget.option!.text ?? '',
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.height * 0.017,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDescriptionSubtitle(BuildContext context, bool? isThisCorrect) {
+    return Wrap(
+      children: [
+        isThisCorrect == true
+            ? Text('Wabikoze! ',
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                    color: const Color(0xFF00A651),
+                    fontSize: MediaQuery.of(context).size.height * 0.014,
+                    fontWeight: FontWeight.bold))
+            : Align(
+                alignment: Alignment.topLeft,
+                child: Text('Ongera ugerageze!',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontSize: MediaQuery.of(context).size.height * 0.014,
+                        fontWeight: FontWeight.bold)),
+              ),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.025),
+        Padding(
+          padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.height * 0.01),
+          child: Text(
+            isThisCorrect == true &&
+                    widget.option != null &&
+                    widget.option!.description != null
+                ? widget.option!.description ?? ''
+                : '',
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.height * 0.014,
+              color: Colors.black.withOpacity(0.9),
+            ),
+          ),
+        ),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+      ],
     );
   }
 

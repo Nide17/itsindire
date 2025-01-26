@@ -8,6 +8,7 @@ import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'package:provider/provider.dart';
+import 'package:itsindire/utilities/snackbar_util.dart';
 import '../../../utilities/route_action_button.dart';
 
 class ContactForm extends StatefulWidget {
@@ -23,19 +24,7 @@ class _ContactFormState extends State<ContactForm> {
   bool isLoading = false;
 
   void showSnackBar(String message, {Color backgroundColor = Colors.red}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-        backgroundColor: backgroundColor,
-        duration: const Duration(seconds: 5),
-      ),
-    );
+    SnackbarUtil.showSnackBar(context, message, backgroundColor);
   }
 
   Future<void> sendEmail() async {

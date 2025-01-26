@@ -5,6 +5,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:pdf_render/pdf_render_widgets.dart';
 // https://pub.dev/packages/pdf_render/example
 
+const String pdfUrl = 'https://firebasestorage.googleapis.com/v0/b/tegura-rw.appspot.com/o/docs%2FIGAZETI-%5BShared%20by%20QuizBlog%5D.PDF?alt=media&token=dd96dc37-679a-48c8-8416-0312d615dc76';
+
 class IgazetiBook extends StatefulWidget {
   const IgazetiBook({super.key});
 
@@ -25,8 +27,7 @@ class _IgazetiBookState extends State<IgazetiBook> {
   Future<String> _loadPdf() async {
     try {
       // Load PDF file from network
-      final file = await DefaultCacheManager().getSingleFile(
-          'https://firebasestorage.googleapis.com/v0/b/tegura-rw.appspot.com/o/docs%2FIGAZETI-%5BShared%20by%20QuizBlog%5D.PDF?alt=media&token=dd96dc37-679a-48c8-8416-0312d615dc76');
+      final file = await DefaultCacheManager().getSingleFile(pdfUrl);
       return file.path;
     } catch (e) {
       print('Error loading PDF: $e');

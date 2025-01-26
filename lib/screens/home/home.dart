@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:itsindire/firebase_services/auth.dart';
 import 'package:itsindire/utilities/app_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:itsindire/utilities/string_utils.dart'; // New import for capitalizeWords utility
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,7 +30,7 @@ class _HomePageState extends State<HomePage> {
     return Consumer<AuthState>(builder: (context, authState, _) {
       String msg = DateTime.now().hour < 12 ? 'Mwaramutse' : 'Mwiriwe';
       String username = authState.currentProfile?.username ?? '';
-      String? displayMsg = (username != '')
+      String? displayMsg = username.isNotEmpty
           ? '$msg, ${capitalizeWords(username.split(' ')[0])}!'
           : '$msg!';
 
@@ -127,55 +128,7 @@ class _HomePageState extends State<HomePage> {
                   height: MediaQuery.of(context).size.height * 0.02,
                 ),
                 GestureDetector(
-                  onTap: () => showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      title: const Text(
-                        'Disclaimer',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22,
-                          color: Colors.black,
-                        ),
-                      ),
-                      content: Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: RichText(
-                          text: TextSpan(
-                            text:
-                                'This app is intended for educational purposes only and is neither affiliated with nor endorsed by the Rwandan government or National Police. It utilizes publicly available resources to support learners. The app assumes no responsibility for any misuse of the provided materials. For official information, ',
-                            style: disclaimerTextStyle,
-                            children: [
-                              TextSpan(
-                                text:
-                                    'please refer to the Rwanda National Police website.',
-                                style: linkTextStyle,
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () => _openLink(
-                                      'https://police.gov.rw/uploads/tx_download/Iteka_rya_Perezida_no_85_01_ryo_ku_wa_02_09_2002_rishyiraho_amabwiriza_rusange_agenga_imihanda_n_uburyo_bwo_kuyigendamo.pdf'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text(
-                            'Close',
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  onTap: () => _showDisclaimerDialog(context),
                   child: Text(
                     'Disclaimer',
                     style: linkTextStyle,
@@ -189,19 +142,55 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  String capitalizeWords(String input) {
-    List<String> words = input.split(' ');
-    List<String> capitalizedWords = [];
-
-    for (String word in words) {
-      if (word.isNotEmpty) {
-        capitalizedWords
-            .add('${word[0].toUpperCase()}${word.substring(1).toLowerCase()}');
-      } else {
-        capitalizedWords.add(word);
-      }
-    }
-    return capitalizedWords.join(' ');
+  void _showDisclaimerDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        title: const Text(
+          'Disclaimer',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
+            color: Colors.black,
+          ),
+        ),
+        content: Container(
+          padding: const EdgeInsets.all(8.0),
+          child: RichText(
+            text: TextSpan(
+              text:
+                  'This app is intended for educational purposes only and is neither affiliated with nor endorsed by the Rwandan government or National Police. It utilizes publicly available resources to support learners. The app assumes no responsibility for any misuse of the provided materials. For official information, ',
+              style: disclaimerTextStyle,
+              children: [
+                TextSpan(
+                  text: 'please refer to the Rwanda National Police website.',
+                  style: linkTextStyle,
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () => _openLink(
+                        'https://police.gov.rw/uploads/tx_download/Iteka_rya_Perezida_no_85_01_ryo_ku_wa_02_09_2002_rishyiraho_amabwiriza_rusange_agenga_imihanda_n_uburyo_bwo_kuyigendamo.pdf'),
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text(
+              'Close',
+              style: TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

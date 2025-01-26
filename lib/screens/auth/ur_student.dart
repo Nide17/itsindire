@@ -8,6 +8,7 @@ import 'package:itsindire/utilities/description.dart';
 import 'package:itsindire/screens/iga/utils/gradient_title.dart';
 import 'package:itsindire/utilities/app_bar.dart';
 import 'package:itsindire/firebase_services/auth.dart';
+import 'package:itsindire/utilities/snackbar_util.dart';
 
 import '../../main.dart';
 
@@ -239,15 +240,7 @@ class _UrStudentState extends State<UrStudent> {
             username, email, password, true, regNbr, _selectedCampus);
 
         if (registerResult.value != null) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text(
-                'Registered successfully!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              backgroundColor: Color(0xFF00A651)));
+          SnackbarUtil.showSnackBar(context, 'Registered successfully!', const Color(0xFF00A651));
 
           await _loginUser(authState);
         } else {
@@ -292,32 +285,14 @@ class _UrStudentState extends State<UrStudent> {
     ReturnedResult loginResult = await authState.userLogin(email, password);
 
     if (loginResult.value != null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          duration: Duration(seconds: 2),
-          content: Text(
-            'Register successful!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          backgroundColor: Color(0xFF00A651)));
+      SnackbarUtil.showSnackBar(context, 'Register successful!', const Color(0xFF00A651));
 
       Navigator.pushReplacementNamed(context, '/iga-landing');
 
       if (loginResult.value!.email != null &&
           loginResult.value!.email != 'testing@mail.com' &&
           loginResult.value!.email != 'nidehazard10@gmail.com') {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            duration: Duration(seconds: 5),
-            content: Text(
-              'YOU HAVE NOW STARTED A 30 MINUTES TRIAL PERIOD',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  color: Color.fromARGB(255, 0, 105, 51)),
-            ),
-            backgroundColor: Color.fromARGB(255, 250, 213, 6)));
+        SnackbarUtil.showSnackBar(context, 'YOU HAVE NOW STARTED A 30 MINUTES TRIAL PERIOD', const Color.fromARGB(255, 250, 213, 6));
       }
     } else {
       _showErrorDialog('Logging in failed!',

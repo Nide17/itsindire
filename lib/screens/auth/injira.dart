@@ -11,6 +11,7 @@ import 'package:itsindire/utilities/description.dart';
 import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:itsindire/screens/auth/message_container.dart';
+import 'package:itsindire/utilities/snackbar_util.dart';
 
 class Injira extends StatefulWidget {
   final String? message;
@@ -51,23 +52,13 @@ class _InjiraState extends State<Injira> {
   }
 
   void _showSnackbar(String message, ReturnedResult result) {
-
-    if (scaffoldMessenger != null) {
-      scaffoldMessenger!.showSnackBar(
-        SnackBar(
-          content: Text(
-            message,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          backgroundColor: result.isSuccess == true
-              ? const Color(0xFF00A651)
-              : const Color.fromARGB(255, 255, 0, 0),
-        ),
-      );
-    }
+    SnackbarUtil.showSnackBar(
+      context,
+      message,
+      result.isSuccess == true
+          ? const Color(0xFF00A651)
+          : const Color.fromARGB(255, 255, 0, 0),
+    );
   }
 
   Future<void> _handleLogin(AuthState authState) async {

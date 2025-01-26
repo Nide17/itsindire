@@ -50,7 +50,6 @@ class PaymentService {
         print('No payment found');
         return null;
       } else {
-        print('Payment found');
         return _paymentFromSnapshot(snapshot.docs.first);
       }
     });
@@ -67,7 +66,6 @@ class PaymentService {
       print('No payment found');
       return null;
     } else {
-      print('Payment found');
       return _paymentFromSnapshot(snapshot.docs.first);
     }
   }

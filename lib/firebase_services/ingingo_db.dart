@@ -3,7 +3,7 @@ import 'package:itsindire/models/ingingo.dart';
 
 class IngingoService {
   
-  final CollectionReference ingingoCollection =
+  final CollectionReference ingingosCollection =
       FirebaseFirestore.instance.collection('ingingo');
 
   IngingoService();
@@ -44,7 +44,7 @@ class IngingoService {
 // GET TOTAL ingingos FOR A GIVEN isomoID
   Stream<IsomoIngingoSum> getTotalIsomoIngingos(int isomoID) {
     final documentsStream =
-        ingingoCollection.where('isomoID', isEqualTo: isomoID).snapshots();
+        ingingosCollection.where('isomoID', isEqualTo: isomoID).snapshots();
     return documentsStream
         .map((event) => IsomoIngingoSum(realTotalIngingos: event.docs.length));
   }
@@ -52,7 +52,7 @@ class IngingoService {
 // GET ingingos FOR A GIVEN isomoID, ORDERED BY ITS DOCUMENT ID
   Stream<List<IngingoModel>> getIngingosByIsomoIdPaginated(
       int isomoID, int limit, int lastIDinsideDoc) {
-    return ingingoCollection
+    return ingingosCollection
         .where('isomoID', isEqualTo: isomoID)
         .orderBy('id')
         .startAfter([lastIDinsideDoc])

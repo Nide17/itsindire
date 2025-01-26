@@ -7,6 +7,7 @@ import 'package:itsindire/utilities/description.dart';
 import 'package:itsindire/screens/iga/utils/gradient_title.dart';
 import 'package:itsindire/utilities/app_bar.dart';
 import 'package:itsindire/firebase_services/auth.dart';
+import 'package:itsindire/utilities/snackbar_util.dart';
 
 class Konti extends StatefulWidget {
   const Konti({super.key});
@@ -166,30 +167,24 @@ class _KontiState extends State<Konti> {
         if (result.isSuccess) {
           Navigator.of(context).pop();
           Navigator.of(context).pop();
-          _showSnackBar(context, 'success', 'Konti yawe yasibwe neza.');
+          SnackbarUtil.showSnackBar(
+              context, 'Konti yawe yasibwe neza.', Colors.green);
         } else {
-          _showSnackBar(context, 'error', result.error ?? 'Ntibikunze.');
+          SnackbarUtil.showSnackBar(
+              context, result.error ?? 'Ntibikunze.', Colors.red);
         }
       } else {
-        _showSnackBar(context, 'error', 'Nta imeyili, sohoka wongere winjire.');
+        SnackbarUtil.showSnackBar(
+            context, 'Nta imeyili, sohoka wongere winjire.', Colors.red);
       }
     } catch (e) {
-      _showSnackBar(context, 'error', 'Habayeho ikosa: $e');
+      SnackbarUtil.showSnackBar(context, 'Habayeho ikosa: $e', Colors.red);
     } finally {
       setState(() {
         _isDeleting = false;
+        Navigator.pushReplacementNamed(context, '/iyandikishe');
       });
     }
-  }
-
-  void _showSnackBar(BuildContext context, String type, String message) {
-    Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: type == 'error' ? Colors.red : Colors.green,
-      ),
-    );
   }
 
   Widget _buildProfileInfo(BuildContext context, String label, String value) {

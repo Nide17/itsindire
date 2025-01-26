@@ -10,6 +10,7 @@ import 'package:itsindire/screens/iga/utils/gradient_title.dart';
 import 'package:itsindire/utilities/app_bar.dart';
 import 'package:itsindire/utilities/description.dart';
 import 'package:itsindire/utilities/no_internet.dart';
+import 'package:itsindire/utilities/snackbar_util.dart';
 import 'package:provider/provider.dart';
 
 class Ibiciro extends StatefulWidget {
@@ -25,31 +26,13 @@ class _IbiciroState extends State<Ibiciro> {
   bool isUrStudent = false;
   List<IfatabuguziModel?> subscriptionsToUse = [];
 
-  void showSnackBar(String message, Color backgroundColor) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            message,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: MediaQuery.of(context).size.width * 0.04,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          backgroundColor: backgroundColor,
-          duration: const Duration(seconds: 3),
-        ),
-      );
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final conn = Provider.of<ConnectionStatus>(context);
 
     if (conn.isOnline == false) {
-      showSnackBar(
+      SnackbarUtil.showSnackBar(
+        context,
         isUrStudent ? 'No internet connection!' : 'Nta internet mufite!.',
         const Color.fromARGB(255, 255, 8, 0),
       );
@@ -57,7 +40,8 @@ class _IbiciroState extends State<Ibiciro> {
     }
 
     if (conn.isOnline == true && everDisconnected == true) {
-      showSnackBar(
+      SnackbarUtil.showSnackBar(
+        context,
         isUrStudent ? 'Back online!' : 'Internet yagarutse!',
         const Color.fromARGB(255, 0, 255, 85),
       );
@@ -86,31 +70,13 @@ class _IbiciroState extends State<Ibiciro> {
           isUrStudent = profile.urStudent ?? false;
         }
 
-        return Consumer<List<IfatabuguziModel?>?>(
-            builder: (context, amafatabuguzi, _) {
+        return Consumer<List<IfatabuguziModel?>?>(builder: (context, amafatabuguzi, _) {
           if (amafatabuguzi != null) {
             subscriptionsToUse = amafatabuguzi
                 .where((element) => element!.type == (isUrStudent ? 'ur' : 'standard'))
                 .toList();
           }
 
-          // loading
-          if (subscriptionsToUse.isEmpty) {
-            return Scaffold(
-              backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-              appBar: PreferredSize(
-                preferredSize: Size.fromHeight(58.0),
-                child: AppBarItsindire(),
-              ),
-              body: conn.isOnline == false
-                  ? const NoInternet()
-                  : const Center(
-                      child: CircularProgressIndicator(
-                        color: const Color(0xFFFFBD59),
-                      ),
-                    ),
-            );
-          }
           return Scaffold(
             backgroundColor: const Color.fromARGB(255, 71, 103, 158),
             appBar: PreferredSize(
@@ -119,99 +85,99 @@ class _IbiciroState extends State<Ibiciro> {
             ),
             body: conn.isOnline == false
                 ? const NoInternet()
-                : ScrollbarTheme(
-                    data: ScrollbarThemeData(
-                      thumbColor: WidgetStateProperty.all(Color(0xFFFFBD59)),
-                    ),
-                    child: Scrollbar(
-                      child: ListView(
-                        children: [
-                          widget.message != null
-                              ? Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.8,
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal:
-                                        MediaQuery.of(context).size.width *
-                                            0.05,
-                                    vertical:
-                                        MediaQuery.of(context).size.height *
-                                            0.03,
-                                  ),
-                                  padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width * 0.04,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFFFDE59),
-                                    border: Border.all(
-                                      width: 2.0,
-                                      color: const Color.fromARGB(
-                                          255, 255, 204, 0),
-                                    ),
-                                    borderRadius: BorderRadius.circular(24.0),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Color.fromARGB(255, 59, 57, 77),
-                                        offset: Offset(0, 3),
-                                        blurRadius: 8,
-                                        spreadRadius: -7,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        widget.message!,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.04,
-                                          fontWeight: FontWeight.w900,
-                                          color: const Color.fromARGB(
-                                              255, 0, 0, 0),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : Container(),
-                          GradientTitle(
-                              title: isUrStudent == true
-                                  ? ' UR STUDENTS PACKAGES'
-                                  : 'IBICIRO BYO KWIGA',
-                              icon: 'assets/images/ibiciro.svg'),
-                          Description(
-                              text: profile?.urStudent == true
-                                  ? 'Please pay for the package you want to use, then start learning.'
-                                  : 'Ishyura amafaranga ahwanye n\'ifatabuguzi wifuza, uhite utangira kwiga.'),
-                          Column(
-                            children:
-                                subscriptionsToUse.asMap().entries.map((entry) {
-                              int index = entry.key;
-                              final IfatabuguziModel? item = entry.value;
-                              return Ifatabuguzi(
-                                  index: index,
-                                  ifatabuguzi: item ?? IfatabuguziModel(
-                                    id: '',
-                                    igihe: '',
-                                    igiciro: 0,
-                                    ibirimo: [],
-                                    ubusobanuro: '',
-                                    type: '',
-                                  ),
-                                  curWidget: runtimeType.toString(),
-                                  isUrStudent: isUrStudent);
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                : subscriptionsToUse.isEmpty
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFFFBD59),
+                        ),
+                      )
+                    : buildContent(context, profile),
           );
         });
       }),
+    );
+  }
+
+  Widget buildContent(BuildContext context, ProfileModel? profile) {
+    return ScrollbarTheme(
+      data: ScrollbarThemeData(
+        thumbColor: MaterialStateProperty.all(Color(0xFFFFBD59)),
+      ),
+      child: Scrollbar(
+        child: ListView(
+          children: [
+            if (widget.message != null) buildMessageContainer(context),
+            GradientTitle(
+              title: isUrStudent ? ' UR STUDENTS PACKAGES' : 'IBICIRO BYO KWIGA',
+              icon: 'assets/images/ibiciro.svg',
+            ),
+            Description(
+              text: isUrStudent
+                  ? 'Please pay for the package you want to use, then start learning.'
+                  : 'Ishyura amafaranga ahwanye n\'ifatabuguzi wifuza, uhite utangira kwiga.',
+            ),
+            Column(
+              children: subscriptionsToUse.asMap().entries.map((entry) {
+                int index = entry.key;
+                final IfatabuguziModel? item = entry.value;
+                return Ifatabuguzi(
+                  index: index,
+                  ifatabuguzi: item ?? IfatabuguziModel(
+                    id: '',
+                    igihe: '',
+                    igiciro: 0,
+                    ibirimo: [],
+                    ubusobanuro: '',
+                    type: '',
+                  ),
+                  curWidget: runtimeType.toString(),
+                  isUrStudent: isUrStudent,
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildMessageContainer(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.8,
+      margin: EdgeInsets.symmetric(
+        horizontal: MediaQuery.of(context).size.width * 0.05,
+        vertical: MediaQuery.of(context).size.height * 0.03,
+      ),
+      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.04),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFDE59),
+        border: Border.all(
+          width: 2.0,
+          color: const Color.fromARGB(255, 255, 204, 0),
+        ),
+        borderRadius: BorderRadius.circular(24.0),
+        boxShadow: const [
+          BoxShadow(
+            color: Color.fromARGB(255, 59, 57, 77),
+            offset: Offset(0, 3),
+            blurRadius: 8,
+            spreadRadius: -7,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text(
+            widget.message!,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width * 0.04,
+              fontWeight: FontWeight.w900,
+              color: const Color.fromARGB(255, 0, 0, 0),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

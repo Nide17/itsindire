@@ -25,23 +25,27 @@ class ItsindireAlert extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextStyle titleStyle = TextStyle(
+      color: getAlertColor(alertType),
+      fontWeight: FontWeight.bold,
+      fontSize: MediaQuery.of(context).size.width * 0.04,
+    );
+
+    final TextStyle contentStyle = TextStyle(
+      color: const Color.fromARGB(255, 0, 27, 116),
+      fontSize: MediaQuery.of(context).size.width * 0.03,
+    );
+
     return AlertDialog(
       title: Text(
         errorTitle,
         textAlign: TextAlign.center,
-        style: TextStyle(
-          color: getAlertColor(alertType),
-          fontWeight: FontWeight.bold,
-          fontSize: MediaQuery.of(context).size.width * 0.04,
-        ),
+        style: titleStyle,
       ),
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       content: Text(
         errorMsg,
-        style: TextStyle(
-          color: const Color.fromARGB(255, 0, 27, 116),
-          fontSize: MediaQuery.of(context).size.width * 0.03,
-        ),
+        style: contentStyle,
         textAlign: TextAlign.center,
       ),
       shape: RoundedRectangleBorder(
@@ -55,61 +59,40 @@ class ItsindireAlert extends StatelessWidget {
       ),
       shadowColor: const Color.fromARGB(255, 0, 0, 0),
       actions: [
-        TextButton(
-            onPressed: () {
-              firstButtonTitle != null
-                  ? firstButtonFunction!()
-                  : Navigator.of(context).pop();
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.012,
-                vertical: MediaQuery.of(context).size.height * 0.006,
-              ),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: getAlertColor(alertType),
-                  width: MediaQuery.of(context).size.width * 0.004,
-                ),
-                borderRadius: BorderRadius.circular(
-                    MediaQuery.of(context).size.width * 0.016),
-                color: firstButtonColor ?? getAlertColor(alertType),
-              ),
-              child: Text(
-                firstButtonTitle ?? 'Funga',
-                style: const TextStyle(
-                  color: Color.fromARGB(255, 255, 255, 255),
-                ),
-              ),
-            )),
+        _buildButton(context, firstButtonTitle, firstButtonFunction, firstButtonColor),
         if (secondButtonTitle != null && secondButtonFunction != null)
-          TextButton(
-              onPressed: () {
-                secondButtonFunction!();
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.012,
-                  vertical: MediaQuery.of(context).size.height * 0.006,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: getAlertColor(alertType),
-                    width: MediaQuery.of(context).size.width * 0.004,
-                  ),
-                  borderRadius: BorderRadius.circular(
-                      MediaQuery.of(context).size.width * 0.016),
-                  color: secondButtonColor ?? getAlertColor(alertType),
-                ),
-                child: Text(
-                  secondButtonTitle ?? 'Funga',
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 255, 255, 255),
-                  ),
-                ),
-              )),
+          _buildButton(context, secondButtonTitle, secondButtonFunction, secondButtonColor),
       ],
       actionsAlignment: MainAxisAlignment.center,
+    );
+  }
+
+  Widget _buildButton(BuildContext context, String? title, Function? onPressed, Color? color) {
+    return TextButton(
+      onPressed: () {
+        title != null ? onPressed!() : Navigator.of(context).pop();
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.012,
+          vertical: MediaQuery.of(context).size.height * 0.006,
+        ),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: getAlertColor(alertType),
+            width: MediaQuery.of(context).size.width * 0.004,
+          ),
+          borderRadius: BorderRadius.circular(
+              MediaQuery.of(context).size.width * 0.016),
+          color: color ?? getAlertColor(alertType),
+        ),
+        child: Text(
+          title ?? 'Funga',
+          style: const TextStyle(
+            color: Color.fromARGB(255, 255, 255, 255),
+          ),
+        ),
+      ),
     );
   }
 }

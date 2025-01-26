@@ -78,21 +78,23 @@ class _IgaContentState extends State<IgaContent> {
       final finishedProgressesStream = CourseProgressService()
           .getFinishedProgresses(FirebaseAuth.instance.currentUser!.uid);
 
-      _finishedProgressesSubscription =
-          finishedProgressesStream?.listen((progresses) {
-        if (progresses.isNotEmpty) {
-          _processFinishedProgresses(progresses);
-        }
-      }, onError: (error) {
-        print('Error fetching finished progresses: $error');
-      });
+      _finishedProgressesSubscription = finishedProgressesStream?.listen(
+        (progresses) async {
+          if (progresses.isNotEmpty) {
+            await _processFinishedProgresses(progresses);
+          }
+        },
+        onError: (error) {
+          print('Error fetching finished progresses: $error');
+        },
+      );
     } catch (e) {
       print('Error fetching next isomo: $e');
     }
   }
 
   // Process finished progresses to determine the next Isomo
-  void _processFinishedProgresses(List<CourseProgressModel?> progresses) async {
+  Future<void> _processFinishedProgresses(List<CourseProgressModel?> progresses) async {
     final finishedCourses = progresses
         .where((progress) =>
             progress?.currentIngingo == progress?.totalIngingos &&

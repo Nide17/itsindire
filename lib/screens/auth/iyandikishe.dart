@@ -12,6 +12,7 @@ import 'package:itsindire/utilities/app_bar.dart';
 import 'package:itsindire/firebase_services/auth.dart';
 import 'package:itsindire/screens/auth/message_container.dart';
 import 'package:itsindire/screens/auth/form_fields.dart';
+import 'package:itsindire/utilities/snackbar_util.dart';
 
 class Iyandikishe extends StatefulWidget {
   final String? message;
@@ -199,32 +200,14 @@ class _IyandikisheState extends State<Iyandikishe> {
     ReturnedResult loginResult = await authState.userLogin(email, password);
 
     if (loginResult.value != null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          duration: Duration(seconds: 2),
-          content: Text(
-            'Kwiyandikisha byagenze neza!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          backgroundColor: Color(0xFF00A651)));
+      SnackbarUtil.showSnackBar(context, 'Kwiyandikisha byagenze neza!', const Color(0xFF00A651));
 
       Navigator.pushReplacementNamed(context, '/iga-landing');
 
       if (loginResult.value!.email != null &&
           loginResult.value!.email != 'testing@mail.com' &&
           loginResult.value!.email != 'nidehazard10@gmail.com') {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            duration: Duration(seconds: 5),
-            content: Text(
-              'UTANGIYE IGERAGEZA RIRANGIRA MUMINOTA 30',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  color: Color.fromARGB(255, 0, 105, 51)),
-            ),
-            backgroundColor: Color.fromARGB(255, 250, 213, 6)));
+        SnackbarUtil.showSnackBar(context, 'Utangiye igerageza rirangira mu minota 30. Gura ifatabuguzi wige nta nkomyi!', const Color.fromARGB(255, 250, 213, 6));
       }
     } else {
       _showErrorDialog('Kwinjira ntibyagenze neza!',

@@ -102,6 +102,7 @@ class CourseProgressService {
   }
 
   Stream<List<CourseProgressModel?>>? getUnfinishedProgresses(String? uid) {
+
     if (uid == null || uid == '') return null;
 
     final userProgresses = getUserProgresses(uid);
@@ -123,24 +124,20 @@ Future updateUserCourseProgress(
     int totalIngingos,
     int? unansweredPopQuestions,
   ) async {
-
-    // Fetch the current progress document
+  try {
     DocumentSnapshot progressSnapshot =
         await progressCollection.doc('${courseId}_$uid').get();
 
-    // Check if the document exists and get the value of 'unansweredPopQuestions'
     int? currentUnansweredPopQuestions;
     if (progressSnapshot.exists) {
-      // Safely get the value and cast it to int
       currentUnansweredPopQuestions = (progressSnapshot.data()
           as Map<String, dynamic>?)?['unansweredPopQuestions'] as int?;
     }
 
-    // Use the passed value if it's not null, otherwise keep the existing value
     int? updatedUnansweredPopQuestions =
         unansweredPopQuestions ?? currentUnansweredPopQuestions;
 
-    return await progressCollection.doc('${courseId}_$uid').set({
+    await progressCollection.doc('${courseId}_$uid').set({
       'id': '${courseId}_$uid',
       'userId': uid,
       'courseId': courseId,
@@ -149,15 +146,22 @@ Future updateUserCourseProgress(
       'totalIngingos': totalIngingos,
       'unansweredPopQuestions': updatedUnansweredPopQuestions,
     });
+  } catch (e) {
+    print('Error updating user course progress: $e');
   }
+}
 
   // THIS FUNCTION WILL UPDATE THE USER PROGRESS ON A COURSE IN THE DATABASE
   Future updateUnansweredPopQuestions(
     String progressId,
     int count,
   ) async {
-    return await progressCollection.doc(progressId).update({
+  try {
+    await progressCollection.doc(progressId).update({
       'unansweredPopQuestions': FieldValue.increment(count),
     });
+  } catch (e) {
+    print('Error updating unanswered pop questions: $e');
   }
+}
 }

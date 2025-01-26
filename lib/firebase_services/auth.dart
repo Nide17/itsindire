@@ -33,6 +33,7 @@ class AuthState with ChangeNotifier {
 
   User? _currentUser;
   ProfileModel? _currentProfile;
+  bool _isLoggedIn = false;
 
   AuthState() {
     _authSubscription = _authInstance.authStateChanges().listen((user) {
@@ -58,6 +59,7 @@ class AuthState with ChangeNotifier {
   bool get isDisposed => _isDisposed;
   User? get currentUser => _currentUser;
   ProfileModel? get currentProfile => _currentProfile;
+  bool get isLoggedIn => _isLoggedIn;
 
   void setCurrentProfile(ProfileModel? profile) {
     if (_currentProfile != profile) {
@@ -113,6 +115,7 @@ class AuthState with ChangeNotifier {
       // Clear the current user and profile
       setCurrentUser(null);
       setCurrentProfile(null);
+      _isLoggedIn = false;
 
       return 'Bye $loggedOutUserName!';
     } catch (e) {
@@ -195,6 +198,7 @@ class AuthState with ChangeNotifier {
       String username = result.user!.displayName ??
           querySnapshot.docs.first.get('username') ??
           email;
+      _isLoggedIn = true;
       return ReturnedResult(
           value: _userFromFirebaseUser(result.user!),
           successMessage: 'Ikaze ${username}!');
@@ -230,39 +234,8 @@ class AuthState with ChangeNotifier {
       User? user = result.user;
 
       if (user != null) {
-        await profilesCollection.doc(user.uid).set({
-          'uid': user.uid,
-          'username': username,
-          'email': email,
-          'urStudent': urStudent,
-          'regNumber': regNbr,
-          'campus': campus,
-          'roleId': rolesCollection.doc('1'),
-          'sessionID': '',
-        });
-
-        // save trial payment
-        await paymentsCollection.doc(user.uid).set({
-          'ifatabuguziID':
-              (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
-                  ? 'UGl3ahnKZdVrBVTItht7'
-                  : 'Wfp1cRTYMMYnYJo4vYmJ',
-          'userId': user.uid,
-          'igiciro':
-              (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
-                  ? 0
-                  : 4000,
-          'createdAt':
-              (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
-                  ? null
-                  : DateTime.now(),
-          'endAt':
-              (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
-                  ? null
-                  : DateTime.now().add(Duration(days: 60)),
-          'isApproved': true,
-          'phone': null,
-        });
+        await _setupNewProfile(user, username, email, urStudent, regNbr, campus);
+        await _saveTrialPayment(user, email);
 
         return ReturnedResult(
           value: 'Registered successfully, welcome!',
@@ -283,27 +256,79 @@ class AuthState with ChangeNotifier {
     }
   }
 
+  Future<void> _setupNewProfile(User user, String username, String email,
+      bool? urStudent, String? regNbr, String? campus) async {
+    await profilesCollection.doc(user.uid).set({
+      'uid': user.uid,
+      'username': username,
+      'email': email,
+      'urStudent': urStudent,
+      'regNumber': regNbr,
+      'campus': campus,
+      'roleId': rolesCollection.doc('1'),
+      'sessionID': '',
+    });
+  }
+
+  Future<void> _saveTrialPayment(User user, String email) async {
+    await paymentsCollection.doc(user.uid).set({
+      'ifatabuguziID':
+          (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
+              ? 'UGl3ahnKZdVrBVTItht7'
+              : 'Wfp1cRTYMMYnYJo4vYmJ',
+      'userId': user.uid,
+      'igiciro':
+          (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
+              ? 0
+              : 4000,
+      'createdAt':
+          (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
+              ? null
+              : DateTime.now(),
+      'endAt':
+          (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
+              ? null
+              : DateTime.now().add(Duration(days: 60)),
+      'isApproved': true,
+      'phone': null,
+    });
+  }
+
+  // Method to re-authenticate user
+  Future<void> _reauthenticateUser(String email, String password) async {
+    AuthCredential credential = EmailAuthProvider.credential(
+      email: email,
+      password: password,
+    );
+    await _authInstance.currentUser?.reauthenticateWithCredential(credential);
+  }
+
   // Delete user account
   Future deleteAccount(String userId, String email, String password) async {
     try {
-      // re-authenticate user before deleting account
-      AuthCredential credential = EmailAuthProvider.credential(
-        email: email,
-        password: password,
-      );
-
-      await _authInstance.currentUser?.reauthenticateWithCredential(credential);
+      // Re-authenticate user before deleting account
+      await _reauthenticateUser(email, password);
       _logger.i('Deleting user account: $userId');
 
-      // delete payments
-      await paymentsCollection.doc(userId).delete();
-      _logger.i('Payments deleted');
+      // Delete payments
+      await paymentsCollection.where('userId', isEqualTo: userId).get().then(
+        (value) {
+          value.docs.forEach((element) {
+            element.reference.delete();
+            _logger.i('Payments deleted');
+          });
+        },
+      );
 
-      // delete profile
-      await profilesCollection.doc(userId).delete();
-      _logger.i('Profile deleted');
+      // Delete profile
+      await profilesCollection.where('uid', isEqualTo: userId).get().then((value) {
+        value.docs.forEach((element) {
+          element.reference.delete();
+          _logger.i('Profiles deleted');
+        });
+      });
 
-      // delete scores
+      // Delete scores
       await isuzumaScoresCollection
           .where('takerID', isEqualTo: userId)
           .get()
@@ -314,18 +339,21 @@ class AuthState with ChangeNotifier {
       });
       _logger.i('Scores deleted');
 
-      // delete progresses
-      await progressCollection
-          .where('userId', isEqualTo: userId)
-          .get()
-          .then((value) {
-        value.docs.forEach((element) {
-          element.reference.delete();
-        });
-      });
+      // Delete progresses
+      QuerySnapshot progressSnapshot;
+      do {
+        progressSnapshot = await progressCollection
+            .where('userId', isEqualTo: userId)
+            .limit(100) // Limit to 100 documents per batch
+            .get();
+        for (var element in progressSnapshot.docs) {
+          _logger.i('Deleting element: ${element.reference}');
+          await element.reference.delete();
+        }
+      } while (progressSnapshot.docs.isNotEmpty);
       _logger.i('Progresses deleted');
 
-      // delete account
+      // Delete account
       await _authInstance.currentUser?.delete();
       _logger.i('User account deleted');
       return ReturnedResult(
@@ -334,13 +362,15 @@ class AuthState with ChangeNotifier {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'wrong-password') {
         return ReturnedResult(error: 'Ijambo banga siryo!');
+      } else if (e.code == 'requires-recent-login') {
+        return ReturnedResult(error: 'Please re-authenticate and try again.');
       } else {
         return ReturnedResult(error: 'Ntibikunze, habayemo ikosa!');
       }
     } catch (e) {
       _logger.e('Failed to delete user account', error: e);
       return ReturnedResult(
-        error: 'Gusiba konti ntibikunda!',
+        error: 'Gusiba konti ntibyakunze!',
       );
     }
   }
