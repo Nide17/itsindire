@@ -101,7 +101,7 @@ class _IbiciroState extends State<Ibiciro> {
   Widget buildContent(BuildContext context, ProfileModel? profile) {
     return ScrollbarTheme(
       data: ScrollbarThemeData(
-        thumbColor: MaterialStateProperty.all(Color(0xFFFFBD59)),
+        thumbColor: WidgetStateProperty.all(Color(0xFFFFBD59)),
       ),
       child: Scrollbar(
         child: ListView(

@@ -44,9 +44,11 @@ class _UserProgressState extends State<UserProgress> {
     });
   }
 
-  void _showProgressDialog(BuildContext context, PaymentModel payment, double percent, int? unansweredPopQuestions, bool isUrStudent) {
+  void _showProgressDialog(BuildContext context, PaymentModel payment,
+      double percent, int? unansweredPopQuestions, bool isUrStudent) {
     if (payment.isApproved != true) {
-      _showErrorDialog(context, 'Ntibyagenze neza', 'Ifatabuguzi ryawe ntiriremezwa!');
+      _showErrorDialog(
+          context, 'Ntibyagenze neza', 'Ifatabuguzi ryawe ntiriremezwa!');
       return;
     }
 
@@ -55,7 +57,8 @@ class _UserProgressState extends State<UserProgress> {
       return;
     }
 
-    _showProgressDialogContent(context, payment, percent, unansweredPopQuestions, isUrStudent);
+    _showProgressDialogContent(
+        context, payment, percent, unansweredPopQuestions, isUrStudent);
   }
 
   void _showErrorDialog(BuildContext context, String title, String message) {
@@ -72,7 +75,8 @@ class _UserProgressState extends State<UserProgress> {
     );
   }
 
-  void _showCompletionDialog(BuildContext context, PaymentModel payment, bool isUrStudent) {
+  void _showCompletionDialog(
+      BuildContext context, PaymentModel payment, bool isUrStudent) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -90,7 +94,8 @@ class _UserProgressState extends State<UserProgress> {
     );
   }
 
-  void _showProgressDialogContent(BuildContext context, PaymentModel payment, double percent, int? unansweredPopQuestions, bool isUrStudent) {
+  void _showProgressDialogContent(BuildContext context, PaymentModel payment,
+      double percent, int? unansweredPopQuestions, bool isUrStudent) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -111,16 +116,16 @@ class _UserProgressState extends State<UserProgress> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => !(payment.endAt?.isAfter(DateTime.now()) ?? false)
-                    ? Ibiciro(
-                        message: isUrStudent
-                            ? 'Buy a package to continue learning!'
-                            : 'Banza ugure ifatabuguzi!')
-                    : IgaContent(
-                        isomo: widget.isomo,
-                        courseProgress: widget.courseProgress,
-                        thisCourseTotalIngingos: thisCourseTotalIngingos,
-                      ),
+                builder: (context) =>
+                    !(payment.endAt?.isAfter(DateTime.now()) ?? false)
+                        ? Ibiciro(
+                            message: isUrStudent
+                                ? 'Buy a package to continue learning!'
+                                : 'Banza ugure ifatabuguzi!')
+                        : IgaContent(
+                            isomo: widget.isomo,
+                            thisCourseTotalIngingos: thisCourseTotalIngingos,
+                          ),
               ),
             );
           },
@@ -206,7 +211,8 @@ class _UserProgressState extends State<UserProgress> {
               GestureDetector(
                 onTap: () {
                   if (payment != null) {
-                    _showProgressDialog(context, payment, percent, unansweredPopQuestions, isUrStudent);
+                    _showProgressDialog(context, payment, percent,
+                        unansweredPopQuestions, isUrStudent);
                   }
                 },
                 child: Container(

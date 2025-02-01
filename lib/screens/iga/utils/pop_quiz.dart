@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:itsindire/firebase_services/auth.dart';
 import 'package:itsindire/firebase_services/isomo_progress.dart';
 import 'package:itsindire/models/course_progress.dart';
 import 'package:itsindire/models/isomo.dart';
@@ -9,10 +10,11 @@ import 'package:itsindire/screens/iga/utils/custom_radio_button.dart';
 import 'package:itsindire/screens/iga/utils/gradient_title.dart';
 import 'package:itsindire/utilities/app_bar.dart';
 import 'package:itsindire/utilities/direction_button_pq.dart';
+import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class PopQuiz extends StatefulWidget {
-  final List<PopQuestionModel> popQuestions;
+  final List<PopQuestionModel> pagePopQuestions;
   final IsomoModel isomo;
   final CourseProgressModel courseProgress;
   final int currentIngingo;
@@ -20,7 +22,7 @@ class PopQuiz extends StatefulWidget {
 
   const PopQuiz({
     super.key,
-    required this.popQuestions,
+    required this.pagePopQuestions,
     required this.isomo,
     required this.courseProgress,
     required this.currentIngingo,
@@ -34,56 +36,70 @@ class PopQuiz extends StatefulWidget {
 class _PopQuizState extends State<PopQuiz> {
   int selectedOption = 0;
   bool isCurrentCorrect = false;
-  int currQnID = 0;
+  int currentQuestionNo = 1;
   bool loading = false;
+  User? currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
+  }
 
   void handleQuizCompletion() {
+    if (!mounted) return; // Check if the widget is still mounted
+    setState(() {
+      loading = true;
+    });
+
     widget.coursechangeSkipNumber(5); // Update skip value in parent widget
 
-    // Update the number of answered questions in the course progress
-    CourseProgressService()
-        .updateUnansweredPopQuestions(
-            '${widget.isomo.id}_${FirebaseAuth.instance.currentUser!.uid}',
-            -widget.popQuestions.length)
-        .then((value) {
+    // Update the user's course progress with the current ingingo and unanswered pop questions
+    if (currentUser != null) {
       CourseProgressService().updateUserCourseProgress(
-          widget.courseProgress.userId,
-          widget.isomo.id,
-          widget.currentIngingo,
-          widget.courseProgress.totalIngingos,
-          null);
-      setState(() {
-        loading = false;
-      });
+        widget.courseProgress.userId,
+        widget.isomo.id,
+        widget.currentIngingo,
+        widget.courseProgress.totalIngingos,
+        widget.courseProgress.unansweredPopQuestions -
+            widget.pagePopQuestions.length,
+      );
+    }
+
+    if (!mounted) return; // Check if the widget is still mounted
+    setState(() {
+      loading = false;
     });
   }
 
   void forward() {
-    setState(() {
-      if (currQnID < widget.popQuestions.length - 1) {
-        currQnID++;
-      } else {
-        handleQuizCompletion();
-      }
-      selectedOption = 0;
-      isCurrentCorrect = false;
-    });
+    if (currentQuestionNo < widget.pagePopQuestions.length) {
+      setState(() {
+        currentQuestionNo++;
+        resetSelection();
+      });
+    } else {
+      handleQuizCompletion();
+    }
   }
 
   void backward() {
-    if (currQnID > 0 && selectedOption != 0) {
-      // Ensure an option is selected
+    if (currentQuestionNo > 1) {
       setState(() {
-        currQnID--;
-        selectedOption = 0;
-        isCurrentCorrect = false;
+        currentQuestionNo--;
+        resetSelection();
       });
     }
   }
 
+  void resetSelection() {
+    selectedOption = 0;
+    isCurrentCorrect = false;
+  }
+
   Widget buildQuestionTitle() {
     return Text(
-      widget.popQuestions[currQnID].title ?? '',
+      widget.pagePopQuestions[currentQuestionNo - 1].title ?? '',
       style: const TextStyle(
         fontSize: 18.0,
         fontWeight: FontWeight.bold,
@@ -92,8 +108,8 @@ class _PopQuizState extends State<PopQuiz> {
   }
 
   Widget buildQuestionImage() {
-    return widget.popQuestions[currQnID].imageUrl == null ||
-            widget.popQuestions[currQnID].imageUrl == ''
+    return widget.pagePopQuestions[currentQuestionNo - 1].imageUrl == null ||
+            widget.pagePopQuestions[currentQuestionNo - 1].imageUrl == ''
         ? const SizedBox.shrink()
         : SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
@@ -121,7 +137,7 @@ class _PopQuizState extends State<PopQuiz> {
               child: FadeInImage.memoryNetwork(
                 fadeInDuration: const Duration(milliseconds: 200),
                 placeholder: kTransparentImage,
-                image: widget.popQuestions[currQnID].imageUrl!,
+                image: widget.pagePopQuestions[currentQuestionNo - 1].imageUrl!,
                 fit: BoxFit.cover,
               ),
             ),
@@ -130,7 +146,8 @@ class _PopQuizState extends State<PopQuiz> {
 
   Widget buildOptions() {
     return Column(
-      children: widget.popQuestions[currQnID].options.map<Widget>((option) {
+      children: widget.pagePopQuestions[currentQuestionNo - 1].options
+          .map<Widget>((option) {
         return CustomRadioButton(
           option: option,
           isSelected: option.id == selectedOption,
@@ -148,9 +165,12 @@ class _PopQuizState extends State<PopQuiz> {
 
   @override
   Widget build(BuildContext context) {
+    final int lastQuestion = widget.pagePopQuestions.length;
+
     return loading == true
         ? const Center(child: CircularProgressIndicator())
-        : currQnID >= 0 && currQnID < widget.popQuestions.length
+        : currentQuestionNo > 0 &&
+                currentQuestionNo <= widget.pagePopQuestions.length
             ? Scaffold(
                 backgroundColor: const Color.fromARGB(255, 228, 225, 225),
                 appBar: PreferredSize(
@@ -160,75 +180,84 @@ class _PopQuizState extends State<PopQuiz> {
                 body: SingleChildScrollView(
                   child: Column(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 4.0),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF5B8BDF),
-                        ),
-                        child: GradientTitle(
-                            title: widget.isomo.title,
-                            icon: '',
-                            marginTop: 8.0),
-                      ),
-                      Container(
-                        padding:
-                            const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
-                        child: Column(
-                          children: [
-                            buildQuestionTitle(),
-                            buildQuestionImage(),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.016),
-                            buildOptions(),
-                          ],
-                        ),
-                      ),
+                      buildGradientTitle(),
+                      buildQuestionContent(),
                     ],
                   ),
                 ),
-                bottomNavigationBar: Container(
-                  margin: EdgeInsets.zero,
-                  padding: EdgeInsets.zero,
-                  height: MediaQuery.of(context).size.height * 0.1,
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 255, 255, 255),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color.fromARGB(255, 72, 255, 0),
-                        offset: Offset(0, -1),
-                        blurRadius: 1,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      DirectionButtonPq(
-                        buttonText: 'inyuma',
-                        direction: 'inyuma',
-                        opacity: 1,
-                        backward: backward,
-                        popQuestions: widget.popQuestions,
-                        currQnID: currQnID,
-                        isDisabled: selectedOption == 0,
-                      ),
-                      CircleProgressPq(
-                        percent: (currQnID + 1) / widget.popQuestions.length,
-                      ),
-                      DirectionButtonPq(
-                        buttonText: 'komeza',
-                        direction: 'komeza',
-                        opacity: 1,
-                        forward: forward,
-                        popQuestions: widget.popQuestions,
-                        currQnID: currQnID,
-                        isDisabled: selectedOption == 0 || !isCurrentCorrect,
-                      ),
-                    ],
-                  ),
-                ),
+                bottomNavigationBar: buildBottomNavigationBar(lastQuestion),
               )
             : const SizedBox.shrink();
+  }
+
+  Widget buildGradientTitle() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 4.0),
+      decoration: const BoxDecoration(
+        color: Color(0xFF5B8BDF),
+      ),
+      child: GradientTitle(title: widget.isomo.title, icon: '', marginTop: 8.0),
+    );
+  }
+
+  Widget buildQuestionContent() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
+      child: Column(
+        children: [
+          buildQuestionTitle(),
+          buildQuestionImage(),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.016),
+          buildOptions(),
+        ],
+      ),
+    );
+  }
+
+  Widget buildBottomNavigationBar(int lastQuestion) {
+    const Color backgroundColor = Color.fromARGB(255, 255, 255, 255);
+    const Color shadowColor = Color.fromARGB(255, 72, 255, 0);
+
+    return Container(
+      margin: EdgeInsets.zero,
+      padding: EdgeInsets.zero,
+      height: MediaQuery.of(context).size.height * 0.1,
+      decoration: const BoxDecoration(
+        color: backgroundColor,
+        boxShadow: [
+          BoxShadow(
+            color: shadowColor,
+            offset: Offset(0, -1),
+            blurRadius: 1,
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          DirectionButtonPq(
+            buttonText: 'inyuma',
+            direction: 'inyuma',
+            opacity: 1,
+            backward: backward,
+            pagePopQuestions: widget.pagePopQuestions,
+            currentQuestionNo: currentQuestionNo,
+            isDisabled: false,
+          ),
+          CircleProgressPq(
+            percent: currentQuestionNo / widget.pagePopQuestions.length,
+          ),
+          DirectionButtonPq(
+            buttonText: 'komeza',
+            direction: 'komeza',
+            opacity: 1,
+            forward: forward,
+            pagePopQuestions: widget.pagePopQuestions,
+            currentQuestionNo: currentQuestionNo,
+            isDisabled: selectedOption == 0 || !isCurrentCorrect,
+          ),
+        ],
+      ),
+    );
   }
 }

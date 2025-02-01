@@ -7,7 +7,7 @@ class DirectionButtonIsuzume extends StatefulWidget {
   final double opacity;
   final Function? forward;
   final Function? backward;
-  final int lastQn;
+  final int lastQuestion;
   final int currQnID;
   final bool isDisabled;
 
@@ -18,7 +18,7 @@ class DirectionButtonIsuzume extends StatefulWidget {
     required this.opacity,
     this.forward,
     this.backward,
-    required this.lastQn,
+    required this.lastQuestion,
     required this.currQnID,
     required this.isDisabled,
   });
@@ -38,7 +38,7 @@ class _DirectionButtonIsuzumeState extends State<DirectionButtonIsuzume> {
       }
     } else if (widget.direction == 'komeza') {
       widget.forward!();
-      if (widget.currQnID == widget.lastQn) {
+      if (widget.currQnID == widget.lastQuestion) {
         Navigator.pop(context);
       }
     }
@@ -62,7 +62,7 @@ class _DirectionButtonIsuzumeState extends State<DirectionButtonIsuzume> {
       onPressed: _handleOnPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: widget.isDisabled
-            ? const Color(0xFF00CCE5).withOpacity(0.4)
+            ? const Color(0xFF00CCE5).withValues(alpha: 0.4)
             : const Color(0xFF00CCE5),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(32.0),
@@ -104,7 +104,7 @@ class _DirectionButtonIsuzumeState extends State<DirectionButtonIsuzume> {
               visible: widget.direction != 'inyuma',
               child: _buildIcon(
                 widget.direction,
-                widget.currQnID == widget.lastQn ? 1.0 : widget.opacity,
+                widget.currQnID == widget.lastQuestion ? 1.0 : widget.opacity,
               ),
             ),
           ],

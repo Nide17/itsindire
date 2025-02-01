@@ -52,13 +52,15 @@ class _InjiraState extends State<Injira> {
   }
 
   void _showSnackbar(String message, ReturnedResult result) {
-    SnackbarUtil.showSnackBar(
-      context,
-      message,
-      result.isSuccess == true
-          ? const Color(0xFF00A651)
-          : const Color.fromARGB(255, 255, 0, 0),
-    );
+    if (mounted) {
+      SnackbarUtil.showSnackBar(
+        context,
+        message,
+        result.isSuccess == true
+            ? const Color(0xFF00A651)
+            : const Color.fromARGB(255, 255, 0, 0),
+      );
+    }
   }
 
   Future<void> _handleLogin(AuthState authState) async {

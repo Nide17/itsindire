@@ -83,9 +83,9 @@ class _IsuzumaIkibazoButtonState extends State<IsuzumaIkibazoButton> {
       ScoreQuestionI currentQn, bool isReviewing, bool isActive) {
     if (isReviewing) {
       if (currentQn.isCorrectChoosen()) {
-        return const Color(0xFF00A651).withOpacity(isActive ? 0.7 : 1);
+        return const Color(0xFF00A651).withValues(alpha: isActive ? 0.7 : 1);
       } else {
-        return const Color(0xFFFF5B5B).withOpacity(isActive ? 0.7 : 1);
+        return const Color(0xFFFF5B5B).withValues(alpha: isActive ? 0.7 : 1);
       }
     } else {
       if (isActive) {

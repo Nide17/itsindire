@@ -285,7 +285,6 @@ class _IsuzumeDetailsState extends State<IsuzumeDetails> {
                   MaterialPageRoute(
                     builder: (context) => IgaContent(
                       isomo: widget.isomo,
-                      courseProgress: widget.courseProgress,
                       thisCourseTotalIngingos: widget.courseProgress!.totalIngingos,
                     ),
                   ),

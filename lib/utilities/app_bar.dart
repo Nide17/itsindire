@@ -22,8 +22,8 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   final CollectionReference paymentsCollection =
       FirebaseFirestore.instance.collection('payments');
   late StreamSubscription<QuerySnapshot> _paymentsSubscription;
-  final User? currentUser = FirebaseAuth.instance.currentUser;
-  int remainingMinutes = 0;
+  User? currentUser;
+  int remainingSeconds = 0;
 
   // payments stream
   Stream<QuerySnapshot> get payments => currentUser != null
@@ -36,6 +36,16 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   void initState() {
     super.initState();
 
+    // Use the AuthState instance from the Provider to set the currentUser
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
+      });
+      _subscribeToPayments();
+    });
+  }
+
+  void _subscribeToPayments() {
     _paymentsSubscription = payments.listen((event) {
       if (!mounted) return;
       for (var change in event.docChanges) {
@@ -82,6 +92,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
 
   @override
   Widget build(BuildContext context) {
+    
     return MultiProvider(
       providers: [
         StreamProvider<PaymentModel?>.value(
@@ -103,7 +114,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
         return Consumer<ProfileModel?>(builder: (context, profile, _) {
           return Consumer<PaymentModel?>(builder: (context, newestPyt, _) {
             if (newestPyt != null) {
-              remainingMinutes = newestPyt.getRemainingMinutes();
+              remainingSeconds = newestPyt.getRemainingMilliseconds() ~/ 1000;
             }
 
             return AppBar(
@@ -171,7 +182,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
 
   Widget _buildCountdownTimer(BuildContext context) {
     return CountdownTimer(
-      duration: 1 + (remainingMinutes * 60),
+      duration: 1 + remainingSeconds,
       onTimerExpired: () {
         ScaffoldMessenger.of(context).showSnackBar(_buildSnackBar(
             'IGERAGEZA RYARANGIYE, GURA IFATABUGUZI!',
@@ -185,7 +196,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        String email = FirebaseAuth.instance.currentUser?.email ?? '';
+        String email = currentUser?.email ?? '';
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
@@ -216,8 +227,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
                   style: const TextStyle(fontWeight: FontWeight.bold),
                   children: [
                     TextSpan(
-                        text:
-                            '\n${FirebaseAuth.instance.currentUser?.email ?? ''}',
+                        text: '\n${currentUser?.email ?? ''}',
                         style: const TextStyle(
                             fontWeight: FontWeight.w600, fontSize: 12.0)),
                   ]),

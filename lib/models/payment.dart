@@ -20,49 +20,22 @@ class PaymentModel {
     this.phone,
   });
 
-  // GET REMAINING DAYS
   int getRemainingDays() {
-    DateTime now = DateTime.now();
-    if (endAt == null) {
-      return 0;
-    }
-    Duration diff = endAt!.difference(now);
-    int daysDifference = diff.inDays;
-
-    // Check if there is any remaining time in the day beyond the full days difference
-    if (diff.inHours % 24 > 0 ||
-        diff.inMinutes % 1440 > 0 ||
-        diff.inSeconds % 86400 > 0) {
-      if (diff.isNegative) {
-        daysDifference -=
-            1; // Passed time within a day should be considered as a full day passed
-      } else {
-        daysDifference +=
-            1; // Remaining time within a day should be considered as a full day remaining
-      }
-    }
-    return daysDifference;
+    if (endAt == null) return 0;
+    Duration diff = endAt!.difference(DateTime.now());
+    return diff.isNegative ? 0 : diff.inDays;
   }
 
   int getRemainingMinutes() {
-    DateTime now = DateTime.now();
-    if (endAt == null) {
-      return 0;
-    }
-    Duration diff = endAt!.difference(now);
-    int minutesDifference = diff.inMinutes;
+    if (endAt == null) return 0;
+    Duration diff = endAt!.difference(DateTime.now());
+    return diff.isNegative ? 0 : diff.inMinutes;
+  }
 
-    // Check if there is any remaining time in the day beyond the full days difference
-    if (diff.inSeconds % 60 > 0) {
-      if (diff.isNegative) {
-        minutesDifference -=
-            1; // Passed time within a day should be considered as a full day passed
-      } else {
-        minutesDifference +=
-            1; // Remaining time within a day should be considered as a full day remaining
-      }
-    }
-    return minutesDifference < 0 ? 0 : minutesDifference;
+  int getRemainingMilliseconds() {
+    if (endAt == null) return 0;
+    Duration diff = endAt!.difference(DateTime.now());
+    return diff.isNegative ? 0 : diff.inMilliseconds;
   }
 
   // GET FORMATTED END DATE - 2021-09-30
@@ -96,8 +69,8 @@ class PaymentModel {
   // FROM JSON
   factory PaymentModel.fromJson(Map<String, dynamic> json) {
     return PaymentModel(
-      createdAt: (json['createdAt'] as Timestamp).toDate(),
-      endAt: (json['endAt'] as Timestamp).toDate(),
+      createdAt: json['createdAt'] != null ? (json['createdAt'] as Timestamp).toDate() : null,
+      endAt: json['endAt'] != null ? (json['endAt'] as Timestamp).toDate() : null,
       userId: json['userId'],
       ifatabuguziID: json['ifatabuguziID'],
       igiciro: json['igiciro'],

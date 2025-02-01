@@ -20,6 +20,15 @@ class _KontiState extends State<Konti> {
   final _formKey = GlobalKey<FormState>();
   String password = '';
   bool _isDeleting = false;
+  User? currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,21 +95,19 @@ class _KontiState extends State<Konti> {
                             onChanged: (value) =>
                                 setState(() => password = value),
                           ),
-                          _isDeleting
-                              ? CircularProgressIndicator()
-                              : ElevatedButton(
-                                  onPressed: () => _showDeleteAccountDialog(
-                                      context, authState),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 24.0,
-                                      vertical: 12.0,
-                                    ),
-                                  ),
-                                  child: const Text('Siba konti yawe',
-                                      style: TextStyle(color: Colors.white)),
-                                ),
+                          ElevatedButton(
+                            onPressed: () =>
+                                _showDeleteAccountDialog(context, authState),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24.0,
+                                vertical: 12.0,
+                              ),
+                            ),
+                            child: const Text('Siba konti yawe',
+                                style: TextStyle(color: Colors.white)),
+                          ),
                         ],
                       ),
                     ),
@@ -122,20 +129,22 @@ class _KontiState extends State<Konti> {
           title: const Text('Siba konti yawe!'),
           content: const Text(
               'Ubu se wifuza gusiba konti yawe kuri Itsindire? ushobora kuyisiba ariko igenda burundu.'),
-          actions: [
-            _buildDialogButton(
-              context: context,
-              label: 'Oya',
-              color: Colors.green,
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            _buildDialogButton(
-              context: context,
-              label: 'Yego',
-              color: Colors.red,
-              onPressed: () => _deleteAccount(context, authState),
-            ),
-          ],
+          actions: _isDeleting
+              ? [CircularProgressIndicator()]
+              : [
+                  _buildDialogButton(
+                    context: context,
+                    label: 'Oya',
+                    color: Colors.green,
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  _buildDialogButton(
+                    context: context,
+                    label: 'Yego',
+                    color: Colors.red,
+                    onPressed: () => _deleteAccount(context, authState),
+                  ),
+                ],
         );
       },
     );
@@ -158,31 +167,38 @@ class _KontiState extends State<Konti> {
     setState(() {
       _isDeleting = true;
     });
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null && user.email != null) {
-        ReturnedResult result =
-            await authState.deleteAccount(user.uid, user.email!, password);
 
-        if (result.isSuccess) {
-          Navigator.of(context).pop();
-          Navigator.of(context).pop();
-          SnackbarUtil.showSnackBar(
-              context, 'Konti yawe yasibwe neza.', Colors.green);
-        } else {
-          SnackbarUtil.showSnackBar(
-              context, result.error ?? 'Ntibikunze.', Colors.red);
-        }
+    authState.setCurrentProfile(null);
+
+    if (currentUser == null || currentUser!.email == null) {
+      SnackbarUtil.showSnackBar(
+          context, 'Nta imeyili, sohoka wongere winjire.', Colors.red);
+      setState(() {
+        _isDeleting = false;
+      });
+      return;
+    }
+
+    try {
+      ReturnedResult result = await authState.deleteAccount(
+          currentUser!.uid, currentUser!.email!, password);
+
+      if (result.isSuccess) {
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+        authState.setCurrentUser(null);
+        SnackbarUtil.showSnackBar(
+            context, 'Konti yawe yasibwe neza.', Colors.green);
+        Navigator.pushReplacementNamed(context, '/iyandikishe');
       } else {
         SnackbarUtil.showSnackBar(
-            context, 'Nta imeyili, sohoka wongere winjire.', Colors.red);
+            context, result.error ?? 'Ntibikunze.', Colors.red);
       }
     } catch (e) {
       SnackbarUtil.showSnackBar(context, 'Habayeho ikosa: $e', Colors.red);
     } finally {
       setState(() {
         _isDeleting = false;
-        Navigator.pushReplacementNamed(context, '/iyandikishe');
       });
     }
   }

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:itsindire/utilities/loading_widget.dart';
 import 'package:provider/provider.dart';
@@ -41,13 +42,16 @@ class _UrStudentState extends State<UrStudent> {
   ];
   String _selectedCampus = '';
   bool loading = false;
+  User? currentUser;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final user = Provider.of<AuthState>(context, listen: false).currentUser;
-      if (user != null) {
+    setState(() {
+      currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
+    });
+      if (currentUser != null) {
         Navigator.pushReplacementNamed(context, '/iga-landing');
       }
     });

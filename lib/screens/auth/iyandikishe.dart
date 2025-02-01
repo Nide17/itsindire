@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:itsindire/main.dart';
 import 'package:itsindire/utilities/loading_widget.dart';
@@ -28,6 +29,7 @@ class _IyandikisheState extends State<Iyandikishe> {
   final CollectionReference roles =
       FirebaseFirestore.instance.collection('roles');
   bool loading = false;
+  User? currentUser;
 
   // FORM FIELD VALUES STATE
   String username = '';
@@ -41,8 +43,11 @@ class _IyandikisheState extends State<Iyandikishe> {
     super.initState();
     appBarItsindire = AppBarItsindire();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final user = Provider.of<AuthState>(context, listen: false).currentUser;
-      if (user != null) {
+      setState(() {
+        currentUser =
+            Provider.of<AuthState>(context, listen: false).currentUser;
+      });
+      if (currentUser != null) {
         Navigator.pushReplacementNamed(context, '/iga-landing');
       }
     });
@@ -71,10 +76,10 @@ class _IyandikisheState extends State<Iyandikishe> {
               if (widget.message != null)
                 MessageContainer(message: widget.message!),
               const GradientTitle(
-                  title: 'IYANDIKISHE',
-                  icon: 'assets/images/iyandikishe.svg'),
+                  title: 'IYANDIKISHE', icon: 'assets/images/iyandikishe.svg'),
               const Description(
-                  text: 'Iyandikishe ubundi, wige, umenye utsindire provisoire!'),
+                  text:
+                      'Iyandikishe ubundi, wige, umenye utsindire provisoire!'),
               if (loading) const LoadingWidget(),
               if (!loading) _buildImage(context),
               _buildForm(context, authState),
@@ -102,8 +107,7 @@ class _IyandikisheState extends State<Iyandikishe> {
   Widget _buildForm(BuildContext context, AuthState authState) {
     return Padding(
       padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.05,
-          vertical: 0.0),
+          horizontal: MediaQuery.of(context).size.width * 0.05, vertical: 0.0),
       child: Form(
         key: _formKey,
         child: Column(
@@ -200,14 +204,18 @@ class _IyandikisheState extends State<Iyandikishe> {
     ReturnedResult loginResult = await authState.userLogin(email, password);
 
     if (loginResult.value != null) {
-      SnackbarUtil.showSnackBar(context, 'Kwiyandikisha byagenze neza!', const Color(0xFF00A651));
+      SnackbarUtil.showSnackBar(
+          context, 'Kwiyandikisha byagenze neza!', const Color(0xFF00A651));
 
       Navigator.pushReplacementNamed(context, '/iga-landing');
 
       if (loginResult.value!.email != null &&
           loginResult.value!.email != 'testing@mail.com' &&
           loginResult.value!.email != 'nidehazard10@gmail.com') {
-        SnackbarUtil.showSnackBar(context, 'Utangiye igerageza rirangira mu minota 30. Gura ifatabuguzi wige nta nkomyi!', const Color.fromARGB(255, 250, 213, 6));
+        SnackbarUtil.showSnackBar(
+            context,
+            'Utangiye igerageza rirangira mu minota 30. Gura ifatabuguzi wige nta nkomyi!',
+            const Color.fromARGB(255, 250, 213, 6));
       }
     } else {
       _showErrorDialog('Kwinjira ntibyagenze neza!',

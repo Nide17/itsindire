@@ -68,7 +68,7 @@ class CountdownTimerState extends State<CountdownTimer>
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.blue.withOpacity(0.6),
+                color: Colors.blue.withValues(alpha: 0.6),
                 offset: const Offset(0, 2),
                 blurRadius: 1,
               ),

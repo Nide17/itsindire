@@ -192,7 +192,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                                     direction: 'inyuma',
                                     opacity: 1,
                                     backward: backward,
-                                    lastQn: popQuestions.length - 1,
+                                    lastQuestion: popQuestions.length - 1,
                                     currQnID: qnIndex,
                                     isDisabled: qnIndex < 1,
                                   ),
@@ -207,7 +207,7 @@ class _IsuzumeContentState extends State<IsuzumeContent> {
                                     direction: 'komeza',
                                     opacity: 1,
                                     forward: forward,
-                                    lastQn: popQuestions.length - 1,
+                                    lastQuestion: popQuestions.length - 1,
                                     currQnID: qnIndex,
                                     isDisabled:
                                         qnIndex >= popQuestions.length - 1 ||

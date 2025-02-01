@@ -33,13 +33,13 @@ class PaymentService {
         phone: phone,
       );
     } catch (e) {
-      print('\n\n\nError: $e\n\n');
+      print('\n\nError: $e\n');
       return null;
     }
   }
 
   Stream<PaymentModel?> getNewestPytByUserId(String userId) {
-    print('User ID: $userId');
+
     return paymentsCollection
         .where('userId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)

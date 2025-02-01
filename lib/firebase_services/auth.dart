@@ -33,7 +33,6 @@ class AuthState with ChangeNotifier {
 
   User? _currentUser;
   ProfileModel? _currentProfile;
-  bool _isLoggedIn = false;
 
   AuthState() {
     _authSubscription = _authInstance.authStateChanges().listen((user) {
@@ -59,7 +58,6 @@ class AuthState with ChangeNotifier {
   bool get isDisposed => _isDisposed;
   User? get currentUser => _currentUser;
   ProfileModel? get currentProfile => _currentProfile;
-  bool get isLoggedIn => _isLoggedIn;
 
   void setCurrentProfile(ProfileModel? profile) {
     if (_currentProfile != profile) {
@@ -115,7 +113,6 @@ class AuthState with ChangeNotifier {
       // Clear the current user and profile
       setCurrentUser(null);
       setCurrentProfile(null);
-      _isLoggedIn = false;
 
       return 'Bye $loggedOutUserName!';
     } catch (e) {
@@ -156,6 +153,7 @@ class AuthState with ChangeNotifier {
 
       String? sessionIdentity = querySnapshot.docs.first.get('sessionID');
       if (sessionIdentity != '' &&
+          sessionIdentity != null &&
           email != 'nidehazard10@gmail.com' &&
           email != 'testing@mail.com') {
         return ReturnedResult(
@@ -198,7 +196,6 @@ class AuthState with ChangeNotifier {
       String username = result.user!.displayName ??
           querySnapshot.docs.first.get('username') ??
           email;
-      _isLoggedIn = true;
       return ReturnedResult(
           value: _userFromFirebaseUser(result.user!),
           successMessage: 'Ikaze ${username}!');
@@ -234,7 +231,8 @@ class AuthState with ChangeNotifier {
       User? user = result.user;
 
       if (user != null) {
-        await _setupNewProfile(user, username, email, urStudent, regNbr, campus);
+        await _setupNewProfile(
+            user, username, email, urStudent, regNbr, campus);
         await _saveTrialPayment(user, email);
 
         return ReturnedResult(
@@ -321,7 +319,10 @@ class AuthState with ChangeNotifier {
       );
 
       // Delete profile
-      await profilesCollection.where('uid', isEqualTo: userId).get().then((value) {
+      await profilesCollection
+          .where('uid', isEqualTo: userId)
+          .get()
+          .then((value) {
         value.docs.forEach((element) {
           element.reference.delete();
           _logger.i('Profiles deleted');
@@ -356,6 +357,12 @@ class AuthState with ChangeNotifier {
       // Delete account
       await _authInstance.currentUser?.delete();
       _logger.i('User account deleted');
+
+      // Logout
+      await logOut();
+
+      print("\n User account deleted successfully! \n");
+
       return ReturnedResult(
         successMessage: 'Konti yawe yasibwe!',
       );

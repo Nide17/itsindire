@@ -28,80 +28,95 @@ class IgaLanding extends StatefulWidget {
 class _IgaLandingState extends State<IgaLanding> {
   bool loading = false;
   final Set<String> connectionStatus = {};
+  User? currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final conn = Provider.of<ConnectionStatus>(context);
     checkInternet(context, conn);
-    print(Provider.of<AuthState>(context, listen: false).isLoggedIn);
 
-    return loading
-        ? const LoadingWidget()
-        : MultiProvider(
-            providers: [
-              StreamProvider<List<IsomoModel?>?>.value(
-                value: IsomoService()
-                    .getAllAmasomo(FirebaseAuth.instance.currentUser?.uid),
-                initialData: null,
-                catchError: (context, error) {
-                  return [];
-                },
-              ),
-              StreamProvider<List<CourseProgressModel?>?>.value(
-                value: CourseProgressService()
-                    .getUserProgresses(FirebaseAuth.instance.currentUser?.uid),
-                initialData: null,
-                catchError: (context, error) {
-                  return [];
-                },
-              ),
-            ],
-            child: Consumer<List<CourseProgressModel?>?>(
-                builder: (context, allUserProgresses, child) {
+    return loading ? const LoadingWidget() : buildMultiProvider(context, conn);
+  }
+
+  Widget buildMultiProvider(BuildContext context, ConnectionStatus conn) {
+    return MultiProvider(
+      providers: [
+        StreamProvider<List<IsomoModel?>?>.value(
+          value: IsomoService().getAllAmasomo(currentUser?.uid),
+          initialData: null,
+          catchError: (context, error) => [],
+        ),
+        StreamProvider<List<CourseProgressModel?>?>.value(
+          value: CourseProgressService().getUserProgresses(currentUser?.uid),
+          initialData: null,
+          catchError: (context, error) => [],
+        ),
+      ],
+      child: Consumer<AuthState>(
+        builder: (context, authState, _) {
+          return Consumer<List<CourseProgressModel?>?>(
+            builder: (context, allUserProgresses, child) {
               return Consumer<List<IsomoModel?>?>(
-                  builder: (context, allAmasomos, _) {
-                if (allUserProgresses != null &&
-                    allUserProgresses.isEmpty &&
-                    allAmasomos != null &&
-                    allAmasomos.isNotEmpty &&
-                    Provider.of<AuthState>(context, listen: false).isLoggedIn) {
-                  loading = true;
-
-                  for (var isomo in allAmasomos) {
-                    IngingoService()
-                        .getTotalIsomoIngingos(isomo!.id)
-                        .listen((isomoEvent) {
-                      PopQuestionService()
-                          .getPopQuestionsByIsomoID(isomo.id)
-                          .listen((popQnEvent) {
-                        if (FirebaseAuth.instance.currentUser != null) {
-                          CourseProgressService().updateUserCourseProgress(
-                            FirebaseAuth.instance.currentUser!.uid,
-                            isomo.id,
-                            0,
-                            isomoEvent.realTotalIngingos,
-                            popQnEvent.length,
-                          );
-                        }
-                      });
-                    });
-                  }
-
-                  loading = false;
-                }
-                return Scaffold(
-                    backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-                    appBar: PreferredSize(
-                      preferredSize: Size.fromHeight(58.0),
-                      child: AppBarItsindire(),
-                    ),
-                    body: conn.isOnline == false
-                        ? const NoInternet()
-                        : buildIgaList(context),
-                    bottomNavigationBar: const RebaIbiciro());
-              });
-            }),
+                builder: (context, allAmasomos, _) {
+                  handleUserProgressUpdate(
+                      authState, allUserProgresses, allAmasomos);
+                  return buildScaffold(context, conn);
+                },
+              );
+            },
           );
+        },
+      ),
+    );
+  }
+
+  void handleUserProgressUpdate(
+      AuthState authState,
+      List<CourseProgressModel?>? allUserProgresses,
+      List<IsomoModel?>? allAmasomos) {
+    if (allUserProgresses != null &&
+        allUserProgresses.isEmpty &&
+        allAmasomos != null &&
+        allAmasomos.isNotEmpty &&
+        authState.currentProfile?.uid != null) {
+      loading = true;
+      for (var isomo in allAmasomos) {
+        IngingoService().getTotalIsomoIngingos(isomo!.id).listen((isomoEvent) {
+          PopQuestionService()
+              .getPopQuestionsByIsomoID(isomo.id)
+              .listen((popQnEvent) {
+            CourseProgressService().updateUserCourseProgress(
+              currentUser!.uid,
+              isomo.id,
+              0,
+              isomoEvent.realTotalIngingos,
+              popQnEvent.length,
+            );
+          });
+        });
+      }
+      loading = false;
+    }
+  }
+
+  Widget buildScaffold(BuildContext context, ConnectionStatus conn) {
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 71, 103, 158),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(58.0),
+        child: AppBarItsindire(),
+      ),
+      body: conn.isOnline == false ? const NoInternet() : buildIgaList(context),
+      bottomNavigationBar: const RebaIbiciro(),
+    );
   }
 
   // Method to build the list of items
@@ -196,7 +211,8 @@ class _IgaLandingState extends State<IgaLanding> {
   }
 
   // Method to check internet connection and show snackbar
-  Future<void> checkInternet(BuildContext context, ConnectionStatus conn) async {
+  Future<void> checkInternet(
+      BuildContext context, ConnectionStatus conn) async {
     if (conn.isOnline == false && !connectionStatus.contains('disconnected')) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         SnackbarUtil.showSnackBar(context, 'Nta internet mufite!.',

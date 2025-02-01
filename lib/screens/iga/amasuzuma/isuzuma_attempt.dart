@@ -149,7 +149,7 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
                         boxShadow: [
                           BoxShadow(
                             color: const Color.fromARGB(255, 83, 65, 240)
-                                .withOpacity((qnsLength != qnIndex) ? 0.7 : 1),
+                                .withValues(alpha: (qnsLength != qnIndex) ? 0.7 : 1),
                             offset: const Offset(0, 3),
                             blurRadius: 8,
                             spreadRadius: -8,
@@ -220,9 +220,9 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
                         },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white
-                              .withOpacity(unansweredQns.isNotEmpty ? 0.65 : 1),
+                              .withValues(alpha: unansweredQns.isNotEmpty ? 0.65 : 1),
                           backgroundColor: const Color.fromARGB(255, 255, 0, 0)
-                              .withOpacity(unansweredQns.isNotEmpty ? 0.6 : 1),
+                              .withValues(alpha: unansweredQns.isNotEmpty ? 0.6 : 1),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(32.0),
                               side: BorderSide(
@@ -244,7 +244,7 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
                               width: MediaQuery.of(context).size.width * 0.024,
                               colorFilter: ColorFilter.mode(
                                 const Color.fromARGB(255, 255, 255, 255)
-                                    .withOpacity(
+                                    .withValues(alpha: 
                                         unansweredQns.isNotEmpty ? 0.5 : 1),
                                 BlendMode.srcATop,
                               ),
@@ -255,7 +255,7 @@ class _IsuzumaAttemptState extends State<IsuzumaAttempt> {
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.024,
                                 color: const Color.fromARGB(255, 255, 255, 255)
-                                    .withOpacity(
+                                    .withValues(alpha: 
                                         unansweredQns.isNotEmpty ? 0.65 : 1),
                               ),
                             ),

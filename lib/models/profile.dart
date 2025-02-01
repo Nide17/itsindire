@@ -53,6 +53,6 @@ class ProfileModel {
   // TO STRING
   @override
   String toString() {
-    return "ProfileModel {id: $uid, username: $username, email: $email, phone: $phone, photo: $photo, gender: $gender, dob: $dob, urStudent: $urStudent, regNumber: $regNumber, campus: $campus, roleId: $roleId, sessionID: $sessionID}";
+    return "ProfileModel {uid: $uid, username: $username, email: $email, phone: $phone, photo: $photo, gender: $gender, dob: $dob, urStudent: $urStudent, regNumber: $regNumber, campus: $campus, roleId: $roleId, sessionID: $sessionID}";
   }
 }

@@ -56,7 +56,7 @@ class _IsuzumaCustomRadioButtonState extends State<IsuzumaCustomRadioButton> {
                     color: widget.isReviewing
                         ? getDisplayColor(
                             widget.option!.isCorrect, widget.isReviewing)
-                        : Colors.grey.withOpacity(0.4),
+                        : Colors.grey.withValues(alpha: 0.4),
                     offset: const Offset(0, 1),
                     blurRadius: 1,
                   ),
@@ -162,7 +162,7 @@ class _IsuzumaCustomRadioButtonState extends State<IsuzumaCustomRadioButton> {
                             style: TextStyle(
                               fontSize:
                                   MediaQuery.of(context).size.height * 0.014,
-                              color: Colors.black.withOpacity(0.9),
+                              color: Colors.black.withValues(alpha: 0.9),
                             ),
                           ),
                         ],

@@ -87,7 +87,7 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
           BoxShadow(
             color: isSelected
                 ? getDisplayColor(isThisCorrect)
-                : Colors.grey.withOpacity(0.4),
+                : Colors.grey.withValues(alpha: 0.4),
             offset: const Offset(0, 1),
             blurRadius: 1,
           ),
@@ -173,7 +173,7 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
             textAlign: TextAlign.left,
             style: TextStyle(
               fontSize: MediaQuery.of(context).size.height * 0.014,
-              color: Colors.black.withOpacity(0.9),
+              color: Colors.black.withValues(alpha: 0.9),
             ),
           ),
         ),

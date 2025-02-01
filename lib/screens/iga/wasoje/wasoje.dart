@@ -21,6 +21,20 @@ class Wasoje extends StatefulWidget {
 }
 
 class _WasojeState extends State<Wasoje> {
+  User? currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    setCurrentUser();
+  }
+
+  void setCurrentUser() {
+    setState(() {
+      currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return _buildProviders(context);
@@ -30,49 +44,51 @@ class _WasojeState extends State<Wasoje> {
     return MultiProvider(
       providers: [
         StreamProvider<List<IsomoModel?>?>.value(
-          value: IsomoService()
-              .getAllAmasomo(FirebaseAuth.instance.currentUser?.uid),
+          value: IsomoService().getAllAmasomo(currentUser?.uid),
           initialData: null,
           catchError: (context, error) => [],
         ),
         StreamProvider<List<CourseProgressModel?>?>.value(
-          value: FirebaseAuth.instance.currentUser != null
-              ? CourseProgressService().getFinishedProgresses(
-                  FirebaseAuth.instance.currentUser!.uid)
+          value: currentUser != null
+              ? CourseProgressService().getFinishedProgresses(currentUser!.uid)
               : null,
           initialData: null,
-          catchError: (context, error) {
-            return [];
-          },
+          catchError: (context, error) => [],
         ),
       ],
-      child: Consumer<AuthState>(builder: (context, authState, _) {
-        return Consumer<List<IsomoModel?>?>(
-            builder: (context, allAmasomos, child) {
-          return Consumer<List<CourseProgressModel?>?>(
-              builder: (context, finishedProgresses, child) {
-            final overallProgress =
-                allAmasomos != null && finishedProgresses != null
-                    ? finishedProgresses.length / allAmasomos.length
-                    : 0.0;
-
-            return _buildScaffold(context, authState, overallProgress, finishedProgresses);
-          });
-        });
-      }),
+      child: _buildConsumer(context),
     );
   }
 
-  Widget _buildScaffold(BuildContext context, AuthState authState, double overallProgress, List<CourseProgressModel?>? finishedProgresses) {
+  Widget _buildConsumer(BuildContext context) {
+    return Consumer<AuthState>(builder: (context, authState, _) {
+      return Consumer<List<IsomoModel?>?>(
+          builder: (context, allAmasomos, child) {
+        return Consumer<List<CourseProgressModel?>?>(
+            builder: (context, finishedProgresses, child) {
+          final overallProgress =
+              (allAmasomos != null && finishedProgresses != null)
+                  ? finishedProgresses.length / allAmasomos.length
+                  : 0.0;
+
+          return _buildScaffold(
+              context, authState, overallProgress, finishedProgresses);
+        });
+      });
+    });
+  }
+
+  Widget _buildScaffold(BuildContext context, AuthState authState,
+      double overallProgress, List<CourseProgressModel?>? finishedProgresses) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-      appBar: PreferredSize(
+      appBar: const PreferredSize(
         preferredSize: Size.fromHeight(58.0),
         child: AppBarItsindire(),
       ),
       body: ScrollbarTheme(
         data: ScrollbarThemeData(
-          thumbColor: WidgetStateProperty.all(Color(0xFFFFBD59)),
+          thumbColor: WidgetStateProperty.all(const Color(0xFFFFBD59)),
         ),
         child: Scrollbar(
           child: ListView(children: <Widget>[
@@ -83,9 +99,7 @@ class _WasojeState extends State<Wasoje> {
               height: MediaQuery.of(context).size.height * 0.01,
             ),
             ProgressCircle(
-              percent: authState.currentProfile != null
-                  ? overallProgress
-                  : 0.0,
+              percent: authState.currentProfile != null ? overallProgress : 0.0,
               progress: authState.currentProfile != null
                   ? 'Ugeze kukigero cya ${(overallProgress * 100).toStringAsFixed(0)}% wiga!'
                   : 'Banza winjire!',

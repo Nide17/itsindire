@@ -73,7 +73,7 @@ class QuizScore {
   // TO STRING
   @override
   String toString() {
-    return '\nQuizScore{userID: $userID, isomoID: $isomoID, questions: $questions}\n\n';
+    return '\nQuizScore{userID: $userID, isomoID: $isomoID, questions: $questions}\n';
   }
 }
 

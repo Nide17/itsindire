@@ -1,8 +1,8 @@
 import 'dart:async';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:itsindire/firebase_services/auth.dart';
 import 'package:itsindire/firebase_services/pop_question_db.dart';
 import 'package:itsindire/firebase_services/isomo_db.dart';
 import 'package:itsindire/firebase_services/ingingo_db.dart';
@@ -18,16 +18,15 @@ import 'package:itsindire/screens/iga/utils/content_details.dart';
 import 'package:itsindire/utilities/app_bar.dart';
 import 'package:itsindire/utilities/direction_button.dart';
 import 'package:itsindire/utilities/loading_widget.dart';
+import 'package:provider/single_child_widget.dart';
 
 class IgaContent extends StatefulWidget {
   final IsomoModel isomo;
-  final dynamic courseProgress;
   final int thisCourseTotalIngingos;
 
   const IgaContent({
     super.key,
     required this.isomo,
-    required this.courseProgress,
     required this.thisCourseTotalIngingos,
   });
 
@@ -36,23 +35,27 @@ class IgaContent extends StatefulWidget {
 }
 
 class _IgaContentState extends State<IgaContent> {
-  // Variables to manage pagination and state
-  int _skip = 0;
-  int _increment = 0;
-  IsomoModel? nextIsomo;
-  int nextIsomoTotalIngingos = 0;
-  final ScrollController _scrollController = ScrollController();
-  bool isMovingForward = true;
-  bool loadingNextIsomo = true;
+  User? currentUser;
   StreamSubscription<List<CourseProgressModel?>>?
       _finishedProgressesSubscription;
+  int _skip = 0;
+  int _increment = 0;
+
+  IsomoModel? nextIsomo;
+  int nextIsomoTotalIngingos = 0;
+  int nextIsomoTotalPopQuestions = 0;
+
+  final ScrollController _scrollController = ScrollController();
+  bool isMovingForward = true;
+  bool isNextIsomoLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _skip = _calculateInitialSkip();
+    currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
+    _calculateInitialSkip();
     _fetchNextIsomo();
-    loadingNextIsomo = false;
+    isNextIsomoLoading = false;
   }
 
   @override
@@ -62,21 +65,27 @@ class _IgaContentState extends State<IgaContent> {
     super.dispose();
   }
 
-  // Calculate initial skip value based on course progress
-  int _calculateInitialSkip() {
-    if (widget.courseProgress != null &&
-        widget.courseProgress.currentIngingo !=
-            widget.courseProgress.totalIngingos) {
-      return widget.courseProgress.currentIngingo;
+  Future<void> _calculateInitialSkip() async {
+    try {
+      final progress = await CourseProgressService()
+          .getProgress(currentUser?.uid, widget.isomo.id)
+          ?.first;
+
+      if (progress != null &&
+          progress.currentIngingo < progress.totalIngingos) {
+        setState(() {
+          _skip = progress.currentIngingo;
+        });
+      }
+    } catch (e) {
+      print('IgaContent - Error calculating initial skip: $e');
     }
-    return 0;
   }
 
-  // Fetch the next Isomo (lesson) asynchronously
   Future<void> _fetchNextIsomo() async {
     try {
-      final finishedProgressesStream = CourseProgressService()
-          .getFinishedProgresses(FirebaseAuth.instance.currentUser!.uid);
+      final finishedProgressesStream =
+          CourseProgressService().getFinishedProgresses(currentUser?.uid);
 
       _finishedProgressesSubscription = finishedProgressesStream?.listen(
         (progresses) async {
@@ -85,16 +94,16 @@ class _IgaContentState extends State<IgaContent> {
           }
         },
         onError: (error) {
-          print('Error fetching finished progresses: $error');
+          print('IgaContent - Error fetching finished progresses: $error');
         },
       );
     } catch (e) {
-      print('Error fetching next isomo: $e');
+      print('IgaContent - Error fetching next isomo: $e');
     }
   }
 
-  // Process finished progresses to determine the next Isomo
-  Future<void> _processFinishedProgresses(List<CourseProgressModel?> progresses) async {
+  Future<void> _processFinishedProgresses(
+      List<CourseProgressModel?> progresses) async {
     final finishedCourses = progresses
         .where((progress) =>
             progress?.currentIngingo == progress?.totalIngingos &&
@@ -113,15 +122,20 @@ class _IgaContentState extends State<IgaContent> {
     nextIsomoCandidate = await IsomoService().getIsomoById(irindisomoId);
 
     if (mounted) setState(() => nextIsomo = nextIsomoCandidate);
-    if (nextIsomo?.id != null) {
-      IngingoService().getTotalIsomoIngingos(widget.isomo.id).listen((event) {
+    if (nextIsomo != null) {
+      IngingoService().getTotalIsomoIngingos(nextIsomo!.id).listen((event) {
         if (mounted)
           setState(() => nextIsomoTotalIngingos = event.realTotalIngingos);
+      });
+
+      PopQuestionService()
+          .getPopQuestionsByIsomoID(nextIsomo!.id)
+          .listen((event) {
+        if (mounted) setState(() => nextIsomoTotalPopQuestions = event.length);
       });
     }
   }
 
-  // Scroll to the top of the page
   void _scrollToTop() {
     _scrollController.animateTo(
       0.0,
@@ -130,7 +144,6 @@ class _IgaContentState extends State<IgaContent> {
     );
   }
 
-  // Change the skip number for pagination
   void changeSkipNumber(int number) {
     setState(() {
       _skip += number;
@@ -145,81 +158,72 @@ class _IgaContentState extends State<IgaContent> {
 
   @override
   Widget build(BuildContext context) {
-    final usr = FirebaseAuth.instance.currentUser;
-    const int ingingosPageLimit = 5;
-
     return MultiProvider(
-      providers: [
-        StreamProvider<List<IngingoModel>>.value(
-          value: _skip >= 0
-              ? IngingoService().getIngingosByIsomoIdPaginated(
-                  widget.isomo.id, ingingosPageLimit, _skip)
-              : const Stream<List<IngingoModel>>.empty(),
-          initialData: [],
-          catchError: (context, error) => [],
-        ),
-        StreamProvider<CourseProgressModel?>.value(
-          value: CourseProgressService().getProgress(usr?.uid, widget.isomo.id),
-          initialData: null,
-          catchError: (context, error) => null,
-        ),
-        StreamProvider<List<PopQuestionModel>?>.value(
-          value: PopQuestionService().getPopQuestionsByIsomoID(widget.isomo.id),
-          initialData: null,
-          catchError: (context, error) => [],
-        ),
-      ],
+      providers: _buildProviders(),
       child: Consumer<CourseProgressModel?>(
         builder: (context, progress, _) {
-          final int totalIngingos =
-              progress?.totalIngingos ?? widget.courseProgress.totalIngingos;
-          final int currentIngingo =
-              progress?.currentIngingo ?? widget.courseProgress.currentIngingo;
-          final int unansweredPopQuestions = progress?.unansweredPopQuestions ??
-              widget.courseProgress.unansweredPopQuestions;
-
-          return Consumer<List<PopQuestionModel>?>(
-            builder: (context, popQuestions, _) {
-              
-              return Consumer<List<IngingoModel>?>(
-                builder: (context, ingingos, _) {
-                  if (ingingos == null) {
-                    return const Scaffold(body: const LoadingWidget());
-                  }
-                  return loadingNextIsomo
-                      ? const LoadingWidget()
-                      : _buildContent(context, currentIngingo, totalIngingos,
-                          unansweredPopQuestions, popQuestions, usr);
-                },
-              );
-            },
-          );
+          if (progress == null) {
+            return const Scaffold(body: LoadingWidget());
+          }
+          return _buildContentBasedOnProgress(context, progress);
         },
       ),
     );
   }
 
-  // Build the main content of the screen
-  Widget _buildContent(
-    BuildContext context,
-    int currentIngingo,
-    int totalIngingos,
-    int unansweredPopQuestions,
-    List<PopQuestionModel>? popQuestions,
-    User? usr,
-  ) {
-    if (currentIngingo >= totalIngingos && unansweredPopQuestions == 0) {
-      return _buildCompletionScreen(context, popQuestions, usr);
-    }
-
-    return _buildIngingosScreen(context, currentIngingo, totalIngingos);
+  List<SingleChildWidget> _buildProviders() {
+    const int ingingosPageLimit = 5;
+    return [
+      StreamProvider<List<IngingoModel>>.value(
+        value: _skip >= 0
+            ? IngingoService().getIngingosByIsomoIdPaginated(
+                widget.isomo.id, ingingosPageLimit, _skip)
+            : const Stream<List<IngingoModel>>.empty(),
+        initialData: [],
+        catchError: (context, error) => [],
+      ),
+      StreamProvider<CourseProgressModel?>.value(
+        value: CourseProgressService()
+            .getProgress(currentUser?.uid, widget.isomo.id),
+        initialData: null,
+        catchError: (context, error) => null,
+      ),
+      StreamProvider<List<PopQuestionModel>?>.value(
+        value: PopQuestionService().getPopQuestionsByIsomoID(widget.isomo.id),
+        initialData: null,
+        catchError: (context, error) => [],
+      ),
+    ];
   }
 
-  // Build the completion screen when all ingingos are completed
+  Widget _buildContentBasedOnProgress(
+      BuildContext context, CourseProgressModel progress) {
+    return Consumer<List<PopQuestionModel>?>(
+        builder: (context, popQuestions, _) {
+      return Consumer<List<IngingoModel>?>(builder: (context, ingingos, _) {
+        if (ingingos == null) {
+          return const Scaffold(body: LoadingWidget());
+        }
+        return isNextIsomoLoading
+            ? const LoadingWidget()
+            : _buildContent(context, progress, popQuestions);
+      });
+    });
+  }
+
+  Widget _buildContent(BuildContext context, CourseProgressModel progress,
+      List<PopQuestionModel>? popQuestions) {
+    if (progress.totalIngingos > 0 &&
+        progress.currentIngingo == progress.totalIngingos &&
+        progress.unansweredPopQuestions == 0) {
+      return _buildCompletionScreen(context, popQuestions);
+    }
+    return _buildIngingosScreen(context);
+  }
+
   Widget _buildCompletionScreen(
     BuildContext context,
     List<PopQuestionModel>? popQuestions,
-    User? usr,
   ) {
     return Scaffold(
       body: ItsindireAlert(
@@ -237,7 +241,7 @@ class _IgaContentState extends State<IgaContent> {
         secondButtonTitle: nextIsomo != null ? 'Irindi somo' : '',
         secondButtonFunction: nextIsomo != null
             ? () {
-                _startNextIsomo(context, popQuestions, usr);
+                _startNextIsomo(context, popQuestions);
               }
             : null,
         alertType: 'success',
@@ -245,9 +249,7 @@ class _IgaContentState extends State<IgaContent> {
     );
   }
 
-  // Build the ingingos screen for the current lesson
-  Widget _buildIngingosScreen(
-      BuildContext context, int currentIngingo, int totalIngingos) {
+  Widget _buildIngingosScreen(BuildContext context) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 1000),
       transitionBuilder: (Widget child, Animation<double> animation) {
@@ -317,7 +319,6 @@ class _IgaContentState extends State<IgaContent> {
     );
   }
 
-  // Build the bottom navigation bar with direction buttons
   Widget _buildBottomNavigationBar(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.092,
@@ -365,9 +366,8 @@ class _IgaContentState extends State<IgaContent> {
     );
   }
 
-  // Start the next Isomo (lesson)
   void _startNextIsomo(
-      BuildContext context, List<PopQuestionModel>? popQuestions, User? usr) {
+      BuildContext context, List<PopQuestionModel>? popQuestions) {
     Navigator.pop(context);
     showDialog(
       context: context,
@@ -385,19 +385,19 @@ class _IgaContentState extends State<IgaContent> {
           secondButtonTitle: 'Tangira',
           secondButtonFunction: () {
             Navigator.pop(context);
+
+            CourseProgressService().updateUserCourseProgress(
+              currentUser!.uid,
+              nextIsomo!.id,
+              0,
+              nextIsomoTotalIngingos,
+              nextIsomoTotalPopQuestions,
+            );
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => IgaContent(
                   isomo: nextIsomo!,
-                  courseProgress: CourseProgressModel(
-                    id: '${nextIsomo!.id}_${usr!.uid}',
-                    userId: usr.uid,
-                    totalIngingos: nextIsomoTotalIngingos,
-                    currentIngingo: 0,
-                    courseId: nextIsomo!.id,
-                    unansweredPopQuestions: popQuestions!.length,
-                  ),
                   thisCourseTotalIngingos: widget.thisCourseTotalIngingos,
                 ),
               ),

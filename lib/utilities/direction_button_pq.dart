@@ -8,8 +8,8 @@ class DirectionButtonPq extends StatefulWidget {
   final double opacity;
   final Function()? forward;
   final Function()? backward;
-  final List<PopQuestionModel> popQuestions;
-  final int? currQnID;
+  final List<PopQuestionModel> pagePopQuestions;
+  final int? currentQuestionNo;
   final bool isDisabled;
 
   const DirectionButtonPq({
@@ -19,8 +19,8 @@ class DirectionButtonPq extends StatefulWidget {
     required this.opacity,
     this.forward,
     this.backward,
-    required this.popQuestions,
-    this.currQnID,
+    required this.pagePopQuestions,
+    this.currentQuestionNo,
     required this.isDisabled,
   });
 
@@ -31,58 +31,15 @@ class DirectionButtonPq extends StatefulWidget {
 class _DirectionButtonPqState extends State<DirectionButtonPq> {
   @override
   Widget build(BuildContext context) {
-    final int lastQn = (widget.popQuestions.length) - 1;
-
     return ElevatedButton(
-      onPressed: () {
-        if (widget.direction == 'inyuma' && widget.isDisabled == false) {
-          widget.backward!();
-          if (widget.currQnID == 0) {
-            Navigator.pop(context);
-          }
-        } else if (widget.direction == 'komeza' && widget.isDisabled == false) {
-          widget.forward!();
-          if (widget.currQnID == lastQn) {
-            Navigator.pop(context);
-          }
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        fixedSize: Size(
-          MediaQuery.of(context).size.width * 0.3,
-          MediaQuery.of(context).size.height * 0.0,
-        ),
-        backgroundColor: widget.isDisabled
-            ? const Color(0xFF00CCE5).withOpacity(0.4)
-            : const Color(0xFF00CCE5),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(32.0),
-            side: BorderSide(
-              color: const Color.fromARGB(255, 0, 0, 0),
-              style: BorderStyle.solid,
-              width: MediaQuery.of(context).size.width * 0.005,
-            )),
-        padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.05,
-            vertical: MediaQuery.of(context).size.height * 0.01),
-      ),
+      onPressed: widget.isDisabled ? null : _handleButtonPress,
+      style: _buttonStyle(context),
       child: SingleChildScrollView(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Visibility(
-              visible: widget.direction == 'inyuma' ? true : false,
-              child: Opacity(
-                opacity: widget.opacity,
-                child: SvgPicture.asset(
-                  widget.direction == 'inyuma'
-                      ? 'assets/images/backward.svg'
-                      : 'assets/images/forward.svg',
-                  width: MediaQuery.of(context).size.width * 0.05,
-                ),
-              ),
-            ),
+            _buildIcon(context, isBackward: true),
             Text(
               widget.buttonText,
               style: TextStyle(
@@ -90,19 +47,65 @@ class _DirectionButtonPqState extends State<DirectionButtonPq> {
                   fontSize: MediaQuery.of(context).size.width * 0.035,
                   color: Colors.black),
             ),
-            Visibility(
-              visible: widget.direction == 'inyuma' ? false : true,
-              child: Opacity(
-                opacity: widget.currQnID == lastQn ? 1.0 : widget.opacity,
-                child: SvgPicture.asset(
-                  widget.direction == 'inyuma'
-                      ? 'assets/images/backward.svg'
-                      : 'assets/images/forward.svg',
-                  width: MediaQuery.of(context).size.width * 0.05,
-                ),
-              ),
-            ),
+            _buildIcon(context, isBackward: false),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _handleButtonPress() {
+    final int lastQuestion = widget.pagePopQuestions.length;
+    if (widget.direction == 'inyuma') {
+      widget.backward!();
+      if (widget.currentQuestionNo == 1) {
+        Navigator.pop(context);
+      }
+    } else if (widget.direction == 'komeza') {
+      widget.forward!();
+      if (widget.currentQuestionNo == lastQuestion) {
+        Navigator.pop(context);
+      }
+    }
+  }
+
+  ButtonStyle _buttonStyle(BuildContext context) {
+    return ElevatedButton.styleFrom(
+      fixedSize: Size(
+        MediaQuery.of(context).size.width * 0.3,
+        MediaQuery.of(context).size.height * 0.0,
+      ),
+      backgroundColor: widget.isDisabled
+          ? const Color(0xFF00CCE5).withValues(alpha: 0.4)
+          : const Color(0xFF00CCE5),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(32.0),
+          side: BorderSide(
+            color: const Color.fromARGB(255, 0, 0, 0),
+            style: BorderStyle.solid,
+            width: MediaQuery.of(context).size.width * 0.005,
+          )),
+      padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.05,
+          vertical: MediaQuery.of(context).size.height * 0.01),
+    );
+  }
+
+  Widget _buildIcon(BuildContext context, {required bool isBackward}) {
+    final int lastQuestion = widget.pagePopQuestions.length;
+    return Visibility(
+      visible: isBackward
+          ? widget.direction == 'inyuma'
+          : widget.direction == 'komeza',
+      child: Opacity(
+        opacity: isBackward || widget.currentQuestionNo == lastQuestion
+            ? 1.0
+            : widget.opacity,
+        child: SvgPicture.asset(
+          isBackward
+              ? 'assets/images/backward.svg'
+              : 'assets/images/forward.svg',
+          width: MediaQuery.of(context).size.width * 0.05,
         ),
       ),
     );

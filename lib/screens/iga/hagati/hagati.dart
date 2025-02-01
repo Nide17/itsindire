@@ -22,6 +22,19 @@ class Hagati extends StatefulWidget {
 
 class _HagatiState extends State<Hagati> {
   double overallProgress = 0.0;
+  User? currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    setCurrentUser();
+  }
+
+  void setCurrentUser() {
+    setState(() {
+      currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +45,14 @@ class _HagatiState extends State<Hagati> {
     return MultiProvider(
       providers: [
         StreamProvider<List<IsomoModel?>?>.value(
-          value: IsomoService().getAllAmasomo(FirebaseAuth.instance.currentUser?.uid),
+          value: IsomoService().getAllAmasomo(currentUser?.uid),
           initialData: null,
           catchError: (context, error) => [],
         ),
         StreamProvider<List<CourseProgressModel?>?>.value(
-          value: FirebaseAuth.instance.currentUser != null
-              ? CourseProgressService().getUnfinishedProgresses(FirebaseAuth.instance.currentUser!.uid)
+          value: currentUser != null
+              ? CourseProgressService()
+                  .getUnfinishedProgresses(currentUser!.uid)
               : null,
           initialData: null,
           catchError: (context, error) => [],
@@ -52,19 +66,31 @@ class _HagatiState extends State<Hagati> {
     );
   }
 
-  Widget buildCourseProgressConsumer(BuildContext context, List<IsomoModel?>? allAmasomos) {
+  Widget buildCourseProgressConsumer(
+      BuildContext context, List<IsomoModel?>? allAmasomos) {
     return Consumer<List<CourseProgressModel?>?>(
       builder: (context, notFinishedProgresses, child) {
-        if (notFinishedProgresses != null && allAmasomos != null &&
-            (allAmasomos.length - notFinishedProgresses.length > 0)) {
-          overallProgress = (allAmasomos.length - notFinishedProgresses.length) / allAmasomos.length;
-        }
-        return buildAuthStateConsumer(context, allAmasomos, notFinishedProgresses);
+        calculateOverallProgress(allAmasomos, notFinishedProgresses);
+        return buildAuthStateConsumer(
+            context, allAmasomos, notFinishedProgresses);
       },
     );
   }
 
-  Widget buildAuthStateConsumer(BuildContext context, List<IsomoModel?>? allAmasomos, List<CourseProgressModel?>? notFinishedProgresses) {
+  void calculateOverallProgress(List<IsomoModel?>? allAmasomos,
+      List<CourseProgressModel?>? notFinishedProgresses) {
+    if (notFinishedProgresses != null &&
+        allAmasomos != null &&
+        (allAmasomos.length - notFinishedProgresses.length > 0)) {
+      overallProgress = (allAmasomos.length - notFinishedProgresses.length) /
+          allAmasomos.length;
+    }
+  }
+
+  Widget buildAuthStateConsumer(
+      BuildContext context,
+      List<IsomoModel?>? allAmasomos,
+      List<CourseProgressModel?>? notFinishedProgresses) {
     return Consumer<AuthState>(
       builder: (context, authState, _) {
         return Scaffold(
@@ -73,14 +99,19 @@ class _HagatiState extends State<Hagati> {
             preferredSize: Size.fromHeight(58.0),
             child: AppBarItsindire(),
           ),
-          body: buildBody(context, authState, allAmasomos, notFinishedProgresses),
+          body:
+              buildBody(context, authState, allAmasomos, notFinishedProgresses),
           bottomNavigationBar: const RebaIbiciro(),
         );
       },
     );
   }
 
-  Widget buildBody(BuildContext context, AuthState authState, List<IsomoModel?>? allAmasomos, List<CourseProgressModel?>? notFinishedProgresses) {
+  Widget buildBody(
+      BuildContext context,
+      AuthState authState,
+      List<IsomoModel?>? allAmasomos,
+      List<CourseProgressModel?>? notFinishedProgresses) {
     return ScrollbarTheme(
       data: ScrollbarThemeData(
         thumbColor: WidgetStateProperty.all(Color(0xFFFFBD59)),
@@ -103,7 +134,8 @@ class _HagatiState extends State<Hagati> {
               usr: authState.currentUser,
             ),
             if (authState.currentProfile != null)
-              AmasomoProgress(progressesToShow: notFinishedProgresses, isHagati: true)
+              AmasomoProgress(
+                  progressesToShow: notFinishedProgresses, isHagati: true)
             else
               const ViewNotLoggedIn(),
           ],

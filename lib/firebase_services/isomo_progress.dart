@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:itsindire/models/course_progress.dart';
 
 class CourseProgressService {
-  
   final CollectionReference progressCollection =
       FirebaseFirestore.instance.collection('progresses');
 
@@ -102,7 +101,6 @@ class CourseProgressService {
   }
 
   Stream<List<CourseProgressModel?>>? getUnfinishedProgresses(String? uid) {
-
     if (uid == null || uid == '') return null;
 
     final userProgresses = getUserProgresses(uid);
@@ -117,51 +115,37 @@ class CourseProgressService {
 
   // THIS FUNCTION WILL UPDATE THE USER PROGRESS ON A COURSE IN THE DATABASE
   //WHEN THE USER START AND WHEN THE USER IS LEARNING A COURSE AND WHEN THE USER FINISHES A COURSE
-Future updateUserCourseProgress(
+  Future updateUserCourseProgress(
     String uid,
     int courseId,
     int currentIngingo,
     int totalIngingos,
     int? unansweredPopQuestions,
   ) async {
-  try {
-    DocumentSnapshot progressSnapshot =
-        await progressCollection.doc('${courseId}_$uid').get();
+    try {
+      DocumentSnapshot progressSnapshot =
+          await progressCollection.doc('${courseId}_$uid').get();
 
-    int? currentUnansweredPopQuestions;
-    if (progressSnapshot.exists) {
-      currentUnansweredPopQuestions = (progressSnapshot.data()
-          as Map<String, dynamic>?)?['unansweredPopQuestions'] as int?;
+      int? currentUnansweredPopQuestions;
+      if (progressSnapshot.exists) {
+        currentUnansweredPopQuestions = (progressSnapshot.data()
+            as Map<String, dynamic>?)?['unansweredPopQuestions'] as int?;
+      }
+
+      int? updatedUnansweredPopQuestions =
+          unansweredPopQuestions ?? currentUnansweredPopQuestions;
+
+      await progressCollection.doc('${courseId}_$uid').set({
+        'id': '${courseId}_$uid',
+        'userId': uid,
+        'courseId': courseId,
+        'currentIngingo':
+            currentIngingo > totalIngingos ? totalIngingos : currentIngingo,
+        'totalIngingos': totalIngingos,
+        'unansweredPopQuestions': updatedUnansweredPopQuestions,
+      });
+    } catch (e) {
+      print('Error updating user course progress: $e');
     }
-
-    int? updatedUnansweredPopQuestions =
-        unansweredPopQuestions ?? currentUnansweredPopQuestions;
-
-    await progressCollection.doc('${courseId}_$uid').set({
-      'id': '${courseId}_$uid',
-      'userId': uid,
-      'courseId': courseId,
-      'currentIngingo':
-          currentIngingo > totalIngingos ? totalIngingos : currentIngingo,
-      'totalIngingos': totalIngingos,
-      'unansweredPopQuestions': updatedUnansweredPopQuestions,
-    });
-  } catch (e) {
-    print('Error updating user course progress: $e');
   }
-}
-
-  // THIS FUNCTION WILL UPDATE THE USER PROGRESS ON A COURSE IN THE DATABASE
-  Future updateUnansweredPopQuestions(
-    String progressId,
-    int count,
-  ) async {
-  try {
-    await progressCollection.doc(progressId).update({
-      'unansweredPopQuestions': FieldValue.increment(count),
-    });
-  } catch (e) {
-    print('Error updating unanswered pop questions: $e');
-  }
-}
 }

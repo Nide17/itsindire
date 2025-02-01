@@ -38,9 +38,9 @@ class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
           BoxShadow(
             color: widget.direction == 'inyuma'
                 ? const Color.fromARGB(255, 238, 225, 45)
-                    .withOpacity(isDisabled ? 0.7 : 1)
+                    .withValues(alpha: isDisabled ? 0.7 : 1)
                 : const Color.fromARGB(255, 18, 182, 86)
-                    .withOpacity(isDisabled ? 0.7 : 1),
+                    .withValues(alpha: isDisabled ? 0.7 : 1),
             offset: const Offset(0, 3),
             blurRadius: 8,
             spreadRadius: -8,
@@ -85,7 +85,7 @@ class _IsuzumaDirectionButtonState extends State<IsuzumaDirectionButton> {
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: isDisabled
-              ? const Color(0xFF1B56CB).withOpacity(0.4)
+              ? const Color(0xFF1B56CB).withValues(alpha: 0.4)
               : const Color(0xFF1B56CB),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(32.0),

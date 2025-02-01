@@ -36,47 +36,79 @@ class DirectionButton extends StatefulWidget {
 }
 
 class _DirectionButtonState extends State<DirectionButton> {
+  static const int skipIncrement = 5;
   int ingingoID = 0;
+  Future<List<PopQuestionModel>?>? pagePopQuestionsFuture;
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPopQuestions();
+  }
+
+  void _loadPopQuestions() {
+    setState(() {
+      isLoading = true;
+    });
+    List<int> listIngingosID2 = List.generate(skipIncrement, (i) => ingingoID + i);
+    if (listIngingosID2.isNotEmpty) {
+      pagePopQuestionsFuture = PopQuestionService()
+          .getPopQuestionsByIngingoIDs(widget.isomo.id, listIngingosID2)
+          .first
+          .whenComplete(() {
+        setState(() {
+          isLoading = false;
+        });
+      });
+    } else {
+      pagePopQuestionsFuture = Future.value([]);
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Generate a list of ingingos IDs from ingingoID
-    List<int> listIngingosID2 = List.generate(5, (i) => ingingoID + i);
+    return FutureBuilder<List<PopQuestionModel>?>(
+      future: pagePopQuestionsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildLoadingIndicator();
+        } else if (snapshot.hasError) {
+          return _buildErrorText(snapshot.error);
+        } else {
+          return _buildButton(context, snapshot.data ?? []);
+        }
+      },
+    );
+  }
 
+  Widget _buildLoadingIndicator() {
+    return CircularProgressIndicator();
+  }
+
+  Widget _buildErrorText(Object? error) {
+    return Text('Error: $error');
+  }
+
+  Widget _buildButton(BuildContext context, List<PopQuestionModel> pagePopQuestions) {
     return MultiProvider(
       providers: [
         StreamProvider<List<PopQuestionModel>?>.value(
-          value: listIngingosID2.isNotEmpty
-              ? PopQuestionService().getPopQuestionsByIngingoIDs(
-                  widget.isomo.id,
-                  listIngingosID2,
-                )
-              : null,
+          value: Stream.value(pagePopQuestions),
           initialData: null,
           catchError: (context, error) => [],
         ),
       ],
-      child: Consumer3<List<IngingoModel>, CourseProgressModel?, List<PopQuestionModel>?>(
-        builder: (context, pageIngingos, courseProgress, pagePopQuestions, _) {
-
-          if (pageIngingos.isNotEmpty && ingingoID != pageIngingos[0].id) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              setState(() {
-                ingingoID = pageIngingos[0].id;
-              });
-            });
-          }
-
-          List<int> currentIngingosIds =
-              pageIngingos.isNotEmpty ? pageIngingos.map((e) => e.id).toList() : [];
-
-          bool isPageIngingosHavePopQuestions = currentIngingosIds.contains(
-              pagePopQuestions != null && pagePopQuestions.isNotEmpty
-                  ? pagePopQuestions[0].ingingoID
-                  : 0);
-
+      child: Consumer3<List<IngingoModel>, CourseProgressModel, List<PopQuestionModel>?>(
+        builder: (context, pageIngingos, courseProgress, pgPopQuestions, _) {
+          _updateIngingoID(pageIngingos);
           return ElevatedButton(
-            onPressed: () => _handleOnPressed(context, pageIngingos, courseProgress, pagePopQuestions, isPageIngingosHavePopQuestions),
+            onPressed: isLoading
+                ? () => _showLoadingMessage(context)
+                : () => _handleOnPressed(context, pageIngingos, courseProgress, pgPopQuestions),
             style: _buttonStyle(context),
             child: _buttonChild(context),
           );
@@ -85,17 +117,35 @@ class _DirectionButtonState extends State<DirectionButton> {
     );
   }
 
-  void _handleOnPressed(BuildContext context, List<IngingoModel> pageIngingos, CourseProgressModel? courseProgress, List<PopQuestionModel>? pagePopQuestions, bool isPageIngingosHavePopQuestions) {
+  void _showLoadingMessage(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Please wait, loading...')),
+    );
+  }
+
+  void _updateIngingoID(List<IngingoModel> pageIngingos) {
+    if (pageIngingos.isNotEmpty && ingingoID != pageIngingos[0].id) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          ingingoID = pageIngingos[0].id;
+          _loadPopQuestions();
+        });
+      });
+    }
+  }
+
+  void _handleOnPressed(
+      BuildContext context,
+      List<IngingoModel> pageIngingos,
+      CourseProgressModel courseProgress,
+      List<PopQuestionModel>? pgPopQuestions) {
     widget.scrollTop();
     if (widget.direction == 'inyuma') {
-      widget.changeSkipNumber(-5);
+      widget.changeSkipNumber(-skipIncrement);
     } else if (widget.direction == 'komeza') {
-      // UPDATE THE CURRENT INGINGO
-      if (widget.skip >= 0 &&
-          widget.skip <= courseProgress!.totalIngingos &&
-          pageIngingos.length + widget.skip >
-              courseProgress.currentIngingo &&
-          pagePopQuestions!.isEmpty) {
+      if (pgPopQuestions != null && pgPopQuestions.isNotEmpty) {
+        _navigateToPopQuiz(context, pgPopQuestions, courseProgress, pageIngingos.length);
+      } else {
         CourseProgressService().updateUserCourseProgress(
           courseProgress.userId,
           widget.isomo.id,
@@ -103,27 +153,28 @@ class _DirectionButtonState extends State<DirectionButton> {
           courseProgress.totalIngingos,
           null,
         );
-      }
-
-      if (pagePopQuestions != null &&
-          pagePopQuestions.isNotEmpty &&
-          isPageIngingosHavePopQuestions) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PopQuiz(
-              popQuestions: pagePopQuestions,
-              isomo: widget.isomo,
-              courseProgress: courseProgress!,
-              currentIngingo: widget.skip + pageIngingos.length,
-              coursechangeSkipNumber: widget.changeSkipNumber,
-            ),
-          ),
-        );
-      } else {
-        widget.changeSkipNumber(5);
+        widget.changeSkipNumber(skipIncrement);
       }
     }
+  }
+
+  void _navigateToPopQuiz(
+      BuildContext context,
+      List<PopQuestionModel> pgPopQuestions,
+      CourseProgressModel courseProgress,
+      int currentIngingoLength) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PopQuiz(
+          pagePopQuestions: pgPopQuestions,
+          isomo: widget.isomo,
+          courseProgress: courseProgress,
+          currentIngingo: widget.skip + currentIngingoLength,
+          coursechangeSkipNumber: widget.changeSkipNumber,
+        ),
+      ),
+    );
   }
 
   ButtonStyle _buttonStyle(BuildContext context) {

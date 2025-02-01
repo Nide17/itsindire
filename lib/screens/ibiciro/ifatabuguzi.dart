@@ -109,8 +109,8 @@ class Ifatabuguzi extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: isUrStudent
-                        ? 'Period: ${ifatabuguzi.igihe.toUpperCase()} \n\nPrice: ${ifatabuguzi.igiciro} RWF     '
-                        : 'Igihe: ${ifatabuguzi.igihe.toUpperCase()} \n\nIgiciro: ${ifatabuguzi.igiciro} RWF     ',
+                        ? 'Period: ${ifatabuguzi.igihe.toUpperCase()} \nPrice: ${ifatabuguzi.igiciro} RWF     '
+                        : 'Igihe: ${ifatabuguzi.igihe.toUpperCase()} \nIgiciro: ${ifatabuguzi.igiciro} RWF     ',
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: MediaQuery.of(context).size.width * 0.032,

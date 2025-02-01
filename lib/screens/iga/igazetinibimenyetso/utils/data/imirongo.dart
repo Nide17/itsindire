@@ -28,7 +28,7 @@ List<Map<String, dynamic>> imirongo = [
     'imgUrl':
         'https://firebasestorage.googleapis.com/v0/b/tegura-rw.appspot.com/o/imirongo%2FImirongo%20ibangikanye.png?alt=media&token=45766e5c-5fd7-4e96-8e42-a4e88cdea19a',
     'txt':
-        '📝 Iyo umurongo wera ukomeje n\'umurongo wera ucagaguye ubangikanye umuyobozi “agomba kwita gusa ku murongo urushijeho kumwegera.” \n\n\t 💡 Umuyobozi warenze umurongo ucagaguye n\'umurongo udacagaguye ibangikanye kugirango anyure ku kindi kinyabiziga ashobora kwongera kuyirenga kugira ngo asubire mu mwanya we ukwiye mu muhanda.',
+        '📝 Iyo umurongo wera ukomeje n\'umurongo wera ucagaguye ubangikanye umuyobozi “agomba kwita gusa ku murongo urushijeho kumwegera.” \n\t 💡 Umuyobozi warenze umurongo ucagaguye n\'umurongo udacagaguye ibangikanye kugirango anyure ku kindi kinyabiziga ashobora kwongera kuyirenga kugira ngo asubire mu mwanya we ukwiye mu muhanda.',
     'top_txt': ''
   },
   {
@@ -59,7 +59,7 @@ List<Map<String, dynamic>> imirongo = [
     'title': '',
     'imgUrl': '',
     'txt':
-        ' “👉 Imirongo yera irombereje imaze kuvugwa haruguru ishobora gusimburwa n\'imitemeri hakurikijwe ibi bikurikira:” \n\n\t💡 Umurongo udacagaguye ugizwe n\'imitemeri y\'ibara ryera cyangwa risa n\'icyuma, iri mu ntera ngufi igenda ingana hagati yayo.\n\n\t💡 Umurongo ucagaguye ugizwe n\'imitemeri y\'ibara ryera cyangwa risa n\'icyuma ishyizweho mu dutsiko,  igashyirwa mu ntera ngufi kandi ikagenda ingana hagati yayo, utwo dutsiko twose natwo ubwatwo tukaba dutandukanijwe n\'intera igiye isumbaho.',
+        ' “👉 Imirongo yera irombereje imaze kuvugwa haruguru ishobora gusimburwa n\'imitemeri hakurikijwe ibi bikurikira:” \n\t💡 Umurongo udacagaguye ugizwe n\'imitemeri y\'ibara ryera cyangwa risa n\'icyuma, iri mu ntera ngufi igenda ingana hagati yayo.\n\t💡 Umurongo ucagaguye ugizwe n\'imitemeri y\'ibara ryera cyangwa risa n\'icyuma ishyizweho mu dutsiko,  igashyirwa mu ntera ngufi kandi ikagenda ingana hagati yayo, utwo dutsiko twose natwo ubwatwo tukaba dutandukanijwe n\'intera igiye isumbaho.',
     'top_txt': ''
   },
   {
@@ -108,7 +108,7 @@ List<Map<String, dynamic>> imirongo = [
         'https://firebasestorage.googleapis.com/v0/b/tegura-rw.appspot.com/o/imirongo%2FUturangacyerekezo%20dutoranya.png?alt=media&token=cee5c301-289e-450f-9766-785c019163bf',
     'txt': '',
     'top_txt':
-        ' “👉 Uturangacyerekezo dutoranya tw\'ibara ryera” dushobora gushyirwa hafi y\'amasangano. Utwo turangacyerekezo “twerekana igisate cy\'umuhanda abayobozi bagomba gukurikira” kugira ngo bagane mu cyerekezo cyerekanwa n\'utwo turangacyerekezo.\n\nKandi mu masangano abayobozi bagomba gukulikira icyerekezo, cyangwa kimwe mu byerekezo byerekanwa ku gisate cy\'umuhanda barimo.',
+        ' “👉 Uturangacyerekezo dutoranya tw\'ibara ryera” dushobora gushyirwa hafi y\'amasangano. Utwo turangacyerekezo “twerekana igisate cy\'umuhanda abayobozi bagomba gukurikira” kugira ngo bagane mu cyerekezo cyerekanwa n\'utwo turangacyerekezo.\nKandi mu masangano abayobozi bagomba gukulikira icyerekezo, cyangwa kimwe mu byerekezo byerekanwa ku gisate cy\'umuhanda barimo.',
   },
   {
     'title': '',
@@ -116,7 +116,7 @@ List<Map<String, dynamic>> imirongo = [
         'https://firebasestorage.googleapis.com/v0/b/tegura-rw.appspot.com/o/imirongo%2FUturanga%20gukata.png?alt=media&token=1b2a6981-39d0-4c7d-8a90-4264021296b4',
     'txt': '',
     'top_txt':
-        '📝 Umurongo uciyemo uduce umenyesha ahegereye umurongo ukomeje ushobora kuzuzwa “n\'uturanga gukata tw\'ibara ryera.” \n\nUtwo turangacyerekezo tumenyesha “igabanurwa ry\'umubare w\'ibisate by\'umuhanda bishobora” gukoreshwa mu cyerekezo bajyamo.',
+        '📝 Umurongo uciyemo uduce umenyesha ahegereye umurongo ukomeje ushobora kuzuzwa “n\'uturanga gukata tw\'ibara ryera.” \nUtwo turangacyerekezo tumenyesha “igabanurwa ry\'umubare w\'ibisate by\'umuhanda bishobora” gukoreshwa mu cyerekezo bajyamo.',
   },
   {
     'title': '',

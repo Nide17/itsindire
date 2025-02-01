@@ -98,7 +98,7 @@ class _ContentDetailsState extends State<ContentDetails> {
           border: Border.all(color: Colors.grey.shade300, width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               spreadRadius: 2,
               blurRadius: 6,
               offset: const Offset(0, 2),
@@ -173,7 +173,6 @@ class _ContentDetailsState extends State<ContentDetails> {
                   MaterialPageRoute(
                     builder: (context) => IgaContent(
                       isomo: widget.isomo,
-                      courseProgress: courseProgress,
                       thisCourseTotalIngingos: thisCourseTotalIngingos,
                     ),
                   ),
