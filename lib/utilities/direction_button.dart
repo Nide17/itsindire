@@ -38,7 +38,7 @@ class DirectionButton extends StatefulWidget {
 class _DirectionButtonState extends State<DirectionButton> {
   static const int skipIncrement = 5;
   int ingingoID = 0;
-  Future<List<PopQuestionModel>?>? pagePopQuestionsFuture;
+  Future<List<PopQuestionModel>?>? pagePopQuestionsFuture = null;
   bool isLoading = false;
 
   @override
@@ -48,24 +48,30 @@ class _DirectionButtonState extends State<DirectionButton> {
   }
 
   void _loadPopQuestions() {
+    if (!mounted) return;
     setState(() {
       isLoading = true;
     });
-    List<int> listIngingosID2 = List.generate(skipIncrement, (i) => ingingoID + i);
+    List<int> listIngingosID2 =
+        List.generate(skipIncrement, (i) => ingingoID + i);
     if (listIngingosID2.isNotEmpty) {
       pagePopQuestionsFuture = PopQuestionService()
           .getPopQuestionsByIngingoIDs(widget.isomo.id, listIngingosID2)
           .first
           .whenComplete(() {
-        setState(() {
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+          });
+        }
       });
     } else {
       pagePopQuestionsFuture = Future.value([]);
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -93,22 +99,25 @@ class _DirectionButtonState extends State<DirectionButton> {
     return Text('Error: $error');
   }
 
-  Widget _buildButton(BuildContext context, List<PopQuestionModel> pagePopQuestions) {
+  Widget _buildButton(
+      BuildContext context, List<PopQuestionModel> pgPopQuestions) {
     return MultiProvider(
       providers: [
         StreamProvider<List<PopQuestionModel>?>.value(
-          value: Stream.value(pagePopQuestions),
+          value: Stream.value(pgPopQuestions),
           initialData: null,
           catchError: (context, error) => [],
         ),
       ],
-      child: Consumer3<List<IngingoModel>, CourseProgressModel, List<PopQuestionModel>?>(
+      child: Consumer3<List<IngingoModel>, CourseProgressModel,
+          List<PopQuestionModel>?>(
         builder: (context, pageIngingos, courseProgress, pgPopQuestions, _) {
           _updateIngingoID(pageIngingos);
           return ElevatedButton(
-            onPressed: isLoading
+            onPressed: isLoading || pgPopQuestions == null
                 ? () => _showLoadingMessage(context)
-                : () => _handleOnPressed(context, pageIngingos, courseProgress, pgPopQuestions),
+                : () => _handleOnPressed(
+                    context, pageIngingos, courseProgress, pgPopQuestions),
             style: _buttonStyle(context),
             child: _buttonChild(context),
           );
@@ -144,7 +153,8 @@ class _DirectionButtonState extends State<DirectionButton> {
       widget.changeSkipNumber(-skipIncrement);
     } else if (widget.direction == 'komeza') {
       if (pgPopQuestions != null && pgPopQuestions.isNotEmpty) {
-        _navigateToPopQuiz(context, pgPopQuestions, courseProgress, pageIngingos.length);
+        _navigateToPopQuiz(
+            context, pgPopQuestions, courseProgress, pageIngingos.length);
       } else {
         CourseProgressService().updateUserCourseProgress(
           courseProgress.userId,

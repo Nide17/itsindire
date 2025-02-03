@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:itsindire/firebase_services/auth.dart';
 import 'package:itsindire/firebase_services/payment_db.dart';
@@ -10,6 +11,7 @@ import 'package:itsindire/models/payment.dart';
 import 'package:itsindire/models/profile.dart';
 import 'package:itsindire/screens/iga/utils/countdown_timer.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class AppBarItsindire extends StatefulWidget {
   const AppBarItsindire({super.key});
@@ -30,16 +32,19 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
       ? paymentsCollection
           .where('userId', isEqualTo: currentUser!.uid)
           .snapshots()
+          .handleError((error) {
+          _showSnackBar('Error fetching payments: $error',
+              const Color.fromARGB(255, 255, 0, 0));
+        })
       : const Stream.empty();
 
   @override
   void initState() {
     super.initState();
-
-    // Use the AuthState instance from the Provider to set the currentUser
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
-        currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
+        currentUser =
+            Provider.of<AuthState>(context, listen: false).currentUser;
       });
       _subscribeToPayments();
     });
@@ -50,20 +55,27 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
       if (!mounted) return;
       for (var change in event.docChanges) {
         dynamic doc = change.doc.data();
-
         if (change.type == DocumentChangeType.modified &&
             doc['userId'] == currentUser!.uid &&
-            doc['isApproved'] == true) {
-          _showSnackBar('Ifatabuguzi ryawe ryemejwe. Ubu watangira kwiga!');
+            doc['isApproved'] == true &&
+            doc['endAt'].toDate().isAfter(DateTime.now())) {
+          _showSnackBar('Ifatabuguzi ryawe ryemejwe. Ubu watangira kwiga!',
+              const Color(0xFF00A651));
+        } else if (change.type == DocumentChangeType.modified &&
+            doc['endAt'].toDate().isBefore(DateTime.now())) {
+          _showSnackBar(
+              'Gura irindi fatabuguzi!', const Color.fromARGB(255, 255, 0, 0));
         }
       }
+    }, onError: (error) {
+      _showSnackBar('Error in payment subscription: $error',
+          const Color.fromARGB(255, 255, 0, 0));
     });
   }
 
-  void _showSnackBar(String message) {
+  void _showSnackBar(String message, Color color) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(_buildSnackBar(message, const Color(0xFF00A651)));
+    ScaffoldMessenger.of(context).showSnackBar(_buildSnackBar(message, color));
   }
 
   SnackBar _buildSnackBar(String message, Color backgroundColor) {
@@ -86,13 +98,12 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
 
   @override
   void dispose() {
-    _paymentsSubscription.cancel(); // Cancel the subscription
+    _paymentsSubscription.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return MultiProvider(
       providers: [
         StreamProvider<PaymentModel?>.value(
@@ -113,6 +124,8 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
       child: Consumer<AuthState>(builder: (context, authState, _) {
         return Consumer<ProfileModel?>(builder: (context, profile, _) {
           return Consumer<PaymentModel?>(builder: (context, newestPyt, _) {
+            String ifatabuguziID = dotenv.env['TRIAL_SUBSCRIPTION_ID'] ?? '';
+
             if (newestPyt != null) {
               remainingSeconds = newestPyt.getRemainingMilliseconds() ~/ 1000;
             }
@@ -131,7 +144,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
               actions: (currentUser != null && profile != null)
                   ? <Widget>[
                       if (newestPyt != null &&
-                          newestPyt.ifatabuguziID == 'UGl3ahnKZdVrBVTItht7')
+                          newestPyt.ifatabuguziID == ifatabuguziID)
                         _buildCountdownTimer(context),
                       _buildProfileIcon(context, profile, newestPyt, authState),
                     ]
@@ -170,6 +183,8 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
           ? SvgPicture.asset(
               'assets/images/avatar.svg',
               height: MediaQuery.of(context).size.height * 0.048,
+              colorFilter: const ColorFilter.mode(
+                  const Color(0xFFFFBD59), BlendMode.srcIn),
             )
           : CircleAvatar(
               backgroundImage: NetworkImage(profile.photo ?? ''),
@@ -210,6 +225,8 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
               ? SvgPicture.asset(
                   'assets/images/avatar.svg',
                   height: MediaQuery.of(context).size.height * 0.048,
+                  colorFilter: const ColorFilter.mode(
+                      const Color(0xFF5B8BDF), BlendMode.srcIn),
                 )
               : CircleAvatar(
                   backgroundImage: NetworkImage(
@@ -220,6 +237,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
           title: Align(
             alignment: Alignment.center,
             child: Text.rich(
+              style: const TextStyle(color: const Color(0xFF5B8BDF)),
               textAlign: TextAlign.center,
               TextSpan(
                   text: capitalizeWords(
@@ -262,101 +280,104 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
 
   Widget _buildSubscriptionStatus(
       BuildContext context, PaymentModel? newestPyt) {
+    String ifatabuguziID = dotenv.env['TRIAL_SUBSCRIPTION_ID'] ?? '';
+
     if (newestPyt == null) {
-      return Align(
-        child: Text(
-          'NTA FATABUGUZI URAFATA',
-          style: TextStyle(
-            fontWeight: FontWeight.w900,
-            fontSize: MediaQuery.of(context).size.width * 0.032,
-            color: const Color.fromARGB(255, 255, 0, 0),
-          ),
-        ),
-      );
-    }
-
-    if (newestPyt.ifatabuguziID == 'UGl3ahnKZdVrBVTItht7') {
-      return Align(
-        child: Text(
-          newestPyt.getRemainingMinutes() > 0
-              ? 'USIGAJE IMINOTA ${newestPyt.getRemainingMinutes()}, GURA IFATABUGUZI VUBA!'
-              : 'IGERAGEZA RYARANGIYE, GURA IFATABUGUZI',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: MediaQuery.of(context).size.width * 0.04,
-            color: const Color.fromARGB(255, 255, 0, 0),
-          ),
-        ),
-      );
-    }
-
-    if (newestPyt.getRemainingDays() > 0 && newestPyt.isApproved == true) {
+      return _buildSubscriptionStatusText(context, 'NTA FATABUGUZI URAFATA',
+          const Color.fromARGB(255, 255, 0, 0));
+    } else if (newestPyt.getRemainingMilliseconds() <= 0) {
+      return _buildSubscriptionStatusText(context, 'IFATABUGUZI RYARANGIYE!',
+          const Color.fromARGB(255, 255, 0, 0));
+    } else if (newestPyt.isApproved == false &&
+        newestPyt.getRemainingMilliseconds() > 0) {
+      return _buildSubscriptionStatusText(
+          context,
+          'Mwishyuye, ifatabuguzi ryanyu riri kwigwaho...',
+          const Color.fromARGB(255, 255, 0, 0));
+    } else if (newestPyt.isApproved == true &&
+        newestPyt.getRemainingMilliseconds() > 0) {
+      String remainingText = _getRemainingText(newestPyt);
       return Column(
         children: [
-          Text(
-            'IFATABUGUZI RYAWE',
-            style: TextStyle(
-              fontWeight: FontWeight.w900,
-              fontSize: MediaQuery.of(context).size.width * 0.032,
-              color: const Color.fromARGB(255, 255, 255, 255),
-            ),
+          Container(
+            margin: EdgeInsets.symmetric(
+                vertical: MediaQuery.of(context).size.height * 0.012),
+            height: MediaQuery.of(context).size.height * 0.002,
+            color: const Color(0xFF5B8BDF),
           ),
           SizedBox(height: MediaQuery.of(context).size.height * 0.024),
-          Text(
-            'Rizarangira kuri ${newestPyt.getFormatedEndDate()}',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              height: MediaQuery.of(context).size.height * 0.004,
-              fontWeight: FontWeight.w600,
-              fontSize: MediaQuery.of(context).size.width * 0.036,
-              color: const Color.fromARGB(255, 0, 27, 116),
-            ),
-          ),
-          Text(
-            'Usigaje iminsi ${newestPyt.getRemainingDays()}',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              height: MediaQuery.of(context).size.height * 0.0032,
-              fontWeight: FontWeight.w600,
-              fontSize: MediaQuery.of(context).size.width * 0.032,
-              color: const Color.fromARGB(255, 0, 27, 116),
-            ),
+          _buildSubscriptionStatusText(
+              context, 'IFATABUGUZI RYAWE', const Color(0xFF5B8BDF)),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.024),
+          _buildSubscriptionStatusText(
+              context,
+              newestPyt.getFormatedEndDate() ==
+                      new DateFormat('yyyy-MM-dd').format(DateTime.now())
+                  ? 'Rirarangira uyu munsi!'
+                  : 'Rizarangira kuri ${newestPyt.getFormatedEndDate()}',
+              newestPyt.getFormatedEndDate() ==
+                      new DateFormat('yyyy-MM-dd').format(DateTime.now())
+                  ? const Color.fromARGB(255, 255, 0, 0)
+                  : const Color(0xFF5B8BDF)),
+          _buildSubscriptionStatusText(
+              context,
+              remainingText,
+              newestPyt.getRemainingDays() > 1
+                  ? const Color(0xFF5B8BDF)
+                  : const Color.fromARGB(255, 255, 0, 0)),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.024),
+          Container(
+            margin: EdgeInsets.symmetric(
+                vertical: MediaQuery.of(context).size.height * 0.012),
+            height: MediaQuery.of(context).size.height * 0.002,
+            color: const Color(0xFF5B8BDF),
           ),
         ],
       );
+    } else if (newestPyt.ifatabuguziID == ifatabuguziID) {
+      return _buildSubscriptionStatusText(
+          context,
+          newestPyt.getRemainingMilliseconds() > 0
+              ? 'USIGAJE IMINOTA ${newestPyt.getRemainingMinutes()}, GURA IFATABUGUZI VUBA!'
+              : 'IGERAGEZA RYARANGIYE, GURA IFATABUGUZI',
+          const Color.fromARGB(255, 255, 0, 0));
+    } else {
+      return _buildSubscriptionStatusText(context, 'NTA FATABUGUZI MUFITE',
+          const Color.fromARGB(255, 255, 0, 0));
     }
+  }
 
-    if (newestPyt.getRemainingDays() > 0 && newestPyt.isApproved == false) {
-      return Container(
-        padding:
-            EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.01),
-        child: Align(
-          child: Text(
-            'Mwishyuye, ifatabuguzi ryanyu riri kwigwaho...',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: MediaQuery.of(context).size.width * 0.04,
-              color: const Color.fromARGB(255, 255, 0, 0),
-            ),
-          ),
-        ),
-      );
-    }
-
+  Widget _buildSubscriptionStatusText(
+      BuildContext context, String text, Color color) {
     return Align(
       child: Text(
-        (newestPyt.ifatabuguziID == 'UGl3ahnKZdVrBVTItht7')
-            ? 'IGERAGEZA RYARANGIYE, GURA IFATABUGUZI'
-            : 'IFATABUGUZI RYARANGIYE!',
+        text,
+        textAlign: TextAlign.center,
         style: TextStyle(
           fontWeight: FontWeight.w900,
           fontSize: MediaQuery.of(context).size.width * 0.032,
-          color: const Color.fromARGB(255, 255, 0, 0),
+          color: color,
         ),
       ),
     );
+  }
+
+  String _getRemainingText(PaymentModel newestPyt) {
+    if (newestPyt.getRemainingDays() > 1) {
+      return 'Usigaje iminsi ${newestPyt.getRemainingDays()}';
+    } else if (newestPyt.getRemainingDays() == 1) {
+      return 'Usigaje umunsi umwe!';
+    } else if (newestPyt.getRemainingHours() > 1) {
+      return 'Usigaje amasaha ${newestPyt.getRemainingHours()}';
+    } else if (newestPyt.getRemainingHours() == 1) {
+      return 'Usigaje isaha imwe!';
+    } else if (newestPyt.getRemainingMinutes() > 1) {
+      return 'Usigaje iminota ${newestPyt.getRemainingMinutes()}';
+    } else if (newestPyt.getRemainingMinutes() == 1) {
+      return 'Usigaje umunota umwe!';
+    } else {
+      return 'Usigaje Amasegonda make!';
+    }
   }
 
   Widget _buildLogoutButton(BuildContext context, AuthState authState) {

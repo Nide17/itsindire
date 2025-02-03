@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:itsindire/models/payment.dart';
 import 'package:itsindire/models/profile.dart';
 import 'package:itsindire/models/user.dart';
 import 'package:itsindire/firebase_services/profiledb.dart';
@@ -182,12 +184,16 @@ class AuthState with ChangeNotifier {
 
       // Update the current user's payment data
       await paymentsCollection.doc(result.user?.uid).get().then((value) {
+        String ifatabuguziID = dotenv.env['TRIAL_SUBSCRIPTION_ID'] ?? '';
         if (value.exists &&
-            value.get('ifatabuguziID') == 'UGl3ahnKZdVrBVTItht7' &&
+            value.get('ifatabuguziID') == ifatabuguziID &&
             value.get('endAt') == null) {
           paymentsCollection.doc(result.user?.uid).update({
             'createdAt': DateTime.now(),
-            'endAt': DateTime.now().add(Duration(minutes: 30)),
+            'endAt': DateTime.now().add(Duration(
+                minutes: dotenv.env['TRIAL_DAYS'] != null
+                    ? int.parse(dotenv.env['TRIAL_DAYS']!)
+                    : 30)),
             'isApproved': true,
           });
         }
@@ -269,27 +275,35 @@ class AuthState with ChangeNotifier {
   }
 
   Future<void> _saveTrialPayment(User user, String email) async {
-    await paymentsCollection.doc(user.uid).set({
-      'ifatabuguziID':
-          (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
-              ? 'UGl3ahnKZdVrBVTItht7'
-              : 'Wfp1cRTYMMYnYJo4vYmJ',
-      'userId': user.uid,
-      'igiciro':
-          (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
-              ? 0
-              : 4000,
-      'createdAt':
-          (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
-              ? null
-              : DateTime.now(),
-      'endAt':
-          (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
-              ? null
-              : DateTime.now().add(Duration(days: 60)),
-      'isApproved': true,
-      'phone': null,
-    });
+    try {
+      PaymentModel payment;
+      if (email == 'nidehazard10@gmail.com' || email == 'testing@mail.com') {
+        payment = PaymentModel(
+          createdAt: DateTime.now(),
+          endAt: DateTime.now().add(Duration(days: 60)),
+          userId: user.uid,
+          ifatabuguziID: 'Wfp1cRTYMMYnYJo4vYmJ',
+          igiciro: 4000,
+          isApproved: true,
+          phone: null,
+        );
+      } else {
+        String ifatabuguziID = dotenv.env['TRIAL_SUBSCRIPTION_ID'] ?? '';
+        payment = PaymentModel(
+          userId: user.uid,
+          ifatabuguziID: ifatabuguziID,
+          igiciro: 0,
+          createdAt: null,
+          endAt: null,
+          isApproved: false,
+          phone: null,
+        );
+      }
+
+      await paymentsCollection.doc(user.uid).set(payment.toJson());
+    } catch (e) {
+      _logger.e('Failed to save trial payment', error: e);
+    }
   }
 
   // Method to re-authenticate user

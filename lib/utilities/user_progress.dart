@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:itsindire/firebase_services/auth.dart';
 import 'package:itsindire/firebase_services/payment_db.dart';
 import 'package:itsindire/firebase_services/profiledb.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -31,6 +32,7 @@ class UserProgress extends StatefulWidget {
 class _UserProgressState extends State<UserProgress> {
   int thisCourseTotalIngingos = 0;
   bool loadingRealTotalIngingos = true;
+  User? currentUser;
 
   Future<void> getTotalIngingos() async {
     Stream<IsomoIngingoSum> totalIngingos =
@@ -41,6 +43,18 @@ class _UserProgressState extends State<UserProgress> {
         thisCourseTotalIngingos = event.totalIngingos;
         loadingRealTotalIngingos = false;
       });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        currentUser =
+            Provider.of<AuthState>(context, listen: false).currentUser;
+      });
+      getTotalIngingos();
     });
   }
 
@@ -137,12 +151,6 @@ class _UserProgressState extends State<UserProgress> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    getTotalIngingos();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final int? curCourseIngingo = widget.courseProgress != null
         ? widget.courseProgress?.currentIngingo
@@ -159,9 +167,8 @@ class _UserProgressState extends State<UserProgress> {
     return MultiProvider(
       providers: [
         StreamProvider<ProfileModel?>.value(
-          value: FirebaseAuth.instance.currentUser != null
-              ? ProfileService()
-                  .getCurrentProfileByID(FirebaseAuth.instance.currentUser!.uid)
+          value: currentUser != null
+              ? ProfileService().getCurrentProfileByID(currentUser!.uid)
               : null,
           initialData: null,
           catchError: (context, error) {
@@ -169,9 +176,8 @@ class _UserProgressState extends State<UserProgress> {
           },
         ),
         StreamProvider<PaymentModel?>.value(
-          value: FirebaseAuth.instance.currentUser != null
-              ? PaymentService()
-                  .getNewestPytByUserId(FirebaseAuth.instance.currentUser!.uid)
+          value: currentUser != null
+              ? PaymentService().getNewestPytByUserId(currentUser!.uid)
               : null,
           initialData: null,
           catchError: (context, error) => null,

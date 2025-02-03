@@ -46,3 +46,6 @@ app.*.map.json
 */key.properties
 
 momo
+
+# Debug files and vscode
+.vscode/

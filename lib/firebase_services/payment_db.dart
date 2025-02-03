@@ -78,7 +78,8 @@ class PaymentService {
       }
 
       if (payment.userId != null) {
-        await _deleteSpecificPayments(payment.userId!, 'UGl3ahnKZdVrBVTItht7');
+        String ifatabuguziID = dotenv.env['TRIAL_SUBSCRIPTION_ID'] ?? '';
+        await _deleteSpecificPayments(payment.userId!, ifatabuguziID);
       } else {
         throw Exception('User ID is null');
       }
@@ -102,8 +103,9 @@ class PaymentService {
 
     if (activePayment.docs.isNotEmpty) {
       for (var doc in activePayment.docs) {
+        String ifatabuguziID = doc.get('ifatabuguziID');
         if (doc.get('isApproved') &&
-            doc.get('ifatabuguziID') != 'UGl3ahnKZdVrBVTItht7') {
+            doc.get('ifatabuguziID') != ifatabuguziID) {
           return 'Ufite ifatabuguzi ritararangira, reka rirangire cga utuvugishe turihindure!';
         }
       }

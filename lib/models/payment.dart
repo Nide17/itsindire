@@ -26,6 +26,12 @@ class PaymentModel {
     return diff.isNegative ? 0 : diff.inDays;
   }
 
+  int getRemainingHours() {
+    if (endAt == null) return 0;
+    Duration diff = endAt!.difference(DateTime.now());
+    return diff.isNegative ? 0 : diff.inHours;
+  }
+
   int getRemainingMinutes() {
     if (endAt == null) return 0;
     Duration diff = endAt!.difference(DateTime.now());
@@ -55,7 +61,7 @@ class PaymentModel {
     } else {
       return 'N/A'; // or any default value you prefer
     }
-    }
+  }
 
   String getFormattedCreatedAt() {
     DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
@@ -69,8 +75,11 @@ class PaymentModel {
   // FROM JSON
   factory PaymentModel.fromJson(Map<String, dynamic> json) {
     return PaymentModel(
-      createdAt: json['createdAt'] != null ? (json['createdAt'] as Timestamp).toDate() : null,
-      endAt: json['endAt'] != null ? (json['endAt'] as Timestamp).toDate() : null,
+      createdAt: json['createdAt'] != null
+          ? (json['createdAt'] as Timestamp).toDate()
+          : null,
+      endAt:
+          json['endAt'] != null ? (json['endAt'] as Timestamp).toDate() : null,
       userId: json['userId'],
       ifatabuguziID: json['ifatabuguziID'],
       igiciro: json['igiciro'],

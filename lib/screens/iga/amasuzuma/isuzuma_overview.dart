@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:itsindire/firebase_services/auth.dart';
 import 'package:itsindire/firebase_services/isomo_db.dart';
 import 'package:itsindire/firebase_services/isuzuma_score_db.dart';
 import 'package:itsindire/firebase_services/payment_db.dart';
@@ -29,17 +31,30 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
   dynamic payment;
   bool isPaymentLoading = false;
   bool _isMounted = false;
+  User? currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _isMounted = true;
+    setState(() {
+      currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
+    });
+    _isPaymentApproved();
+    fetchAmasomoTitles();
+  }
 
   Future<bool> _isPaymentApproved() async {
     setState(() => isPaymentLoading = true);
 
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
+    if (currentUser == null) {
       setState(() => isPaymentLoading = false);
       return false;
     }
 
-    final pymt = await PaymentService().getUserLatestPytData(user.uid);
+    final pymt = currentUser != null
+        ? await PaymentService().getUserLatestPytData(currentUser!.uid)
+        : null;
     setState(() {
       payment = pymt;
       isPaymentLoading = false;
@@ -67,14 +82,6 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _isMounted = true;
-    _isPaymentApproved();
-    fetchAmasomoTitles();
-  }
-
-  @override
   void dispose() {
     _isMounted = false;
     super.dispose();
@@ -82,22 +89,21 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
 
   @override
   Widget build(BuildContext context) {
-    final usr = FirebaseAuth.instance.currentUser;
-
     return MultiProvider(
       providers: [
         StreamProvider<IsuzumaScoreModel?>.value(
-          value: usr == null
+          value: currentUser == null
               ? null
               : IsuzumaScoreService()
-                  .getScoreByID('${usr.uid}_${widget.isuzuma.id}'),
+                  .getScoreByID('${currentUser!.uid}_${widget.isuzuma.id}'),
           initialData: null,
           catchError: (context, error) {
             return null;
           },
         ),
       ],
-      child: Consumer<IsuzumaScoreModel?>(builder: (context, scoreUserIsuzuma, _) {
+      child:
+          Consumer<IsuzumaScoreModel?>(builder: (context, scoreUserIsuzuma, _) {
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 71, 103, 158),
           appBar: PreferredSize(
@@ -108,7 +114,7 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
             children: <Widget>[
               _buildOverviewCard(context),
               _buildReviewScoreButton(context, scoreUserIsuzuma),
-              _buildAttemptButton(context, usr, scoreUserIsuzuma),
+              _buildAttemptButton(context, currentUser, scoreUserIsuzuma),
             ],
           ),
         );
@@ -229,7 +235,8 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
               itemBuilder: (context, index) {
                 return ListTile(
                   dense: true,
-                  visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+                  visualDensity:
+                      const VisualDensity(horizontal: 0, vertical: -4),
                   leading: Text(
                     '${index + 1}.',
                     style: TextStyle(
@@ -252,7 +259,8 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
     );
   }
 
-  Widget _buildReviewScoreButton(BuildContext context, IsuzumaScoreModel? scoreUserIsuzuma) {
+  Widget _buildReviewScoreButton(
+      BuildContext context, IsuzumaScoreModel? scoreUserIsuzuma) {
     return scoreUserIsuzuma != null
         ? Container(
             width: MediaQuery.of(context).size.width * 0.5,
@@ -262,7 +270,8 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => IsuzumaScoreReview(isuzuma: widget.isuzuma),
+                      builder: (context) =>
+                          IsuzumaScoreReview(isuzuma: widget.isuzuma),
                     ));
               },
               style: ElevatedButton.styleFrom(
@@ -274,7 +283,8 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
                 foregroundColor: const Color.fromARGB(255, 0, 0, 0),
                 backgroundColor: const Color.fromARGB(255, 187, 201, 221),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.05),
+                  borderRadius: BorderRadius.circular(
+                      MediaQuery.of(context).size.width * 0.05),
                 ),
               ),
               child: Text(
@@ -290,7 +300,8 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
         : Container();
   }
 
-  Widget _buildAttemptButton(BuildContext context, User? usr, IsuzumaScoreModel? scoreUserIsuzuma) {
+  Widget _buildAttemptButton(BuildContext context, User? currentUser,
+      IsuzumaScoreModel? scoreUserIsuzuma) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.45,
       margin: EdgeInsets.only(
@@ -299,13 +310,16 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
       alignment: Alignment.center,
       child: ElevatedButton(
         onPressed: () {
-          usr == null
+          currentUser == null
               ? Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => const Iyandikishe(
-                          message: 'Banza wiyandikishe, wishyure ubone aya masuzumabumenyi yose!')))
-              : payment != null && payment.isApproved && payment.endAt.isAfter(DateTime.now())
+                          message:
+                              'Banza wiyandikishe, wishyure ubone aya masuzumabumenyi yose!')))
+              : payment != null &&
+                      payment.isApproved &&
+                      payment.endAt.isAfter(DateTime.now())
                   ? Navigator.push(
                       context,
                       PageTransition(
@@ -315,19 +329,23 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
                       context: context,
                       barrierDismissible: false,
                       builder: (BuildContext context) {
+                        String ifatabuguziID =
+                            dotenv.env['TRIAL_SUBSCRIPTION_ID'] ?? '';
                         return ItsindireAlert(
                           errorTitle: 'Ntibyagenze neza',
                           errorMsg: payment == null
-                              ? 'Nturishyura'
+                              ? 'Banza ugure ifatabuguzi!'
                               : payment.isApproved == false
-                                  ? 'Ifatabuguzi ryawe ntiriremezwa'
-                                  : !payment.endAt.isAfter(DateTime.now())
-                                      ? 'Ifatabuguzi ryawe ryararangiye'
-                                  : payment.ifatabuguziID == 'UGl3ahnKZdVrBVTItht7'
-                                  ? 'Nta fatabuguzi urafata, rigure aka kanya'
-                                      : 'Ibyo wifuza ntibyagenze neza. Ongera ushyure kugira ngo ugerageze!',
+                                  ? 'Ifatabuguzi ryawe ntiriremezwa!'
+                                  : payment.ifatabuguziID == ifatabuguziID &&
+                                          !payment.endAt.isAfter(DateTime.now())
+                                      ? 'Igerageza ryawe ryararangiye, gura ifatabuguzi!'
+                                      : !payment.endAt.isAfter(DateTime.now())
+                                          ? 'Ifatabuguzi ryawe ryararangiye, gura irindi!'
+                                          : 'Ibyo wifuza ntibyakunze!',
                           alertType: 'error',
-                          secondButtonTitle: payment.isApproved != false ? 'Ishyura' : null,
+                          secondButtonTitle:
+                              payment.isApproved != false ? 'Ishyura' : null,
                           secondButtonFunction: () {
                             Navigator.pop(context);
                             Navigator.pushReplacementNamed(context, '/ibiciro');
@@ -344,14 +362,16 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
           foregroundColor: const Color.fromARGB(255, 0, 0, 0),
           backgroundColor: const Color(0xFFFFBD59),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.05),
+            borderRadius:
+                BorderRadius.circular(MediaQuery.of(context).size.width * 0.05),
           ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
               child: Image.asset(
                 'assets/images/isuzuma.png',
                 height: MediaQuery.of(context).size.height * 0.028,
@@ -359,7 +379,9 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
             ),
             Flexible(
               child: Text(
-                scoreUserIsuzuma != null ? 'SUBIRAMO'.toUpperCase() : 'RITANGIRE'.toUpperCase(),
+                scoreUserIsuzuma != null
+                    ? 'SUBIRAMO'.toUpperCase()
+                    : 'RITANGIRE'.toUpperCase(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: MediaQuery.of(context).size.width * 0.035,
