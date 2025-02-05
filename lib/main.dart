@@ -137,7 +137,7 @@ class _ItsindireAppState extends State<ItsindireApp> {
         ChangeNotifierProvider(create: (_) => ProfileService()),
         StreamProvider<List<IsomoModel?>?>.value(
           value: IsomoService()
-              .getAllAmasomo(FirebaseAuth.instance.currentUser?.uid),
+              .getAllAmasomo(),
           initialData: null,
           catchError: (context, error) {
             return [];

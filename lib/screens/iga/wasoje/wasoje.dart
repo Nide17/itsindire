@@ -10,7 +10,6 @@ import 'package:itsindire/screens/iga/utils/gradient_title.dart';
 import 'package:itsindire/utilities/amasomo_progress.dart';
 import 'package:itsindire/utilities/app_bar.dart';
 import 'package:itsindire/utilities/progress_circle.dart';
-import 'package:itsindire/utilities/view_not_logged_in.dart';
 import 'package:provider/provider.dart';
 
 class Wasoje extends StatefulWidget {
@@ -44,7 +43,7 @@ class _WasojeState extends State<Wasoje> {
     return MultiProvider(
       providers: [
         StreamProvider<List<IsomoModel?>?>.value(
-          value: IsomoService().getAllAmasomo(currentUser?.uid),
+          value: IsomoService().getAllAmasomo(),
           initialData: null,
           catchError: (context, error) => [],
         ),
@@ -105,10 +104,8 @@ class _WasojeState extends State<Wasoje> {
                   : 'Banza winjire!',
               usr: authState.currentUser,
             ),
-            if (authState.currentProfile != null)
-              AmasomoProgress(progressesToShow: finishedProgresses)
-            else
-              const ViewNotLoggedIn(),
+            AmasomoProgress(
+                progressesToShow: finishedProgresses, isHagati: false)
           ]),
         ),
       ),

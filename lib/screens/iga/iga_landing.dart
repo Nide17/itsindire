@@ -50,7 +50,7 @@ class _IgaLandingState extends State<IgaLanding> {
     return MultiProvider(
       providers: [
         StreamProvider<List<IsomoModel?>?>.value(
-          value: IsomoService().getAllAmasomo(currentUser?.uid),
+          value: IsomoService().getAllAmasomo(),
           initialData: null,
           catchError: (context, error) => [],
         ),

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:itsindire/firebase_services/auth.dart';
 import 'package:itsindire/firebase_services/isomo_db.dart';
 import 'package:itsindire/models/course_progress.dart';
 import 'package:itsindire/models/isomo.dart';
@@ -22,6 +23,16 @@ class AmasomoProgress extends StatefulWidget {
 }
 
 class _AmasomoProgressState extends State<AmasomoProgress> {
+  User? currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final sortedProgresses = _getSortedProgresses(widget.progressesToShow);
@@ -32,14 +43,15 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
     return MultiProvider(
       providers: [
         StreamProvider<List<IsomoModel?>?>.value(
-          value: IsomoService()
-              .getAllAmasomo(FirebaseAuth.instance.currentUser?.uid),
+          value: IsomoService().getAllAmasomo(),
           initialData: null,
           catchError: (context, error) => [],
         ),
       ],
       child: Consumer<List<IsomoModel?>?>(builder: (context, allAmasomos, _) {
-        if ((sortedProgresses?.isEmpty ?? true) && widget.isHagati) {
+        if (currentUser != null &&
+            sortedProgresses.isEmpty &&
+            widget.isHagati) {
           return _buildMessageColumn(
             context,
             'Wasoje amasomo yose!',
@@ -55,7 +67,7 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
         }
 
         if ((allAmasomos?.isEmpty ?? true) ||
-            (sortedProgresses?.isEmpty ?? true)) {
+            (sortedProgresses.isEmpty && !widget.isHagati)) {
           return _buildMessageColumn(
             context,
             'Nta masomo urasoza!',
@@ -75,30 +87,45 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
         }
 
         return Column(
-          children: sortedProgresses?.map((progress) {
-                final isomo = allAmasomos?.firstWhere(
-                  (ism) => ism?.id == progress?.courseId,
-                  orElse: () => IsomoModel(
-                    conclusion: '',
-                    id: 0,
-                    description: '',
-                    introText: '',
-                    title: '',
-                  ),
-                );
+          children: (currentUser == null &&
+                  sortedProgresses.isEmpty &&
+                  widget.isHagati)
+              ? (allAmasomos?.map((isomo) {
+                    return _buildProgressCard(
+                        context, isomo, null, screenWidth, screenHeight);
+                  }).toList() ??
+                  [])
+              : (sortedProgresses.map((progress) {
+                  final isomo = allAmasomos?.firstWhere(
+                    (ism) => ism?.id == progress?.courseId,
+                    orElse: () => IsomoModel(
+                      conclusion: '',
+                      id: 0,
+                      description: '',
+                      introText: '',
+                      title: '',
+                    ),
+                  );
 
-                return _buildProgressCard(
-                    context, isomo, progress, screenWidth, screenHeight);
-              }).toList() ?? [],
+                  return _buildProgressCard(
+                      context, isomo, progress, screenWidth, screenHeight);
+                }).toList()),
         );
       }),
     );
   }
 
-  List<CourseProgressModel?>? _getSortedProgresses(List<CourseProgressModel?>? progresses) {
-    final sortedProgresses = progresses?..sort((a, b) {
-      return a!.courseId.compareTo(b!.courseId);
-    });
+  List<CourseProgressModel?> _getSortedProgresses(
+      List<CourseProgressModel?>? progresses) {
+    // if no progresses, return empty list
+    if (progresses == null) {
+      return [];
+    }
+
+    final sortedProgresses = progresses
+      ..sort((a, b) {
+        return a!.courseId.compareTo(b!.courseId);
+      });
     return sortedProgresses;
   }
 
@@ -198,7 +225,15 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
                         introText: '',
                         title: '',
                       ),
-                  courseProgress: progress,
+                  courseProgress: progress ??
+                      CourseProgressModel(
+                        id: "0",
+                        courseId: 0,
+                        userId: '',
+                        currentIngingo: 0,
+                        totalIngingos: 1,
+                        unansweredPopQuestions: 0,
+                      ),
                 ),
               ],
             ),

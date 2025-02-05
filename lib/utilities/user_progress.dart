@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:itsindire/firebase_services/auth.dart';
 import 'package:itsindire/firebase_services/payment_db.dart';
 import 'package:itsindire/firebase_services/profiledb.dart';
+import 'package:itsindire/screens/auth/iyandikishe.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:itsindire/firebase_services/ingingo_db.dart';
@@ -58,9 +59,10 @@ class _UserProgressState extends State<UserProgress> {
     });
   }
 
-  void _showProgressDialog(BuildContext context, PaymentModel payment,
+  void _showProgressDialog(BuildContext context, PaymentModel? payment,
       double percent, int? unansweredPopQuestions, bool isUrStudent) {
     if (currentUser != null &&
+        payment != null &&
         currentUser?.email != 'nidehazard10@gmail.com' &&
         currentUser?.email != 'testing@mail.com' &&
         payment.isApproved != true) {
@@ -69,7 +71,7 @@ class _UserProgressState extends State<UserProgress> {
       return;
     }
 
-    if (percent == 1.0 && unansweredPopQuestions == 0) {
+    if (percent == 1.0 && unansweredPopQuestions == 0 && payment != null) {
       _showCompletionDialog(context, payment, isUrStudent);
       return;
     }
@@ -111,7 +113,7 @@ class _UserProgressState extends State<UserProgress> {
     );
   }
 
-  void _showProgressDialogContent(BuildContext context, PaymentModel payment,
+  void _showProgressDialogContent(BuildContext context, PaymentModel? payment,
       double percent, int? unansweredPopQuestions, bool isUrStudent) {
     showDialog(
       context: context,
@@ -133,8 +135,10 @@ class _UserProgressState extends State<UserProgress> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    !(payment.endAt?.isAfter(DateTime.now()) ?? false)
+                builder: (context) => currentUser == null
+                    ? const Iyandikishe()
+                    : (payment == null ||
+                            !(payment.endAt?.isAfter(DateTime.now()) ?? false))
                         ? Ibiciro(
                             message: isUrStudent
                                 ? 'Buy a package to continue learning!'
@@ -219,10 +223,8 @@ class _UserProgressState extends State<UserProgress> {
               ),
               GestureDetector(
                 onTap: () {
-                  if (payment != null) {
-                    _showProgressDialog(context, payment, percent,
-                        unansweredPopQuestions, isUrStudent);
-                  }
+                  _showProgressDialog(context, payment, percent,
+                      unansweredPopQuestions, isUrStudent);
                 },
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.3,

@@ -9,7 +9,6 @@ import 'package:itsindire/models/isomo.dart';
 import 'package:itsindire/screens/ibiciro/reba_ibiciro_button.dart';
 import 'package:itsindire/screens/iga/utils/gradient_title.dart';
 import 'package:itsindire/utilities/amasomo_progress.dart';
-import 'package:itsindire/utilities/view_not_logged_in.dart';
 import 'package:itsindire/utilities/progress_circle.dart';
 import 'package:itsindire/utilities/app_bar.dart';
 
@@ -45,7 +44,7 @@ class _HagatiState extends State<Hagati> {
     return MultiProvider(
       providers: [
         StreamProvider<List<IsomoModel?>?>.value(
-          value: IsomoService().getAllAmasomo(currentUser?.uid),
+          value: IsomoService().getAllAmasomo(),
           initialData: null,
           catchError: (context, error) => [],
         ),
@@ -130,14 +129,11 @@ class _HagatiState extends State<Hagati> {
               percent: authState.currentProfile != null ? overallProgress : 0.0,
               progress: authState.currentProfile != null
                   ? 'Ugeze kukigero cya ${(overallProgress * 100).toStringAsFixed(0)}% wiga!'
-                  : 'Banza winjire!',
+                  : '',
               usr: authState.currentUser,
             ),
-            if (authState.currentProfile != null)
-              AmasomoProgress(
-                  progressesToShow: notFinishedProgresses, isHagati: true)
-            else
-              const ViewNotLoggedIn(),
+            AmasomoProgress(
+                progressesToShow: notFinishedProgresses, isHagati: true)
           ],
         ),
       ),
