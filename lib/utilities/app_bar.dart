@@ -26,6 +26,8 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   late StreamSubscription<QuerySnapshot> _paymentsSubscription;
   User? currentUser;
   int remainingSeconds = 0;
+  late ScaffoldMessengerState scaffoldMessenger;
+  late AuthState authState;
 
   // payments stream
   Stream<QuerySnapshot> get payments => currentUser != null
@@ -42,11 +44,36 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        currentUser =
-            Provider.of<AuthState>(context, listen: false).currentUser;
-      });
+      _initializeCurrentUser();
       _subscribeToPayments();
+    });
+  }
+
+  void _initializeCurrentUser() {
+    setState(() {
+      currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    scaffoldMessenger = ScaffoldMessenger.of(context);
+    authState = Provider.of<AuthState>(context, listen: false);
+    // Listen for changes in AuthState
+    authState.addListener(_authStateListener);
+  }
+
+  @override
+  void dispose() {
+    _paymentsSubscription.cancel();
+    authState.removeListener(_authStateListener);
+    super.dispose();
+  }
+
+  void _authStateListener() {
+    setState(() {
+      currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
     });
   }
 
@@ -54,18 +81,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
     _paymentsSubscription = payments.listen((event) {
       if (!mounted) return;
       for (var change in event.docChanges) {
-        dynamic doc = change.doc.data();
-        if (change.type == DocumentChangeType.modified &&
-            doc['userId'] == currentUser!.uid &&
-            doc['isApproved'] == true &&
-            doc['endAt'].toDate().isAfter(DateTime.now())) {
-          _showSnackBar('Ifatabuguzi ryawe ryemejwe. Ubu watangira kwiga!',
-              const Color(0xFF00A651));
-        } else if (change.type == DocumentChangeType.modified &&
-            doc['endAt'].toDate().isBefore(DateTime.now())) {
-          _showSnackBar(
-              'Gura irindi fatabuguzi!', const Color.fromARGB(255, 255, 0, 0));
-        }
+        _handlePaymentChange(change);
       }
     }, onError: (error) {
       _showSnackBar('Error in payment subscription: $error',
@@ -73,9 +89,24 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
     });
   }
 
+  void _handlePaymentChange(DocumentChange change) {
+    dynamic doc = change.doc.data();
+    if (change.type == DocumentChangeType.modified &&
+        doc['userId'] == currentUser!.uid) {
+      if (doc['isApproved'] == true &&
+          doc['endAt'].toDate().isAfter(DateTime.now())) {
+        _showSnackBar('Ifatabuguzi ryawe ryemejwe. Ubu watangira kwiga!',
+            const Color(0xFF00A651));
+      } else if (doc['endAt'].toDate().isBefore(DateTime.now())) {
+        _showSnackBar(
+            'Gura irindi fatabuguzi!', const Color.fromARGB(255, 255, 0, 0));
+      }
+    }
+  }
+
   void _showSnackBar(String message, Color color) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(_buildSnackBar(message, color));
+    scaffoldMessenger.showSnackBar(_buildSnackBar(message, color));
   }
 
   SnackBar _buildSnackBar(String message, Color backgroundColor) {
@@ -94,12 +125,6 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
       duration: const Duration(seconds: 5),
       backgroundColor: backgroundColor,
     );
-  }
-
-  @override
-  void dispose() {
-    _paymentsSubscription.cancel();
-    super.dispose();
   }
 
   @override
@@ -179,16 +204,22 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   Widget _buildProfileIcon(BuildContext context, ProfileModel profile,
       PaymentModel? newestPyt, AuthState authState) {
     return IconButton(
-      icon: profile.photo == ''
-          ? SvgPicture.asset(
-              'assets/images/avatar.svg',
-              height: MediaQuery.of(context).size.height * 0.048,
-              colorFilter: const ColorFilter.mode(
-                  const Color(0xFFFFBD59), BlendMode.srcIn),
-            )
-          : CircleAvatar(
-              backgroundImage: NetworkImage(profile.photo ?? ''),
-            ),
+      icon: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: const Color(0xFFFFBD59), width: 2.0),
+        ),
+        child: profile.photo == ''
+            ? SvgPicture.asset(
+                'assets/images/avatar.svg',
+                height: MediaQuery.of(context).size.height * 0.048,
+                colorFilter: const ColorFilter.mode(
+                    const Color(0xFFFFBD59), BlendMode.srcIn),
+              )
+            : CircleAvatar(
+                backgroundImage: NetworkImage(profile.photo ?? ''),
+              ),
+      ),
       onPressed: () {
         _showProfileDialog(context, profile, newestPyt, authState);
       },
@@ -211,7 +242,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        String email = currentUser?.email ?? '';
+        String? email = currentUser?.email;
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
@@ -257,8 +288,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                (email != '' &&
-                        email != 'nidehazard10@gmail.com' &&
+                (email != 'nidehazard10@gmail.com' &&
                         email != 'testing@mail.com')
                     ? _buildSubscriptionStatus(context, newestPyt)
                     : Container(),
@@ -387,9 +417,9 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
         onPressed: () async {
           dynamic result = await authState.logOut();
 
-          ScaffoldMessenger.of(context).showSnackBar(_buildSnackBar(
+          _showSnackBar(
               result != null ? result : 'Ntibikunze, ongera ugerageze!',
-              const Color(0xFF00A651)));
+              const Color(0xFF00A651));
           Navigator.of(context).popUntil((route) => route.isFirst);
         },
         icon: Icon(

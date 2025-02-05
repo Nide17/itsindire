@@ -116,6 +116,8 @@ class AuthState with ChangeNotifier {
       setCurrentUser(null);
       setCurrentProfile(null);
 
+      notifyListeners(); // Notify listeners about the logout
+
       return 'Bye $loggedOutUserName!';
     } catch (e) {
       _logger.e('Failed to log out', error: e);
