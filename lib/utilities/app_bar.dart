@@ -28,7 +28,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
       FirebaseFirestore.instance.collection('payments');
   late StreamSubscription<QuerySnapshot> _paymentsSubscription;
   User? currentUser;
-  int remainingSeconds = 0;
+  int remainingSeconds = -1;
   late ScaffoldMessengerState scaffoldMessenger;
   late AuthState authState;
   bool isProcessingPayment = false;
@@ -54,6 +54,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   }
 
   void _initializeCurrentUser() {
+    if (!mounted) return; // Add this check
     setState(() {
       currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
     });
@@ -76,6 +77,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   }
 
   void _authStateListener() {
+    if (!mounted) return; // Add this check
     setState(() {
       currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
     });
@@ -229,7 +231,9 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   List<Widget> _buildActions(BuildContext context, ProfileModel profile,
       PaymentModel? newestPyt, AuthState authState, String ifatabuguziID) {
     return [
-      if (newestPyt != null && newestPyt.ifatabuguziID == ifatabuguziID)
+      if (newestPyt != null &&
+          newestPyt.ifatabuguziID == ifatabuguziID &&
+          newestPyt.getRemainingMilliseconds() > 0)
         _buildCountdownTimer(context),
       _buildProfileIcon(context, profile, newestPyt, authState),
     ];

@@ -301,8 +301,25 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
   }
 
   void _handleAttemptButtonPress(BuildContext context, User? currentUser) {
-    print('Current user: $currentUser');
-    if (currentUser == null) {
+
+    if (isPaymentLoading || isTitlesLoading || payment == null) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+        content: Row(
+          children: const [
+            CircularProgressIndicator(),
+            SizedBox(width: 20),
+            Text("Loading..."),
+          ],
+        ),
+          );
+        },
+      );
+
+    } else if (currentUser == null) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -334,9 +351,9 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
                 : payment.isApproved == false
                     ? 'Ifatabuguzi ryawe ntiriremezwa!'
                     : payment.ifatabuguziID == ifatabuguziID &&
-                            !payment.endAt.isAfter(DateTime.now())
+                            payment.endAt.isBefore(DateTime.now())
                         ? 'Igerageza ryawe ryararangiye, gura ifatabuguzi!'
-                        : !payment.endAt.isAfter(DateTime.now())
+                        : payment.endAt.isBefore(DateTime.now())
                             ? 'Ifatabuguzi ryawe ryararangiye, gura irindi!'
                             : 'Ibyo wifuza ntibyakunze!',
             alertType: 'error',

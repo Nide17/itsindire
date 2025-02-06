@@ -164,6 +164,7 @@ class _KontiState extends State<Konti> {
   }
 
   Future<void> _deleteAccount(BuildContext context, AuthState authState) async {
+    if (!mounted) return; // Add this check
     setState(() {
       _isDeleting = true;
     });
@@ -173,6 +174,7 @@ class _KontiState extends State<Konti> {
     if (currentUser == null || currentUser!.email == null) {
       SnackbarUtil.showSnackBar(
           context, 'Nta imeyili, sohoka wongere winjire.', Colors.red);
+      if (!mounted) return; // Add this check
       setState(() {
         _isDeleting = false;
       });
@@ -197,6 +199,7 @@ class _KontiState extends State<Konti> {
     } catch (e) {
       SnackbarUtil.showSnackBar(context, 'Habayeho ikosa: $e', Colors.red);
     } finally {
+      if (!mounted) return; // Add this check
       setState(() {
         _isDeleting = false;
       });

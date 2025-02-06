@@ -50,6 +50,8 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
       ],
       child: Consumer<List<IsomoModel?>?>(builder: (context, allAmasomos, _) {
         if (currentUser != null &&
+            allAmasomos != null &&
+            allAmasomos.isNotEmpty &&
             sortedProgresses.isEmpty &&
             widget.isHagati) {
           return _buildMessageColumn(
@@ -70,7 +72,7 @@ class _AmasomoProgressState extends State<AmasomoProgress> {
             (sortedProgresses.isEmpty && !widget.isHagati)) {
           return _buildMessageColumn(
             context,
-            'Nta masomo urasoza!',
+            widget.isHagati ? 'Tegereza gato ...' : 'Nta masomo urasoza!',
             'Tangira',
             () {
               Navigator.pushReplacement(
