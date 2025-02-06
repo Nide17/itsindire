@@ -300,8 +300,59 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
         : Container();
   }
 
-  Widget _buildAttemptButton(BuildContext context, User? currentUser,
-      IsuzumaScoreModel? scoreUserIsuzuma) {
+  void _handleAttemptButtonPress(BuildContext context, User? currentUser) {
+    print('Current user: $currentUser');
+    if (currentUser == null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const Iyandikishe(
+            message: 'Banza wiyandikishe, wishyure ubone aya masuzumabumenyi yose!',
+          ),
+        ),
+      );
+    } else if (currentUser.email == 'nidehazard10@gmail.com' ||
+        currentUser.email == 'testing@mail.com' ||
+        (payment != null && payment.isApproved && payment.endAt.isAfter(DateTime.now()))) {
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.leftToRight,
+          child: IsuzumaAttempt(isuzuma: widget.isuzuma),
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          String ifatabuguziID = dotenv.env['TRIAL_SUBSCRIPTION_ID'] ?? '';
+          return ItsindireAlert(
+            errorTitle: 'Ntibyagenze neza',
+            errorMsg: payment == null
+                ? 'Banza ugure ifatabuguzi!'
+                : payment.isApproved == false
+                    ? 'Ifatabuguzi ryawe ntiriremezwa!'
+                    : payment.ifatabuguziID == ifatabuguziID &&
+                            !payment.endAt.isAfter(DateTime.now())
+                        ? 'Igerageza ryawe ryararangiye, gura ifatabuguzi!'
+                        : !payment.endAt.isAfter(DateTime.now())
+                            ? 'Ifatabuguzi ryawe ryararangiye, gura irindi!'
+                            : 'Ibyo wifuza ntibyakunze!',
+            alertType: 'error',
+            secondButtonTitle: payment.isApproved != false ? 'Ishyura' : null,
+            secondButtonFunction: () {
+              Navigator.pop(context);
+              Navigator.pushReplacementNamed(context, '/ibiciro');
+            },
+            secondButtonColor: Color(0xFF00A651),
+          );
+        },
+      );
+    }
+  }
+
+  Widget _buildAttemptButton(BuildContext context, User? currentUser, IsuzumaScoreModel? scoreUserIsuzuma) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.45,
       margin: EdgeInsets.only(
@@ -309,53 +360,7 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
       ),
       alignment: Alignment.center,
       child: ElevatedButton(
-        onPressed: () {
-          currentUser == null
-              ? Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const Iyandikishe(
-                          message:
-                              'Banza wiyandikishe, wishyure ubone aya masuzumabumenyi yose!')))
-              : currentUser.email == 'nidehazard10@gmail.com' ||
-                      currentUser.email == 'testing@mail.com' ||
-                      (payment != null &&
-                          payment.isApproved &&
-                          payment.endAt.isAfter(DateTime.now()))
-                  ? Navigator.push(
-                      context,
-                      PageTransition(
-                          type: PageTransitionType.leftToRight,
-                          child: IsuzumaAttempt(isuzuma: widget.isuzuma)))
-                  : showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (BuildContext context) {
-                        String ifatabuguziID =
-                            dotenv.env['TRIAL_SUBSCRIPTION_ID'] ?? '';
-                        return ItsindireAlert(
-                          errorTitle: 'Ntibyagenze neza',
-                          errorMsg: payment == null
-                              ? 'Banza ugure ifatabuguzi!'
-                              : payment.isApproved == false
-                                  ? 'Ifatabuguzi ryawe ntiriremezwa!'
-                                  : payment.ifatabuguziID == ifatabuguziID &&
-                                          !payment.endAt.isAfter(DateTime.now())
-                                      ? 'Igerageza ryawe ryararangiye, gura ifatabuguzi!'
-                                      : !payment.endAt.isAfter(DateTime.now())
-                                          ? 'Ifatabuguzi ryawe ryararangiye, gura irindi!'
-                                          : 'Ibyo wifuza ntibyakunze!',
-                          alertType: 'error',
-                          secondButtonTitle:
-                              payment.isApproved != false ? 'Ishyura' : null,
-                          secondButtonFunction: () {
-                            Navigator.pop(context);
-                            Navigator.pushReplacementNamed(context, '/ibiciro');
-                          },
-                          secondButtonColor: Color(0xFF00A651),
-                        );
-                      });
-        },
+        onPressed: () => _handleAttemptButtonPress(context, currentUser),
         style: ElevatedButton.styleFrom(
           fixedSize: Size(
             MediaQuery.of(context).size.width * 0.5,
@@ -364,16 +369,14 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
           foregroundColor: const Color.fromARGB(255, 0, 0, 0),
           backgroundColor: const Color(0xFFFFBD59),
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(MediaQuery.of(context).size.width * 0.05),
+            borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.05),
           ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
               child: Image.asset(
                 'assets/images/isuzuma.png',
                 height: MediaQuery.of(context).size.height * 0.028,
@@ -381,9 +384,7 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
             ),
             Flexible(
               child: Text(
-                scoreUserIsuzuma != null
-                    ? 'SUBIRAMO'.toUpperCase()
-                    : 'RITANGIRE'.toUpperCase(),
+                scoreUserIsuzuma != null ? 'SUBIRAMO'.toUpperCase() : 'RITANGIRE'.toUpperCase(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: MediaQuery.of(context).size.width * 0.035,

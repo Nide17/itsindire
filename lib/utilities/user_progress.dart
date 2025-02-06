@@ -61,23 +61,32 @@ class _UserProgressState extends State<UserProgress> {
 
   void _showProgressDialog(BuildContext context, PaymentModel? payment,
       double percent, int? unansweredPopQuestions, bool isUrStudent) {
-    if (currentUser != null &&
-        payment != null &&
-        currentUser?.email != 'nidehazard10@gmail.com' &&
-        currentUser?.email != 'testing@mail.com' &&
-        payment.isApproved != true) {
+    if (_shouldShowErrorDialog(payment)) {
       _showErrorDialog(
           context, 'Ntibyagenze neza', 'Ifatabuguzi ryawe ntiriremezwa!');
       return;
     }
 
-    if (percent == 1.0 && unansweredPopQuestions == 0 && payment != null) {
-      _showCompletionDialog(context, payment, isUrStudent);
+    if (_shouldShowCompletionDialog(percent, unansweredPopQuestions, payment)) {
+      _showCompletionDialog(context, payment!, isUrStudent);
       return;
     }
 
     _showProgressDialogContent(
         context, payment, percent, unansweredPopQuestions, isUrStudent);
+  }
+
+  bool _shouldShowErrorDialog(PaymentModel? payment) {
+    return currentUser != null &&
+        payment != null &&
+        currentUser?.email != 'nidehazard10@gmail.com' &&
+        currentUser?.email != 'testing@mail.com' &&
+        payment.isApproved != true;
+  }
+
+  bool _shouldShowCompletionDialog(
+      double percent, int? unansweredPopQuestions, PaymentModel? payment) {
+    return percent == 1.0 && unansweredPopQuestions == 0 && payment != null;
   }
 
   void _showErrorDialog(BuildContext context, String title, String message) {
@@ -137,8 +146,10 @@ class _UserProgressState extends State<UserProgress> {
               MaterialPageRoute(
                 builder: (context) => currentUser == null
                     ? const Iyandikishe()
-                    : (payment == null ||
-                            !(payment.endAt?.isAfter(DateTime.now()) ?? false))
+                    : currentUser?.email != 'nidehazard10@gmail.com' &&
+                            currentUser?.email != 'testing@mail.com' &&
+                            (payment == null ||
+                                payment.endAt?.isBefore(DateTime.now()) == true)
                         ? Ibiciro(
                             message: isUrStudent
                                 ? 'Buy a package to continue learning!'
@@ -159,12 +170,8 @@ class _UserProgressState extends State<UserProgress> {
 
   @override
   Widget build(BuildContext context) {
-    final int? curCourseIngingo = widget.courseProgress != null
-        ? widget.courseProgress?.currentIngingo
-        : 0;
-    final int? unansweredPopQuestions = widget.courseProgress != null
-        ? widget.courseProgress?.unansweredPopQuestions
-        : 0;
+    final int? curCourseIngingo = widget.courseProgress?.currentIngingo ?? 0;
+    final int? unansweredPopQuestions = widget.courseProgress?.unansweredPopQuestions ?? 0;
 
     final double percent = (widget.courseProgress?.totalIngingos != 0 &&
             widget.courseProgress!.totalIngingos >= curCourseIngingo!)
@@ -178,9 +185,7 @@ class _UserProgressState extends State<UserProgress> {
               ? ProfileService().getCurrentProfileByID(currentUser!.uid)
               : null,
           initialData: null,
-          catchError: (context, error) {
-            return null;
-          },
+          catchError: (context, error) => null,
         ),
         StreamProvider<PaymentModel?>.value(
           value: currentUser != null
@@ -191,9 +196,7 @@ class _UserProgressState extends State<UserProgress> {
         ),
       ],
       child: Consumer<ProfileModel?>(builder: (context, profile, _) {
-        final bool isUrStudent = profile != null &&
-            profile.urStudent != null &&
-            profile.urStudent == true;
+        final bool isUrStudent = profile?.urStudent == true;
         return Consumer<PaymentModel?>(builder: (context, payment, _) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
