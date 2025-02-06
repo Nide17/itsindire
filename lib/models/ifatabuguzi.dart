@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class IfatabuguziModel {
   String id = '';
   String igihe;
@@ -117,6 +119,26 @@ class IfatabuguziModel {
       ibirimo: List<String>.from(map['ibirimo'].split('\n')),
       ubusobanuro: map['ubusobanuro'],
       type: map['type'],
+    );
+  }
+
+  static IfatabuguziModel fromSnapshot(DocumentSnapshot snapshot) {
+    final data = snapshot.data() as Map<String, dynamic>? ?? {};
+
+    final igihe = data['igihe'] ?? '';
+    final igiciro = data['igiciro'] ?? 0;
+    final ibirimoData = data['ibirimo'] ?? [];
+    final ibirimo = List<String>.from(ibirimoData);
+    final ubusobanuro = data['ubusobanuro'] ?? '';
+    final type = data['type'] ?? '';
+
+    return IfatabuguziModel(
+      id: snapshot.id,
+      igihe: igihe,
+      igiciro: igiciro,
+      ibirimo: ibirimo,
+      ubusobanuro: ubusobanuro,
+      type: type,
     );
   }
 }

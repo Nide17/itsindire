@@ -79,7 +79,7 @@ class _IyandikisheState extends State<Iyandikishe> {
                   title: 'IYANDIKISHE', icon: 'assets/images/iyandikishe.svg'),
               const Description(
                   text:
-                      'Iyandikishe ubundi, wige, umenye utsindire provisoire!'),
+                      'Banza wiyandikishe, maze wige, utsindire provisoire!'),
               if (loading) const LoadingWidget(),
               if (!loading) _buildImage(context),
               _buildForm(context, authState),

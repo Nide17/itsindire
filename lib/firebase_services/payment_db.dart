@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:itsindire/firebase_services/ifatabuguzi_db.dart';
 import 'package:itsindire/main.dart';
+import 'package:itsindire/models/ifatabuguzi.dart';
 import 'package:itsindire/models/payment.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
@@ -39,7 +41,6 @@ class PaymentService {
   }
 
   Stream<PaymentModel?> getNewestPytByUserId(String userId) {
-
     return paymentsCollection
         .where('userId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
@@ -95,6 +96,22 @@ class PaymentService {
     }
   }
 
+  Future<ReturnedResult> updatePaymentStartEnd(PaymentModel payment) async {
+    try {
+      DocumentSnapshot docSnapshot = await IfatabuguziService().getIfatabuguziById(payment.ifatabuguziID);
+      IfatabuguziModel ifatabuguzi = IfatabuguziModel.fromSnapshot(docSnapshot);
+
+      await paymentsCollection.doc(payment.userId).update({
+        'createdAt': DateTime.now(),
+        'endAt': DateTime.now().add(Duration(days: ifatabuguzi.getDays())),
+      });
+
+      return ReturnedResult(value: true);
+    } catch (e) {
+      return ReturnedResult(error: e.toString());
+    }
+  }
+
   Future<String?> _checkActivePayments(String userId) async {
     final activePayment = await paymentsCollection
         .where('userId', isEqualTo: userId)
@@ -113,7 +130,8 @@ class PaymentService {
     return null;
   }
 
-  Future<void> _deleteSpecificPayments(String userId, String ifatabuguziID) async {
+  Future<void> _deleteSpecificPayments(
+      String userId, String ifatabuguziID) async {
     final specificPayments = await paymentsCollection
         .where('userId', isEqualTo: userId)
         .where('ifatabuguziID', isEqualTo: ifatabuguziID)
@@ -126,8 +144,18 @@ class PaymentService {
 
   // SEND EMAIL NOTIFICATION
   Future<void> _sendPaymentNotification(PaymentModel payment) async {
-    String username = dotenv.env['GMAIL_EMAIL']!;
-    String password = dotenv.env['GMAIL_PASSWORD']!;
+    String? username = dotenv.env['GMAIL_EMAIL'];
+    String? password = dotenv.env['GMAIL_PASSWORD'];
+
+    if (username == null || password == null) {
+      print('Email credentials are not set in the environment variables.');
+      return;
+    }
+
+    if (payment.userId == null || payment.phone == null) {
+      print('Payment userId or phone is null.');
+      return;
+    }
 
     // CREATE THE SMTP SERVER
     final smtpServer = gmail(username, password);
@@ -139,14 +167,19 @@ class PaymentService {
       ..ccRecipients.addAll(['brucendati@gmail.com'])
       ..subject = 'Itsindire Payment'
       ..html =
-          "<h1>Payment</h1>\n<p>Payment ${payment.phone} has been made by user ID: ${payment.userId!}</p>\n<p>Payment Phone: ${payment.phone!}</p>\n<p>Payment amount: ${payment.igiciro!}</p>\n<p>Payment Created At: ${payment.createdAt}</p>\n<p>Payment End At: ${payment.endAt}</p>\n<p>Payment isApproved: ${payment.isApproved}</p>";
+          "<h1>Payment</h1>\n<p>Payment ${payment.phone} has been made by user ID: ${payment.userId}</p>\n<p>Payment Phone: ${payment.phone}</p>\n<p>Payment amount: ${payment.igiciro}</p>\n<p>Payment Created At: ${payment.createdAt}</p>\n<p>Payment End At: ${payment.endAt}</p>\n<p>Payment isApproved: ${payment.isApproved}</p>";
 
     // SEND THE MESSAGE
     try {
       final sendReport = await send(message, smtpServer);
       print('Message sent: $sendReport');
-    } on Exception catch (e) {
+    } on MailerException catch (e) {
       print('Error sending email: $e');
+      for (var p in e.problems) {
+        print('Problem: ${p.code}: ${p.msg}');
+      }
+    } catch (e) {
+      print('Unexpected error: $e');
     }
   }
 }

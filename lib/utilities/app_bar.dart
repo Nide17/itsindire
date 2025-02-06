@@ -5,13 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:itsindire/firebase_services/auth.dart';
+import 'package:itsindire/firebase_services/ifatabuguzi_db.dart';
 import 'package:itsindire/firebase_services/payment_db.dart';
 import 'package:itsindire/firebase_services/profiledb.dart';
+import 'package:itsindire/models/ifatabuguzi.dart';
 import 'package:itsindire/models/payment.dart';
 import 'package:itsindire/models/profile.dart';
 import 'package:itsindire/screens/iga/utils/countdown_timer.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/single_child_widget.dart';
 
 class AppBarItsindire extends StatefulWidget {
   const AppBarItsindire({super.key});
@@ -28,6 +31,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   int remainingSeconds = 0;
   late ScaffoldMessengerState scaffoldMessenger;
   late AuthState authState;
+  bool isProcessingPayment = false;
 
   // payments stream
   Stream<QuerySnapshot> get payments => currentUser != null
@@ -89,15 +93,52 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
     });
   }
 
-  void _handlePaymentChange(DocumentChange change) {
-    dynamic doc = change.doc.data();
+  void _handlePaymentChange(DocumentChange change) async {
+    dynamic pyt = change.doc.data();
+    if (currentUser == null) {
+      print('Current user is null.');
+      return;
+    }
+
     if (change.type == DocumentChangeType.modified &&
-        doc['userId'] == currentUser!.uid) {
-      if (doc['isApproved'] == true &&
-          doc['endAt'].toDate().isAfter(DateTime.now())) {
+        pyt['userId'] == currentUser!.uid) {
+      if (pyt['isApproved'] == true &&
+          pyt['endAt'].toDate().isAfter(DateTime.now())) {
+        // Prevent recursive updates
+        if (isProcessingPayment) return;
+        isProcessingPayment = true;
+
+        // Fetch the IfatabuguziModel
+        IfatabuguziModel? ifatabuguzi = await IfatabuguziService()
+            .getIfatabuguziById(pyt['ifatabuguziID'])
+            .then((docSnapshot) {
+          if (docSnapshot.exists) {
+            return IfatabuguziModel.fromSnapshot(docSnapshot);
+          }
+          return null;
+        });
+
+        if (ifatabuguzi != null) {
+          DateTime newCreatedAt = DateTime.now();
+          DateTime newEndAt =
+              newCreatedAt.add(Duration(days: ifatabuguzi.getDays()));
+
+          // Check if the dates need to be updated
+          if (pyt['createdAt'].toDate().isBefore(newCreatedAt) ||
+              pyt['endAt'].toDate().isBefore(newEndAt)) {
+            // Update the start and end date of the subscription
+            await paymentsCollection.doc(change.doc.id).update({
+              'createdAt': newCreatedAt,
+              'endAt': newEndAt,
+            });
+          }
+        }
+
         _showSnackBar('Ifatabuguzi ryawe ryemejwe. Ubu watangira kwiga!',
             const Color(0xFF00A651));
-      } else if (doc['endAt'].toDate().isBefore(DateTime.now())) {
+
+        isProcessingPayment = false;
+      } else if (pyt['endAt'].toDate().isBefore(DateTime.now())) {
         _showSnackBar(
             'Gura irindi fatabuguzi!', const Color.fromARGB(255, 255, 0, 0));
       }
@@ -130,55 +171,68 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        StreamProvider<PaymentModel?>.value(
-          value: currentUser != null
-              ? PaymentService().getNewestPytByUserId(currentUser!.uid)
-              : null,
-          initialData: null,
-          catchError: (context, error) => null,
-        ),
-        StreamProvider<ProfileModel?>.value(
-          value: currentUser != null
-              ? ProfileService().getCurrentProfileByID(currentUser!.uid)
-              : null,
-          initialData: null,
-          catchError: (context, error) => null,
-        ),
-      ],
+      providers: _buildProviders(),
       child: Consumer<AuthState>(builder: (context, authState, _) {
         return Consumer<ProfileModel?>(builder: (context, profile, _) {
           return Consumer<PaymentModel?>(builder: (context, newestPyt, _) {
-            String ifatabuguziID = dotenv.env['TRIAL_SUBSCRIPTION_ID'] ?? '';
-
-            if (newestPyt != null) {
-              remainingSeconds = newestPyt.getRemainingMilliseconds() ~/ 1000;
-            }
-
-            return AppBar(
-              backgroundColor: const Color(0xFF5B8BDF),
-              automaticallyImplyLeading: false,
-              bottom: PreferredSize(
-                preferredSize: MediaQuery.of(context).size * 0.001,
-                child: Container(
-                  color: const Color(0xFFFFBD59),
-                  height: MediaQuery.of(context).size.height * 0.01,
-                ),
-              ),
-              title: _buildTitle(context),
-              actions: (currentUser != null && profile != null)
-                  ? <Widget>[
-                      if (newestPyt != null &&
-                          newestPyt.ifatabuguziID == ifatabuguziID)
-                        _buildCountdownTimer(context),
-                      _buildProfileIcon(context, profile, newestPyt, authState),
-                    ]
-                  : [],
-            );
+            return _buildAppBar(context, profile, newestPyt, authState);
           });
         });
       }),
     );
+  }
+
+  List<SingleChildWidget> _buildProviders() {
+    return [
+      StreamProvider<PaymentModel?>.value(
+        value: currentUser != null
+            ? PaymentService().getNewestPytByUserId(currentUser!.uid)
+            : null,
+        initialData: null,
+        catchError: (context, error) => null,
+      ),
+      StreamProvider<ProfileModel?>.value(
+        value: currentUser != null
+            ? ProfileService().getCurrentProfileByID(currentUser!.uid)
+            : null,
+        initialData: null,
+        catchError: (context, error) => null,
+      ),
+    ];
+  }
+
+  AppBar _buildAppBar(BuildContext context, ProfileModel? profile,
+      PaymentModel? newestPyt, AuthState authState) {
+    String ifatabuguziID = dotenv.env['TRIAL_SUBSCRIPTION_ID'] ?? '';
+
+    if (newestPyt != null) {
+      remainingSeconds = newestPyt.getRemainingMilliseconds() ~/ 1000;
+    }
+
+    return AppBar(
+      backgroundColor: const Color(0xFF5B8BDF),
+      automaticallyImplyLeading: false,
+      bottom: PreferredSize(
+        preferredSize: MediaQuery.of(context).size * 0.001,
+        child: Container(
+          color: const Color(0xFFFFBD59),
+          height: MediaQuery.of(context).size.height * 0.01,
+        ),
+      ),
+      title: _buildTitle(context),
+      actions: (currentUser != null && profile != null)
+          ? _buildActions(context, profile, newestPyt, authState, ifatabuguziID)
+          : [],
+    );
+  }
+
+  List<Widget> _buildActions(BuildContext context, ProfileModel profile,
+      PaymentModel? newestPyt, AuthState authState, String ifatabuguziID) {
+    return [
+      if (newestPyt != null && newestPyt.ifatabuguziID == ifatabuguziID)
+        _buildCountdownTimer(context),
+      _buildProfileIcon(context, profile, newestPyt, authState),
+    ];
   }
 
   Widget _buildTitle(BuildContext context) {
@@ -242,69 +296,73 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        String? email = currentUser?.email;
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-                MediaQuery.of(context).size.width * 0.024),
-            side: BorderSide(
-              color: const Color(0xFF5B8BDF),
-              width: MediaQuery.of(context).size.width * 0.01,
+        return _buildProfileDialog(context, profile, newestPyt, authState);
+      },
+    );
+  }
+
+  Widget _buildProfileDialog(BuildContext context, ProfileModel profile,
+      PaymentModel? newestPyt, AuthState authState) {
+    String? email = currentUser?.email;
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.circular(MediaQuery.of(context).size.width * 0.024),
+        side: BorderSide(
+          color: const Color(0xFF5B8BDF),
+          width: MediaQuery.of(context).size.width * 0.01,
+        ),
+      ),
+      icon: profile.photo == ''
+          ? SvgPicture.asset(
+              'assets/images/avatar.svg',
+              height: MediaQuery.of(context).size.height * 0.048,
+              colorFilter: const ColorFilter.mode(
+                  const Color(0xFF5B8BDF), BlendMode.srcIn),
+            )
+          : CircleAvatar(
+              backgroundImage: NetworkImage(
+                profile.photo ?? '',
+                scale: 2,
+              ),
             ),
-          ),
-          icon: profile.photo == ''
-              ? SvgPicture.asset(
-                  'assets/images/avatar.svg',
-                  height: MediaQuery.of(context).size.height * 0.048,
-                  colorFilter: const ColorFilter.mode(
-                      const Color(0xFF5B8BDF), BlendMode.srcIn),
-                )
-              : CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    profile.photo ?? '',
-                    scale: 2,
-                  ),
-                ),
-          title: Align(
-            alignment: Alignment.center,
-            child: Text.rich(
-              style: const TextStyle(color: const Color(0xFF5B8BDF)),
-              textAlign: TextAlign.center,
-              TextSpan(
-                  text: capitalizeWords(
-                      currentUser?.displayName ?? profile.username ?? ''),
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                  children: [
-                    TextSpan(
-                        text: '\n${currentUser?.email ?? ''}',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 12.0)),
-                  ]),
-            ),
-          ),
-          backgroundColor: const Color(0xFFFFBD59),
-          elevation: 10.0,
-          shadowColor: const Color(0xFF5B8BDF),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                (email != 'nidehazard10@gmail.com' &&
-                        email != 'testing@mail.com')
-                    ? _buildSubscriptionStatus(context, newestPyt)
-                    : Container(),
-                const SizedBox(height: 10.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildLogoutButton(context, authState),
-                    _buildAccountDetailsButton(context),
-                  ],
-                ),
+      title: Align(
+        alignment: Alignment.center,
+        child: Text.rich(
+          style: const TextStyle(color: const Color(0xFF5B8BDF)),
+          textAlign: TextAlign.center,
+          TextSpan(
+              text: capitalizeWords(
+                  currentUser?.displayName ?? profile.username ?? ''),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+              children: [
+                TextSpan(
+                    text: '\n${currentUser?.email ?? ''}',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600, fontSize: 12.0)),
+              ]),
+        ),
+      ),
+      backgroundColor: const Color(0xFFFFBD59),
+      elevation: 10.0,
+      shadowColor: const Color(0xFF5B8BDF),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: <Widget>[
+            (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
+                ? _buildSubscriptionStatus(context, newestPyt)
+                : Container(),
+            const SizedBox(height: 10.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildLogoutButton(context, authState),
+                _buildAccountDetailsButton(context),
               ],
             ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
 
@@ -337,7 +395,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
           ),
           SizedBox(height: MediaQuery.of(context).size.height * 0.024),
           _buildSubscriptionStatusText(
-              context, 'IFATABUGUZI RYAWE', const Color(0xFF5B8BDF)),
+              context, 'IFATABUGUZI RYAWE', const Color.fromARGB(255, 0, 0, 0)),
           SizedBox(height: MediaQuery.of(context).size.height * 0.024),
           _buildSubscriptionStatusText(
               context,

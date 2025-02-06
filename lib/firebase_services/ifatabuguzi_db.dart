@@ -11,17 +11,17 @@ class IfatabuguziService {
   List<IfatabuguziModel> _amafatabuguziFromSnapshot(
       QuerySnapshot querySnapshot) {
     return querySnapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
+      final data = doc.data() as Map<String, dynamic>? ?? {};
 
-      final igihe = data.containsKey('igihe') ? data['igihe'] : '';
-      final igiciro = data.containsKey('igiciro') ? data['igiciro'] : 0;
+      final igihe = data['igihe'] ?? '';
+      final igiciro = data['igiciro'] ?? 0;
 
       // Convert raw data for questions into List<ifatabuguziQuestion>
-      final ibirimoData = data.containsKey('ibirimo') ? data['ibirimo'] : [];
+      final ibirimoData = data['ibirimo'] ?? [];
       final ibirimo = List<String>.from(ibirimoData);
       final ubusobanuro =
-          data.containsKey('ubusobanuro') ? data['ubusobanuro'] : '';
-      final type = data.containsKey('type') ? data['type'] : '';
+          data['ubusobanuro'] ?? '';
+      final type = data['type'] ?? '';
 
       return IfatabuguziModel(
         id: doc.id,
@@ -37,5 +37,14 @@ class IfatabuguziService {
   // GET ALL amafatabuguzi
   Stream<List<IfatabuguziModel>> get amafatabuguzi {
     return ifatabuguziCollection.snapshots().map(_amafatabuguziFromSnapshot);
+  }
+
+  Future<DocumentSnapshot> getIfatabuguziById(String? ifatabuguziID) async {
+    try {
+      return await ifatabuguziCollection.doc(ifatabuguziID).get();
+    } catch (e) {
+      print('Error getting document: $e');
+      rethrow;
+    }
   }
 }
