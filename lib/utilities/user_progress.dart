@@ -67,8 +67,8 @@ class _UserProgressState extends State<UserProgress> {
       return;
     }
 
-    if (_shouldShowCompletionDialog(percent, unansweredPopQuestions, payment)) {
-      _showCompletionDialog(context, payment!, isUrStudent);
+    if (percent == 1.0 && unansweredPopQuestions == 0) {
+      _showIsuzume(context, payment, isUrStudent);
       return;
     }
 
@@ -82,11 +82,6 @@ class _UserProgressState extends State<UserProgress> {
         currentUser?.email != 'nidehazard10@gmail.com' &&
         currentUser?.email != 'testing@mail.com' &&
         payment.isApproved != true;
-  }
-
-  bool _shouldShowCompletionDialog(
-      double percent, int? unansweredPopQuestions, PaymentModel? payment) {
-    return percent == 1.0 && unansweredPopQuestions == 0 && payment != null;
   }
 
   void _showErrorDialog(BuildContext context, String title, String message) {
@@ -103,13 +98,15 @@ class _UserProgressState extends State<UserProgress> {
     );
   }
 
-  void _showCompletionDialog(
-      BuildContext context, PaymentModel payment, bool isUrStudent) {
+  void _showIsuzume(
+      BuildContext context, PaymentModel? payment, bool isUrStudent) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return !(payment.endAt?.isAfter(DateTime.now()) ?? false)
+        return (currentUser?.email != 'nidehazard10@gmail.com' &&
+                currentUser?.email != 'testing@mail.com' &&
+                payment?.endAt?.isBefore(DateTime.now()) == true)
             ? Ibiciro(
                 message: isUrStudent
                     ? 'Buy a package to continue learning!'
@@ -171,7 +168,8 @@ class _UserProgressState extends State<UserProgress> {
   @override
   Widget build(BuildContext context) {
     final int? curCourseIngingo = widget.courseProgress?.currentIngingo ?? 0;
-    final int? unansweredPopQuestions = widget.courseProgress?.unansweredPopQuestions ?? 0;
+    final int? unansweredPopQuestions =
+        widget.courseProgress?.unansweredPopQuestions ?? 0;
 
     final double percent = (widget.courseProgress?.totalIngingos != 0 &&
             widget.courseProgress!.totalIngingos >= curCourseIngingo!)
@@ -243,7 +241,7 @@ class _UserProgressState extends State<UserProgress> {
                   ),
                   child: Center(
                     child: Text(
-                      (percent == 0.0)
+                      percent == 0.0
                           ? "TANGIRA"
                           : percent == 1.0 && unansweredPopQuestions == 0
                               ? "ISUZUME"
