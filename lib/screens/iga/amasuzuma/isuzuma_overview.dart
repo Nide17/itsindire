@@ -27,28 +27,26 @@ class IsuzumaOverview extends StatefulWidget {
 
 class _IsuzumaOverviewState extends State<IsuzumaOverview> {
   List<String> amasomo = [];
-  bool isTitlesLoading = true;
   dynamic payment;
-  bool isPaymentLoading = false;
-  bool _isMounted = false;
   User? currentUser;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _isMounted = true;
-    setState(() {
-      currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
-    });
-    _isPaymentApproved();
-    fetchAmasomoTitles();
+    currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    setState(() => isLoading = true);
+    await _isPaymentApproved();
+    await fetchAmasomoTitles();
+    setState(() => isLoading = false);
   }
 
   Future<bool> _isPaymentApproved() async {
-    setState(() => isPaymentLoading = true);
-
     if (currentUser == null) {
-      setState(() => isPaymentLoading = false);
       return false;
     }
 
@@ -57,7 +55,6 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
         : null;
     setState(() {
       payment = pymt;
-      isPaymentLoading = false;
     });
 
     if (payment != null &&
@@ -70,55 +67,57 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
   }
 
   Future<void> fetchAmasomoTitles() async {
-    List<String> amasomoTitles = await IsomoService()
-        .getAmasomoTitlesByIds(widget.isuzuma.getIsomoIDs());
+    if (amasomo.isEmpty) {
+      List<String> amasomoTitles = await IsomoService()
+          .getAmasomoTitlesByIds(widget.isuzuma.getIsomoIDs());
 
-    if (_isMounted) {
       setState(() {
         amasomo = amasomoTitles;
-        isTitlesLoading = false;
       });
     }
   }
 
   @override
   void dispose() {
-    _isMounted = false;
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        StreamProvider<IsuzumaScoreModel?>.value(
-          value: currentUser == null
-              ? null
-              : IsuzumaScoreService()
-                  .getScoreByID('${currentUser!.uid}_${widget.isuzuma.id}'),
-          initialData: null,
-          catchError: (context, error) {
-            return null;
-          },
+    return Stack(
+      children: [
+        MultiProvider(
+          providers: [
+            StreamProvider<IsuzumaScoreModel?>.value(
+              value: currentUser == null
+                  ? null
+                  : IsuzumaScoreService()
+                      .getScoreByID('${currentUser!.uid}_${widget.isuzuma.id}'),
+              initialData: null,
+              catchError: (context, error) {
+                return null;
+              },
+            ),
+          ],
+          child: Consumer<IsuzumaScoreModel?>(
+              builder: (context, scoreUserIsuzuma, _) {
+            return Scaffold(
+              backgroundColor: const Color.fromARGB(255, 71, 103, 158),
+              appBar: PreferredSize(
+                preferredSize: Size.fromHeight(58.0),
+                child: AppBarItsindire(),
+              ),
+              body: ListView(
+                children: <Widget>[
+                  _buildOverviewCard(context),
+                  _buildReviewScoreButton(context, scoreUserIsuzuma),
+                  _buildAttemptButton(context, currentUser, scoreUserIsuzuma),
+                ],
+              ),
+            );
+          }),
         ),
       ],
-      child:
-          Consumer<IsuzumaScoreModel?>(builder: (context, scoreUserIsuzuma, _) {
-        return Scaffold(
-          backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(58.0),
-            child: AppBarItsindire(),
-          ),
-          body: ListView(
-            children: <Widget>[
-              _buildOverviewCard(context),
-              _buildReviewScoreButton(context, scoreUserIsuzuma),
-              _buildAttemptButton(context, currentUser, scoreUserIsuzuma),
-            ],
-          ),
-        );
-      }),
     );
   }
 
@@ -225,10 +224,10 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
 
   Widget _buildAmasomoList(BuildContext context) {
     return SizedBox(
-      height: isTitlesLoading
+      height: isLoading
           ? MediaQuery.of(context).size.height * 0.048 * 5
           : MediaQuery.of(context).size.height * 0.04 * amasomo.length,
-      child: isTitlesLoading
+      child: isLoading
           ? const LoadingWidget()
           : ListView.builder(
               itemCount: amasomo.length,
@@ -291,7 +290,7 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
                 'Reba uko wakoze',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.035,
+                  fontSize: MediaQuery.of(context).size.width * 0.032,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -301,75 +300,77 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
   }
 
   void _handleAttemptButtonPress(BuildContext context, User? currentUser) {
-
-    if (isPaymentLoading || isTitlesLoading || payment == null) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-        content: Row(
-          children: const [
-            CircularProgressIndicator(),
-            SizedBox(width: 20),
-            Text("Loading..."),
-          ],
-        ),
-          );
-        },
-      );
-
-    } else if (currentUser == null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const Iyandikishe(
-            message: 'Banza wiyandikishe, wishyure ubone aya masuzumabumenyi yose!',
-          ),
-        ),
-      );
-    } else if (currentUser.email == 'nidehazard10@gmail.com' ||
-        currentUser.email == 'testing@mail.com' ||
-        (payment != null && payment.isApproved && payment.endAt.isAfter(DateTime.now()))) {
-      Navigator.push(
-        context,
-        PageTransition(
-          type: PageTransitionType.leftToRight,
-          child: IsuzumaAttempt(isuzuma: widget.isuzuma),
-        ),
-      );
+    if (currentUser == null) {
+      _navigateToIyandikishe(context);
+    } else if (_isUserAllowedToAttempt(currentUser)) {
+      _navigateToIsuzumaAttempt(context);
     } else {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          String ifatabuguziID = dotenv.env['TRIAL_SUBSCRIPTION_ID'] ?? '';
-          return ItsindireAlert(
-            errorTitle: 'Ntibyagenze neza',
-            errorMsg: payment == null
-                ? 'Banza ugure ifatabuguzi!'
-                : payment.isApproved == false
-                    ? 'Ifatabuguzi ryawe ntiriremezwa!'
-                    : payment.ifatabuguziID == ifatabuguziID &&
-                            payment.endAt.isBefore(DateTime.now())
-                        ? 'Igerageza ryawe ryararangiye, gura ifatabuguzi!'
-                        : payment.endAt.isBefore(DateTime.now())
-                            ? 'Ifatabuguzi ryawe ryararangiye, gura irindi!'
-                            : 'Ibyo wifuza ntibyakunze!',
-            alertType: 'error',
-            secondButtonTitle: payment.isApproved != false ? 'Ishyura' : null,
-            secondButtonFunction: () {
-              Navigator.pop(context);
-              Navigator.pushReplacementNamed(context, '/ibiciro');
-            },
-            secondButtonColor: Color(0xFF00A651),
-          );
-        },
-      );
+      _showPaymentAlert(context);
     }
   }
 
-  Widget _buildAttemptButton(BuildContext context, User? currentUser, IsuzumaScoreModel? scoreUserIsuzuma) {
+  void _navigateToIyandikishe(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const Iyandikishe(
+          message:
+              'Banza wiyandikishe, wishyure ubone aya masuzumabumenyi yose!',
+        ),
+      ),
+    );
+  }
+
+  bool _isUserAllowedToAttempt(User currentUser) {
+    return currentUser.email == 'nidehazard10@gmail.com' ||
+        currentUser.email == 'testing@mail.com' ||
+        (payment != null &&
+            payment.isApproved &&
+            payment.endAt.isAfter(DateTime.now()));
+  }
+
+  void _navigateToIsuzumaAttempt(BuildContext context) {
+    Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.leftToRight,
+        child: IsuzumaAttempt(isuzuma: widget.isuzuma),
+      ),
+    );
+  }
+
+  void _showPaymentAlert(BuildContext context) {
+    String ifatabuguziID = dotenv.env['TRIAL_SUBSCRIPTION_ID'] ?? '';
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return ItsindireAlert(
+          errorTitle: 'Ntibyagenze neza',
+          errorMsg: payment == null
+              ? 'Banza ugure ifatabuguzi!'
+              : payment.isApproved == false
+                  ? 'Ifatabuguzi ryawe ntiriremezwa!'
+                  : payment.ifatabuguziID == ifatabuguziID &&
+                          payment.endAt.isBefore(DateTime.now())
+                      ? 'Igerageza ryawe ryararangiye, gura ifatabuguzi!'
+                      : payment.endAt.isBefore(DateTime.now())
+                          ? 'Ifatabuguzi ryawe ryararangiye, gura irindi!'
+                          : 'Ibyo wifuza ntibyakunze!',
+          alertType: 'error',
+          secondButtonTitle: payment.isApproved != false ? 'Ishyura' : null,
+          secondButtonFunction: () {
+            Navigator.pop(context);
+            Navigator.pushReplacementNamed(context, '/ibiciro');
+          },
+          secondButtonColor: Color(0xFF00A651),
+        );
+      },
+    );
+  }
+
+  Widget _buildAttemptButton(BuildContext context, User? currentUser,
+      IsuzumaScoreModel? scoreUserIsuzuma) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.45,
       margin: EdgeInsets.only(
@@ -377,7 +378,8 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
       ),
       alignment: Alignment.center,
       child: ElevatedButton(
-        onPressed: () => _handleAttemptButtonPress(context, currentUser),
+        onPressed: () =>
+            isLoading ? null : _handleAttemptButtonPress(context, currentUser),
         style: ElevatedButton.styleFrom(
           fixedSize: Size(
             MediaQuery.of(context).size.width * 0.5,
@@ -386,14 +388,16 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
           foregroundColor: const Color.fromARGB(255, 0, 0, 0),
           backgroundColor: const Color(0xFFFFBD59),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.05),
+            borderRadius:
+                BorderRadius.circular(MediaQuery.of(context).size.width * 0.05),
           ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
               child: Image.asset(
                 'assets/images/isuzuma.png',
                 height: MediaQuery.of(context).size.height * 0.028,
@@ -401,7 +405,11 @@ class _IsuzumaOverviewState extends State<IsuzumaOverview> {
             ),
             Flexible(
               child: Text(
-                scoreUserIsuzuma != null ? 'SUBIRAMO'.toUpperCase() : 'RITANGIRE'.toUpperCase(),
+                isLoading
+                    ? 'TEGEREZA GATO...'
+                    : scoreUserIsuzuma != null
+                        ? 'SUBIRAMO'.toUpperCase()
+                        : 'RITANGIRE'.toUpperCase(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: MediaQuery.of(context).size.width * 0.035,

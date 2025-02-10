@@ -54,7 +54,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   }
 
   void _initializeCurrentUser() {
-    if (!mounted) return; // Add this check
+    if (!mounted) return;
     setState(() {
       currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
     });
@@ -65,7 +65,6 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
     super.didChangeDependencies();
     scaffoldMessenger = ScaffoldMessenger.of(context);
     authState = Provider.of<AuthState>(context, listen: false);
-    // Listen for changes in AuthState
     authState.addListener(_authStateListener);
   }
 
@@ -77,7 +76,7 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   }
 
   void _authStateListener() {
-    if (!mounted) return; // Add this check
+    if (!mounted) return;
     setState(() {
       currentUser = Provider.of<AuthState>(context, listen: false).currentUser;
     });
@@ -307,7 +306,6 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
 
   Widget _buildProfileDialog(BuildContext context, ProfileModel profile,
       PaymentModel? newestPyt, AuthState authState) {
-    String? email = currentUser?.email;
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius:
@@ -353,7 +351,10 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
       content: SingleChildScrollView(
         child: ListBody(
           children: <Widget>[
-            (email != 'nidehazard10@gmail.com' && email != 'testing@mail.com')
+            (currentUser != null &&
+                    currentUser?.email != 'nidehazard10@gmail.com' &&
+                    currentUser?.email != 'testing@mail.com' &&
+                    newestPyt != null)
                 ? _buildSubscriptionStatus(context, newestPyt)
                 : Container(),
             const SizedBox(height: 10.0),
@@ -371,13 +372,10 @@ class _AppBarItsindireState extends State<AppBarItsindire> {
   }
 
   Widget _buildSubscriptionStatus(
-      BuildContext context, PaymentModel? newestPyt) {
+      BuildContext context, PaymentModel newestPyt) {
     String ifatabuguziID = dotenv.env['TRIAL_SUBSCRIPTION_ID'] ?? '';
 
-    if (newestPyt == null) {
-      return _buildSubscriptionStatusText(context, 'NTA FATABUGUZI URAFATA',
-          const Color.fromARGB(255, 255, 0, 0));
-    } else if (newestPyt.getRemainingMilliseconds() <= 0) {
+    if (newestPyt.getRemainingMilliseconds() <= 0) {
       return _buildSubscriptionStatusText(context, 'IFATABUGUZI RYARANGIYE!',
           const Color.fromARGB(255, 255, 0, 0));
     } else if (newestPyt.isApproved == false &&
