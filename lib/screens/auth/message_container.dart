@@ -1,29 +1,43 @@
-
 import 'package:flutter/material.dart';
 
 class MessageContainer extends StatelessWidget {
   final String message;
+  final Color backgroundColor;
+  final Color borderColor;
+  final double borderRadius;
+  final EdgeInsets? padding;
 
-  const MessageContainer({required this.message});
+  const MessageContainer({
+    required this.message,
+    this.backgroundColor = const Color(0xFFFFDE59),
+    this.borderColor = const Color.fromARGB(255, 255, 204, 0),
+    this.borderRadius = 24.0,
+    this.padding,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context).size;
+    final containerPadding = padding ??
+        EdgeInsets.all(
+          mediaQuery.width * 0.04,
+        );
+
     return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: mediaQuery.width * 0.8,
       margin: EdgeInsets.symmetric(
-        horizontal: MediaQuery.of(context).size.width * 0.05,
-        vertical: MediaQuery.of(context).size.height * 0.03,
+        horizontal: mediaQuery.width * 0.05,
+        vertical: mediaQuery.height * 0.03,
       ),
-      padding: EdgeInsets.all(
-        MediaQuery.of(context).size.width * 0.04,
-      ),
+      padding: containerPadding,
       decoration: BoxDecoration(
-        color: const Color(0xFFFFDE59),
+        color: backgroundColor,
         border: Border.all(
           width: 2.0,
-          color: const Color.fromARGB(255, 255, 204, 0),
+          color: borderColor,
         ),
-        borderRadius: BorderRadius.circular(24.0),
+        borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: const [
           BoxShadow(
             color: Color.fromARGB(255, 59, 57, 77),
@@ -39,10 +53,11 @@ class MessageContainer extends StatelessWidget {
             message,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: MediaQuery.of(context).size.width * 0.04,
+              fontSize: mediaQuery.width * 0.04,
               fontWeight: FontWeight.w900,
               color: const Color.fromARGB(255, 0, 0, 0),
             ),
+            semanticsLabel: 'Message: $message',
           ),
         ],
       ),

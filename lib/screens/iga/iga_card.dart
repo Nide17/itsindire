@@ -6,23 +6,29 @@ class IgaCard extends StatelessWidget {
   final String icon;
   final Widget screen;
 
-  const IgaCard(
-      {super.key,
-      required this.title,
-      required this.icon,
-      required this.screen});
+  const IgaCard({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.screen,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context).size;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context,
-            PageTransition(
-                type: PageTransitionType.leftToRight, child: screen));
+          context,
+          PageTransition(
+            type: PageTransitionType.leftToRight,
+            child: screen,
+          ),
+        );
       },
       child: Container(
-        width: MediaQuery.of(context).size.width * 0.4,
+        width: mediaQuery.width * 0.4,
         decoration: BoxDecoration(
           color: const Color(0xFF00CCE5),
           borderRadius: BorderRadius.circular(8.0),
@@ -35,6 +41,7 @@ class IgaCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // Title Section
             Padding(
               padding: const EdgeInsets.all(2.0),
               child: Text(
@@ -43,15 +50,20 @@ class IgaCard extends StatelessWidget {
                 softWrap: true,
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
-                  fontSize: MediaQuery.of(context).size.width * 0.035,
+                  fontSize: mediaQuery.width * 0.035,
                   color: const Color.fromARGB(255, 255, 255, 255),
                 ),
+                semanticsLabel: 'Card title: $title',
               ),
             ),
+
+            // Divider Section
             Container(
               color: const Color(0xFFFFBD59),
-              height: MediaQuery.of(context).size.height * 0.009,
+              height: mediaQuery.height * 0.009,
             ),
+
+            // Icon Section
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 8.0,
@@ -59,7 +71,15 @@ class IgaCard extends StatelessWidget {
               ),
               child: Image.asset(
                 icon,
-                height: MediaQuery.of(context).size.height * 0.2,
+                height: mediaQuery.height * 0.2,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.error,
+                    color: Colors.red,
+                    size: 50,
+                  );
+                },
+                semanticLabel: 'Card icon for $title',
               ),
             ),
           ],

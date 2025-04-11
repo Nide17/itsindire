@@ -7,11 +7,11 @@ const TextStyle headerTextStyle = TextStyle(
   color: Colors.white,
 );
 
-TextStyle linkTextStyle = TextStyle(
+const TextStyle linkTextStyle = TextStyle(
   decoration: TextDecoration.underline,
   decorationStyle: TextDecorationStyle.dotted,
   decorationThickness: 3.0,
-  decorationColor: const Color(0xFFFAD201),
+  decorationColor: Color(0xFFFAD201),
   color: Color(0xff14e4ff),
   fontSize: 16,
 );
@@ -33,27 +33,40 @@ class ViewNotLoggedIn extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: height * 0.03),
       child: Column(
         children: [
-          SizedBox(
-            width: width * 0.7,
-            child: const Text(
-              'Injira niba wariyandikishije cyangwa wiyandikishe utangire kwiga!',
-              textAlign: TextAlign.center,
-              style: headerTextStyle,
-            ),
+          _buildHeaderText(width),
+          SizedBox(height: height * 0.05),
+          _buildActionButtons(width),
+        ],
+      ),
+    );
+  }
+
+  // Extracted header text widget
+  Widget _buildHeaderText(double width) {
+    return SizedBox(
+      width: width * 0.7,
+      child: const Text(
+        'Injira niba wariyandikishije cyangwa wiyandikishe utangire kwiga!',
+        textAlign: TextAlign.center,
+        style: headerTextStyle,
+      ),
+    );
+  }
+
+  // Extracted action buttons widget
+  Widget _buildActionButtons(double width) {
+    return SizedBox(
+      width: width * 0.9,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: const [
+          RouteActionButton(
+            btnText: 'Injira',
+            route: '/injira',
           ),
-          SizedBox(
-            height: height * 0.05,
-          ),
-          SizedBox(
-            width: width * 0.9,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                RouteActionButton(btnText: 'Injira', route: '/injira'),
-                RouteActionButton(
-                    btnText: 'Iyandikishe', route: '/iyandikishe'),
-              ],
-            ),
+          RouteActionButton(
+            btnText: 'Iyandikishe',
+            route: '/iyandikishe',
           ),
         ],
       ),

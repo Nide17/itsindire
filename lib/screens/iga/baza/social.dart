@@ -9,11 +9,11 @@ class Social extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // RETURN EACH SOCIAL MEDIA USING THE CENTER WIDGET
+    final mediaQuery = MediaQuery.of(context).size;
+
     return Container(
       margin: const EdgeInsets.all(16.0),
       padding: const EdgeInsets.all(16.0),
-      // STYLING
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
@@ -23,61 +23,26 @@ class Social extends StatelessWidget {
         boxShadow: const [
           BoxShadow(
             color: Color.fromARGB(255, 43, 43, 43),
-            offset: Offset(
-              5.0,
-              5.0,
-            ),
+            offset: Offset(5.0, 5.0),
             blurRadius: 10.0,
             spreadRadius: 2.0,
-          ), //BoxShadow
+          ),
           BoxShadow(
             color: Color.fromARGB(255, 71, 103, 158),
             offset: Offset(0.0, 0.0),
             blurRadius: 0.0,
             spreadRadius: 0.0,
-          ), //BoxShadow
+          ),
         ],
       ),
       child: Column(
         children: [
-          // SOCIAL MEDIA LIST
-          for (var i = 0; i < socialData.length; i++)
-
-            // EACH SOCIAL MEDIA
-            Padding(
-              padding: const EdgeInsets.all(1.0),
-              child: TextButton(
-                onPressed: () => _handleClick(socialData[i]['url']),
-                child: Row(
-                  children: <Widget>[
-                    // HORIZONTAL SPACE
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.04,
-                    ),
-
-                    // SVG ICON
-                    SvgPicture.asset(
-                      socialData[i]['icon'] ?? '',
-                      height: MediaQuery.of(context).size.height * 0.045,
-                      colorFilter: const ColorFilter.mode(
-                          Color.fromARGB(255, 255, 255, 255), BlendMode.srcIn),
-                    ),
-
-                    // HORIZONTAL SPACE
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.02,
-                    ),
-
-                    // TEXT WIDGET
-                    Text('  ${socialData[i]['title']}',
-                        style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.width * 0.045,
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                          fontWeight: FontWeight.bold,
-                        )),
-                  ],
-                ),
-              ),
+          for (var social in socialData)
+            SocialMediaButton(
+              icon: social['icon'] ?? '',
+              title: social['title'] ?? '',
+              url: social['url'] ?? '',
+              mediaQuery: mediaQuery,
             ),
         ],
       ),
@@ -85,11 +50,59 @@ class Social extends StatelessWidget {
   }
 }
 
-// Handle the click with corresponding link or text
-void _handleClick(String url) async {
+class SocialMediaButton extends StatelessWidget {
+  final String icon;
+  final String title;
+  final String url;
+  final Size mediaQuery;
+
+  const SocialMediaButton({
+    required this.icon,
+    required this.title,
+    required this.url,
+    required this.mediaQuery,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(1.0),
+      child: TextButton(
+        onPressed: () => _handleClick(url, context),
+        child: Row(
+          children: <Widget>[
+            SizedBox(width: mediaQuery.width * 0.04),
+            SvgPicture.asset(
+              icon,
+              height: mediaQuery.height * 0.045,
+              colorFilter: const ColorFilter.mode(
+                Color.fromARGB(255, 255, 255, 255),
+                BlendMode.srcIn,
+              ),
+            ),
+            SizedBox(width: mediaQuery.width * 0.02),
+            Text(
+              '  $title',
+              style: TextStyle(
+                fontSize: mediaQuery.width * 0.045,
+                color: const Color.fromARGB(255, 255, 255, 255),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+void _handleClick(String url, BuildContext context) async {
   final Uri _url = Uri.parse(url);
 
   if (!await launchUrl(_url, mode: LaunchMode.inAppBrowserView)) {
-    throw Exception('Could not launch $_url');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Could not launch $url')),
+    );
   }
 }
