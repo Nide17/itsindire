@@ -32,16 +32,20 @@ class _LoadingLightningState extends State<LoadingLightning>
 
     if (widget.duration > 0) {
       Future.delayed(Duration(seconds: widget.duration), () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        }
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -54,7 +58,7 @@ class _LoadingLightningState extends State<LoadingLightning>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.24),
+            SizedBox(height: mediaQuery.height * 0.24),
             const Text(
               "ITSINDIRE",
               style: TextStyle(
@@ -62,8 +66,9 @@ class _LoadingLightningState extends State<LoadingLightning>
                 color: Color(0xFFFAD201),
                 fontWeight: FontWeight.bold,
               ),
+              semanticsLabel: 'App title: ITSINDIRE',
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.08),
+            SizedBox(height: mediaQuery.height * 0.08),
             Container(
               padding: const EdgeInsets.all(4.0),
               width: 100.0,
@@ -80,12 +85,16 @@ class _LoadingLightningState extends State<LoadingLightning>
                 builder: (context, child) {
                   return Transform.rotate(
                     angle: _animation.value,
-                    child: SvgPicture.asset('assets/images/lightning.svg'),
+                    child: SvgPicture.asset(
+                      'assets/images/lightning.svg',
+                      semanticsLabel: 'Rotating lightning icon',
+                      placeholderBuilder: (context) => const CircularProgressIndicator(),
+                    ),
                   );
                 },
               ),
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.08),
+            SizedBox(height: mediaQuery.height * 0.08),
             const Text(
               "Iga, Umenye, Utsinde!",
               style: TextStyle(
@@ -93,6 +102,7 @@ class _LoadingLightningState extends State<LoadingLightning>
                 color: Color.fromARGB(255, 13, 173, 232),
                 fontWeight: FontWeight.bold,
               ),
+              semanticsLabel: 'App slogan: Iga, Umenye, Utsinde!',
             ),
           ],
         ),
