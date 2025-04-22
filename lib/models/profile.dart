@@ -50,7 +50,7 @@ class ProfileModel {
     this.sessionID = profile.sessionID;
   }
 
-  // TO STRING
+
   @override
   String toString() {
     return "ProfileModel {uid: $uid, username: $username, email: $email, phone: $phone, photo: $photo, gender: $gender, dob: $dob, urStudent: $urStudent, regNumber: $regNumber, campus: $campus, roleId: $roleId, sessionID: $sessionID}";

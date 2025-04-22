@@ -41,7 +41,7 @@ class IsuzumaModel {
     };
   }
 
-  // TO STRING
+
   @override
   String toString() {
     return 'Isuzuma(id: $id, title: $title, description: $description, questions: $questions)';
@@ -98,7 +98,7 @@ class IsuzumaQuestion {
     };
   }
 
-  // TO STRING
+
   @override
   String toString() {
     return 'Question(id: $id, ingingoID: $ingingoID, isomoID: $isomoID, title: $title, imageUrl: $imageUrl, options: $options)';
@@ -151,7 +151,7 @@ class IsuzumaOption {
     };
   }
 
-  // TO STRING
+
   @override
   String toString() {
     return 'Option(id: $id, text: $text, imageUrl: $imageUrl, isCorrect: $isCorrect, explanation: $explanation)';

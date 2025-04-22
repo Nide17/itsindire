@@ -18,7 +18,6 @@ class QuizScore {
   QuizScore(
       {required this.questions, required this.userID, required this.isomoID});
 
-  // SETTERS
   void setUserID(String userID) {
     this.userID = userID;
   }
@@ -70,7 +69,6 @@ class QuizScore {
     return count;
   }
 
-  // TO STRING
   @override
   String toString() {
     return '\nQuizScore{userID: $userID, isomoID: $isomoID, questions: $questions}\n';
@@ -90,12 +88,10 @@ class ScoreQuestion {
       required this.isAnswerCorrect,
       this.choosenOption});
 
-  // GETTERS
   PopQuestionModel getPopQuestion() {
     return popQuestion;
   }
 
-  // SETTERS
   void setIsAnswerCorrect(bool isAnswerCorrect) {
     this.isAnswerCorrect = isAnswerCorrect;
   }
@@ -104,7 +100,6 @@ class ScoreQuestion {
     this.choosenOption = choosenOption;
   }
 
-  // TO STRING
   @override
   String toString() {
     return 'ScoreQuestion{popQuestion: $popQuestion, isAnswered: $isAnswered, isAnswerCorrect: $isAnswerCorrect, choosenOption: $choosenOption}';

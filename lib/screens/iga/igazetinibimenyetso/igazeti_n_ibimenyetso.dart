@@ -17,86 +17,74 @@ class Igazeti extends StatefulWidget {
 }
 
 class _IgazetiState extends State<Igazeti> {
+  static const double verticalSpacing = 16.0;
+
+  final List<Map<String, dynamic>> cards = [
+    {
+      'title': 'IGAZETI',
+      'icon': 'assets/images/igazeti_book.png',
+      'screen': IgazetiBook(),
+    },
+    {
+      'title': 'IBYAPA',
+      'icon': 'assets/images/ibyapa.png',
+      'screen': IgazetiIbyapa(),
+    },
+    {
+      'title': 'IMIRONGO YO MUMUHANDA',
+      'icon': 'assets/images/imirongo.png',
+      'screen': IgazetiImirongo(),
+    },
+    {
+      'title': 'IBIMENYETSO BIMURIKA',
+      'icon': 'assets/images/ibimurika.png',
+      'screen': IgazetiIbimurika(),
+    },
+    {
+      'title': 'IBYAPA NYONGERA N\'IBINTU NGOBOKA',
+      'icon': 'assets/images/Ahari ubutabazi.png',
+      'screen': IgazetiInyongera(),
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color.fromARGB(255, 71, 103, 158),
-        appBar: const PreferredSize(
-          preferredSize: Size.fromHeight(58.0),
-          child: AppBarItsindire(),
-        ),
-        body: Scrollbar(
-          thumbVisibility: true,
-          child: ListView(children: <Widget>[
+      backgroundColor: const Color.fromARGB(255, 71, 103, 158),
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(58.0),
+        child: AppBarItsindire(),
+      ),
+      body: Scrollbar(
+        thumbVisibility: true,
+        child: ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: [
             const GradientTitle(
-                title: 'IGAZETI N\'IBIMENYETSO',
-                icon: 'assets/images/igazeti.svg'),
-
-            // Vertical space
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.04,
+              title: 'IGAZETI N\'IBIMENYETSO',
+              icon: 'assets/images/igazeti.svg',
             ),
-
-            // Cards row for IGAZETI and IBYAPA
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                IgaCard(
-                  title: 'IGAZETI',
-                  icon: 'assets/images/igazeti_book.png',
-                  screen: IgazetiBook(),
-                ),
-                IgaCard(
-                  title: 'IBYAPA',
-                  icon: 'assets/images/ibyapa.png',
-                  screen: IgazetiIbyapa(),
-                ),
-              ],
-            ),
-
-            // Vertical space
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.04,
-            ),
-
-            // Cards row for IMIRONGO and IBIMURIKA
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                IgaCard(
-                  title: 'IMIRONGO YO MUMUHANDA',
-                  icon: 'assets/images/imirongo.png',
-                  screen: IgazetiImirongo(),
-                ),
-                IgaCard(
-                  title: 'IBIMENYETSO BIMURIKA',
-                  icon: 'assets/images/ibimurika.png',
-                  screen: IgazetiIbimurika(),
-                ),
-              ],
-            ),
-
-            // Vertical space
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.04,
-            ),
-
-            // Cards row for IBYAPA NYONGERA N'IBINTU NGOBOKA
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                IgaCard(
-                  title: 'IBYAPA NYONGERA N\'IBINTU NGOBOKA',
-                  icon: 'assets/images/Ahari ubutabazi.png',
-                  screen: IgazetiInyongera(),
-                ),
-              ],
-            ),
-          ]),
+            SizedBox(height: verticalSpacing),
+            _buildCardGrid(),
+          ],
         ),
-        bottomNavigationBar: const RebaIbiciro());
+      ),
+      bottomNavigationBar: const RebaIbiciro(),
+    );
+  }
+
+  Widget _buildCardGrid() {
+    return Wrap(
+      spacing: 16.0,
+      runSpacing: 16.0,
+      alignment: WrapAlignment.spaceAround,
+      children: cards.map((card) {
+        return IgaCard(
+          title: card['title'],
+          icon: card['icon'],
+          screen: card['screen'],
+        );
+      }).toList(),
+    );
   }
 }

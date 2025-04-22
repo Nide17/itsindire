@@ -27,7 +27,7 @@ class IbibazoBibazaModel {
     };
   }
 
-  // TO STRING
+
   @override
   String toString() {
     return 'IbibazoBibazaModel{id: $id, question: $question, answer: $answer}';

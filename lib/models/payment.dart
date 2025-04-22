@@ -101,7 +101,6 @@ class PaymentModel {
     };
   }
 
-  // TO STRING
   @override
   String toString() {
     return 'PaymentModel(createdAt: $createdAt, endAt: $endAt, userId: $userId, ifatabuguziID: $ifatabuguziID, igiciro: $igiciro, isApproved: $isApproved, phone: $phone)';

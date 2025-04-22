@@ -113,7 +113,7 @@ class IngingoModel {
     };
   }
 
-  // TO STRING
+
   @override
   String toString() {
     return 'IngingoModel(id: $id, isomoID: $isomoID, title: $title, text: $text, imageUrl: $imageUrl, imageTitle: $imageTitle, imageDesc: $imageDesc, options: $options, nb: $nb, insideTitle: $insideTitle)';

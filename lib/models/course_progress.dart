@@ -20,7 +20,7 @@ class CourseProgressModel {
 // GET THE PROGRESS PERCENTAGE
   get progressPercentage => currentIngingo / totalIngingos;
 
-  // TO STRING
+
   @override
   String toString() {
     return 'CourseProgressModel{id: $id, userId: $userId, courseId: $courseId, currentIngingo: $currentIngingo, totalIngingos: $totalIngingos, unansweredPopQuestions: $unansweredPopQuestions}';

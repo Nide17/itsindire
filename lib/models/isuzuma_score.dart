@@ -110,7 +110,7 @@ class IsuzumaScoreModel extends ChangeNotifier {
     };
   }
 
-  // TO STRING
+
   @override
   String toString() {
     return 'IsuzumaScoreModel(id: $id, isuzumaID: $isuzumaID, takerID: $takerID, marks: $marks, totalMarks: $totalMarks, dateTaken: $dateTaken, questions: $questions, amasomo: $amasomo, isuzumaTitle: $isuzumaTitle)';
@@ -193,7 +193,7 @@ class ScoreQuestionI {
   }
   
 
-  // TO STRING
+
   @override
   String toString() {
     return 'ScoreQuestionI(id: $id, ingingoID: $ingingoID, isomoID: $isomoID, title: $title, imageUrl: $imageUrl, options: $options, isAnswered: $isAnswered)';
@@ -282,7 +282,7 @@ class ScoreOptionI {
     };
   }
 
-  // TO STRING
+
   @override
   String toString() {
     return 'Option(id: $id, text: $text, explanation: $explanation, imageUrl: $imageUrl, isCorrect: $isCorrect, isChoosen: $isChoosen)';

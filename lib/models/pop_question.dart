@@ -94,7 +94,6 @@ class PopQuestionModel {
     };
   }
 
-  // TO STRING
   @override
   String toString() {
     return 'PopQuestion(id: $id, ingingoID: $ingingoID, isomoID: $isomoID, title: $title, imageUrl: $imageUrl, options: $options)';
